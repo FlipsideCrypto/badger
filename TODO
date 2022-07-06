@@ -1,0 +1,21 @@
+ACTIVE
+☐ Get basic landing page
+☐ Button to direct to admin
+☐ Some login and account UI
+☐ Moralis set up?
+☐ Yes will need info on how many holders of tokens, possibly scrape the roles from this too if possible
+☐ Basic Contract
+☐ Management UI and functionality
+☐ File Uploading
+☐ Would be nice to upload to IPFS to not have any data storage
+☐ Deploy a contract via front end
+☐ API and database to store different roles and deeper info on an org than what is on chain? (POSSIBLE TO DO THIS WITHOUT AN API?)
+☐ Set up server
+
+BRANDING
+☐ Alice in Wonderland Vibes
+☐ Colors: 
+    #471b53
+
+ARCHIVED
+✔ Initialize react project @done(22-07-06 10:54)
