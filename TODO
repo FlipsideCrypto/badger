@@ -5,39 +5,45 @@ Drakes Wants:
     - Contributor Badges, Leader Badges, Governance Badges
 
 CONTRACT: 
-    ☐ Contract for Multi Level Membership Tokens
+    ☐ Onchain metadata
+    ☐ Is there any case where someone could rightfully need multiple copies of the same badge?
+        If so, add a require statement to mint and remove the balanceOf in burn.
+    ☐ Full test suite
+    ☐ MadHatterOrg deployed first, then MadHatter is deployed and points at that version
+    
+ACTIVE:
+    ☐ On chain metadata for tokens
+    ☐ Contract tested and deployed on Polygon
+    ☐ Get basic landing page
+    ☐ Button to direct to admin
+    ☐ Some login and account UI
+    ☐ Moralis set up?
+    ☐ Yes will need info on how many holders of tokens, possibly scrape the roles from this too if possible
+    ☐ Management UI and functionality
+    ☐ File Uploading
+    ☐ Would be nice to upload to IPFS to not have any data storage
+    ☐ Deploy a contract via front end
+    ☐ API and database to store different roles and deeper info on an org than what is on chain? (POSSIBLE TO DO THIS WITHOUT AN API?)
+    ☐ Set up host
+        
+BRANDING:
+    ☐ Chess Vibes
+    ☐ Colors: 
+    #471b53
+            
+ARCHIVED:
+    ✔ Basic Contract @done(22-07-06 16:58)
+    ✔ Minimal proxies @done(22-07-06 16:58)
+    ✔ CRUD Roles @done(22-07-06 16:58)
+    ✔ Permissions for certain @done(22-07-06 16:58)
+    ✘ IF MAINNET: Airdrop Via EIP 2309 and a Merkle Root @cancelled(22-07-06 16:57)
+    ✔ Initialize react project @done(22-07-06 10:54)
+    ✔ Contract for Multi Level Membership Tokens @done(22-07-06 16:57)
     ✔ Utilize Minimal Proxies to allow for multiple contracts @done(22-07-06 14:02)
-        ☐ MadHatterOrg deployed first, then MadHatter is deployed and points at that version
-    ☐ Option For Soul Bound
+    ✔ Option For Soul Bound @done(22-07-06 16:57)
     ✔ Different Ranks/Roles @done(22-07-06 15:19)
         ✔ CRUD of roles in contract @done(22-07-06 15:19)
         ✔ Admin @done(22-07-06 15:19)
         ✔ Levels of Contributors @done(22-07-06 15:19)
         ✔ Participation Badges @done(22-07-06 15:19)
     ✔ Ability for Admins to revoke tokens @done(22-07-06 15:19)
-    ☐ IF MAINNET: Airdrop Via EIP 2309 and a Merkle Root    
-
-ACTIVE:
-☐ Get basic landing page
-☐ Button to direct to admin
-☐ Some login and account UI
-☐ Moralis set up?
-    ☐ Yes will need info on how many holders of tokens, possibly scrape the roles from this too if possible
-☐ Basic Contract
-    ☐ Minimal proxies
-    ☐ CRUD Roles
-    ☐ Permissions for certain 
-☐ Management UI and functionality
-☐ File Uploading
-    ☐ Would be nice to upload to IPFS to not have any data storage
-☐ Deploy a contract via front end
-☐ API and database to store different roles and deeper info on an org than what is on chain? (POSSIBLE TO DO THIS WITHOUT AN API?)
-☐ Set up host
-
-BRANDING:
-☐ Chess Vibes
-☐ Colors: 
-    #471b53
-
-ARCHIVED:
-✔ Initialize react project @done(22-07-06 10:54)
