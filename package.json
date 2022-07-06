@@ -4,6 +4,7 @@
     "@emotion/styled": "^11.9.3",
     "@mui/material": "^5.8.7",
     "@openzeppelin/contracts": "^4.7.0",
+    "@openzeppelin/contracts-upgradeable": "^4.7.0",
     "create-react-app": "^5.0.1",
     "hardhat": "^2.9.9"
   }

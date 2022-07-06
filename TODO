@@ -1,21 +1,43 @@
-ACTIVE
+Drakes Wants:
+    - General….. As a DAO operator I want to be able to track my community on chain So that I can use the variety of tools that can read that 
+    - As a DAO operator I want to lock specific web pages / apps / etc for specific groups So that permissioned members can access functions/info Specific…. An a DAO operator I want to mint NFTs for my contributors So that I can use Guild to token gate discord channels / web pages 
+    - Admin can: Launch new NFT collection at will Upload art for the NFT Add to collection at will (workaround is to overmint) Rescind NFTs (burn or transfer back to main) NFT Traits - Season - Name
+    - Contributor Badges, Leader Badges, Governance Badges
+
+CONTRACT: 
+    ☐ Contract for Multi Level Membership Tokens
+    ✔ Utilize Minimal Proxies to allow for multiple contracts @done(22-07-06 14:02)
+        ☐ MadHatterOrg deployed first, then MadHatter is deployed and points at that version
+    ☐ Option For Soul Bound
+    ✔ Different Ranks/Roles @done(22-07-06 15:19)
+        ✔ CRUD of roles in contract @done(22-07-06 15:19)
+        ✔ Admin @done(22-07-06 15:19)
+        ✔ Levels of Contributors @done(22-07-06 15:19)
+        ✔ Participation Badges @done(22-07-06 15:19)
+    ✔ Ability for Admins to revoke tokens @done(22-07-06 15:19)
+    ☐ IF MAINNET: Airdrop Via EIP 2309 and a Merkle Root    
+
+ACTIVE:
 ☐ Get basic landing page
 ☐ Button to direct to admin
 ☐ Some login and account UI
 ☐ Moralis set up?
-☐ Yes will need info on how many holders of tokens, possibly scrape the roles from this too if possible
+    ☐ Yes will need info on how many holders of tokens, possibly scrape the roles from this too if possible
 ☐ Basic Contract
+    ☐ Minimal proxies
+    ☐ CRUD Roles
+    ☐ Permissions for certain 
 ☐ Management UI and functionality
 ☐ File Uploading
-☐ Would be nice to upload to IPFS to not have any data storage
+    ☐ Would be nice to upload to IPFS to not have any data storage
 ☐ Deploy a contract via front end
 ☐ API and database to store different roles and deeper info on an org than what is on chain? (POSSIBLE TO DO THIS WITHOUT AN API?)
-☐ Set up server
+☐ Set up host
 
-BRANDING
-☐ Alice in Wonderland Vibes
+BRANDING:
+☐ Chess Vibes
 ☐ Colors: 
     #471b53
 
-ARCHIVED
+ARCHIVED:
 ✔ Initialize react project @done(22-07-06 10:54)
