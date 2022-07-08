@@ -3,3 +3,4 @@ secrets.json
 venv/
 artifacts
 cache
+.env

@@ -15,19 +15,19 @@ import { Base64 } from "../Base64.sol";
  * @dev Implementation of ERC1155 Token Standard with account bound ownership and
  *      role based management of tokens to allow organizations to frictionlessly 
  *      document roles, rewards, and accomplishments of their members with an on-chain 
- *      token requiring minimal setup and upkeep. MadHatter let’s a community manager 
- *      or DAO operator to designate their community on chain and to utilize other 
- *      products such as guild to token gate spaces for their members.
+ *      token requiring minimal setup and upkeep. MadHatter lets a community manager 
+ *      or DAO operators designate their community on chain and to utilize other 
+ *      products such as guild.xyz to token gate spaces for their members.
  * @dev MadHatter utilizies EIP-1167 Minimal Proxies to allow the organization users
  *      to clone the base MadHatter V1 contract and delegate function calls to that
  *      pre-deployed base contract in order to vastly reduce the cost and complexity 
  *      of getting a contract deployed when a drastically custom solution is not needed.
- * @dev This implementation is considered V1 as there are more use cases that will appear
- *      in the future, such as optimizing for Ethereum mainnet, having vote governance 
- *      for admin functions, or allowing various collection management permissions from 
- *      non-admin promoted accounts. However, V1 is to be put in the hands of organizations 
- *      currently desiring this functionality with no current alternative and to learn more 
- *      about how this tokenized management could be adapted to other use cases.
+ * @dev This implementation is considered V1 as there are more use cases that will inevitably 
+ *      appear in the future, such as optimizing for Ethereum mainnet, altering the base ERC1155, 
+ *      having vote governance for admin functions, or allowing various collection management 
+ *      permissions from non-admin promoted accounts. However, V1 is to be put in the hands of 
+ *      organizations currently desiring this functionality with no current alternative and to 
+ *      get feedback how this tokenized management could be adapted to other use cases.
  */
 
 contract MadHatterOrg is 
@@ -215,6 +215,29 @@ contract MadHatterOrg is
             , 1
             , ""
         );
+    }
+
+    function mintBadgeBundle(
+          address[] memory _addresses
+        , uint256 _badgeId
+    )
+        public
+        virtual
+        onlyAdmins()
+        onlyExistingBadges(_badgeId)
+    {
+        for(
+            uint256 i; 
+            i < _addresses.length; 
+            i++
+        ) {
+            _mint(
+                  _addresses[i]
+                , _badgeId
+                , 1
+                , ""
+            );
+        }
     }
 
     /**

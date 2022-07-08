@@ -5,16 +5,15 @@ Drakes Wants:
     - Contributor Badges, Leader Badges, Governance Badges
 
 CONTRACT: 
+    ☐ Full test suite
+        Make sure to test the metadata shit!!
     ☐ Is there any case where someone could rightfully need multiple copies of the same badge?
         If so, add a require statement to mint and remove the balanceOf in burn.
             Wtf did I mean by a require statement to mint
     ☐ Is there a reason to have the createBadge/updateBadge as separate functions?
         They do literally the same thing just with a revert if there's an existing badge on the createBadge()
-    ☐ Full test suite
-    ☐ MadHatterOrg deployed first, then MadHatter is deployed and points at that version
     
 ACTIVE:
-    ☐ On chain metadata for tokens
     ☐ Contract tested and deployed on Polygon
     ☐ Get basic landing page
     ☐ Button to direct to admin
@@ -39,6 +38,9 @@ BRANDING:
     #471b53
             
 ARCHIVED:
+    ✔ On chain metadata for tokens @done(22-07-08 02:38)
+    ✔ MadHatterOrg deployed first, then MadHatter is deployed and points at that version @done(22-07-07 22:39)
+        See: Test script
     ✔ Onchain metadata @done(22-07-07 13:36)
     ✔ Basic Contract @done(22-07-06 16:58)
     ✔ Minimal proxies @done(22-07-06 16:58)
