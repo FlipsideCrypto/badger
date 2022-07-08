@@ -3,16 +3,16 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { providers } from 'ethers';
 import { createClient, WagmiConfig, chain, configureChains } from "wagmi";
 import { alchemyProvider } from 'wagmi/providers/alchemy'; // Do I fuckin need this fr
-import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider, getDefaultWallets, darkTheme } from '@rainbow-me/rainbowkit';
 
-import Landing from './components/Home/Landing';
+import Home from './components/Home/Home';
 import AdminDashboard from "./components/Dashboards/AdminDashboard";
 
-import "./App.css"
+import "./App.css";
 
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 
-const { chains } = configureChains(
+const { provider, chains } = configureChains(
   [chain.polygon, chain.polygonMumbai],
   [alchemyProvider({alchemyKey})]
 )
@@ -24,25 +24,30 @@ const { connectors } = getDefaultWallets({
 const wagmiClient = createClient({
   connectors,
   chains,
-  provider(config) {
-    return new providers.AlchemyProvider(config.chainId, alchemyKey)
-  }
+  provider
 })
 
 function App() {
   return (
     <div className="App">
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider coolMode chains={chains}>
+        <RainbowKitProvider coolMode chains={chains} theme={
+          darkTheme({
+            accentColor: '#7b3fe4',
+            accentColorForeground: 'white',
+            borderRadius: 'small',
+          })}
+          style={{fontFamily: "Kalam"}}
+        >
           <Router>
             <Routes>
-              <Route exact path="/" element={<Landing />} />
+              <Route exact path="/" element={<Home />} />
               <Route path="/admin" element={<AdminDashboard />} />
             </Routes>
           </Router>
-          </RainbowKitProvider>
-        </WagmiConfig>
-      </div>
+        </RainbowKitProvider>
+      </WagmiConfig>
+    </div>
   );
 }
 
