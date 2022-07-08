@@ -6,24 +6,28 @@ import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ER
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
+import { Base64 } from "../Base64.sol";
+
 
 /**
- * @title MadHatter V1: On Chain Credential Issuer and Membership Manager
+ * @title Badgem V1: On Chain Credential Issuer and Membership Manager
  * @author @masonthechain and @nftchance 
  * @dev Implementation of ERC1155 Token Standard with account bound ownership and
  *      role based management of tokens to allow organizations to frictionlessly 
  *      document roles, rewards, and accomplishments of their members with an on-chain 
- *      token requiring minimal setup and upkeep.
+ *      token requiring minimal setup and upkeep. MadHatter let’s a community manager 
+ *      or DAO operator to designate their community on chain and to utilize other 
+ *      products such as guild to token gate spaces for their members.
  * @dev MadHatter utilizies EIP-1167 Minimal Proxies to allow the organization users
  *      to clone the base MadHatter V1 contract and delegate function calls to that
  *      pre-deployed base contract in order to vastly reduce the cost and complexity 
  *      of getting a contract deployed when a drastically custom solution is not needed.
  * @dev This implementation is considered V1 as there are more use cases that will appear
- *      in the future, such as optimizing for Ethereum mainnet usage or allowing various
- *      collection management permissions from non-admin accounts. However, V1 is to
- *      be put in the hands of organizations currently desiring this functionality
- *      and to learn more about how this tokenized management could be adapted
- *      to other use cases.
+ *      in the future, such as optimizing for Ethereum mainnet, having vote governance 
+ *      for admin functions, or allowing various collection management permissions from 
+ *      non-admin promoted accounts. However, V1 is to be put in the hands of organizations 
+ *      currently desiring this functionality with no current alternative and to learn more 
+ *      about how this tokenized management could be adapted to other use cases.
  */
 
 contract MadHatterOrg is 
@@ -33,15 +37,14 @@ contract MadHatterOrg is
 {
     using Strings for uint256;
 
+    // Interface ID to allow interfacing with the contract metadata.
     bytes4 private constant CONTRACT_URI_INTERFACE_ID = 0xe8a3d485;
 
+    /// @dev IPFS Hash containing contract metadata
     string public contractURIHash;
 
-    /// @dev Struct storing each each token's metadata and image reference.
-    struct Badge {
-        string title;
-        string imageHash;
-    }
+    /// @dev Description of the organization and the usage of their Badges.
+    string private collectionDescription;
 
     /// @dev Allows for multiple addresses to have the master permissions to distribute and revoke tokens.
     mapping(address => bool) public admins;
@@ -49,21 +52,23 @@ contract MadHatterOrg is
     /// @dev Mapping of the tokenId of each Badge type to the Badge struct metadata info.
     mapping(uint256 => Badge) public badges;
 
+    /// @dev Struct storing each each token's metadata and image reference.
+    struct Badge {
+        string title;
+        string description;
+        string imageHash;
+    }
+
     error AdminOnly();
     error BadgeExists();
     error BadgeDoesNotExist();
     error BadgesAreBoundToAddress();
 
-    /// @dev Prevents actions by non-admin addresses.
-    modifier onlyAdmins() {
-        if (!admins[_msgSender()]) revert AdminOnly();
-        _;
-    }
-
     /// @dev Equivalent of constructors for Minimal Proxy cloning.
     function initialize(
           string memory _baseURI        // ipfs hash
         , string memory _contractURI    // ipfs hash
+        , string memory _collectionDescription
         , Badge[] memory _badges
     ) 
         public
@@ -73,6 +78,7 @@ contract MadHatterOrg is
         __ERC1155_init(_baseURI);
 
         contractURIHash = _contractURI;
+        collectionDescription = _collectionDescription;
         admins[_msgSender()] = true;
 
         for(
@@ -82,6 +88,24 @@ contract MadHatterOrg is
         ) {
             badges[i] = _badges[i];
         }
+    }
+
+    /// @dev Prevents actions by non-admin addresses.
+    modifier onlyAdmins() {
+        if (!admins[_msgSender()]) revert AdminOnly();
+        _;
+    }
+
+    /// @dev Prevents actions on non-existing badge types.
+    modifier onlyExistingBadges(uint256 _badgeId) {
+        if(bytes(badges[_badgeId].title).length == 0) revert BadgeDoesNotExist();
+        _;
+    }
+
+    /// @dev Prevents actions on existing badge types.
+    modifier onlyNewBadge(uint256 _badgeId) {
+        if(bytes(badges[_badgeId].title).length != 0) revert BadgeExists();
+        _;
     }
 
     /**
@@ -105,6 +129,7 @@ contract MadHatterOrg is
             , balanceOf(_msgSender(), _badgeId)
         );
     }
+
     /*///////////////////////////////////////////////////
                     ADMIN CONTROLS
     ///////////////////////////////////////////////////*/
@@ -122,16 +147,17 @@ contract MadHatterOrg is
     function createBadgeType(
           uint256 _badgeId
         , string calldata _title
+        , string calldata _description
         , string calldata _imageHash
     ) 
         public
         virtual
         onlyAdmins()
+        onlyNewBadge(_badgeId)
     {
-        if(bytes(badges[_badgeId].title).length != 0) revert BadgeExists();
-
         badges[_badgeId] = Badge(
               _title
+            , _description
             , _imageHash
         );
     }
@@ -147,9 +173,11 @@ contract MadHatterOrg is
      * Requires:
      *  - Caller to be an admin of this collection.
      */
+
     function updateBadgeType(
           uint256 _badgeId
         , string calldata _title
+        , string calldata _description
         , string calldata _imageHash
     ) 
         public
@@ -158,29 +186,29 @@ contract MadHatterOrg is
     {
         badges[_badgeId] = Badge(
               _title
+            , _description
             , _imageHash
         );
     }
 
     /**
      *  @notice Allows an admin to mint and issue a Badge to an address.
-     *  @param  _badgeId The token ID of the Badge to be awarded.
      *  @param  _to The address to award the badge to.
+     *  @param  _badgeId The token ID of the Badge to be awarded.
      *
      * Requires:
      *  - Caller to be an admin of this collection.
      *  - The Badge ID to have been initialized with createBadgeType()
      */
     function mintBadge(
-          uint256 _badgeId
-        , address _to
+          address _to
+        , uint256 _badgeId
     )
         public
         virtual
         onlyAdmins()
+        onlyExistingBadges(_badgeId)
     {
-        if(bytes(badges[_badgeId].title).length != 0) revert BadgeDoesNotExist();
-
         _mint(
               _to
             , _badgeId
@@ -191,21 +219,21 @@ contract MadHatterOrg is
 
     /**
      *  @notice Allows an admin to revoke a Badge and burn it from a holder.
-     *  @notice This is not intended to be used for achievement based badges, 
+     *  @notice This is not intended to be used for achievement based badges,
      *          however we implemented this function to allow the use case
      *          for organizations that use the ownership of these badgets
      *          to curate their members for various use cases such as queryable
      *          data or on-chain payments.
-     *  @param  _badgeId The token ID of the Badge to be awarded.
      *  @param  _from The address to revoke the Badge from.
+     *  @param  _badgeId The token ID of the Badge to be awarded.
      *
      * Requires:
      *  - Caller to be an admin of this collection.
      *  - The from address to currently own one or more of this Badge type.
      */
     function revokeBadge(
-          uint256 _badgeId
-        , address _from
+          address _from
+        , uint256 _badgeId
     ) 
         public
         virtual
@@ -241,6 +269,58 @@ contract MadHatterOrg is
     /*//////////////////////////////////////////////////////////
                         TOKEN METADATA
     //////////////////////////////////////////////////////////*/
+    function badgeImage(
+        uint256 _badgeId
+    )
+        public
+        virtual
+        view
+        onlyExistingBadges(_badgeId)
+        returns (
+            string memory imageString
+        )
+    {
+        imageString = string(
+            abi.encodePacked(
+                  "ipfs://"
+                , badges[_badgeId].imageHash
+            )
+        );
+
+        return imageString;
+    }
+
+    /**
+     * @notice Generates the on-chain metadata for each Badge.
+     * @param  _badgeId The id of the token to get the traits data for.
+     * @return traitString encoded json in the form of a string detailing the 
+     *         retrieved badge traits.
+     * 
+     * Requires:
+     * - Badge ID must exist
+     */
+    function badgeTraits(
+        uint256 _badgeId
+    )
+        public
+        virtual
+        view
+        onlyExistingBadges(_badgeId)
+        returns (
+            string memory traitString
+        )
+    {
+        traitString = string(
+            abi.encodePacked(
+                  '{"trait_type":"Badge Title","value":"'
+                , badges[_badgeId].title
+                , '"}'
+            )
+        );
+
+        return traitString;
+    }
+
     /**
      * @notice Generates the on-chain metadata for each Badge.
      * @param  _badgeId The id of the token to get the uri data for.
@@ -257,11 +337,35 @@ contract MadHatterOrg is
         public
         virtual
         view
+        onlyExistingBadges(_badgeId)
         returns (
             string memory badgeURI
         )
     {
-
+        Badge memory _badge = badges[_badgeId];
+        
+        // Build the metadata string and return it as encoded data
+        badgeURI = string(
+            abi.encodePacked(
+                  "data:application/json;base64,"
+                , Base64.encode(
+                    bytes(  
+                        abi.encodePacked(
+                              '{"name":"'
+                            , _badge.title
+                            , '","description":"'
+                            , _badge.description
+                            , collectionDescription
+                            , '","image":"'
+                            , badgeImage(_badgeId)
+                            , '","attributes":['
+                            , badgeTraits(_badgeId)
+                            , ']}'
+                        )
+                    )
+                )
+            )
+        );
     }
 
     /*//////////////////////////////////////////////////////////
@@ -369,10 +473,8 @@ contract MadHatterOrg is
 
     /**
      * @notice All transfers are disabled for account bound tokens
-     *         unless one or more of three conditions are met.
-     *         1. Transfer is facilitated by an org admin.
-     *         2. The transfer is to the burn address.
-     *         3. The transfer is from the burn address.
+     *         with the exception of the burnBadge() and revokeBadge()
+     *         functions for a holder and an admin respectively.
      */
     function safeTransferFrom(
           address from
@@ -385,22 +487,13 @@ contract MadHatterOrg is
         virtual 
         override 
     {
-        _validateTransferability(from, to);
-        super.safeTransferFrom(
-              from
-            , to
-            , id
-            , amount
-            , data
-        );
+        revert BadgesAreBoundToAddress();
     }
 
     /**
      * @notice All transfers are disabled for account bound tokens
-     *         unless one or more of three conditions are met.
-     *         1. Transfer is facilitated by an org admin.
-     *         2. The transfer is to the burn address.
-     *         3. The transfer is from the burn address.
+     *         with the exception of the burnBadge() and revokeBadge()
+     *         functions for a holder and an admin respectively.
      */
     function safeBatchTransferFrom(
           address from
@@ -413,34 +506,6 @@ contract MadHatterOrg is
         virtual 
         override 
     {
-        _validateTransferability(from, to);
-        super.safeBatchTransferFrom(
-              from
-            , to
-            , ids
-            , amounts
-            , data
-        );
-    }
-
-    /**
-     * @notice All transfers are disabled for account bound tokens
-     *         unless one or more of three conditions are met.
-     *         1. Transfer is facilitated by an org admin.
-     *         2. The transfer is to the burn address.
-     *         3. The transfer is from the burn address.
-     */
-    function _validateTransferability(
-          address _from
-        , address _to
-    )
-        internal
-        view
-    {
-        if (
-            !admins[_from]
-            && _from != address(0)
-            && _to != address(0)
-        ) revert BadgesAreBoundToAddress();
+        revert BadgesAreBoundToAddress();
     }
 }
