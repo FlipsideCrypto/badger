@@ -38,16 +38,16 @@ function App() {
             accentColorForeground: 'white',
             borderRadius: 'small',
           })}
-          // style={{fontFamily: "Kalam"}}
         >
-          <NavBar>
-            <Router>
-              <Routes>
-                <Route exact path="/" element={<Home />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-              </Routes>
-            </Router>
-          </NavBar>
+          <NavBar />
+          
+          <Router>
+            <Routes>
+              <Route exact path="/" element={<Home />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Routes>
+          </Router>
+
         </RainbowKitProvider>
       </WagmiConfig>
     </div>

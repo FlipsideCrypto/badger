@@ -1,6 +1,8 @@
 import Box from '@mui/material/Box';
 
 const AdminDashboard = () => {
+    console.log('Cmon admin')
+
     return (
         <Box sx={{display: 'block'}}>
             <h1>🎩 MAD HATTER</h1>

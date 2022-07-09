@@ -18,7 +18,7 @@ const NavBar = () => {
                 // justifyContent: 'center',
                 borderBottom: '2px solid white',
                 display: 'flex',
-                flexDirection: "row"
+                flexDirection: "row",
             }} 
         >
           <AppBar 
@@ -27,12 +27,11 @@ const NavBar = () => {
                 bgcolor: '#FFFFFF00',
                 justifyContent: 'center',
                 margin: '0',
-                height: '100%',
             }}
         >
             <Toolbar sx={{ }}>
-              <Typography variant="h4" component="div" align='justify' sx={{ flexGrow: 1, height: '100%', lineHeight: '3'}}>
-                🎩 MAD HATTER
+              <Typography variant="h4" component="div" align='justify' sx={{ flexGrow: 1 }}>
+                <h3>🎩 MAD HATTER</h3>
               </Typography>
               <ConnectBtn />
             </Toolbar>
