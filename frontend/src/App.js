@@ -7,6 +7,7 @@ import { RainbowKitProvider, getDefaultWallets, darkTheme } from '@rainbow-me/ra
 
 import Home from './components/Home/Home';
 import AdminDashboard from "./components/Dashboards/AdminDashboard";
+import NavBar from "./components/NavBar/NavBar";
 
 import "./App.css";
 
@@ -37,14 +38,16 @@ function App() {
             accentColorForeground: 'white',
             borderRadius: 'small',
           })}
-          style={{fontFamily: "Kalam"}}
+          // style={{fontFamily: "Kalam"}}
         >
-          <Router>
-            <Routes>
-              <Route exact path="/" element={<Home />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-            </Routes>
-          </Router>
+          <NavBar>
+            <Router>
+              <Routes>
+                <Route exact path="/" element={<Home />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+              </Routes>
+            </Router>
+          </NavBar>
         </RainbowKitProvider>
       </WagmiConfig>
     </div>

@@ -1,7 +1,8 @@
 .App {
     text-align: center;
-    /* background: linear-gradient(-20deg, #a18cd1 40%, #fbc2eb); */
-    background-color: #471b53;
+    /* background: linear-gradient(180deg, #36008d, #49009d, #8500c7, #f201ff, #ff40cf, #ff79b8, #ffa3bb, #ffb3c1);     */
+    /* background-color: #36008D; */
+    background: linear-gradient(to bottom right, rgb(50, 50, 112) 15%,rgb(245, 124, 245));
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -12,4 +13,8 @@
   
 h1, h2, h3, h4, p, span {
     color: #ffffff;
+}
+
+* {
+  font-family: 'Kalam', cursive !important;
 }
