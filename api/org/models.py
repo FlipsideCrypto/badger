@@ -1,14 +1,26 @@
 from django.db import models
 
-class OrgFile(models.Model):
-    ipfs_hash = models.CharField(max_length=256)
+class Badge(models.Model):
+    name = models.CharField(max_length=128)
+    description = models.TextField(max_length=4000)
+    token_id = models.PositiveIntegerField(blank=False, null=False)
+    image_hash = models.CharField(max_length=256)
 
-class Org(models.Model):
-    name = models.CharField(max_length=256, unique=True)
-    creator_address = models.CharField(max_length=256)
-    contract_address = models.CharField(max_length=256)
+    def __str__(self):
+        return self.name
 
-    files = models.ManyToManyField(OrgFile)
+    class Meta:
+        ordering = ['token_id'] 
+
+class BadgeSet(models.Model):
+    name = models.CharField(max_length=128)
+    description = models.TextField(max_length=4000)
+    image_hash = models.CharField(max_length=256)
+    
+    creator_address = models.CharField(max_length=50)
+    contract_address = models.CharField(max_length=50)
+
+    badges = models.ManyToManyField(Badge)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -16,14 +28,34 @@ class Org(models.Model):
     def __str__(self):
         return self.name
 
-    def upload_file_to_ipfs(self, file):
-        # upload to ipfs
-        file_ipfs_hash = ""
-
-        org_file_obj = OrgFile.objects.create(ipfs_hash=file_ipfs_hash)
-
-        self.files.add(org_file_obj)
-        self.save()
-
     class Meta:
-        ordering = ['name'] 
+        ordering = ['created_at'] 
+
+
+# class OrgFile(models.Model):
+#     ipfs_hash = models.CharField(max_length=256)
+
+# class Org(models.Model):
+#     name = models.CharField(max_length=256, unique=True)
+#     creator_address = models.CharField(max_length=256)
+#     contract_address = models.CharField(max_length=256)
+
+#     files = models.ManyToManyField(OrgFile)
+
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+
+#     def __str__(self):
+#         return self.name
+
+#     def upload_file_to_ipfs(self, file):
+#         # upload to ipfs
+#         file_ipfs_hash = ""
+
+#         org_file_obj = OrgFile.objects.create(ipfs_hash=file_ipfs_hash)
+
+#         self.files.add(org_file_obj)
+#         self.save()
+
+#     class Meta:
+#         ordering = ['name'] 
