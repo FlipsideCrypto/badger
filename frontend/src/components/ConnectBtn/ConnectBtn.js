@@ -1,5 +1,8 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import "./ConnectBtn.css"
+import { Button } from "@mui/material";
+import '@rainbow-me/rainbowkit/dist/index.css'
+
+// import "./ConnectBtn.css"
 
 const ConnectBtn = () => {
     return ( 
@@ -26,9 +29,13 @@ const ConnectBtn = () => {
                     {(() => {
                     if (!mounted || !account || !chain) {
                         return (
-                        <button className="btn-control" onClick={openConnectModal} type="button">
-                            Connect Wallet
-                        </button>
+                        <Button 
+                            onClick={openConnectModal} 
+                            variant="contained" 
+                            sx={{display: 'flex', alignItems: 'center'}}
+                        >
+                            Connect
+                        </Button>
                         );
                     }
 
@@ -42,11 +49,10 @@ const ConnectBtn = () => {
 
                     return (
                         <div style={{ display: 'flex', gap: 12, height: '100%' }}>
-                        <button
-                            className="btn-control"
+                        <Button
                             onClick={openChainModal}
-                            style={{ display: 'flex', alignItems: 'center' }}
-                            type="button"
+                            variant="contained"
+                            sx={{ display: 'flex', alignItems: 'center' }}
                         >
                             {chain.hasIcon && (
                             <div
@@ -69,15 +75,14 @@ const ConnectBtn = () => {
                             </div>
                             )}
                             {chain.name}
-                        </button>
+                        </Button>
 
-                        <button 
-                            className="btn-control"
+                        <Button 
                             onClick={openAccountModal} 
-                            type="button"
-                            style={{}}>
+                            variant="contained"
+                            sx={{}}>
                             {account.displayName}
-                        </button>
+                        </Button>
                         </div>
                     );
                     })()}

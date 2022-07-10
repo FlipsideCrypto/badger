@@ -1,14 +1,13 @@
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import { AppBar, Box, Toolbar, Typography } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 
 import ConnectBtn from "../ConnectBtn/ConnectBtn";
 
 import "./NavBar.css";
 
 const NavBar = () => {
+    let navigate = useNavigate();
+
     return (
         <Box 
             sx={{ 
@@ -19,6 +18,7 @@ const NavBar = () => {
                 borderBottom: '2px solid white',
                 display: 'flex',
                 flexDirection: "row",
+                mb: '20px'
             }} 
         >
           <AppBar 
@@ -29,10 +29,12 @@ const NavBar = () => {
                 margin: '0',
             }}
         >
-            <Toolbar sx={{ }}>
-              <Typography variant="h4" component="div" align='justify' sx={{ flexGrow: 1 }}>
-                <h3>🎩 MAD HATTER</h3>
-              </Typography>
+            <Toolbar>
+                <Typography variant="h4" component="div" align='justify' sx={{ flexGrow: 1 }}>
+                  <Link to="/" style={{ textDecoration: 'none'}}>
+                    <h3>BADGER</h3>
+                  </Link>
+                </Typography>
               <ConnectBtn />
             </Toolbar>
           </AppBar>

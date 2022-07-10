@@ -63,13 +63,13 @@ contract MadHatterOrg is
     error BadgeExists();
     error BadgeDoesNotExist();
     error BadgesAreBoundToAddress();
+    error BundleLengthsInvalid();
 
     /// @dev Equivalent of constructors for Minimal Proxy cloning.
     function initialize(
           string memory _baseURI        // ipfs hash
         , string memory _contractURI    // ipfs hash
         , string memory _collectionDescription
-        , Badge[] memory _badges
     ) 
         public
         virtual
@@ -80,14 +80,6 @@ contract MadHatterOrg is
         contractURIHash = _contractURI;
         collectionDescription = _collectionDescription;
         admins[_msgSender()] = true;
-
-        for(
-            uint256 i;
-            i < _badges.length;
-            i++
-        ) {
-            badges[i] = _badges[i];
-        }
     }
 
     /// @dev Prevents actions by non-admin addresses.
@@ -99,12 +91,6 @@ contract MadHatterOrg is
     /// @dev Prevents actions on non-existing badge types.
     modifier onlyExistingBadges(uint256 _badgeId) {
         if(bytes(badges[_badgeId].title).length == 0) revert BadgeDoesNotExist();
-        _;
-    }
-
-    /// @dev Prevents actions on existing badge types.
-    modifier onlyNewBadge(uint256 _badgeId) {
-        if(bytes(badges[_badgeId].title).length != 0) revert BadgeExists();
         _;
     }
 
@@ -153,13 +139,48 @@ contract MadHatterOrg is
         public
         virtual
         onlyAdmins()
-        onlyNewBadge(_badgeId)
     {
+        if(bytes(badges[_badgeId].title).length != 0) revert BadgeExists();
+
         badges[_badgeId] = Badge(
               _title
             , _description
             , _imageHash
         );
+    }
+
+    /**
+     *  @notice Allows an admin to create a multiple new Badge types 
+     *  and initialize the titles and token images.
+     *  @param  _badgeIds The token IDs to be used for the new Badges.
+     *  @param  _badges The Badge information to be initialized.
+     *
+     * Requires:
+     *  - Caller to be an admin of this collection.
+     *  - The badgeIds to not already be in use.
+     */
+    function createBadgeTypeBundle(
+          uint256[] calldata _badgeIds
+        , Badge[] calldata _badges
+    ) 
+        public
+        virtual
+        onlyAdmins()
+    {
+
+        if(_badgeIds.length != _badges.length) revert BundleLengthsInvalid();
+
+        for(
+            uint256 i;
+            i < _badgeIds.length;
+            i++
+        ) {
+            uint256 _badgeId = _badgeIds[i];
+
+            if(bytes(badges[_badgeId].title).length != 0) revert BadgeExists();
+
+            badges[_badgeId] = _badges[i];
+        }
     }
 
     /**
@@ -217,20 +238,33 @@ contract MadHatterOrg is
         );
     }
 
+    /**
+     *  @notice Allows an admin to mint and issue multiple Badge to various addresses.
+     *  @param  _addresses The addresses to award badges to.
+     *  @param  _badgeIds The token IDs of the Badge to be awarded.
+     *
+     * Requires:
+     *  - Caller to be an admin of this collection.
+     *  - The Badge ID to have been initialized with createBadgeType()
+     */
     function mintBadgeBundle(
-          address[] memory _addresses
-        , uint256 _badgeId
+          address[] calldata _addresses
+        , uint256[] calldata _badgeIds
     )
         public
         virtual
         onlyAdmins()
-        onlyExistingBadges(_badgeId)
     {
+        if(_badgeIds.length != _addresses.length) revert BundleLengthsInvalid();
+
         for(
             uint256 i; 
             i < _addresses.length; 
             i++
         ) {
+            uint256 _badgeId = _badgeIds[i];
+            if(bytes(badges[_badgeId].title).length == 0) revert BadgeDoesNotExist();
+
             _mint(
                   _addresses[i]
                 , _badgeId

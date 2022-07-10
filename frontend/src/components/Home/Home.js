@@ -1,11 +1,23 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import '@rainbow-me/rainbowkit/dist/index.css'
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+    let navigate = useNavigate()
+
     return (
-        <>
-            <h1>🎩 MAD HATTER</h1>
-        </>
+        <Button
+            onClick={() => navigate('/manage')}
+            variant="contained"
+            sx={{ 
+                mt: '400px', 
+                display: 'flex',
+                alignSelf: 'center', 
+                mx: 'auto', 
+                width: '30%'
+            }}
+        >
+            ENTER APP
+        </Button>
     )
 }
 

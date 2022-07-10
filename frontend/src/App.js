@@ -4,6 +4,7 @@ import { providers } from 'ethers';
 import { createClient, WagmiConfig, chain, configureChains } from "wagmi";
 import { alchemyProvider } from 'wagmi/providers/alchemy'; // Do I fuckin need this fr
 import { RainbowKitProvider, getDefaultWallets, darkTheme } from '@rainbow-me/rainbowkit';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import Home from './components/Home/Home';
 import AdminDashboard from "./components/Dashboards/AdminDashboard";
@@ -28,6 +29,22 @@ const wagmiClient = createClient({
   provider
 })
 
+const theme = createTheme({
+  palette: {
+      mode: 'dark',
+      primary: {
+          main: '#FFFFFF'
+      },
+      secondary: {
+          main: '#FFFFFF'
+      },
+  },
+  typography: {
+      fontFamily: 'Orbitron',
+      color: '#FFFFFFF'
+  },
+});
+
 function App() {
   return (
     <div className="App">
@@ -39,15 +56,17 @@ function App() {
             borderRadius: 'small',
           })}
         >
-          <NavBar />
-          
-          <Router>
-            <Routes>
-              <Route exact path="/" element={<Home />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-            </Routes>
-          </Router>
+          <ThemeProvider theme={theme}>
+            <Router>
+              <NavBar />
+            
+              <Routes>
+                <Route exact path="/" element={<Home />} />
+                <Route path="/manage" element={<AdminDashboard />} />
+              </Routes>
+            </Router>
 
+          </ThemeProvider>
         </RainbowKitProvider>
       </WagmiConfig>
     </div>

@@ -1,12 +1,7 @@
-Drakes Wants:
-    - General….. As a DAO operator I want to be able to track my community on chain So that I can use the variety of tools that can read that 
-    - As a DAO operator I want to lock specific web pages / apps / etc for specific groups So that permissioned members can access functions/info Specific…. An a DAO operator I want to mint NFTs for my contributors So that I can use Guild to token gate discord channels / web pages 
-    - Admin can: Launch new NFT collection at will Upload art for the NFT Add to collection at will (workaround is to overmint) Rescind NFTs (burn or transfer back to main) NFT Traits - Season - Name
-    - Contributor Badges, Leader Badges, Governance Badges
-
 CONTRACT: 
     ☐ Full test suite
         Make sure to test the metadata shit!!
+    ✔ Set up hardhat for polygon and mumbai @done(22-07-09 22:23)
     ☐ Is there any case where someone could rightfully need multiple copies of the same badge?
         If so, add a require statement to mint and remove the balanceOf in burn.
             Wtf did I mean by a require statement to mint
@@ -16,11 +11,16 @@ CONTRACT:
 ACTIVE:
     ☐ Contract tested and deployed on Polygon
     ☐ Get basic landing page
-    ☐ Button to direct to admin
-    ☐ Some login and account UI
+    ✔ Button to direct to admin @done(22-07-09 22:23)
+    ✔ Some login and account UI @done(22-07-09 14:24)
+    ☐ Signature to get into dashboard
     ☐ Moralis set up?
     ☐ Yes will need info on how many holders of tokens, possibly scrape the roles from this too if possible
     ☐ Management UI and functionality
+        ☐ Create Collection
+        ☐ Create Badges
+        ☐ Send Badges
+        ☐ Manage Badges
     ☐ File Uploading
     ☐ Would be nice to upload to IPFS to not have any data storage
     ☐ Deploy a contract via front end
@@ -29,7 +29,7 @@ ACTIVE:
         cloneTx = await cloneTx.wait();        
         testOrgAddress = cloneTx.events[0].args[1]
         testOrg = await org.attach(testOrgAddress);
-    ☐ API and database to store different roles and deeper info on an org than what is on chain? (POSSIBLE TO DO THIS WITHOUT AN API?)
+    ☐ API and database to store different roles and deeper info on an org than what is on chain
     ☐ Set up host
         
 BRANDING:

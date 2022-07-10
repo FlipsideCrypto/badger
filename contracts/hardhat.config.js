@@ -10,6 +10,7 @@ const {
     PRIVATE_KEY, 
     ALCHEMY_API_KEY, 
     ETHERSCAN_API_KEY,
+    POLYGON_API_KEY,
     SEED_PHRASE,
 } = require("./secrets.json");
 
@@ -65,7 +66,8 @@ module.exports = {
         }
     },
     etherscan: {
-        apiKey: ETHERSCAN_API_KEY
+        // apiKey: ETHERSCAN_API_KEY
+        apiKey: POLYGON_API_KEY
     },
     defaultNetwork: "hardhat",
     networks: {
@@ -85,5 +87,15 @@ module.exports = {
             accounts: { mnemonic: SEED_PHRASE },
             gasPrice: 50000000000, // 50 gwei
         },
+        polygon: {
+            url: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+            accounts: [`0x${PRIVATE_KEY}`],
+            gasPrice: 'auto'
+        },
+        mumbai: {
+            url: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+            accounts: [`0x${PRIVATE_KEY}`],
+            gasPrice: 'auto'
+        }
     },
 };
