@@ -17,6 +17,22 @@ const AdminDashboard = () => {
     const [collectionDesc, setCollectionDesc] = useState();
     const [imageFile, setImageFile] = useState();
 
+    // const csrfCookie = () => {
+    //     let cookieValue = null,
+    //         name = "csrftoken";
+    //     if (document.cookie && document.cookie !== "") {
+    //         let cookies = document.cookie.split(";");
+    //         for (let i = 0; i < cookies.length; i++) {
+    //             let cookie = cookies[i].trim();
+    //             if (cookie.substring(0, name.length + 1) == (name + "=")) {
+    //                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+    //                 break;
+    //             }
+    //         }
+    //     }
+    //     return cookieValue;
+    // };
+
     const selectImage = (event) => {
         console.log('File: ', event.target.files[0])
         setImageFile(event.target.files[0])
@@ -32,26 +48,38 @@ const AdminDashboard = () => {
 
     const deploy = () => {
         const formData = new FormData();
+        // const csrf = csrfCookie();
+        const config = {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            //   'Authorization': `Token ${csrf}`
+            },
+        };
+        // const imgUrl = URL.createObjectURL(imageFile)
+
+        formData.append('file', imageFile)
+        formData.append('fileName', imageFile.name)
+        formData.append('name', collectionName)
+        formData.append('desc', collectionDesc)
+        formData.append('creator_address', address)
+        
         let deploymentArgs;
 
-        formData.append(
-            {'name': collectionName},
-            {'image': imageFile},
-            {'desc': collectionDesc},
-            {'admin': address}
-        )
+        // formData.append(
+        //     {'name': collectionName},
+        //     {'image': imageFile},
+        //     {'desc': collectionDesc},
+        //     {'admin': address}
+        // )
 
-        axios.post(
-            "api/new_set", 
-            formData
-        )
-        .then(res => res.json())
+
+        axios.post(`${process.env.REACT_APP_API_URL}/badges/new_set/`, formData, config)
         .then(res => {
                 console.log(res)
                 deploymentArgs = {
                     baseuri: 'BASEURI', // should this be my pinata gateway
-                    contract_uri_hash: res.contract_uri_hash,
-                    description: res.description
+                    contract_uri_hash: res.data.contract_uri_hash,
+                    description: res.data.description
                 }
 
                 console.log('deploymentArgs', deploymentArgs)

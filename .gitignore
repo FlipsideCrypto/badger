@@ -5,3 +5,4 @@ contracts/artifacts/@openzeppelin
 contracts/artifacts/build-info
 cache
 .env
+local.py
