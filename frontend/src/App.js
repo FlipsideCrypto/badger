@@ -31,17 +31,19 @@ const wagmiClient = createClient({
 
 const theme = createTheme({
   palette: {
-      mode: 'dark',
+      mode: 'light',
       primary: {
-          main: '#FFFFFF'
+          main: '#FFFFFF',
+          contrastText: '#000000'
       },
       secondary: {
-          main: '#FFFFFF'
+          main: '#FFFFFF',
+          contrastText: '#000000'
       },
   },
   typography: {
-      fontFamily: 'Orbitron',
-      color: '#FFFFFFF'
+      fontFamily: 'Poppins',
+      // color: '#FFFFFFF'
   },
 });
 

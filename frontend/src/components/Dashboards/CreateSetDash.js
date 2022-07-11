@@ -160,7 +160,7 @@ const CreateSetDash = (props) => {
         <>
             <Box 
                 sx={{
-                    bgcolor: "#FFFFFF10",
+                    // bgcolor: "#FFFFFF10",
                     width: '90%',
                     height: 'auto',
                     mx: 'auto',
@@ -217,7 +217,7 @@ const CreateSetDash = (props) => {
 
             {imageFile && collectionName && collectionDesc ?
                 <Box sx={{
-                    bgcolor: "#FFFFFF10",
+                    // bgcolor: "#FFFFFF10",
                     width: '90%',
                     height: 'auto',
                     mx: 'auto',
@@ -245,7 +245,7 @@ const CreateSetDash = (props) => {
                     </Tooltip>
                 </Box>
                 :
-                    <Box />
+                <Box />
             }
         </>
         

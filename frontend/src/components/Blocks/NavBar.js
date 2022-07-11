@@ -22,15 +22,15 @@ const NavBar = () => {
           <AppBar 
             position="static" 
             sx={{
-                bgcolor: '#FFFFFF00',
+                // bgcolor: '#FFFFFF00',
                 justifyContent: 'center',
                 margin: '0',
             }}
         >
             <Toolbar>
-                <Typography variant="h4" component="div" align='justify' sx={{ flexGrow: 1 }}>
+                <Typography variant="h3" component="div" align='justify' sx={{ flexGrow: 1 }}>
                   <Link to="/" style={{ textDecoration: 'none'}}>
-                    <h3>BADGER</h3>
+                    BADGER
                   </Link>
                 </Typography>
               <ConnectBtn />

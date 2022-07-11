@@ -5,3 +5,8 @@ artifacts
 cache
 .env
 local.py
+# api/api/*.pyc
+*.pyc
+api/api/settings/__pycache__/base.cpython-39.pyc
+*.pyc
+api/api/__pycache__/__init__.cpython-39.pyc

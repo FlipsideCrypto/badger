@@ -12,7 +12,7 @@ const Landing = () => {
         <>
             {address ?
                 <Button
-                    onClick={() => navigate('/home')}
+                    onClick={() => navigate('/create')}
                     variant="contained"
                     sx={{ 
                         mt: '400px', 
