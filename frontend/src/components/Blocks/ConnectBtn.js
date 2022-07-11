@@ -2,8 +2,6 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Button } from "@mui/material";
 import '@rainbow-me/rainbowkit/dist/index.css'
 
-// import "./ConnectBtn.css"
-
 const ConnectBtn = () => {
     return ( 
         <ConnectButton.Custom>

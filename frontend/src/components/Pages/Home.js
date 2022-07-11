@@ -2,9 +2,9 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAccount } from 'wagmi'
 
-import ConnectBtn from "../ConnectBtn/ConnectBtn";
+import ConnectBtn from "../Blocks/ConnectBtn";
 
-const Home = () => {
+const Landing = () => {
     let navigate = useNavigate()
     const { address, isConnecting, isDisconnected } = useAccount();
 
@@ -12,7 +12,7 @@ const Home = () => {
         <>
             {address ?
                 <Button
-                    onClick={() => navigate('/manage')}
+                    onClick={() => navigate('/home')}
                     variant="contained"
                     sx={{ 
                         mt: '400px', 
@@ -31,4 +31,4 @@ const Home = () => {
     )
 }
 
-export default Home;
+export default Landing;

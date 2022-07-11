@@ -9,9 +9,9 @@ import proxyAbi from "../../Badger.json"
 import { Box, TextField, Typography, Button, Input, Tooltip } from '@mui/material';
 import { FormControl } from '@mui/material';
 
-import CollectionCard from '../CollectionCard'
+import CollectionCard from '../Blocks/CollectionCard'
 
-const AdminDashboard = (props) => {
+const CreateSetDash = (props) => {
     let navigate = useNavigate();
 
     const { address, isConnecting, isDisconnected } = useAccount();
@@ -252,4 +252,4 @@ const AdminDashboard = (props) => {
     )
 }
 
-export default AdminDashboard;
+export default CreateSetDash;

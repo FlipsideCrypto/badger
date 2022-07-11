@@ -39,12 +39,16 @@ ACTIVE:
 
     ☐ Description may have to be cleaned before IPFS interaction
         ☐ Convert line breaks to /n/n
-    ☐ Deploy a contract via front end
+Contract Interaction:
+    ✔ Deploy a contract via front end @done(22-07-10 21:33)
         To deploy the clone and get the clone contract within ethers:
         cloneTx = await proxy.connect(owner).deployOrg();
         cloneTx = await cloneTx.wait();        
         testOrgAddress = cloneTx.events[0].args[1]
         testOrg = await org.attach(testOrgAddress);
+    ☐ Way to show transaction errors
+    ☐ Better explanation of the clone and initialize double transaction.
+    ☐ 
     ☐ Do test walk throughs and polish UX
     ☐ Add gnosis as a chain
     ☐ Set up host
@@ -53,6 +57,8 @@ ACTIVE:
 V1.01:
     ☐ Add webm conversion for preview and IPFS upload
     ☐ Blocknative events for tx not done through our front end
+    ☐ FAQ Page
+    
             
 ARCHIVED:
     ✘ Blocknative for events not done through our front end? @cancelled(22-07-10 15:06)

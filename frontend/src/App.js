@@ -6,9 +6,9 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'; // Do I fuckin need t
 import { RainbowKitProvider, getDefaultWallets, darkTheme } from '@rainbow-me/rainbowkit';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import Home from './components/Home/Home';
-import AdminDashboard from "./components/Dashboards/AdminDashboard";
-import NavBar from "./components/NavBar/NavBar";
+import Home from './components/Pages/Home';
+import CreateSetDash from "./components/Dashboards/CreateSetDash";
+import NavBar from "./components/Blocks/NavBar";
 
 import "./App.css";
 
@@ -62,7 +62,7 @@ function App() {
             
               <Routes>
                 <Route exact path="/" element={<Home />} />
-                <Route path="/manage" element={<AdminDashboard />} />
+                <Route path="/create" element={<CreateSetDash />} />
               </Routes>
             </Router>
 

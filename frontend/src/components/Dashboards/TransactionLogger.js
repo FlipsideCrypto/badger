@@ -4,7 +4,11 @@ const TransactionLogger = (props) => {
     const {logs, errors} = props;
 
     return(
-        <Box>
+        <Box sx={{
+            mx: 'auto',
+            width: '80%'
+        }}
+        >
 
         </Box>
     )

@@ -1,9 +1,7 @@
 import { AppBar, Box, Toolbar, Typography } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 
-import ConnectBtn from "../ConnectBtn/ConnectBtn";
-
-import "./NavBar.css";
+import ConnectBtn from "./ConnectBtn";
 
 const NavBar = () => {
     let navigate = useNavigate();
