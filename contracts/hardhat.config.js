@@ -3,6 +3,7 @@ require("hardhat-gas-reporter");
 require('hardhat-deploy');
 require("hardhat-watcher");
 require("hardhat-tracer");
+require('hardhat-abi-exporter');
 
 require("@nomiclabs/hardhat-etherscan");
 
@@ -12,6 +13,7 @@ const {
     ETHERSCAN_API_KEY,
     POLYGON_API_KEY,
     SEED_PHRASE,
+    ALCHEMY_MUMBAI_KEY
 } = require("./secrets.json");
 
 task("accounts", "Prints the list of accounts", async(taskArgs, hre) => {
@@ -65,6 +67,13 @@ module.exports = {
             tasks: ["clean", { command: "compile", params: { quiet: true } }, { command: "test", params: { noCompile: true, testFiles: ["testfile.ts"] } }],
         }
     },
+    abiExporter: {
+        path: './abis',
+        runOnCompile: true,
+        clear: true,
+        flat: true,
+        spacing: 2,
+    },
     etherscan: {
         // apiKey: ETHERSCAN_API_KEY
         apiKey: POLYGON_API_KEY
@@ -93,9 +102,10 @@ module.exports = {
             gasPrice: 'auto'
         },
         mumbai: {
-            url: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+            url: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_MUMBAI_KEY}`,
             accounts: [`0x${PRIVATE_KEY}`],
-            gasPrice: 'auto'
+            gas: 3000000,
+            gasPrice: 100000000000 // 100 gwei
         }
     },
 };

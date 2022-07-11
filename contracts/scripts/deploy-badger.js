@@ -5,7 +5,8 @@
 
 const hre = require("hardhat");
 
-const { assert } = require('chai')
+const { assert } = require('chai');
+const { getChainId, ethers } = require("hardhat");
 
 async function main() {
     // Compiling all of the contracts again just in case
@@ -13,21 +14,22 @@ async function main() {
 
     const [deployer] = await ethers.getSigners();
     console.log(`✅ Connected to ${deployer.address}`);
-
+    
+    const chainId = await hre.getChainId()
     
     /*//////////////////////////////////////////////////////////////
                         DEPLOYING BASE CONTRACT
     //////////////////////////////////////////////////////////////*/
 
-    const HatterOrg = await ethers.getContractFactory("BadgerSet");
-    org = await HatterOrg.deploy();
-    org = await org.deployed();
-    console.log("✅ Base Org Deployed.")
+    const BadgerSet = await ethers.getContractFactory("BadgerSet");
+    set = await BadgerSet.deploy();
+    set = await set.deployed();
+    console.log("✅ Base Set Deployed.")
 
     console.table({
-        "Contract Name": await org.name(),
+        "Chain ID": chainId,
         "Deployer": deployer.address,
-        "Contract Address": org.address,
+        "Contract Address": set.address,
         "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
     })
 
@@ -36,20 +38,20 @@ async function main() {
     //     // Give time for etherscan to confirm the contract before verifying.
     //     await new Promise(r => setTimeout(r, 30000));
     //     await hre.run("verify:verify", {
-    //         address: org.address,
+    //         address: set.address,
     //         constructorArguments: [
     //             ...arguments
     //         ],
     //     });
-    //     console.log("✅ Base Org Verified.")
+    //     console.log("✅ Base set Verified.")
     // }
 
     /*//////////////////////////////////////////////////////////////
                         DEPLOYING PROXY MANAGER
     //////////////////////////////////////////////////////////////*/    
-    const HatterProxy = await ethers.getContractFactory("Badger");
-    proxy = await HatterProxy.deploy(
-        org.address
+    const BadgerProxy = await ethers.getContractFactory("Badger");
+    proxy = await BadgerProxy.deploy(
+        set.address
     );
     proxy = await proxy.deployed();
     console.log("✅ Proxy Deployed.")

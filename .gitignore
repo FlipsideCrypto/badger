@@ -1,8 +1,7 @@
 node_modules
 secrets.json
 venv/
-contracts/artifacts/@openzeppelin
-contracts/artifacts/build-info
+artifacts
 cache
 .env
 local.py

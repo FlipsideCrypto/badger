@@ -8,19 +8,22 @@ CONTRACT:
         They do literally the same thing just with a revert if there's an existing badge on the createBadge()
     
 ACTIVE:
+    ☐ Contract deployed on Mumbai for testing
     ☐ Contract tested and deployed on Polygon
     ☐ Get basic landing page
     ☐ Signature to get into dashboard
-    ☐ Blocknative for events not done through our front end?
     
     ☐ Management UI and functionality
         ☐ Create Collection
-            ☐ Upload image and contract uri to IPFS
-            ☐ Make sure it is returning correctly in the js
-            ☐ Save obj in database
+            ✔ Upload image and contract uri to IPFS @done(22-07-10 15:06)
+            ✔ Make sure it is returning correctly in the js @done(22-07-10 15:06)
+            ✔ Save obj in database @done(22-07-10 15:21)
+            ☐ Update method
+            ☐ Post deployment method
             ☐ Clean up interaction ux
+            ☐ Status Message For Uploading
         ☐ Create Badges
-            ☐ Front end stuff
+            ☐ Front end dash
             ☐ Interaction UX
             ☐ Should be able to queue up a bunch of badges to send in one tx
             note: this is mainly copying the create collection functionally
@@ -33,8 +36,9 @@ ACTIVE:
             ☐ Rename, new image for badges
             ☐ Revoke Badges
     ☐ Badge Preview
-    ☐ File Uploading
-    ☐ IPFS upload
+
+    ☐ Description may have to be cleaned before IPFS interaction
+        ☐ Convert line breaks to /n/n
     ☐ Deploy a contract via front end
         To deploy the clone and get the clone contract within ethers:
         cloneTx = await proxy.connect(owner).deployOrg();
@@ -42,11 +46,18 @@ ACTIVE:
         testOrgAddress = cloneTx.events[0].args[1]
         testOrg = await org.attach(testOrgAddress);
     ☐ Do test walk throughs and polish UX
+    ☐ Add gnosis as a chain
     ☐ Set up host
     ☐ Implement new brand
-        
+    
+V1.01:
+    ☐ Add webm conversion for preview and IPFS upload
+    ☐ Blocknative events for tx not done through our front end
             
 ARCHIVED:
+    ✘ Blocknative for events not done through our front end? @cancelled(22-07-10 15:06)
+    ✔ File Uploading @done(22-07-10 14:58)
+    ✔ IPFS upload @done(22-07-10 14:58)
     ✔ Set up hardhat for polygon and mumbai @done(22-07-09 22:23)
     ✔ Button to direct to admin @done(22-07-09 22:23)
     ✔ Some login and account UI @done(22-07-09 14:24)

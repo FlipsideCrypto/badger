@@ -15,7 +15,7 @@ import "./App.css";
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 
 const { provider, chains } = configureChains(
-  [chain.polygon, chain.polygonMumbai],
+  [chain.polygonMumbai, chain.polygon],
   [alchemyProvider({alchemyKey})]
 )
 

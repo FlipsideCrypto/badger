@@ -13,25 +13,25 @@ contract Badger is
     using Clones for address;
 
     /*//////////////////////////////////////////////////////////////
-                        ORG DEPLOYMENT SETTINGS
+                        SET DEPLOYMENT SETTINGS
     //////////////////////////////////////////////////////////////*/
 
     uint256 public version;
-    address public orgMaster;
-    uint256 public hatterOrgs = 1;
+    address public masterContract;
+    uint256 public badgerSets = 1;
     
     /*//////////////////////////////////////////////////////////////
                                 EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event MasterOrgUpdated(
-          address indexed oldOrgMaster
-        , address indexed newOrgMaster
+    event MasterContractUpdated(
+          address indexed oldMasterContract
+        , address indexed newMasterContract
     );
     
-    event OrgCreated(
-          address indexed orgMaster
-        , address indexed orgAddress
+    event NewSetCreated(
+          address indexed master
+        , address indexed setAddress
     );
 
     /*//////////////////////////////////////////////////////////////
@@ -39,37 +39,37 @@ contract Badger is
     //////////////////////////////////////////////////////////////*/
 
     constructor(
-        address _orgMaster
+        address _masterContract
     ) {
-        setOrgMaster(_orgMaster);
+        setMasterContract(_masterContract);
     }
 
     /*//////////////////////////////////////////////////////////////
-                            ORG CONTROL LOGIC 
+                        BADGE SET CONTROL LOGIC 
     //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Controls which contract is used as the factory foundation.
-     * @param _orgMaster The address of the new Organization factory.
+     * @param _masterContract The address of the new BadgeSet factory.
      * 
      * Requires:
      * - Only the owner of Badger protocol can update this.
      */
-    function setOrgMaster(
-        address _orgMaster
+    function setMasterContract(
+        address _masterContract
     ) 
         internal
         onlyOwner()
     {
-        require(orgMaster != _orgMaster, "Badger: Same master");
+        require(masterContract != _masterContract, "Badger: Same master");
 
-        emit MasterOrgUpdated(orgMaster, _orgMaster);
+        emit MasterContractUpdated(masterContract, _masterContract);
 
-        orgMaster = _orgMaster;
+        masterContract = _masterContract;
 
         unchecked {
             version += 1;
-            hatterOrgs = 1;     // Reset the salt
+            badgerSets = 1;     // Reset the salt
         }
     }
 
@@ -80,7 +80,7 @@ contract Badger is
      * @return Address of the future organization when deployed using the 
      *         provided salt.
      */
-    function getOrgAddress(
+    function getSetAddress(
         bytes32 salt
     )
         public
@@ -89,28 +89,28 @@ contract Badger is
             address
         )
     {
-        require(orgMaster != address(0), "Badger: Invalid master");
-        return orgMaster.predictDeterministicAddress(salt);
+        require(masterContract != address(0), "Badger: Invalid master");
+        return masterContract.predictDeterministicAddress(salt);
     }
 
     /**
-     * @notice Allows any user to permissionlessly deploy a new org.
+     * @notice Allows any user to permissionlessly deploy a new Badge Set.
      */
-    function deployOrg()
+    function deploySet()
         public
         virtual
     {
-        bytes32 salt = bytes32(hatterOrgs);
+        bytes32 salt = bytes32(badgerSets);
 
-        orgMaster.cloneDeterministic(salt);
+        masterContract.cloneDeterministic(salt);
 
-        address org = getOrgAddress(salt);
+        address set_address = getSetAddress(salt);
 
         unchecked {
-            hatterOrgs += 1;
+            badgerSets += 1;
         }
 
-        emit OrgCreated(_msgSender(), org);
+        emit NewSetCreated(_msgSender(), set_address);
     }
 
     /**
@@ -118,14 +118,14 @@ contract Badger is
      * @dev The odds of this being needed are monumentally low however 
      *      this is in place for raw protection.
      */
-    function forceOrgNonce(
+    function forceBadgerNonce(
         uint256 _diff
     )
         public
         onlyOwner()
     {
         unchecked {
-            hatterOrgs += _diff;
+            badgerSets += _diff;
         }
     }
 }

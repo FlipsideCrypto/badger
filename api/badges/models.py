@@ -15,10 +15,13 @@ class Badge(models.Model):
 class BadgeSet(models.Model):
     name = models.CharField(max_length=128)
     description = models.TextField(max_length=4000)
-    image_hash = models.CharField(max_length=256)
+    image_hash = models.CharField(max_length=256, blank=True, null=True)
+    contract_uri_hash = models.CharField(max_length=256, blank=True, null=True)
     
-    creator_address = models.CharField(max_length=50)
-    contract_address = models.CharField(max_length=50)
+    creator_address = models.CharField(max_length=50, blank=False, null=False)
+
+    chain = models.CharField(max_length=50, blank=True, null=True)
+    contract_address = models.CharField(max_length=50, blank=True, null=True)
 
     badges = models.ManyToManyField(Badge)
 
