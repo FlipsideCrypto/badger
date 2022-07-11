@@ -18,8 +18,8 @@ ACTIVE:
             ✔ Upload image and contract uri to IPFS @done(22-07-10 15:06)
             ✔ Make sure it is returning correctly in the js @done(22-07-10 15:06)
             ✔ Save obj in database @done(22-07-10 15:21)
-            ☐ Update method
-            ☐ Post deployment method
+            ☐ Update request
+            ☐ Post deployment request
             ☐ Clean up interaction ux
             ☐ Status Message For Uploading
         ☐ Create Badges
@@ -58,7 +58,7 @@ V1.01:
     ☐ Add webm conversion for preview and IPFS upload
     ☐ Blocknative events for tx not done through our front end
     ☐ FAQ Page
-    
+
             
 ARCHIVED:
     ✘ Blocknative for events not done through our front end? @cancelled(22-07-10 15:06)

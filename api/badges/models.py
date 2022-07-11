@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import BooleanField
 
 class Badge(models.Model):
     name = models.CharField(max_length=128)
@@ -19,10 +20,12 @@ class BadgeSet(models.Model):
     contract_uri_hash = models.CharField(max_length=256, blank=True, null=True)
     
     creator_address = models.CharField(max_length=50, blank=False, null=False)
+    # admin_addresses -- need a modeltomodel field maybe?
 
     chain = models.CharField(max_length=50, blank=True, null=True)
     contract_address = models.CharField(max_length=50, blank=True, null=True)
 
+    contract_initialized = BooleanField(default=False)
     badges = models.ManyToManyField(Badge)
 
     created_at = models.DateTimeField(auto_now_add=True)
