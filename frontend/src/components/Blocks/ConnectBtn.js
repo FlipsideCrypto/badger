@@ -48,7 +48,7 @@ const ConnectBtn = (props) => {
                         }
 
                         return (
-                            <div style={{ display: 'flex', gap: 12, height: '100%' }}>
+                            <div style={{ display: 'flex', gap: 12, height: '100%', whiteSpace:'nowrap'}}>
                             <Button
                                 onClick={openChainModal}
                                 variant="contained"

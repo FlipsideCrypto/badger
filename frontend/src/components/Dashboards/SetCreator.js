@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -7,7 +7,7 @@ import { ethers } from "ethers";
 import proxyAbi from "../../Badger.json"
 import cloneAbi from "../../BadgerSet.json"
 
-import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider, CircularProgress } from '@mui/material';
+import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider, CircularProgress, LinearProgress } from '@mui/material';
 import { FormControl } from '@mui/material';
 
 import CollectionCard from '../Blocks/CollectionCard'
@@ -42,17 +42,29 @@ const SetCreator = () => {
 
     const fileInput = useRef();
 
-    function buttonSx(btnIdx) {
+    function buttonLoadingSx(btnIdx) {
+        if (!loading[btnIdx]) return {}
+        const style =  {
+            ...(loading[btnIdx] && {
+                bgcolor: '#A8FBB3',
+                pointerEvents: 'none',
+                opacity: '0.60'
+            }),
+        }
+
+        return style
+      };
+
+    function buttonSuccessSx(btnIdx) {
         if (!btnSuccess[btnIdx]) return {}
         const style =  {
             ...(btnSuccess[btnIdx] && {
                 bgcolor: '#A8FBB3',
-                '&:hover': {
-                    bgcolor: '#A8FBB3',
-                },
+                pointerEvents: 'none',
+                opacity: '0.60'
             }),
         }
-        console.log('style', style)
+
         return style
       };
 
@@ -69,8 +81,7 @@ const SetCreator = () => {
     }
 
     const handleIpfsUpload = () => {
-        // setLoading([true])
-
+        setLoading([true, false, false])
 
         const formData = new FormData();
         const config = {
@@ -88,8 +99,11 @@ const SetCreator = () => {
         
         let deploymentArgs;
 
+        console.log('loading', loading[0])
+
         axios.post(`${process.env.REACT_APP_API_URL}/badges/new_set/`, formData, config)
         .then(res => {
+                console.log('Uploading Data', res)
                 if(res.data['success']) {
                     deploymentArgs = {
                         baseuri: '',
@@ -106,13 +120,14 @@ const SetCreator = () => {
                 }
             }
         )
-        .then(
+        .then(() => {
+            console.log('Setting loading to false currently set to:', loading[0])
             setLoading([false])
-        );
+        });
     }
 
     const cloneContract = () => {
-        setLoading(loading => [true, true])
+        setLoading([false, true, false])
 
         const proxyContract = new ethers.Contract(
             proxyHandlerContractAddress,
@@ -168,6 +183,8 @@ const SetCreator = () => {
             })
         })
         .then(setLoading([false, false, false]))
+        // TODO: post request that gets the set and updates relative info put before set loading false
+
     }
 
 
@@ -279,56 +296,66 @@ const SetCreator = () => {
                 <Typography variant="h2" sx={{textAlign: 'center'}}>
                     FINALIZE THE SET
                 </Typography>
-                <Divider sx={{mx: 'auto',mb:'15px', width: '50%',height: '3px'}}
-                />
+                <Divider sx={{mx: 'auto',mb:'15px', width: '50%',height: '3px'}}/>
+
                 <Box sx={{position: 'relative', margin: 'auto', width: '100%'}}>
                     <Button
                         variant="contained"
-                        sx={buttonSx(0)}
+                        sx={buttonSuccessSx(0)}
+                        disabled={loading[0]}
                         width={'100%'}
-                        disabled={btnSuccess[0]}
                         onClick={handleIpfsUpload}
                     >
                         UPLOAD SET DATA TO IPFS
                     </Button>
-                    {true && (
-                        <CircularProgress
-                            size={24}
-                            sx={{
-                                color: '#A8FBB3',
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                marginTop: '-12px',
-                                marginLeft: '-12px',
-                            }}
-                        />
+                    {loading[0] && (
+                        <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
+                            <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                        </Box>
                     )}
                 </Box>
                 <Typography variant="body1" sx={{textAlign: 'center', mb: '20px', mt: '5px'}}>
                     {btnMsg[0]}
                 </Typography>
 
-                <Button
-                    variant="contained"
-                    sx={buttonSx(1)}
-                    disabled={!btnSuccess[0]}
-                    onClick={cloneContract}
-                >
-                    DEPLOY CONTRACT CLONE
-                </Button>
+                <Box sx={{position: 'relative', margin: 'auto', width: '100%'}}>
+                    <Button
+                        variant="contained"
+                        sx={buttonSuccessSx(1)}
+                        disabled={!btnSuccess[0] || loading[1]}
+                        onClick={cloneContract}
+                    >
+                        DEPLOY CONTRACT CLONE
+                    </Button>
+                    
+                    {loading[1] && (
+                        <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
+                            <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                        </Box>
+                    )}
+                </Box>
+
                 <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
                     {btnMsg[1]}
                 </Typography>
 
-                <Button
-                    variant="contained"
-                    sx={buttonSx(2)}
-                    disabled={!btnSuccess[1]}
-                    onClick={initializeContract}
-                >
-                    INITIALIZE CONTRACT
-                </Button>
+                <Box sx={{position: 'relative', margin: 'auto', width: '100%'}}>
+                    <Button
+                        variant="contained"
+                        sx={buttonSuccessSx(2)}
+                        disabled={!btnSuccess[1] || loading[2]}
+                        onClick={initializeContract}
+                    >
+                        INITIALIZE CONTRACT
+                    </Button>
+
+                    {loading[2] && (
+                        <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
+                            <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                        </Box>
+                    )}
+                </Box>
+
                 <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
                     {btnMsg[2]}
                 </Typography>

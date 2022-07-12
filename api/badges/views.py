@@ -14,6 +14,7 @@ from .serializers import BadgeSetSerializer, BadgeSerializer
 
 pinata = PinataPy(settings.PINATA_API_KEY, settings.PINATA_API_SECRET_KEY)
 
+## TODO: IPFS hash should be the pk for everything
 class BadgeSetViewSet(viewsets.ModelViewSet):
     queryset = BadgeSet.objects.all()
     serializer_class = BadgeSetSerializer
