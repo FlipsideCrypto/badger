@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-import { useSigner, useAccount, useNetwork, useContract, useContractWrite } from 'wagmi'
+import { useSigner, useAccount, useNetwork } from 'wagmi'
 import { ethers } from "ethers";
 import proxyAbi from "../../Badger.json"
 
-import { Box, TextField, Typography, Button, Input, Tooltip } from '@mui/material';
+import { Box, TextField, Typography, Button, Input, Tooltip, FormHelperText } from '@mui/material';
 import { FormControl } from '@mui/material';
 
 import CollectionCard from '../Blocks/CollectionCard'
@@ -76,29 +76,12 @@ const CreateSetDash = (props) => {
     }
 
     const deployContract = (args) => {
-        console.log(proxyHandlerContractAddress, proxyAbi, signer)
-
-        // const { data, isError, isLoading, writeTx } = useContractWrite({
-        //     addressOrName: proxyHandlerContractAddress,
-        //     contractInterface: proxyAbi,
-        //     chainId: chain.id,
-        //     functionName: 'deploySet',
-        //     args: [],
-        //     onSettled(data, error) {
-        //         console.log('Settled', { data, error })
-        //     },
-        //   })
-
-        //   console.log('GETS HERE')
-        //   writeTx()
-
         const proxyContract = new ethers.Contract(
             proxyHandlerContractAddress,
             proxyAbi,
             signer
         );
 
-        // proxyContract.deploySet({gasLimit: 100000})
         proxyContract.deploySet()
         .then((transaction) => {
             console.log('Making Clone...', transaction)
@@ -127,19 +110,6 @@ const CreateSetDash = (props) => {
         //         console.log('Set Initialized.', res)
         //     })
         // })
-       
-       
-       
-       // EXAMPLE: 
-        // const handleTransactionCall = (contractFunction, actionIndex, SUCCESS_MESSAGE) => { 
-        //     contractFunction.then((transaction) => {
-        //         setChainMessage(insertedMessage(0, SUCCESS_TRANSACTION));
-        //         handleTransactionResponse(transaction, actionIndex, SUCCESS_MESSAGE);
-        //     })
-        //     .catch(res => { 
-        //         setChainMessage(insertedMessage(actionIndex, '[ERROR] ' + res['message'])) 
-        //     })
-        // }
     
         // Deploy
         // Await tx
@@ -150,7 +120,6 @@ const CreateSetDash = (props) => {
 
     useEffect(() => {        
         if(!chain) {
-            console.log('Going back home')
             navigate('/')
         }
 
@@ -160,7 +129,6 @@ const CreateSetDash = (props) => {
         <>
             <Box 
                 sx={{
-                    // bgcolor: "#FFFFFF10",
                     width: '90%',
                     height: 'auto',
                     mx: 'auto',
@@ -171,7 +139,7 @@ const CreateSetDash = (props) => {
                     NEW BADGE SET
                 </Typography>
 
-                <Typography variant="body2" sx={{pt: '20px', mb:'30px'}}>
+                <Typography variant="subtitle2" sx={{pt: '20px', mb:'30px'}}>
                     Badge Sets are individual token collections that can represent whatever you 
                     want them to represent. Badges are contained within their Set with bound by whatever 
                     criteria you want to compose them with. A Set can be an entire organization, or a small
@@ -210,8 +178,11 @@ const CreateSetDash = (props) => {
                         variant='outlined'
                         component="span"
                     >
-                        {imageFile ? imageFile.name : 'UPLOAD SET IMAGE'}
+                        <Typography variant="h6">
+                            {imageFile ? imageFile.name : 'UPLOAD SET IMAGE'}
+                        </Typography>
                     </Button>
+                    <FormHelperText>Image for the contract collection.</FormHelperText>
                 </label>
             </Box>
 
@@ -222,7 +193,7 @@ const CreateSetDash = (props) => {
                     height: 'auto',
                     mx: 'auto',
                     py: '20px',
-                    my: '20px'
+                    my: '20px',
                  }}>
                     <CollectionCard
                         imageFile={imageFile}

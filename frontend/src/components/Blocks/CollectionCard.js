@@ -4,19 +4,37 @@ const CollectionCard = (props) => {
     const { imageFile, name, description } = props;
 
     return (
-        <>
-            <Box
-                component="img"
-                sx={{
-                    height: "400px",
-                    width: "400px",
+        <div style={{alignContent: 'center', textAlign: 'center'}}>
+            <Box sx={{
+                    border: '1px solid black',
+                    borderRadius: '10px',
+                    alignSelf: 'center',
+                    alignContent: 'center',
+                    margin: 'auto',
+                    width: '90%',
+                    height: '90%',
+                    mt: '20px'
                 }}
-                alt="Collection Image"
-                src={URL.createObjectURL(imageFile)}
-            />
-
+            >
+                <Box sx={{display: 'flex', justifyContent: 'center', margin: '10px'}}>
+                {imageFile ?
+                    <img
+                        style={{width: '95%', height: '95%', objectFit: 'contain', margin:'auto', display:'block'}}
+                        alt="Collection Image"
+                        src={URL.createObjectURL(imageFile)}
+                    />
+                    :
+                    <img
+                        style={{width: '90%', height: '90%', objectFit: 'contain', margin:'auto', display:'block'}}
+                        alt="Collection Image"
+                        src={'/badger-black-white.svg'}
+                    />
+                }
+                </Box>
+            </Box>
             <Typography 
                 variant="h4"
+                sx={{mt: '10px'}}
             >
                 {name}
             </Typography>
@@ -24,18 +42,16 @@ const CollectionCard = (props) => {
             <Divider 
                 sx={{
                     mx: 'auto', 
-                    my:'20px', 
+                    my:'10px', 
                     width: '70%',
                     height: '3px'
                 }}
             />
 
-            <Typography
-            
-            >
+            <Typography sx={{mb:'15px', mx:'10px'}}>
                 {description}
             </Typography>
-        </>
+        </div>
     )
 }
 

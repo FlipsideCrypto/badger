@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import ConnectBtn from "./ConnectBtn";
 
-const NavBar = () => {
+const Footer = () => {
     let navigate = useNavigate();
 
     return (
@@ -13,10 +13,11 @@ const NavBar = () => {
                 height: '100px',
                 display: 'inline-flex',
                 // justifyContent: 'center',
-                border: '1px solid #000000',
+                border: '1px solid black',
                 display: 'flex',
                 flexDirection: "row",
-                mb: '20px'
+                position: 'absolute',
+                bottom: '0'
             }} 
         >
           <AppBar 
@@ -29,12 +30,12 @@ const NavBar = () => {
         >
             <Toolbar>
               <Box component="div" sx={{display: 'flex', justifyContent: 'flex-start', flexGrow: 1}}>
-                <div style={{height: '100%', marginTop: 'auto', marginBottom: 'auto', marginRight: '15px', marginLeft: '20px'}}>
+                <div style={{height: '100%', marginRight: '15px', marginLeft: '40px', display: 'block'}}>
                   <Box
                     component="img"
                     sx={{
-                        height: "40px",
-                        width: "40px",
+                        height: "19px",
+                        width: "19px",
                         verticalAlign: 'bottom',
                     }}
                     alt="Badger Badge"
@@ -43,17 +44,15 @@ const NavBar = () => {
                 </div>
 
                 <Link to="/" style={{ textDecoration: 'none'}}>
-                  <Typography variant="h3">
+                  <Typography variant="h7">
                       BADGER
                   </Typography>
                 </Link>
-              </Box>
-              
-              <ConnectBtn enterApp={false} />
+              </Box>              
             </Toolbar>
           </AppBar>
         </Box>
       );
 }
 
-export default NavBar;
+export default Footer;

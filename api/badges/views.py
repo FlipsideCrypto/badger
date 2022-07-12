@@ -143,7 +143,7 @@ class BadgeViewSet(viewsets.ModelViewSet):
 
         return JsonResponse(response)
     
-def pin_image(self, imageFile):
+def pin_image(imageFile):
     with NamedTemporaryFile(suffix=".gif", delete=True) as temp_file:
         # convert uploaded file to temp file in order to upload.
         temp_file.write(imageFile.read())

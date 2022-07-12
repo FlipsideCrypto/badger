@@ -2,9 +2,10 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Button,Box } from "@mui/material";
 import '@rainbow-me/rainbowkit/dist/index.css'
 
-const ConnectBtn = () => {
+const ConnectBtn = (props) => {
+    const { enterApp } = props
+
     return ( 
-        <Box fontWeight={700}>
             <ConnectButton.Custom>
                 {({
                     account,
@@ -31,9 +32,9 @@ const ConnectBtn = () => {
                             <Button 
                                 onClick={openConnectModal} 
                                 variant="contained" 
-                                sx={{display: 'flex', alignItems: 'center'}}
+                                sx={{display: 'flex', width: '100%'}}
                             >
-                                Connect
+                                {enterApp ? 'Enter App': 'Connect'}
                             </Button>
                             );
                         }
@@ -89,7 +90,6 @@ const ConnectBtn = () => {
                     );
                 }}
             </ConnectButton.Custom>
-        </Box>
     )
 }
 
