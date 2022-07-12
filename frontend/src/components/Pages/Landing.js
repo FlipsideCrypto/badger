@@ -105,7 +105,7 @@ const Landing = () => {
                         </Typography>
 
                         <Grid container>
-                            <Grid item xs={8} sm={6} md={5} lg={5} sx={{mt: '40px'}}>
+                            <Grid item xs={8} sm={6} sx={{mt: '40px'}}>
                                 <Button
                                     onClick={() => openInNewTab('https://app.flipsidecrypto.com/velocity?nav=Discover')}
                                     variant="contained"
@@ -117,7 +117,7 @@ const Landing = () => {
                                     VIEW FLIPSIDE QUERY
                                 </Button>
                             </Grid>
-                            <Grid item xs={4} sm={6} md={7} lg={7} />
+                            <Grid item xs={4} sm={6} />
                         </Grid>
                     </Box>
                 </Grid>

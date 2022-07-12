@@ -5,8 +5,9 @@ import axios from 'axios';
 import { useSigner, useAccount, useNetwork } from 'wagmi'
 import { ethers } from "ethers";
 import proxyAbi from "../../Badger.json"
+import cloneAbi from "../../BadgerSet.json"
 
-import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider, Fab } from '@mui/material';
+import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider, CircularProgress } from '@mui/material';
 import { FormControl } from '@mui/material';
 
 import CollectionCard from '../Blocks/CollectionCard'
@@ -19,18 +20,41 @@ const SetCreator = () => {
     const { data: signer, isError, isLoading } = useSigner();
     const { chain, chains } = useNetwork();
     
-    // const proxyHandlerContractAddress = chain.name == 'polygon' ?
-    //     process.env.REACT_APP_POLYGON_PROXY : 
-    //     process.env.REACT_APP_MUMBAI_PROXY
-    const proxyHandlerContractAddress = process.env.REACT_APP_MUMBAI_PROXY;
+    const proxyHandlerContractAddress = chain?.name == 'polygon' ?
+        process.env.REACT_APP_POLYGON_PROXY : 
+        process.env.REACT_APP_MUMBAI_PROXY
+    // const proxyHandlerContractAddress = process.env.REACT_APP_MUMBAI_PROXY;
 
     const [collectionName, setCollectionName] = useState('Badger Badges');
     const [collectionDesc, setCollectionDesc] = useState('Your set description will appear at the top of your collection on popular marketplaces and other token viewing apps.');
     const [imageFile, setImageFile] = useState();
-    const [filesUploaded, setFilesUploaded] = useState(false);
+
+    const [deploymentArgs, setDeploymentArgs] = useState();
     const [deployedCloneAddress, setDeployedCloneAddress] = useState();
+    const [loading, setLoading] = useState([false, false, false]);
+    const [btnSuccess, setBtnSuccess] = useState([false, false, false])
+    const [btnMsg, setButtonMsg] = useState([
+        'Badger uploads your image and Badge Set data to IPFS',
+        'Transaction cloning the Badger base contract, using 40x less fees than regular deployment',
+        "Your Badge Set contract clone has to be 'made real' with a transaction.",
+        'Move on to creating the Badges for your new set.'
+    ])
 
     const fileInput = useRef();
+
+    function buttonSx(btnIdx) {
+        if (!btnSuccess[btnIdx]) return {}
+        const style =  {
+            ...(btnSuccess[btnIdx] && {
+                bgcolor: '#A8FBB3',
+                '&:hover': {
+                    bgcolor: '#A8FBB3',
+                },
+            }),
+        }
+        console.log('style', style)
+        return style
+      };
 
     const selectImage = (event) => {
         setImageFile(event.target.files[0])
@@ -44,7 +68,12 @@ const SetCreator = () => {
         setCollectionDesc(event.target.value)
     }
 
-    const initializeSet = () => {
+    async function handleIpfsUpload() {
+        const promisedLoading = () => new Promise(resolve => setLoading(true, resolve));
+        await promisedLoading();
+        // setLoading([true])
+
+
         const formData = new FormData();
         const config = {
             headers: {
@@ -69,16 +98,24 @@ const SetCreator = () => {
                         contract_uri_hash: res.data.contract_uri_hash,
                         description: res.data.description
                     }
-                    deployContract(deploymentArgs);
+
+                    setDeploymentArgs(deploymentArgs);
+                    setBtnSuccess([true]);
                 }
                 else {
                     console.log('Invalid Upload')
+                    setBtnSuccess([false]);
                 }
             }
+        )
+        .then(
+            setLoading([false])
         );
     }
 
-    const deployContract = (args) => {
+    const cloneContract = () => {
+        setLoading(loading => [true, true])
+
         const proxyContract = new ethers.Contract(
             proxyHandlerContractAddress,
             proxyAbi,
@@ -91,33 +128,48 @@ const SetCreator = () => {
             transaction.wait()
             .then((res) => {
                 console.log('Badge Set Cloned', res)
-                console.log('Clone Address2', res.events[0].args.setAddress)
 
                 setDeployedCloneAddress(res.events[0].args.setAddress)
+                setBtnSuccess(btnSuccess => [...btnSuccess, true])
             })
             .catch((res) => {
                 console.log('Error Cloning', res)
+                // todo: error message
             })
         })
+        .then(
+            setLoading([false, false])
+        )
+    }
 
-        console.log('Args', args)
+    const initializeContract = () => {
+        setLoading([false, false, true])
 
-        // proxyContract.initialize(
-        //     args.baseuri,
-        //     args.contract_uri_hash,
-        //     args.description
-        // ).then((transaction) => {
-        //     console.log('Initializing Set...');
-        //     transaction.wait()
-        //     .then((res) => {
-        //         console.log('Set Initialized.', res)
-        //     })
-        // })
-    
-        // Deploy
-        // Await tx
-        // When it's mined give a thumbs up, take to badge creation page
-        // Also include a tx or link to OS or something
+        const clonedContract = new ethers.Contract(
+            proxyHandlerContractAddress,
+            proxyAbi,
+            signer
+        );
+
+        clonedContract.initialize(
+            deploymentArgs.baseuri,
+            deploymentArgs.contract_uri_hash,
+            deploymentArgs.description
+        )
+        .then((transaction) => {
+            console.log('Initializing Set...', transaction)
+            
+            transaction.wait()
+            .then((res) => {
+                console.log('Set Initialized.', res)
+                setBtnSuccess(btnSuccess => [...btnSuccess, true])
+            })
+            .catch((res) => {
+                console.log('Error Initializing', res)
+                // todo: error message
+            })
+        })
+        .then(setLoading([false, false, false]))
     }
 
 
@@ -226,25 +278,73 @@ const SetCreator = () => {
                     mt: '50px'
                 }}
             >
-                <Typography variant="body1" sx={{textAlign: 'center'}}>
-                    To finish the setup, click through the action buttons. You will first upload the collection data to IPFS,
-                    then deploy a clone of the Badger contract (so your set will be its own collection). Then initialize that clone,
-                    before moving on to set up your Badges.
+                <Typography variant="h2" sx={{textAlign: 'center'}}>
+                    FINALIZE THE SET
                 </Typography>
                 <Divider sx={{mx: 'auto',mb:'15px', width: '50%',height: '3px'}}
                 />
-                <Fab variant="extended">
-                    UPLOAD SET DATA TO IPFS
-                </Fab>
-                <Fab sx={{mt:'20px'}}variant="extended">
+                <Box sx={{position: 'relative', margin: 'auto', width: '100%'}}>
+                    <Button
+                        variant="contained"
+                        sx={buttonSx(0)}
+                        width={'100%'}
+                        disabled={btnSuccess[0]}
+                        onClick={handleIpfsUpload}
+                    >
+                        UPLOAD SET DATA TO IPFS
+                    </Button>
+                    {loading[0] && (
+                        <CircularProgress
+                            size={24}
+                            sx={{
+                                color: '#A8FBB3',
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                marginTop: '-12px',
+                                marginLeft: '-12px',
+                            }}
+                        />
+                    )}
+                </Box>
+                <Typography variant="body1" sx={{textAlign: 'center', mb: '20px', mt: '5px'}}>
+                    {btnMsg[0]}
+                </Typography>
+
+                <Button
+                    variant="contained"
+                    sx={buttonSx(1)}
+                    disabled={!btnSuccess[0]}
+                    onClick={cloneContract}
+                >
                     DEPLOY CONTRACT CLONE
-                </Fab>
-                <Fab sx={{mt:'20px'}}variant="extended">
+                </Button>
+                <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                    {btnMsg[1]}
+                </Typography>
+
+                <Button
+                    variant="contained"
+                    sx={buttonSx(2)}
+                    disabled={!btnSuccess[1]}
+                    onClick={initializeContract}
+                >
                     INITIALIZE CONTRACT
-                </Fab>
-                <Fab sx={{mt:'20px'}}variant="extended">
+                </Button>
+                <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                    {btnMsg[2]}
+                </Typography>
+
+                <Button
+                    variant="contained"
+                    disabled={!btnSuccess[2]}
+                    onClick={() => navigate('/create/badges')}
+                >
                     SET UP BADGES
-                </Fab>
+                </Button>
+                <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                    {btnMsg[3]}
+                </Typography>
             </Box>
 
             <Box sx={{pt:'200px'}} />

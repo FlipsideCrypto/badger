@@ -1,26 +1,15 @@
 CONTRACT: 
     ☐ Full test suite
         Make sure to test the metadata shit!!
-    ☐ Is there any case where someone could rightfully need multiple copies of the same badge?
-        If so, add a require statement to mint and remove the balanceOf in burn.
-            Wtf did I mean by a require statement to mint
     ☐ Is there a reason to have the createBadge/updateBadge as separate functions?
         They do literally the same thing just with a revert if there's an existing badge on the createBadge()
     
 ACTIVE:
-    ☐ Contract deployed on Mumbai for testing
     ☐ Contract tested and deployed on Polygon
-    ☐ Get basic landing page
-    ☐ Signature to get into dashboard
-    
     ☐ Management UI and functionality
         ☐ Create Collection
-            ✔ Upload image and contract uri to IPFS @done(22-07-10 15:06)
-            ✔ Make sure it is returning correctly in the js @done(22-07-10 15:06)
-            ✔ Save obj in database @done(22-07-10 15:21)
             ☐ Update request
             ☐ Post deployment request
-            ☐ Clean up interaction ux
             ☐ Status Message For Uploading
         ☐ Create Badges
             ☐ Front end dash
@@ -36,33 +25,37 @@ ACTIVE:
             ☐ Rename, new image for badges
             ☐ Revoke Badges
     ☐ Badge Preview
+    ☐ Rate limit IPFS upload
     ☐ Mobile formatting of landing page and header
-    ☐ 
-
-    ☐ Description may have to be cleaned before IPFS interaction
-        ☐ Convert line breaks to /n/n
+    
 Contract Interaction:
-    ✔ Deploy a contract via front end @done(22-07-10 21:33)
-        To deploy the clone and get the clone contract within ethers:
-        cloneTx = await proxy.connect(owner).deployOrg();
-        cloneTx = await cloneTx.wait();        
-        testOrgAddress = cloneTx.events[0].args[1]
-        testOrg = await org.attach(testOrgAddress);
-    ☐ Way to show transaction errors
-    ☐ Better explanation of the clone and initialize double transaction.
-    ☐ 
+    ☐ Have transaction errors
+    ☐ Do a final update of ABIs
     ☐ Do test walk throughs and polish UX
-    ☐ Add gnosis as a chain
     ☐ Set up host
     ☐ Implement new brand
     
 V1.01:
+    ☐ Signature to get into dashboard
     ☐ Add webm conversion for preview and IPFS upload
     ☐ Blocknative events for tx not done through our front end
     ☐ FAQ Page
+    ☐ Add gnosis as a chain
+    ☐ Description may have to be cleaned before IPFS interaction
+        ☐ Convert line breaks to /n/n
 
             
 ARCHIVED:
+    ✔ Way to show transaction errors @done(22-07-11 21:20)
+    ✔ Better explanation of the clone and initialize double transaction. @done(22-07-11 21:19)
+    ✘ Is there any case where someone could rightfully need multiple copies of the same badge? @cancelled(22-07-11 20:28)
+    ✔ Contract deployed on Mumbai for testing @done(22-07-11 20:25)
+    ✔ Get basic landing page @done(22-07-11 20:25)
+    ✔ Upload image and contract uri to IPFS @done(22-07-10 15:06)
+    ✔ Make sure it is returning correctly in the js @done(22-07-10 15:06)
+    ✔ Save obj in database @done(22-07-10 15:21)
+    ✔ Clean up interaction ux @done(22-07-11 20:25)
+    ✔ Deploy a contract via front end @done(22-07-10 21:33)
     ✘ Blocknative for events not done through our front end? @cancelled(22-07-10 15:06)
     ✔ File Uploading @done(22-07-10 14:58)
     ✔ IPFS upload @done(22-07-10 14:58)

@@ -11,7 +11,6 @@ import Footer from "./components/Blocks/Footer";
 import NavBar from "./components/Blocks/NavBar";
 
 import Landing from './components/Pages/Landing';
-import CreateSetDash from "./components/Dashboards/CreateSetDash";
 import SetCreator from "./components/Dashboards/SetCreator"
 import "./App.css";
 
@@ -104,6 +103,7 @@ const theme = createTheme({
             background: 'repeating-linear-gradient(-70deg, #FFFFFF 0 6px, #00000065 6px 7px);',
           },
           border: '1px solid #000000',
+          width: '100%'
         },
       },
     },
