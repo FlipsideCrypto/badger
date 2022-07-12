@@ -6,3 +6,4 @@ cache
 .env
 local.py
 *.pyc
+production.py

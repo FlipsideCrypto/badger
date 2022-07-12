@@ -231,7 +231,8 @@ const SetCreator = () => {
                     then deploy a clone of the Badger contract (so your set will be its own collection). Then initialize that clone,
                     before moving on to set up your Badges.
                 </Typography>
-
+                <Divider sx={{mx: 'auto',mb:'15px', width: '50%',height: '3px'}}
+                />
                 <Fab variant="extended">
                     UPLOAD SET DATA TO IPFS
                 </Fab>
