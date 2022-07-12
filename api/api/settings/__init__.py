@@ -3,4 +3,4 @@ from .base import *
 try:
     from .local import *
 except:
-    from .prod import *
+    from .production import *
