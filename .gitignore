@@ -7,3 +7,4 @@ cache
 local.py
 *.pyc
 production.py
+db.sqlite3
