@@ -68,9 +68,7 @@ const SetCreator = () => {
         setCollectionDesc(event.target.value)
     }
 
-    async function handleIpfsUpload() {
-        const promisedLoading = () => new Promise(resolve => setLoading(true, resolve));
-        await promisedLoading();
+    const handleIpfsUpload = () => {
         // setLoading([true])
 
 
@@ -293,7 +291,7 @@ const SetCreator = () => {
                     >
                         UPLOAD SET DATA TO IPFS
                     </Button>
-                    {loading[0] && (
+                    {true && (
                         <CircularProgress
                             size={24}
                             sx={{
