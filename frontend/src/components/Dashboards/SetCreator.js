@@ -98,16 +98,15 @@ const SetCreator = (props) => {
                     }
 
                     setDeploymentArgs(deploymentArgs);
-                    setBtnSuccess([true]);
+                    setBtnSuccess([true, false, false]);
                 }
                 else {
                     console.log('Invalid Upload')
-                    setBtnSuccess([false]);
+                    setBtnSuccess([false, false, false]);
                 }
             }
         )
         .then(() => {
-            console.log('Setting loading to false currently set to:', loading[0])
             setLoading([false, false, false])
         });
     }
@@ -129,16 +128,16 @@ const SetCreator = (props) => {
                 console.log('Badge Set Cloned', res)
 
                 setBadgeSetContract(res.events[0].args.setAddress)
-                setBtnSuccess(btnSuccess => [...btnSuccess, true])
+                setBtnSuccess([true, true, false])
             })
             .catch((res) => {
                 console.log('Error Cloning', res)
                 // todo: error message
             })
+            .then(
+                setLoading([false, false, false])
+            )
         })
-        .then(
-            setLoading([false, false, false])
-        )
     }
 
     const initializeContract = () => {
@@ -161,18 +160,16 @@ const SetCreator = (props) => {
             transaction.wait()
             .then((res) => {
                 console.log('Set Initialized.', res)
-                setBtnSuccess(btnSuccess => [...btnSuccess, true])
+                setBtnSuccess([true, true, true])
             })
             .catch((res) => {
                 console.log('Error Initializing', res)
                 // todo: error message
             })
-        })
-        .then(
-            finalizeSet()
-        )
-        .then(() => {
-            setLoading([false, false, false])
+            .then(() => {
+                setLoading([false, false, false])
+                finalizeSet()
+            })
         })
     }
 
@@ -191,14 +188,7 @@ const SetCreator = (props) => {
 
         axios.post(`${process.env.REACT_APP_API_URL}/badges/finalize_set/`, formData, config)
         .then(res => {
-            if(res.data['success']) {
-                setBtnSuccess([true]);
-            }
-            else {
-                console.log('Invalid Upload')
-                // TODO: Error message
-                setBtnSuccess([false]);
-            }
+            // TODO: Error
         })
     }
 
@@ -206,8 +196,12 @@ const SetCreator = (props) => {
         if(!chain) {
             navigate('/')
         }
-
     }, [])
+
+    const logInfo = () => {
+        console.log('BtnSuccess', btnSuccess)
+        console.log('BtnLoading', loading)
+    }
 
     return (
         <div style={{marginLeft: '50px', marginRight: '50px'}}>
@@ -385,6 +379,8 @@ const SetCreator = (props) => {
                     {btnMsg[3]}
                 </Typography>
             </Box>
+
+            <Button onClick={logInfo} />
 
             <Box sx={{pt:'200px'}} />
         </div>

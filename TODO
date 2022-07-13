@@ -1,3 +1,10 @@
+CRITICAL:
+    ☐ Deploy Contract button behaves oddly in the UX.
+        ☐ Does not have loading indicator
+        ☐ Becomes non-disabled again after tx is signed?
+    ☐ Set up Badge Creation quick so I can test to make sure the contract works well.
+
+
 CONTRACT: 
     ☐ Full test suite
         Make sure to test the metadata shit!!
@@ -7,10 +14,6 @@ CONTRACT:
 ACTIVE:
     ☐ Contract tested and deployed on Polygon
     ☐ Management UI and functionality
-        ✔ Create Collection @done(22-07-12 11:01)
-            ☐ Update request
-            ☐ Post deployment request
-            ✔ Status Message For Uploading @done(22-07-12 11:01)
             ☐ Error Messages
         ☐ Create Badges
             ☐ Front end dash
@@ -26,8 +29,7 @@ ACTIVE:
             ☐ Rename, new image for badges
             ☐ Revoke Badges
     ☐ Badge Preview
-    ☐ How to ensure that
-    ☐ Mobile formatting of landing page and header
+    ☐ ENSURE THAT ONLY THE FRONT END CAN MAKE POST REQUESTS TO THE BACKEND.
     ☐ Make sure image preview is vertical and center aligned, outline box should not fit image.
     ☐ Fix form outline on click
     
@@ -47,9 +49,13 @@ V1.01:
     ☐ Add gnosis as a chain
     ☐ Description may have to be cleaned before IPFS interaction
         ☐ Convert line breaks to /n/n
-
+    ☐ Mobile redesign
             
 ARCHIVED:
+    ✔ Create Collection @done(22-07-12 11:01)
+        ✔ Update request @done(22-07-13 02:52)
+        ✔ Post deployment request @done(22-07-13 02:53)
+        ✔ Status Message For Uploading @done(22-07-12 11:01)
     ✔ Way to show transaction errors @done(22-07-11 21:20)
     ✔ Better explanation of the clone and initialize double transaction. @done(22-07-11 21:19)
     ✘ Is there any case where someone could rightfully need multiple copies of the same badge? @cancelled(22-07-11 20:28)
