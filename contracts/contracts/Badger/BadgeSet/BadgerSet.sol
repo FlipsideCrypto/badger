@@ -412,7 +412,10 @@ contract BadgerSet is
                             , _badge.title
                             , '","description":"'
                             , _badge.description
+                            , "\\n\\n"
                             , collectionDescription
+                            , "\\n\\n"
+                            , "[A Badger managed token.](https://badger.utc24.io/)"
                             , '","image":"'
                             , badgeImage(_badgeId)
                             , '","attributes":['

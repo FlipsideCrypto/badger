@@ -1,4 +1,3 @@
-const { optionGroupUnstyledClasses } = require('@mui/base');
 const { assert } = require('chai')
 
 var chai = require('chai')
@@ -82,6 +81,12 @@ describe("Badger", function() {
             assert.equal(1, await testOrg.balanceOf(signer1.address, 1))
         });
 
+        it('Minting Badge', async() => {
+            await testOrg.mintBadge(owner.address, 1);
+
+            assert.equal(1, await testOrg.balanceOf(owner.address, 1))
+        });
+
         it('Minting Badge Bundle', async() => {
             const ids = [2, 2, 3, 3]
             const addresses = [signer2.address, signer3.address, signer2.address, signer3.address]
@@ -132,6 +137,11 @@ describe("Badger", function() {
 
             // Revert the burn
             await testOrg.connect(owner).mintBadge(signer1.address, 1);
+        })
+
+        it('URI', async() => {
+           let uri = await testOrg.uri(1)
+           console.log(uri)
         })
     });
 });
