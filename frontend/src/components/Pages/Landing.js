@@ -201,7 +201,6 @@ const Landing = () => {
                     }
                 </Grid>
                 <Grid item xs={4} sm={6} md={8} lg={9} />
-                <div className='page-divider' style={{paddingTop: '20vh', width:'100%'}} />
             </Grid>
         </div>
     )

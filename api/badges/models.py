@@ -3,8 +3,10 @@ from django.db import models
 class Badge(models.Model):
     name = models.CharField(max_length=128)
     description = models.TextField(max_length=4000)
-    token_id = models.PositiveIntegerField(blank=False, null=False)
+    token_id = models.PositiveIntegerField(default=0)
     image_hash = models.CharField(max_length=256)
+    on_chain = models.BooleanField(default=False)
+    parent_address = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name

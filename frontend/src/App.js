@@ -44,6 +44,12 @@ const theme = createTheme({
           main: '#FFFFFF',
           contrastText: '#000000'
       },
+      info: {
+        main: '#000000',
+        light: '#000000',
+        dark: '#000000',
+        contrastText: '#000000'
+      }
   },
   typography: {
       fontFamily: 'Poppins',
@@ -108,6 +114,18 @@ const theme = createTheme({
           width: '100%'
         },
       },
+    },
+    MuiTextField: {
+      variants: [
+        {
+          props: {variant: 'outlined', disabled: true},
+          style: {
+            backgroundColor: '#d1d1d1',
+            opacity: '0.60',
+            borderRadius: '5px'
+          },
+        },
+      ],
     },
     MuiBox: {
       styleOverrides: {

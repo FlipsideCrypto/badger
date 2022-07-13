@@ -10,4 +10,4 @@ class BadgeSetSerializer(serializers.ModelSerializer):
 class BadgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Badge
-        fields = ["name", "description", "token_id", "image_hash"]
+        fields = ["name", "description", "token_id", "image_hash", "on_chain"]

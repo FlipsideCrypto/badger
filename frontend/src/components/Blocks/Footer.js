@@ -7,6 +7,8 @@ const Footer = () => {
     let navigate = useNavigate();
 
     return (
+      <>
+        <Box sx={{pt: '200px'}} />
         <Box 
             sx={{ 
                 width: '100%',
@@ -52,7 +54,8 @@ const Footer = () => {
             </Toolbar>
           </AppBar>
         </Box>
-      );
+      </>
+    );
 }
 
 export default Footer;

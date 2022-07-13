@@ -2,30 +2,24 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-import { useSigner, useAccount, useNetwork } from 'wagmi'
+import { useNetwork } from 'wagmi'
 import { ethers } from "ethers";
 import proxyAbi from "../../Badger.json"
 import cloneAbi from "../../BadgerSet.json"
 
-import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider, CircularProgress, LinearProgress } from '@mui/material';
+import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider, LinearProgress } from '@mui/material';
 import { FormControl } from '@mui/material';
 
 import CollectionCard from '../Blocks/CollectionCard'
 import BigBox from "../Blocks/BigBox"
 
 const SetCreator = (props) => {
-    let navigate = useNavigate();
-
-    const { badgeSetContract, setBadgeSetContract, setStage} = props;
-
-    const { address, isConnecting, isDisconnected } = useAccount();
-    const { data: signer, isError, isLoading } = useSigner();
+    const { badgeSetContract, setBadgeSetContract, setStage, address, signer} = props;
     const { chain, chains } = useNetwork();
-    
-    const proxyHandlerContractAddress = chain?.name == 'polygon' ?
+
+    const proxyHandlerContractAddress = chain?.name === 'polygon' ?
         process.env.REACT_APP_POLYGON_PROXY : 
         process.env.REACT_APP_MUMBAI_PROXY
-    // const proxyHandlerContractAddress = process.env.REACT_APP_MUMBAI_PROXY;
 
     const [collectionName, setCollectionName] = useState('Badger Badges');
     const [collectionDesc, setCollectionDesc] = useState('Your set description will appear at the top of your collection on popular marketplaces and other token viewing apps.');
@@ -37,8 +31,8 @@ const SetCreator = (props) => {
     const [btnMsg, setButtonMsg] = useState([
         'Badger uploads your image and Badge Set data to IPFS',
         'Transaction cloning the Badger base contract, using 40x less fees than regular deployment',
-        "Your Badge Set contract clone has to be 'made real' with a transaction.",
-        'Move on to creating the Badges for your new set.'
+        "Your Badge Set contract clone has to be 'made real' with a transaction",
+        'Move on to creating the Badges for your new set'
     ])
 
     const fileInput = useRef();
@@ -87,7 +81,7 @@ const SetCreator = (props) => {
         
         let deploymentArgs;
 
-        axios.post(`${process.env.REACT_APP_API_URL}/badges/new_set/`, formData, config)
+        axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/new_set/`, formData, config)
         .then(res => {
                 console.log('Uploading Data', res)
                 if(res.data['success']) {
@@ -186,21 +180,10 @@ const SetCreator = (props) => {
         formData.append('contract_address', badgeSetContract)
 
 
-        axios.post(`${process.env.REACT_APP_API_URL}/badges/finalize_set/`, formData, config)
+        axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/finalize_set/`, formData, config)
         .then(res => {
             // TODO: Error
         })
-    }
-
-    useEffect(() => {        
-        if(!chain) {
-            navigate('/')
-        }
-    }, [])
-
-    const logInfo = () => {
-        console.log('BtnSuccess', btnSuccess)
-        console.log('BtnLoading', loading)
     }
 
     return (
@@ -246,6 +229,7 @@ const SetCreator = (props) => {
                                 label="Collection Description"
                                 onChange={handleDescChange}
                                 sx={{width: '90%'}}
+                                color='info'
                             />
                             <Box sx={{textAlign: 'left', width: '90%'}}>
                                 <FormHelperText>
@@ -379,8 +363,6 @@ const SetCreator = (props) => {
                     {btnMsg[3]}
                 </Typography>
             </Box>
-
-            <Button onClick={logInfo} />
 
             <Box sx={{pt:'200px'}} />
         </div>

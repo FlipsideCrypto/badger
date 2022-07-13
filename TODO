@@ -2,24 +2,27 @@ CRITICAL:
     ☐ Deploy Contract button behaves oddly in the UX.
         ☐ Does not have loading indicator
         ☐ Becomes non-disabled again after tx is signed?
-    ☐ Set up Badge Creation quick so I can test to make sure the contract works well.
 
 
 CONTRACT: 
-    ☐ Full test suite
-        Make sure to test the metadata shit!!
-    ☐ Is there a reason to have the createBadge/updateBadge as separate functions?
-        They do literally the same thing just with a revert if there's an existing badge on the createBadge()
+    ☐ Contract deployed on Polygon and tested
     
 ACTIVE:
-    ☐ Contract tested and deployed on Polygon
+    ☐ Combine all waiting actions at the end.
+        Don't deploy contract or upload IPFS images until they confirm both their set and their badges.
+        Allow everything to be input, when they are done adding badges, have a final initialize dashboard,
+        The initialize dashboard does all of the current actions within the Badge and Set Creators.
+
+        Once the final initialize dashboard is complete, take them to their set managament dashboard.
+        Here they can create new badges, edit badges, or mint/revoke from their members.
+
+
+    ☐ Home Dashboard
+        Displays all sets, can click into a set to see all badges and revoke or mint from here.
+    ☐ Flow should be able to be interrupted and go back to edit a certain step.
     ☐ Management UI and functionality
             ☐ Error Messages
-        ☐ Create Badges
-            ☐ Front end dash
-            ☐ Interaction UX
-            ☐ Should be able to queue up a bunch of badges to send in one tx
-            note: this is mainly copying the create collection functionally
+            ☐ Bread crumbs for set up process
         ☐ Send Badges
             ☐ Pull badges of org
             ☐ Show badges on front end
@@ -28,17 +31,17 @@ ACTIVE:
         ☐ Manage Badges
             ☐ Rename, new image for badges
             ☐ Revoke Badges
-    ☐ Badge Preview
+    
     ☐ ENSURE THAT ONLY THE FRONT END CAN MAKE POST REQUESTS TO THE BACKEND.
+        Need Chance to help me out with this
     ☐ Make sure image preview is vertical and center aligned, outline box should not fit image.
-    ☐ Fix form outline on click
+    ☐ Do test walk throughs and polish UX
+
     
 Contract Interaction:
     ☐ Have transaction errors
     ☐ Do a final update of ABIs
-    ☐ Do test walk throughs and polish UX
     ☐ Set up host
-    ☐ Implement new brand
     
 V1.01:
     ☐ Signature to get into dashboard
@@ -52,6 +55,16 @@ V1.01:
     ☐ Mobile redesign
             
 ARCHIVED:
+    ✔ Is there a reason to have the createBadge/updateBadge as separate functions? @done(22-07-13 14:24)
+    ✔ Full test suite @done(22-07-13 14:23)
+    ✔ Set up Badge Creation quick so I can test to make sure the contract works well. @done(22-07-13 14:22)
+    ✔ Badge Preview @started(22-07-13 14:21) @done(22-07-13 14:21) @lasted(43s)
+    ✔ Create Badges @done(22-07-13 14:21)
+            ✔ Front end dash @done(22-07-13 14:21)
+            ✔ Interaction UX @done(22-07-13 14:21)
+            ✔ Should be able to queue up a bunch of badges to send in one tx @done(22-07-13 14:21)
+    ✔ Fix form outline on click @done(22-07-13 14:21)
+    ✔ Implement new brand @done(22-07-13 14:21)
     ✔ Create Collection @done(22-07-12 11:01)
         ✔ Update request @done(22-07-13 02:52)
         ✔ Post deployment request @done(22-07-13 02:53)
