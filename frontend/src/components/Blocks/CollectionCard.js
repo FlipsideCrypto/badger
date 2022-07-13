@@ -16,16 +16,16 @@ const CollectionCard = (props) => {
                     mt: '20px'
                 }}
             >
-                <Box sx={{display: 'flex', justifyContent: 'center', margin: '10px'}}>
+                <Box sx={{display: 'flex', justifyContent: 'center',}}>
                 {imageFile ?
                     <img
-                        style={{width: '95%', height: '95%', objectFit: 'contain', margin:'auto', display:'block'}}
+                        style={{width: '100%', height: '100%', objectFit: 'contain', margin:'auto', display:'block', borderRadius: '10px',}}
                         alt="Collection Image"
                         src={URL.createObjectURL(imageFile)}
                     />
                     :
                     <img
-                        style={{width: '90%', height: '90%', objectFit: 'contain', margin:'auto', display:'block'}}
+                        style={{width: '100%', height: '100%', objectFit: 'contain', margin:'auto', display:'block', borderRadius: '10px',}}
                         alt="Collection Image"
                         src={'/badger-black-white.svg'}
                     />
@@ -34,7 +34,7 @@ const CollectionCard = (props) => {
             </Box>
             <Typography 
                 variant="h4"
-                sx={{mt: '10px'}}
+                sx={{mx: '25px', my:'10px'}}
             >
                 {name}
             </Typography>
@@ -48,7 +48,7 @@ const CollectionCard = (props) => {
                 }}
             />
 
-            <Typography sx={{mb:'15px', mx:'10px'}}>
+            <Typography sx={{mx:'20px', mb:'15px'}}>
                 {description}
             </Typography>
         </div>

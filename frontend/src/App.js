@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Helmet } from 'react-helmet'
 
 import { providers } from 'ethers';
 import { createClient, WagmiConfig, chain, configureChains } from "wagmi";
@@ -12,6 +13,7 @@ import NavBar from "./components/Blocks/NavBar";
 
 import Landing from './components/Pages/Landing';
 import SetCreator from "./components/Dashboards/SetCreator"
+import BadgeCreator from "./components/Dashboards/BadgeCreator"
 import "./App.css";
 
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
@@ -124,14 +126,23 @@ function App() {
         <RainbowKitProvider coolMode chains={chains}>
           <ThemeProvider theme={theme}>
             <Router>
+              <Helmet>
+                <title>BADGER</title>
+                <meta property="og:title" content="BADGER" />
+                <meta name="twitter:title" content="BADGER" />
+                
+                <meta name="description" content="Badge-ify the roles that control the gates of your on-chain organization." />
+                <meta property="og:description" content="Badge-ify the roles that control the gates of your on-chain organization." />
+                <meta name="twitter:description" content="Badge-ify the roles that control the gates of your on-chain organization." />
+              </Helmet>
+
               <NavBar />
-            
               <Routes>
                 <Route exact path="/" element={<Landing />} />
-                <Route path="/create" element={<SetCreator />} />
                 <Route path="/home" element={<Home />} />
+                <Route path="/create" element={<SetCreator />} />
+                <Route path="/create/badges" element={<BadgeCreator />} />
               </Routes>
-  
               <Footer />
             </Router>
           </ThemeProvider>

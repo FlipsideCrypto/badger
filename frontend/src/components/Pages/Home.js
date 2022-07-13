@@ -1,12 +1,14 @@
 import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useAccount } from 'wagmi'
+import { useEffect, useState, } from 'react';
 
-import ConnectBtn from "../Blocks/ConnectBtn";
+import { useNavigate } from "react-router-dom";
+
+import BadgeCreator from "../Dashboards/BadgeCreator";
+import SetCreator from "../Dashboards/SetCreator";
 
 const Home = () => {
-    let navigate = useNavigate()
-    const { address, isConnecting, isDisconnected } = useAccount();
+    const [badgeSetContract, setBadgeSetContract] = useState();
+    const [stage, setStage] = useState('createSet')
 
     // TODO: Home page should give a logged in user the ability to navigate to any
     //          dashboard that they have access to. If an admin, they should be able 
@@ -16,22 +18,19 @@ const Home = () => {
 
     return (
         <>
-            {address ?
-                <Button
-                    onClick={() => navigate('/create')}
-                    variant="contained"
-                    sx={{ 
-                        mt: '400px', 
-                        display: 'flex',
-                        alignSelf: 'center', 
-                        mx: 'auto', 
-                        width: '30%'
-                    }}
-                >
-                    ENTER APP
-                </Button>
-                :
-                <ConnectBtn />
+            {stage == 'createSet' &&
+                <SetCreator 
+                    badgeSetContract={badgeSetContract}
+                    setBadgeSetContract={setBadgeSetContract}
+                    setStage={setStage}
+                />
+            }
+            {stage == 'createBadge' &&
+                <BadgeCreator
+                    badgeSetContract={badgeSetContract}
+                    setBadgeSetContract={setBadgeSetContract}
+                    setStage={setStage}
+                />
             }
         </>
     )

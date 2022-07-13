@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAccount } from 'wagmi'
 
 import ConnectBtn from "../Blocks/ConnectBtn";
+import BigBox from "../Blocks/BigBox"
 
 const Landing = () => {
     let navigate = useNavigate()
@@ -15,22 +16,22 @@ const Landing = () => {
     return (
         <div className='page-margin-left'>
             <Grid container spacing={0} sx={{textAlign: 'left', mt: '20vh'}}>
-                <Grid item xs={9} sm={8} lg={7}>
+                <Grid item xs={8} sm={6} lg={6}>
                     <Typography variant="h1">
                         Effortlessly create and distribute on-chain Badges for your community 
                         members to display and track their roles, permissions, and accolades.
                     </Typography>
                 </Grid>
-                <Grid item xs={3} sm={4} lg={5} sx={{flexGrow: 1}}>
-                    <Typography variant="h2">
-                        IMAGE
-                    </Typography>
+                <Grid item xs={4} sm={6} lg={6} sx={{flexGrow: 1}}>
+                    <Box sx={{backgroundColor: '#000000', height: '150%', width: '100%'}}>
+                        <p style={{color: '#FFFFFF'}}>PLACEHOLDER IMAGE</p>
+                    </Box>
                 </Grid>
 
                 <Grid item xs={8} sm={6} md={4} lg={3} sx={{mt: '40px'}}>
                     {address ?
                         <Button
-                            onClick={() => navigate('/create')}
+                            onClick={() => navigate('/home')}
                             variant="contained"
                             sx={{ 
                                 display: 'flex',
@@ -59,7 +60,9 @@ const Landing = () => {
                     </Typography>
                 </Grid>
                 <Grid item xs={6} sm={5} md={6}>
-                    Maybe token component view
+                    <Box sx={{backgroundColor: '#000000', height: '150%', width: '100%'}}>
+                        <p style={{color: '#FFFFFF'}}>PLACEHOLDER IMAGE</p>
+                    </Box>
                 </Grid>
                 <Grid item xs={0} sm={1} xl={2} />
 
@@ -146,10 +149,23 @@ const Landing = () => {
                             <Typography variant="h2" sx={{textAlign: 'center', }}>
                                 Step into the new world enabled by a community with on-chain Badges.                   
                             </Typography>
-
-                            <Typography variant="body1" sx={{mt: '20px'}}>
-                                
-                            </Typography>
+                            {/* <Grid container spacing={2} sx={{mt: '20px'}}>
+                                    <Grid item xs={6}>
+                                        <BigBox>
+                                            <Box sx={{borderRadius: '10px', backgroundColor: 'FFFFFF'}}>
+                                                <Typography variant="h7">1</Typography>
+                                            </Box>
+                                            <Typography variant="body1">Represent your community on chain.</Typography>
+                                        </BigBox>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <BigBox>
+                                            <Typography variant="body1">
+                                                4. Out of the box integration with leading DAO tools
+                                            </Typography>
+                                        </BigBox>
+                                    </Grid>
+                            </Grid> */}
                         </Grid>
                         <Grid item xs={1} xl={3}/>
                     </Grid>
@@ -163,15 +179,15 @@ const Landing = () => {
                     </Typography>
                 </Grid>
                 <Grid item xs={2} sm={3} lg={6} sx={{flexGrow: 1}}>
-                    <Typography variant="h2">
-                        IMAGE
-                    </Typography>
+                    <Box sx={{backgroundColor: '#000000', height: '100%', width: '100%'}}>
+                        <p style={{color: '#FFFFFF'}}>PLACEHOLDER IMAGE</p>
+                    </Box>
                 </Grid>
 
                 <Grid item xs={8} sm={6} md={4} lg={3} sx={{mt: '40px'}}>
                     {address ?
                         <Button
-                            onClick={() => navigate('/create')}
+                            onClick={() => navigate('/home')}
                             variant="contained"
                             sx={{ 
                                 display: 'flex',

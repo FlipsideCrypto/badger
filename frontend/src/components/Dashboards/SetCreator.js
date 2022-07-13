@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, Suspense } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -13,8 +13,10 @@ import { FormControl } from '@mui/material';
 import CollectionCard from '../Blocks/CollectionCard'
 import BigBox from "../Blocks/BigBox"
 
-const SetCreator = () => {
+const SetCreator = (props) => {
     let navigate = useNavigate();
+
+    const { badgeSetContract, setBadgeSetContract, setStage} = props;
 
     const { address, isConnecting, isDisconnected } = useAccount();
     const { data: signer, isError, isLoading } = useSigner();
@@ -30,7 +32,6 @@ const SetCreator = () => {
     const [imageFile, setImageFile] = useState();
 
     const [deploymentArgs, setDeploymentArgs] = useState();
-    const [deployedCloneAddress, setDeployedCloneAddress] = useState();
     const [loading, setLoading] = useState([false, false, false]);
     const [btnSuccess, setBtnSuccess] = useState([false, false, false])
     const [btnMsg, setButtonMsg] = useState([
@@ -41,19 +42,6 @@ const SetCreator = () => {
     ])
 
     const fileInput = useRef();
-
-    function buttonLoadingSx(btnIdx) {
-        if (!loading[btnIdx]) return {}
-        const style =  {
-            ...(loading[btnIdx] && {
-                bgcolor: '#A8FBB3',
-                pointerEvents: 'none',
-                opacity: '0.60'
-            }),
-        }
-
-        return style
-      };
 
     function buttonSuccessSx(btnIdx) {
         if (!btnSuccess[btnIdx]) return {}
@@ -99,8 +87,6 @@ const SetCreator = () => {
         
         let deploymentArgs;
 
-        console.log('loading', loading[0])
-
         axios.post(`${process.env.REACT_APP_API_URL}/badges/new_set/`, formData, config)
         .then(res => {
                 console.log('Uploading Data', res)
@@ -122,7 +108,7 @@ const SetCreator = () => {
         )
         .then(() => {
             console.log('Setting loading to false currently set to:', loading[0])
-            setLoading([false])
+            setLoading([false, false, false])
         });
     }
 
@@ -142,7 +128,7 @@ const SetCreator = () => {
             .then((res) => {
                 console.log('Badge Set Cloned', res)
 
-                setDeployedCloneAddress(res.events[0].args.setAddress)
+                setBadgeSetContract(res.events[0].args.setAddress)
                 setBtnSuccess(btnSuccess => [...btnSuccess, true])
             })
             .catch((res) => {
@@ -151,7 +137,7 @@ const SetCreator = () => {
             })
         })
         .then(
-            setLoading([false, false])
+            setLoading([false, false, false])
         )
     }
 
@@ -159,8 +145,8 @@ const SetCreator = () => {
         setLoading([false, false, true])
 
         const clonedContract = new ethers.Contract(
-            proxyHandlerContractAddress,
-            proxyAbi,
+            badgeSetContract,
+            cloneAbi,
             signer
         );
 
@@ -182,11 +168,39 @@ const SetCreator = () => {
                 // todo: error message
             })
         })
-        .then(setLoading([false, false, false]))
-        // TODO: post request that gets the set and updates relative info put before set loading false
-
+        .then(
+            finalizeSet()
+        )
+        .then(() => {
+            setLoading([false, false, false])
+        })
     }
 
+    // Sends finalized data to api
+    const finalizeSet = async () => {
+        const formData = new FormData();
+        const config = {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+        };
+
+        formData.append('contract_hash', deploymentArgs.contract_uri_hash)
+        formData.append('contract_address', badgeSetContract)
+
+
+        axios.post(`${process.env.REACT_APP_API_URL}/badges/finalize_set/`, formData, config)
+        .then(res => {
+            if(res.data['success']) {
+                setBtnSuccess([true]);
+            }
+            else {
+                console.log('Invalid Upload')
+                // TODO: Error message
+                setBtnSuccess([false]);
+            }
+        })
+    }
 
     useEffect(() => {        
         if(!chain) {
@@ -363,7 +377,7 @@ const SetCreator = () => {
                 <Button
                     variant="contained"
                     disabled={!btnSuccess[2]}
-                    onClick={() => navigate('/create/badges')}
+                    onClick={() => setStage('createBadge')}
                 >
                     SET UP BADGES
                 </Button>

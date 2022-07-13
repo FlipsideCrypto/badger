@@ -1,6 +1,7 @@
 from venv import create
 from django.http import JsonResponse
 from django.conf import settings
+from django.utils import timezone
 
 from rest_framework.permissions import AllowAny
 from rest_framework import viewsets
@@ -28,6 +29,7 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
         setName = request.POST.get("name", None)
         setDesc = request.POST.get("desc", None)
         creator_address = request.POST.get("creator_address", None)
+        chain = request.POST.get("chain", None)
 
         ## TODO: Clean description and add line break unicode
 
@@ -65,22 +67,32 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
             creator_address=creator_address,
             image_hash=ipfs_img_hash,
             created_at=created_at,
-            contract_uri_hash=contract_uri_hash
+            contract_uri_hash=contract_uri_hash,
+            chain=chain
         )
         badgeSetObj.save()
 
         return JsonResponse(response)
 
     @action(methods=["post"], detail=False)
-    def update_set(self, request):
+    def finalize_set(self, request):
+        contract_uri_hash = request.POST.get('contract_hash')
         contract_address = request.POST.get("contract_address", None)
-        contract_initialized = request.POST.get("contract_initialized", None)
-        badges = request.POST.get("badges", None)
         chain = request.POST.get("chain", None)
 
-        # for values in request update model and save.
+        badge_set = self.get_queryset().filter(contract_uri_hash=contract_uri_hash).first()
+        print(badge_set)
 
-        pass
+        ## TODO: This is fuckin exploitable. What's a good way around this?
+        if badge_set.contract_initialized:
+            return JsonResponse({'success': False, 'message':'Contract already initialized.'})
+
+        badge_set.contract_address = contract_address
+        badge_set.contract_initialized = True
+        badge_set.updated_at = timezone.now()
+        badge_set.save()
+
+        return JsonResponse({'success': True})
 
     def pin_image(self, imageFile):
         with NamedTemporaryFile(suffix=".gif", delete=True) as temp_file:

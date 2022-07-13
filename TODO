@@ -7,10 +7,11 @@ CONTRACT:
 ACTIVE:
     ☐ Contract tested and deployed on Polygon
     ☐ Management UI and functionality
-        ☐ Create Collection
+        ✔ Create Collection @done(22-07-12 11:01)
             ☐ Update request
             ☐ Post deployment request
-            ☐ Status Message For Uploading
+            ✔ Status Message For Uploading @done(22-07-12 11:01)
+            ☐ Error Messages
         ☐ Create Badges
             ☐ Front end dash
             ☐ Interaction UX
@@ -25,8 +26,10 @@ ACTIVE:
             ☐ Rename, new image for badges
             ☐ Revoke Badges
     ☐ Badge Preview
-    ☐ Rate limit IPFS upload
+    ☐ How to ensure that
     ☐ Mobile formatting of landing page and header
+    ☐ Make sure image preview is vertical and center aligned, outline box should not fit image.
+    ☐ Fix form outline on click
     
 Contract Interaction:
     ☐ Have transaction errors
@@ -37,6 +40,7 @@ Contract Interaction:
     
 V1.01:
     ☐ Signature to get into dashboard
+    ☐ Rate limit IPFS upload
     ☐ Add webm conversion for preview and IPFS upload
     ☐ Blocknative events for tx not done through our front end
     ☐ FAQ Page
