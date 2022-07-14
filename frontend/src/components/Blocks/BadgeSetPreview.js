@@ -4,11 +4,6 @@ import BigBox from './BigBox'
 const BadgeSetPreview = (props) => {
     const { badgeData } = props;
 
-    const breakpoints = () => {
-
-
-    }
-
     return (
         <Box sx={{width: '60%', margin:'auto'}}>
             <Grid container columnSpacing={4}>

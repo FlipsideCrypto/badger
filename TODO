@@ -3,15 +3,7 @@ CRITICAL:
         ☐ Does not have loading indicator
         ☐ Becomes non-disabled again after tx is signed?
     ☐ Redesign flow of creation
-        ☐ All data kept in Home -- Rename home to something more suitable
-        ✔ Create Set @done(22-07-14 12:43)
-            ✔ No buttons other than to get to the next stage and file upload @done(22-07-14 12:43)
-            ☐ Form data should be the default use state to allow for directing backwards
-            ✔ No API calls @done(22-07-14 12:43)
-        ☐ Create Badges
-            ☐ No buttons other than queueing up multiple badges.
             ☐ Need a good way to show previous badges and let them move back and forth between them
-            ☐ need array of image files in that data that maintains state
         ☐ Finalize
             ☐ Might need a good way to show this but for now we can just flow with our current button stack
             ☐ Make API calls when certain things get finalized
@@ -72,6 +64,14 @@ V1.01:
     ☐ Mobile redesign
             
 ARCHIVED:
+    ✔ All data kept in Home -- Rename home to something more suitable @done(22-07-14 15:17)
+    ✔ Create Set @done(22-07-14 12:43)
+        ✔ No buttons other than to get to the next stage and file upload @done(22-07-14 12:43)
+        ✔ Form data should be the default use state to allow for directing backwards @done(22-07-14 15:17)
+        ✔ No API calls @done(22-07-14 12:43)
+    ✔ Create Badges @done(22-07-14 15:17)
+        ✔ No buttons other than queueing up multiple badges. @done(22-07-14 15:17)
+        ✔ need array of image files in that data that maintains state @done(22-07-14 15:17)
     ✔ Flow should be able to be interrupted and go back to edit a certain step. @started(22-07-14 02:53) @done(22-07-14 02:53) @lasted(11s)
     ✔ Is there a reason to have the createBadge/updateBadge as separate functions? @done(22-07-13 14:24)
     ✔ Full test suite @done(22-07-13 14:23)
