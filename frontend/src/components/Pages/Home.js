@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useSigner, useAccount } from "wagmi"
 
-import { Button } from "@mui/material";
-
 import BadgeCreator from "../Dashboards/BadgeCreator";
 import SetCreator from "../Dashboards/SetCreator";
-import BadgeMinter from "../Dashboards/BadgeMinter";
+import BadgeManager from "../Dashboards/BadgeManager";
+import FinalizeSet from "../Dashboards/FinalizeSet";
 
 const Home = () => {
     let navigate = useNavigate();
@@ -14,17 +13,37 @@ const Home = () => {
     const { data: signer } = useSigner();
 
     // TODO: Fix these default values
-    const [badgeSetContract, setBadgeSetContract] = useState('');
     const [stage, setStage] = useState('createSet')
-    // TODO: Home page should give a logged in user the ability to navigate to any
-    //          dashboard that they have access to. If an admin, they should be able 
-    //          to navigate to create badges, manage badges, or create a new set.
-    // TODO: Design this before jumping into it
+    const [badgeSetContract, setBadgeSetContract] = useState('0x76c212d4Ad177eD7E099d527BBF7aceCa3868ED0');
+    
+    const [badgeSetImageFile, setBadgeSetImageFile] = useState();
+    const [badgeSetDeploymentArgs, setBadgeSetDeploymentArgs] = useState();
+    const [badgeDataToFinalize, setBadgeDataToFinalize] = useState([]);
+    const [badgeId, setBadgeId] = useState(0)
+
     useEffect(() => {        
         if(!address) {
             navigate('/')
         }
     }, [])
+
+    function renderNewBadgeCreator() {
+        return <BadgeCreator
+            key={`badge-${badgeId}`}
+            badgeSetContract={badgeSetContract}
+            setStage={setStage}
+            address={address}
+            signer={signer}
+            badgeDataToFinalize={badgeDataToFinalize}
+            setBadgeDataToFinalize={setBadgeDataToFinalize}
+            setBadgeId={setBadgeId}
+            badgeId={badgeId}
+        />
+    }
+
+    useEffect(() => {
+        renderNewBadgeCreator()
+    }, [badgeId])
 
     return (
         <>
@@ -38,17 +57,22 @@ const Home = () => {
                 />
             }
             {stage === 'createBadge' &&
-                <BadgeCreator
+                renderNewBadgeCreator()
+            }
+            {stage === 'mintBadges' &&
+                <BadgeManager
                     badgeSetContract={badgeSetContract}
                     setStage={setStage}
                     address={address}
                     signer={signer}
                 />
             }
-            {stage === 'mintBadges' &&
-                <BadgeMinter
-                    badgeSetContract={badgeSetContract}
+            {stage === 'finalizeSet' &&
+                <FinalizeSet 
                     setStage={setStage}
+                    badgeSetImageFile={badgeSetImageFile}
+                    badgeSetDeploymentArgs={badgeSetDeploymentArgs}
+                    badgeDataToFinalize={badgeDataToFinalize}
                     address={address}
                     signer={signer}
                 />

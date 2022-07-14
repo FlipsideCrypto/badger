@@ -11,20 +11,18 @@ const BigBox = (props) => {
                 display: 'flex'
             }}
         >
-            {/* <div style={{margin: '7px', marginRight: '8px'}}> */}
-                <Box
-                    sx={{
-                        margin: '7px',
-                        border: '1px solid black',
-                        borderRadius: '6px',
-                        width: `calc(100% - 14px)`,
-                        height: 'calc(100% - 14px)',
-                        background: '#FFFFFF',
-                    }}
-                >
-                    {props.children}
-                </Box>
-            {/* </div> */}
+            <Box
+                sx={{
+                    margin: '7px',
+                    border: '1px solid black',
+                    borderRadius: '6px',
+                    width: `calc(100% - 14px)`,
+                    height: 'calc(100% - 14px)',
+                    background: '#FFFFFF',
+                }}
+            >
+                {props.children}
+            </Box>
         </Box>
     )
 }

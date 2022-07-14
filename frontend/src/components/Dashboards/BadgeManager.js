@@ -12,12 +12,17 @@ import { FormControl } from '@mui/material';
 import CollectionCard from '../Blocks/CollectionCard'
 import BigBox from "../Blocks/BigBox"
 
-const BadgeCreator = (props) => {
-    const { badgeSetContract, setStage, signer, address } = props
+const BadgeManager = (props) => {
+    const { 
+        badgeSetContract, 
+        setStage, 
+        signer, 
+        address 
+    } = props
 
     return (
         <h3>{ badgeSetContract }</h3>
     )
 }
 
-export default BadgeCreator
+export default BadgeManager;

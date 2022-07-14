@@ -5,16 +5,23 @@ import axios from 'axios';
 import { ethers } from "ethers";
 import cloneAbi from "../../BadgerSet.json"
 
-import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider, CircularProgress, LinearProgress } from '@mui/material';
+import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider, LinearProgress, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
 import { FormControl } from '@mui/material';
 
 import CollectionCard from '../Blocks/CollectionCard'
 import BigBox from "../Blocks/BigBox"
+import BadgeSetPreview from "../Blocks/BadgeSetPreview"
 
 const BadgeCreator = (props) => {
-    const { badgeSetContract, setStage, signer, address } = props
+    const { 
+        badgeSetContract, 
+        setStage, 
+        signer, 
+        address,
+        badgeDataToFinalize, setBadgeDataToFinalize,
+        setBadgeId
+    } = props
 
-    const [badgeData, setBadgeData] = useState([]);
     const [badgeName, setBadgeName] = useState('Badge Name');
     const [badgeDesc, setBadgeDesc] = useState('Description of the Badge.');
     const [badgeImgFile, setBadgeImgFile] = useState();
@@ -74,27 +81,28 @@ const BadgeCreator = (props) => {
         axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/pin_badge_image/`, formData, config)
         .then((res) => {
             console.log('Image pin response', res)
+            setCurrentBadgeIdx(res.data.token_id)
+            setBadgeImgHash(res.data.image_hash)
             setBtnSuccess([true, false, false])
             setLoading([false, false, false])
         })
         .catch((res) => {
             console.log('Error pinning image', res)
-            setLoading([false, false, false])
         })
     }
 
-    const handleBadgeFinalize = (createAnother) => {
+    const handleBadgeFinalize = () => {
         const data = [badgeName, badgeDesc, badgeImgHash]
-        setBadgeData(badgeData => [...badgeData, data])
+        setBadgeDataToFinalize(badgeDataToFinalize => [...badgeDataToFinalize, data])
+    }
 
-        // TODO: post to pin image
-
-        if (createAnother) {
-            // TODO: Clean out all previous state data.
-        }
+    const handleNewBadgeForm = () => {
+        setBadgeId((badgeId) => badgeId+1);
     }
 
     const setBadgesTransaction = () => {
+        setLoading([false, false, true]);
+
         const contract = new ethers.Contract(
             badgeSetContract,
             cloneAbi,
@@ -103,40 +111,56 @@ const BadgeCreator = (props) => {
             
         let tokenIds = [];
         let formData = new FormData();
-        // TODO: We need to get their last used tokenId.
+        formData.append('contract_address', badgeSetContract);
+        const config = {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+        };
+
         for(
-            let i = currentBadgeIdx; 
-            i < badgeData.length + currentBadgeIdx; 
+            let i = 0; 
+            i < badgeDataToFinalize.length; 
             i++
         ) {
-            tokenIds.push(i);
-            formData.append('tokenId', i)
-            formData.append('name', badgeData[i][0])
-            formData.append('desc', badgeData[i][1])
-            formData.append('imageHash', badgeData[i][2])
+            tokenIds.push(i + currentBadgeIdx);
+            formData.append('tokenId', i + currentBadgeIdx)
+            formData.append('name', badgeDataToFinalize[i][0])
+            formData.append('desc', badgeDataToFinalize[i][1])
+            formData.append('imageHash', badgeDataToFinalize[i][2])
         }
 
-
+        console.log(tokenIds, badgeDataToFinalize)
         contract.createBadgeTypeBundle(
             tokenIds,
-            badgeData
+            badgeDataToFinalize
         )
         .then((transaction) => {
             console.log('Creating Badges..')
 
             transaction.wait()
-            .then((res) => {
-                // post data to api
-            })
-            .catch((error) => {
-                console.log('Error with tx', error)
-            })
-            .then((res) => {
-                console.log('What does this res do', res)
-
+            .then(() => {
+                axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/new_badges/`, formData, config)
+                .then(() => {
+                    setBtnSuccess([true, true, true])
+                    setLoading([false, false, false])
+                })
+                .catch((error) => {
+                    console.log('error with post', error)
+                })
             })
         })
     }
+
+    useEffect(() => {
+        if (
+            !badgeImgHash ||
+            badgeDataToFinalize.length > 1 &&
+            badgeImgHash === badgeDataToFinalize[badgeDataToFinalize.length - 1][2]
+        ) return
+
+        handleBadgeFinalize();
+    }, [badgeImgHash])
 
     return (
         <div style={{marginLeft: '50px', marginRight: '50px'}}>
@@ -158,8 +182,9 @@ const BadgeCreator = (props) => {
                 each Badge Type has to be set in the contract.
             </Typography>
 
-            <Grid container rowSpacing={1} columnSpacing={2} sx={{textAlign: 'left'}}>
-                <Grid item xs={12} md={6}>
+            <Grid container rowSpacing={1} columnSpacing={3} sx={{textAlign: 'left'}}>
+                <Grid item xs={0} md={1} lg={2} />
+                <Grid item xs={12} md={5} lg={4}>
                     <BigBox>
                         <FormControl sx={{width: '100%', margin:'auto', my:'20px', alignItems:'center'}}>
                             <TextField 
@@ -167,7 +192,6 @@ const BadgeCreator = (props) => {
                                 onChange={handleNameChange}
                                 sx={{width: '90%'}}
                                 color='info'
-                                disabled={btnSuccess[0]}
                             />
                             
                             <Box sx={{textAlign: 'left', width: '90%'}}>
@@ -184,7 +208,6 @@ const BadgeCreator = (props) => {
                                 onChange={handleDescChange}
                                 sx={{width: '90%'}}
                                 color='info'
-                                disabled={btnSuccess[0]}
                             />
                             <Box sx={{textAlign: 'left', width: '90%'}}>
                                 <FormHelperText>
@@ -203,7 +226,6 @@ const BadgeCreator = (props) => {
                                     multiple type="file" 
                                     color='info'
                                     onChange={selectImage}
-                                    disabled={btnSuccess[0]}
                                 />
                                 <Button 
                                     sx={{width: '100%', margin:'auto', borderStyle: 'dashed'}}
@@ -215,14 +237,14 @@ const BadgeCreator = (props) => {
                                     </Typography>
                                 </Button>
                                 <FormHelperText>
-                                    Image for the Badge token
+                                    Image for the Badge token (1:1 Aspect Ratio Recommended)
                                 </FormHelperText>
                             </label>
                         </FormControl>
                     </BigBox>
                 </Grid>
 
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={5} lg={4}>
                     <BigBox>
                         <CollectionCard
                             imageFile={badgeImgFile}
@@ -230,17 +252,21 @@ const BadgeCreator = (props) => {
                             description={badgeDesc}
                         />
                     </BigBox>
+                    <Grid item xs={0} md={1} lg={2} />
                 </Grid>
-                {/* Control Buttons */}
-                <Grid item xs={1} md={2} />
-                <Grid item xs={10} md={8}>
+            </Grid>
+
+            {/* Control Buttons */}
+            <Grid container columnSpacing={2}>
+
+                <Grid item xs={1} md={3} lg={4}/>
+                <Grid item xs={10} md={6} lg={4}>
                     <Box 
                         sx={{
                             display: 'flex', 
                             flexDirection:'column',
-                            // width: '60%',
-                            // margin: 'auto',
-                            mt: '50px'
+                            margin: 'auto',
+                            mt: '100px',
                         }}
                     >
                         <Typography variant="h2" sx={{textAlign: 'center'}}>
@@ -272,7 +298,7 @@ const BadgeCreator = (props) => {
                                     variant="contained"
                                     sx={buttonSuccessSx(1)}
                                     disabled={!btnSuccess[0]}
-                                    onClick={() => handleBadgeFinalize(true)}
+                                    onClick={() => handleNewBadgeForm()}
                                 >
                                     CREATE ANOTHER
                                 </Button>
@@ -299,7 +325,7 @@ const BadgeCreator = (props) => {
 
                         <Button
                                 variant="contained"
-                                sx={buttonSuccessSx(2)}
+                                sx={buttonSuccessSx(3)}
                                 disabled={!btnSuccess[2]}
                                 onClick={() => setStage('mintBadges')}
                             >
@@ -310,11 +336,37 @@ const BadgeCreator = (props) => {
                         </Typography>
 
                     </Box>
-
                 </Grid>
-                <Grid item xs={1} md={2} />
-                
+                <Grid item xs={1} md={3} lg={4} />
             </Grid>
+
+            {badgeDataToFinalize.length > 0 &&
+                <>
+                    <Grid container columnSpacing={2}>
+                        <Grid item xs={1} md={3} lg={4}/>
+                        <Grid item xs={10} md={6} lg={4}>
+                            <Box 
+                                sx={{
+                                    display: 'flex', 
+                                    flexDirection:'column',
+                                    // width: '60%',
+                                    margin: 'auto',
+                                    mt: '100px',
+                                }}
+                            >
+                                <Typography variant="h2" sx={{textAlign: 'center', mt: '50px'}}>
+                                    QUEUED BADGES
+                                </Typography>
+                                <Divider sx={{mx: 'auto',mb:'15px', width: '80%',height: '3px'}}/>
+                        
+                            </Box>
+                        </Grid>
+                        <Grid item xs={1} md={3} lg={4}/>
+                    </Grid>
+    
+                    <BadgeSetPreview badgeData={badgeDataToFinalize} />
+                </>
+            }
         </div>
     )
 }

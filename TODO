@@ -8,17 +8,9 @@ CONTRACT:
     ☐ Contract deployed on Polygon and tested
     
 ACTIVE:
-    ☐ Combine all waiting actions at the end.
-        Don't deploy contract or upload IPFS images until they confirm both their set and their badges.
-        Allow everything to be input, when they are done adding badges, have a final initialize dashboard,
-        The initialize dashboard does all of the current actions within the Badge and Set Creators.
-
-        Once the final initialize dashboard is complete, take them to their set managament dashboard.
-        Here they can create new badges, edit badges, or mint/revoke from their members.
-
-
     ☐ Home Dashboard
         Displays all sets, can click into a set to see all badges and revoke or mint from here.
+    ☐ SVGs not rendering from ipfs
     ☐ Flow should be able to be interrupted and go back to edit a certain step.
     ☐ Management UI and functionality
             ☐ Error Messages
@@ -44,6 +36,14 @@ Contract Interaction:
     ☐ Set up host
     
 V1.01:
+    ☐ Move to the FinalizeSet flow.
+        ☐ Combine all waiting actions at the end.
+        Don't deploy contract or upload IPFS images until they confirm both their set and their badges.
+        Allow everything to be input, when they are done adding badges, have a final initialize dashboard,
+        The initialize dashboard does all of the current actions within the Badge and Set Creators.
+
+        Once the final initialize dashboard is complete, take them to their set managament dashboard.
+        Here they can create new badges, edit badges, or mint/revoke from their members.
     ☐ Signature to get into dashboard
     ☐ Rate limit IPFS upload
     ☐ Add webm conversion for preview and IPFS upload

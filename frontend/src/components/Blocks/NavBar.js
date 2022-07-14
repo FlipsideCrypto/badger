@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import ConnectBtn from "./ConnectBtn";
 
-const NavBar = () => {
+const Navbar = () => {
     let navigate = useNavigate();
 
     return (
@@ -56,4 +56,4 @@ const NavBar = () => {
       );
 }
 
-export default NavBar;
+export default Navbar;

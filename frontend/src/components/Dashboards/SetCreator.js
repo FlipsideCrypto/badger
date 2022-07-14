@@ -206,8 +206,9 @@ const SetCreator = (props) => {
                 A Set will be it's own contract while Badges are tokens within that contract.
             </Typography>
 
-            <Grid container rowSpacing={1} columnSpacing={2} sx={{textAlign: 'left'}}>
-                <Grid item xs={6}>
+            <Grid container rowSpacing={1} columnSpacing={3} sx={{textAlign: 'left'}}>
+                <Grid item xs={0} md={1} lg={2} />
+                <Grid item xs={12} md={5} lg={4}>
                     <BigBox>
                         <FormControl sx={{width: '100%', margin:'auto', my:'20px', alignItems:'center'}}>
                             <TextField 
@@ -225,7 +226,7 @@ const SetCreator = (props) => {
                         <FormControl sx={{width: '100%', margin:'auto', mb:'20px', alignItems:'center'}}>
                             <TextField 
                                 multiline
-                                rows={12}
+                                rows={10}
                                 label="Collection Description"
                                 onChange={handleDescChange}
                                 sx={{width: '90%'}}
@@ -265,7 +266,7 @@ const SetCreator = (props) => {
                     </BigBox>
                 </Grid>
 
-                <Grid item xs={6}>
+                <Grid item xs={12} md={5} lg={4}>
                     <BigBox>
                         <CollectionCard
                             imageFile={imageFile}
@@ -274,97 +275,103 @@ const SetCreator = (props) => {
                         />
                     </BigBox>
                 </Grid>
+                <Grid item xs={0} md={1} lg={2} />
             </Grid>
 
-            <Box 
-                sx={{
-                    display: 'flex', 
-                    flexDirection:'column',
-                    width: '60%',
-                    margin: 'auto',
-                    mt: '50px'
-                }}
-            >
-                <Typography variant="h2" sx={{textAlign: 'center'}}>
-                    FINALIZE THE SET
-                </Typography>
-                <Divider sx={{mx: 'auto',mb:'15px', width: '50%',height: '3px'}}/>
-
-                <Box sx={{position: 'relative', margin: 'auto', width: '100%'}}>
-                    <Button
-                        variant="contained"
-                        sx={buttonSuccessSx(0)}
-                        disabled={loading[0]}
-                        width={'100%'}
-                        onClick={handleIpfsUpload}
+            <Grid container columnSpacing={2}>
+                <Grid item xs={1} md={3} lg={4}/>
+                <Grid item xs={10} md={6} lg={4}>
+                    <Box 
+                        sx={{
+                            display: 'flex', 
+                            flexDirection:'column',
+                            margin: 'auto',
+                            mt: '100px'
+                        }}
                     >
-                        UPLOAD SET DATA TO IPFS
-                    </Button>
-                    {loading[0] && (
-                        <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
-                            <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                        <Typography variant="h1" sx={{textAlign: 'center'}}>
+                            FINALIZE THE SET
+                        </Typography>
+                        <Divider sx={{mx: 'auto',mb:'15px', width: '50%',height: '3px'}}/>
+
+                        <Box sx={{position: 'relative', margin: 'auto', width: '100%'}}>
+                            <Button
+                                variant="contained"
+                                sx={buttonSuccessSx(0)}
+                                disabled={loading[0]}
+                                width={'100%'}
+                                onClick={handleIpfsUpload}
+                            >
+                                UPLOAD SET DATA TO IPFS
+                            </Button>
+                            {loading[0] && (
+                                <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
+                                    <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                                </Box>
+                            )}
                         </Box>
-                    )}
-                </Box>
-                <Typography variant="body1" sx={{textAlign: 'center', mb: '20px', mt: '5px'}}>
-                    {btnMsg[0]}
-                </Typography>
+                        <Typography variant="body1" sx={{textAlign: 'center', mb: '20px', mt: '5px'}}>
+                            {btnMsg[0]}
+                        </Typography>
 
-                <Box sx={{position: 'relative', margin: 'auto', width: '100%'}}>
-                    <Button
-                        variant="contained"
-                        sx={buttonSuccessSx(1)}
-                        disabled={!btnSuccess[0] || loading[1]}
-                        onClick={cloneContract}
-                    >
-                        DEPLOY CONTRACT CLONE
-                    </Button>
-                    
-                    {loading[1] && (
-                        <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
-                            <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                        <Box sx={{position: 'relative', margin: 'auto', width: '100%'}}>
+                            <Button
+                                variant="contained"
+                                sx={buttonSuccessSx(1)}
+                                disabled={!btnSuccess[0] || loading[1]}
+                                onClick={cloneContract}
+                            >
+                                DEPLOY CONTRACT CLONE
+                            </Button>
+                            
+                            {loading[1] && (
+                                <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
+                                    <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                                </Box>
+                            )}
                         </Box>
-                    )}
-                </Box>
 
-                <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
-                    {btnMsg[1]}
-                </Typography>
+                        <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                            {btnMsg[1]}
+                        </Typography>
 
-                <Box sx={{position: 'relative', margin: 'auto', width: '100%'}}>
-                    <Button
-                        variant="contained"
-                        sx={buttonSuccessSx(2)}
-                        disabled={!btnSuccess[1] || loading[2]}
-                        onClick={initializeContract}
-                    >
-                        INITIALIZE CONTRACT
-                    </Button>
+                        <Box sx={{position: 'relative', margin: 'auto', width: '100%'}}>
+                            <Button
+                                variant="contained"
+                                sx={buttonSuccessSx(2)}
+                                disabled={!btnSuccess[1] || loading[2]}
+                                onClick={initializeContract}
+                            >
+                                INITIALIZE CONTRACT
+                            </Button>
 
-                    {loading[2] && (
-                        <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
-                            <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                            {loading[2] && (
+                                <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
+                                    <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                                </Box>
+                            )}
                         </Box>
-                    )}
-                </Box>
 
-                <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
-                    {btnMsg[2]}
-                </Typography>
+                        <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                            {btnMsg[2]}
+                        </Typography>
 
-                <Button
-                    variant="contained"
-                    disabled={!btnSuccess[2]}
-                    onClick={() => setStage('createBadge')}
-                >
-                    SET UP BADGES
-                </Button>
-                <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
-                    {btnMsg[3]}
-                </Typography>
-            </Box>
+                        <Button
+                            variant="contained"
+                            disabled={!btnSuccess[2]}
+                            onClick={() => setStage('createBadge')}
+                        >
+                            SET UP BADGES
+                        </Button>
+                        <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                            {btnMsg[3]}
+                        </Typography>
+                    </Box>
+                </Grid>
+            </Grid>
+            <Grid item xs={1} md={3} lg={4} />
 
-            <Box sx={{pt:'200px'}} />
+            <Box sx={{pt:'100px'}} />
         </div>
     )
 }

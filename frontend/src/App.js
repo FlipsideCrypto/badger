@@ -9,7 +9,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import Home from './components/Pages/Home';
 import Footer from "./components/Blocks/Footer";
-import NavBar from "./components/Blocks/NavBar";
+import NavBar from "./components/Blocks/Navbar";
 
 import Landing from './components/Pages/Landing';
 import SetCreator from "./components/Dashboards/SetCreator"
@@ -75,7 +75,7 @@ const theme = createTheme({
       },
       h3: {
         color: '#000000',
-        fontWeight: 700,
+        fontWeight: 600,
       },
       h4: {
         color: '#000000',

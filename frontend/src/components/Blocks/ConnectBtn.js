@@ -41,18 +41,18 @@ const ConnectBtn = (props) => {
 
                         if (chain.unsupported) {
                             return (
-                            <button className="btn-control" onClick={openChainModal} type="button">
+                            <Button variant="contained" onClick={openChainModal} sx={{display: 'flex'}}>
                                 Wrong Network
-                            </button>
+                            </Button>
                             );
                         }
 
                         return (
-                            <div style={{ display: 'flex', gap: 12, height: '100%', whiteSpace:'nowrap'}}>
+                            <div style={{ display: 'flex', gap: 12, height: '100%', width: '100%', whiteSpace:'nowrap'}}>
                             <Button
                                 onClick={openChainModal}
                                 variant="contained"
-                                sx={{ display: 'flex', alignItems: 'center' }}
+                                sx={{ display: 'flex',  }}
                             >
                                 {chain.hasIcon && (
                                 <div

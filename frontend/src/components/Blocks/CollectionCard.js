@@ -11,8 +11,8 @@ const CollectionCard = (props) => {
                     alignSelf: 'center',
                     alignContent: 'center',
                     margin: 'auto',
-                    width: '90%',
-                    height: '90%',
+                    width: '70%',
+                    height: '70%',
                     mt: '20px'
                 }}
             >
@@ -27,7 +27,7 @@ const CollectionCard = (props) => {
                     <img
                         style={{width: '100%', height: '100%', objectFit: 'contain', margin:'auto', display:'block', borderRadius: '10px',}}
                         alt="Collection Image"
-                        src={'/badger-black-white.svg'}
+                        src={'/badger-logo-whiteblackbg.png'}
                     />
                 }
                 </Box>
@@ -48,7 +48,7 @@ const CollectionCard = (props) => {
                 }}
             />
 
-            <Typography sx={{mx:'20px', mb:'15px'}}>
+            <Typography sx={{mx:'50px', mb:'15px'}}>
                 {description}
             </Typography>
         </div>
