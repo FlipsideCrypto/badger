@@ -92,7 +92,7 @@ export default function CustomStepper(props) {
     const { activeStep } = props; 
 
   return (
-    <Stack sx={{ width: "100%" }} spacing={4}>
+    <Stack sx={{ width: "100%", mt:'40px' }} spacing={4}>
       <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />}>
         {steps.map((label) => (
           <Step key={label}>

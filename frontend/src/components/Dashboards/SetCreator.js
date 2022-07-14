@@ -215,6 +215,7 @@ const SetCreator = (props) => {
                                 label="Collection Name"
                                 onChange={handleNameChange}
                                 sx={{width: '90%'}}
+                                color='info'
                             />
                             
                             <Box sx={{textAlign: 'left', width: '90%'}}>
