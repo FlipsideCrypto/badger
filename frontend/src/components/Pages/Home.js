@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSigner, useAccount } from "wagmi"
 
 import BadgeCreator from "../Dashboards/BadgeCreator";
-import SetCreator from "../Dashboards/SetCreator";
+import SetForm from "../Forms/SetForm";
 import BadgeManager from "../Dashboards/BadgeManager";
 import FinalizeSet from "../Dashboards/FinalizeSet";
 
@@ -48,7 +48,7 @@ const Home = () => {
     return (
         <>
             {stage === 'createSet' &&
-                <SetCreator 
+                <SetForm 
                     badgeSetContract={badgeSetContract}
                     setBadgeSetContract={setBadgeSetContract}
                     setStage={setStage}
