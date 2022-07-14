@@ -5,7 +5,7 @@ import { useSigner, useAccount } from "wagmi"
 import BadgeForm from "../Forms/BadgeForm";
 import SetForm from "../Forms/SetForm";
 import FinalizeForm from "../Forms/FinalizeForm";
-import BadgeManager from "../Dashboards/BadgeManager";
+import MintForm from "../Forms/MintForm";
 
 const CreationManager = () => {
     let navigate = useNavigate();
@@ -15,10 +15,9 @@ const CreationManager = () => {
     // TODO: Fix these default values -- stage and the default image file
     const [stage, setStage] = useState('createSet')
     
-    const [badgeSetData, setBadgeSetData] = useState({'name': 'Badger Badges', 'desc': 'Your set description will appear at the top of your collection on popular marketplaces and other token viewing apps.', 'imgFile': null});
-    const [badgeSetImageFile, setBadgeSetImageFile] = useState();
+    const [badgeSetData, setBadgeSetData] = useState({'name': null, 'desc': null, 'imgFile': null});
     const [badgeSetDeploymentArgs, setBadgeSetDeploymentArgs] = useState();
-    const [badgeData, setBadgeData] = useState([{'name': 'Badger Badge', 'desc': 'A description of the Badge detailing what it is for.', 'imgFile':null}]);
+    const [badgeData, setBadgeData] = useState([{'name': null, 'desc': null, 'imgFile':null}]);
     const [badgeId, setBadgeId] = useState(0);
     const [contractAddress, setContractAddress] = useState();
 
@@ -66,7 +65,7 @@ const CreationManager = () => {
                 />
             }
             {stage === 'mintBadges' &&
-                <BadgeManager
+                <MintForm
                     setStage={setStage}
                     address={address}
                     signer={signer}

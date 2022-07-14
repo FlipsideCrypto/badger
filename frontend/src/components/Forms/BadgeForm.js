@@ -14,9 +14,12 @@ const BadgeForm = (props) => {
 
     const { badgeData, setBadgeData, setStage, badgeId, setBadgeId } = props;
 
-    const [badgeName, setBadgeName] = useState('Badge Name');
-    const [badgeDesc, setBadgeDesc] = useState('Description of the Badge');
-    const [badgeImgFile, setBadgeImgFile] = useState(null);
+    const [badgeName, setBadgeName] = useState(badgeData[badgeId] ? badgeData[badgeId].name : null);
+    const [badgeDesc, setBadgeDesc] = useState(badgeData[badgeId] ? badgeData[badgeId].desc : null);
+    const [badgeImgFile, setBadgeImgFile] = useState(badgeData[badgeId] ? badgeData[badgeId].imgFile : null);
+
+    const defaultName = 'Badger Badge'
+    const defaultDesc = 'A description of the Badge detailing what it is for.'
 
     const fileInput = useRef();
 
@@ -39,30 +42,54 @@ const BadgeForm = (props) => {
             'imgFile': badgeImgFile
         }
         
-        setBadgeData((badgeData) => [...badgeData, badge])
-        setStage('finalizeSet')
+        // If there is data further in the array, save this data in the same index and move to the next index
+        if (badgeData[badgeId+1]) {
+            let newData = badgeData
+            newData[badgeId] = badge
+            setBadgeData(newData)
+            setBadgeId((badgeId) => badgeId+1)
+        }
+        // If there is no data further in the array, save this data and redirect
+        else {
+            // If the default value is still in there we dont want to push, we overwrite the array
+            badgeId === 0 ? 
+                setBadgeData([badge]) :
+                setBadgeData((badgeData) => [...badgeData, badge])
+            setStage('finalizeSet')
+        }
+        
         window.scrollTo(0, 0);
     }
 
     const handleBack = () => {
-        setStage('createSet')
+        // Go back to create set if first badgeId, else go back to a previous badge
+        if (badgeId === 0) setStage('createSet')
+        else setBadgeId((badgeId) => badgeId-1)
         window.scrollTo(0,0)
     }
 
     const handleNewBadgeForm = () => {
+        console.log('badgeData', badgeData)
+
         const badge = {
             'name': badgeName,
             'desc': badgeDesc,
             'imgFile': badgeImgFile
         }
 
-        setBadgeData((badgeData) => [...badgeData, badge])
+        if (badgeId === 0) setBadgeData([badge])
+        else setBadgeData((badgeData) => [...badgeData, badge])
+        
         setBadgeId((badgeId) => badgeId+1);
         window.scrollTo(0,0)
     }
 
     return (
         <div style={{marginLeft: '50px', marginRight: '50px'}}>
+            <h1>badgeId: {badgeId}</h1>
+            {/* {badgeData.map((badge) => {
+                <p key={badge.name}>{badge.name} - {badge.desc} - {badge.imgFile}</p>
+            })} */}
             <CustomStepper activeStep={1} />
             <Typography variant="h1" sx={{pt: '20px', textAlign: 'center'}}>
                 CREATE BADGES
@@ -92,6 +119,7 @@ const BadgeForm = (props) => {
                                 onChange={handleNameChange}
                                 sx={{width: '90%'}}
                                 color='info'
+                                defaultValue={badgeName}
                             />
                             
                             <Box sx={{textAlign: 'left', width: '90%'}}>
@@ -108,6 +136,7 @@ const BadgeForm = (props) => {
                                 onChange={handleDescChange}
                                 sx={{width: '90%'}}
                                 color='info'
+                                defaultValue={badgeDesc}
                             />
                             <Box sx={{textAlign: 'left', width: '90%'}}>
                                 <FormHelperText>
@@ -146,9 +175,9 @@ const BadgeForm = (props) => {
                 <Grid item sm={12} md={5} lg={4}>
                     <BigBox>
                         <CollectionCard
-                            name={badgeName}
-                            description={badgeDesc}
-                            badgeImgFile={badgeImgFile}
+                            name={badgeName !== null ? badgeName : defaultName}
+                            description={badgeDesc !== null ? badgeDesc : defaultDesc}
+                            imageFile={badgeImgFile}
                         />
                     </BigBox>
                 </Grid>

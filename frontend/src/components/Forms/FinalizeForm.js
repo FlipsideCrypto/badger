@@ -182,7 +182,9 @@ const FinalizeForm = (props) => {
                 <Grid item sm={0} md={2} lg={3} />
                 <Grid item sm={12} md={8} lg={6}>
                     <BigBox>
-
+                        {badgeData.map((badge) => {
+                            return <h2 key={badge.name}>{badge.name} -- {badge.desc} -- {badge.imgFile}</h2>
+                        })}
                     </BigBox>
                 </Grid>
                 <Grid item sm={0} md={2} lg={3} />

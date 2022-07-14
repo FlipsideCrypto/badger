@@ -14,9 +14,12 @@ const SetForm = (props) => {
 
     const { badgeSetData, setBadgeSetData, setStage } = props;
 
-    const [collectionName, setCollectionName] = useState(badgeSetData['name']);
-    const [collectionDesc, setCollectionDesc] = useState(badgeSetData['desc']);
-    const [imageFile, setImageFile] = useState(badgeSetData['imgFile']);
+    const [collectionName, setCollectionName] = useState(badgeSetData.name);
+    const [collectionDesc, setCollectionDesc] = useState(badgeSetData.desc);
+    const [imageFile, setImageFile] = useState(badgeSetData.imgFile);
+
+    const defaultName = 'Badger Badges'
+    const defaultDesc = 'Your Set description will appear at the top of your collection on popular marketplaces and other token viewing apps.'
 
     const fileInput = useRef();
 
@@ -136,9 +139,9 @@ const SetForm = (props) => {
                 <Grid item sm={12} md={5} lg={4}>
                     <BigBox>
                         <CollectionCard
+                            name={collectionName !== null ? collectionName : defaultName}
+                            description={collectionDesc !== null ? collectionDesc : defaultDesc}
                             imageFile={imageFile}
-                            name={collectionName}
-                            description={collectionDesc}
                         />
                     </BigBox>
                 </Grid>
