@@ -8,7 +8,7 @@ import { RainbowKitProvider, getDefaultWallets, darkTheme } from '@rainbow-me/ra
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import Footer from "./components/Blocks/Footer";
-import NavBar from "./components/Blocks/Navbar";
+import Navbar from "./components/Blocks/Navbar";
 
 import Home from './components/Pages/Home';
 import Landing from './components/Pages/Landing';
@@ -177,7 +177,7 @@ function App() {
                 <meta name="twitter:description" content="Badge-ify the roles that control the gates of your on-chain organization." />
               </Helmet>
 
-              <NavBar />
+              <Navbar />
               <Routes>
                 <Route exact path="/" element={<Landing />} />
                 {/* <Route path="/home" element={<Home />} /> */}

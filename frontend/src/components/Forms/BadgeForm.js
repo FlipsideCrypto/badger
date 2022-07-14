@@ -77,7 +77,15 @@ const BadgeForm = (props) => {
             'imgFile': badgeImgFile
         }
 
+        // If we're at the first badge, overrwrite array (this function is not accessible if there's more data in array)
+        // If we already have data in this index, overwrite the index
+        // Else, push data to array
         if (badgeId === 0) setBadgeData([badge])
+        else if (badgeData[badgeId]) {
+            let newData = badgeData
+            newData[badgeId] = badge
+            setBadgeData(newData)
+        }
         else setBadgeData((badgeData) => [...badgeData, badge])
         
         setBadgeId((badgeId) => badgeId+1);
@@ -197,7 +205,7 @@ const BadgeForm = (props) => {
                 <Grid item sm={1} md={1} lg={1} />
 
                 <Grid item sm={4} md={4} lg={2}>
-                {!badgeName || !badgeDesc || !badgeImgFile ?
+                {!badgeName || !badgeDesc || !badgeImgFile || badgeData[badgeId+1] ?
                         <Button
                             variant="contained"
                             disabled={true}
