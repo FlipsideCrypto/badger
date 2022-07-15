@@ -40,3 +40,13 @@ class BadgeSet(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+class User(models.Model):
+    address = models.CharField(max_length=50, blank=False, null=False)
+    admin_for = models.ManyToManyField(BadgeSet)
+    badges_owned = models.ManyToManyField(Badge)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.address

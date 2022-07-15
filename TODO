@@ -25,6 +25,10 @@ CRITICAL:
             ☐ Getter for ownership records of a contract address
             ☐ Model for a "profile" -- Just an address pk with all the badges they own, if they are an admin anywhere
     ☐ Stepper needs green font when completed 
+    
+    ☐ Remove dummy returns in API
+    ☐ Move API calls on FinalizeSet to behind the transaction
+        These two were done for easier testing
 
 
 CONTRACT: 

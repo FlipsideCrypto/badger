@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { useSigner, useAccount } from "wagmi"
+import { useSigner, useAccount, useNetwork } from "wagmi"
 
 import BadgeForm from "../Forms/BadgeForm";
 import SetForm from "../Forms/SetForm";
@@ -11,6 +11,7 @@ const CreationManager = () => {
     let navigate = useNavigate();
     const { address } = useAccount();
     const { data: signer } = useSigner();
+    const { chain } = useNetwork();
 
     // TODO: Fix these default values -- stage and the default image file
     const [stage, setStage] = useState('createSet')
@@ -65,6 +66,7 @@ const CreationManager = () => {
                     signer={signer}
                     lastInitializedTokenId={lastInitializedTokenId}
                     contractAddress={contractAddress}
+                    chain={chain}
                     setContractAddress={setContractAddress}
                     setBadgeId={setBadgeId}
                     setBadgeSetData={setBadgeSetData}

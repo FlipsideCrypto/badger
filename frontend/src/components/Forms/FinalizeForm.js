@@ -18,6 +18,7 @@ const FinalizeForm = (props) => {
         address, 
         signer,
         contractAddress,
+        chain,
         setContractAddress, 
         setStage, 
         setBadgeId,
@@ -141,6 +142,7 @@ const FinalizeForm = (props) => {
         formData.append('set_img_hash', badgeSetData.ipfs_img)
         formData.append('set_contract_address', contractAddress)
         formData.append('set_creator', address)
+        formData.append('chain', chain)
 
         // TODO: This needs to be moved to within the .then for after the tx is finalized.
         axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/new_set/`, formData, apiConfig)

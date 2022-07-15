@@ -42,6 +42,8 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
         set_img = request.data.get('set_img')
         badge_imgs = request.data.getlist('badge_imgs')
         
+        max_file_size = 20000000 # 20MB
+        
         print(set_desc)
         dummy_response = {
             'success':True, 
@@ -52,7 +54,11 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
         }
         return JsonResponse(dummy_response)
         
+        
         try:
+            if set_img.size > max_file_size:
+                raise Exception('File {imgName} too large. Max {max_file_size / 1000000}MB')
+
             # pin contract image
             img_pin_response = pin_image(set_img, set_img.name)
             if img_pin_response['status']:
@@ -79,6 +85,9 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
             # Pin all badge images
             badge_img_hashes = []
             for image in badge_imgs:
+                if image.size > max_file_size:
+                    raise Exception('File {imgName} too large. Max {max_file_size / 1000000}MB')
+                
                 img_pin_response = pin_image(image, image.name)
                 if img_pin_response['status']:
                     error_msg = json.loads(img_pin_response['text'])
@@ -154,6 +163,7 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
 
         return JsonResponse(response)
 
+    ## TODO: OUTDATED
     @action(methods=["post"], detail=False)
     def finalize_set(self, request):
         contract_uri_hash = request.POST.get('contract_hash')
@@ -175,6 +185,7 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
 
         return JsonResponse({'success': True})
 
+    ## TODO: OUTDATED
     @action(methods=["post"], detail=False)
     def new_badges(self, request):
         print('new badges', request.data)
