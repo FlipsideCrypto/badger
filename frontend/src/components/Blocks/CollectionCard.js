@@ -4,7 +4,7 @@ const CollectionCard = (props) => {
     const { imageFile, name, description } = props;
 
     return (
-        <div style={{alignContent: 'center', textAlign: 'center'}}>
+        <div style={{alignContent: 'center', textAlign: 'center', whiteSpace:'pre-line'}}>
             <Box sx={{
                     border: '1px solid black',
                     borderRadius: '10px',

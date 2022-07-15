@@ -45,6 +45,10 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
         max_file_size = 20000000 # 20MB
         
         print(set_desc)
+        ## TODO: does the \r\n\r\n work in the uri?
+        # set_desc = set_desc.replace('\r\n\r\n', '\\n')
+        # print('replaced set_desc', set_desc)
+
         dummy_response = {
             'success':True, 
             'set_hash': 'asfasf', 
@@ -131,7 +135,7 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
             )
             badgeSetObj.save()
         except Exception as error:
-            return JsonResponse('success': False, 'error': str(error))
+            return JsonResponse({'success': False, 'error': str(error)})
 
         return JsonResponse({'success': True})
 

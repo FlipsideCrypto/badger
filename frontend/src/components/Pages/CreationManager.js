@@ -13,13 +13,12 @@ const CreationManager = () => {
     const { data: signer } = useSigner();
     const { chain } = useNetwork();
 
-    // TODO: Fix these default values -- stage and the default image file
     const [stage, setStage] = useState('createSet')
-    
     const [badgeSetData, setBadgeSetData] = useState({'name': null, 'desc': null, 'imgFile': null});
     const [badgeData, setBadgeData] = useState([{'name': null, 'desc': null, 'imgFile':null}]);
     const [badgeId, setBadgeId] = useState(0);
     const [contractAddress, setContractAddress] = useState();
+    const [contractInitialized, setContractInitialized] = useState(false);
 
     // TODO: This need to be used in whatever component we use to manage the admin dashboard.
     const [lastInitializedTokenId, setLastInitializedTokenId] = useState(0)
@@ -67,6 +66,8 @@ const CreationManager = () => {
                     lastInitializedTokenId={lastInitializedTokenId}
                     contractAddress={contractAddress}
                     chain={chain}
+                    contractInitialized={contractInitialized}
+                    setContractInitialized={setContractInitialized}
                     setContractAddress={setContractAddress}
                     setBadgeId={setBadgeId}
                     setBadgeSetData={setBadgeSetData}

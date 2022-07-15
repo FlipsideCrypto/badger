@@ -43,6 +43,13 @@ const BadgeForm = (props) => {
             'imgFile': badgeImgFile
         }
         let currentId = badgeId
+
+        // Catch case for if the badge img has been uploaded to IPFS and image has not been changed
+        if (badgeData[badgeId]?.img_hash && badgeImgFile === badgeData[badgeId]?.imgFile) {
+            setStage('finalizeSet')
+            setBadgeId((badgeId) => badgeId+1)
+            return
+        }
         
         // If there is currently data at this index, save this data in the same index and move to the next
         if (badgeData[badgeId]) {

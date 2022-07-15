@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Box, Typography, Button, Grid, Divider, LinearProgress } from '@mui/material';
 
 import axios from 'axios';
@@ -19,6 +19,8 @@ const FinalizeForm = (props) => {
         signer,
         contractAddress,
         chain,
+        contractInitialized,
+        setContractInitialized,
         setContractAddress, 
         setStage, 
         setBadgeId,
@@ -76,6 +78,7 @@ const FinalizeForm = (props) => {
         axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/ipfs_pin/`, formData, apiConfig)
         .then((res) => {
                 if (res.data['success']) {
+                    console.log('Res', res.data)
                     let setUpdate = badgeSetData
                     setUpdate.ipfs_img = res.data.set_img_hash
                     setUpdate.contract_hash = res.data.set_hash
@@ -87,6 +90,7 @@ const FinalizeForm = (props) => {
                         badgeUpdate[idx] = badge
                     })
 
+                    console.log('badgeUpdate', badgeUpdate)
                     setBadgeSetData(setUpdate)
                     setBadgeData(badgeUpdate)
                     setDeploymentArgs(res.data.deployment_args)
@@ -115,22 +119,26 @@ const FinalizeForm = (props) => {
             signer
         );
 
-        proxyContract.deploySet()
-        .then((transaction) => {
-            transaction.wait()
-            .then((res) => {
-                console.log('Badge Set Cloned', res)
+        // proxyContract.deploySet()
+        // .then((transaction) => {
+        //     transaction.wait()
+        //     .then((res) => {
+        //         console.log('Badge Set Cloned', res)
 
-                setContractAddress(res.events[0].args.setAddress)
-                setBtnSuccess([true, true, false, false])
-                setLoading([false, true, false, false])
-            })
-            .catch((res) => {
-                console.log('Error Cloning', res)
-                setErrorMsg({'step' : 2, 'error': res})
-                setLoading([false, false, false, false])
-            })
-        })
+        //         setContractAddress(res.events[0].args.setAddress)
+        //         setBtnSuccess([true, true, false, false])
+        //         setLoading([false, true, false, false])
+        //     })
+        //     .catch((res) => {
+        //         console.log('Error Cloning', res)
+        //         setErrorMsg({'step' : 2, 'error': res})
+        //         setLoading([false, false, false, false])
+        //     })
+        // })
+
+        // TODO: Remove this -- just added for testing
+        setBtnSuccess([true, true, false, false])
+        setLoading([false, false, false, false])
     }
 
     const initializeContract = () => {
@@ -149,6 +157,7 @@ const FinalizeForm = (props) => {
         axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/new_set/`, formData, apiConfig)
         .then((res) => {
                 if (res.data['success']) {
+                    setContractInitialized(true);
                     setLoading([false, false, false, false])
                     setBtnSuccess([true, true, true, false])
                 } else {
@@ -251,6 +260,26 @@ const FinalizeForm = (props) => {
 
         return style
     }
+
+    // Handles if they have completed a step then went back
+    useEffect(() => {
+        console.log('Stored Badge Data', badgeData)
+
+        if (contractInitialized) {
+            setBtnSuccess([true, true, true, false])
+            return
+        }
+
+        if (contractAddress) {
+            setBtnSuccess([true, true, false, false])
+            return
+        }
+
+        if (badgeData[badgeData.length - 1].img_hash) {
+            setBtnSuccess([true, false, false, false])
+            return
+        }
+    }, [])
 
 
     return (

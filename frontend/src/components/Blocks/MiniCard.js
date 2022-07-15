@@ -11,6 +11,7 @@ const MiniCard = (props) => {
             minHeight: 200,
             marginBlock: 20,
             alignItems: "center", 
+            whiteSpace: "pre-line"
         }}>
 
             <div style={{
