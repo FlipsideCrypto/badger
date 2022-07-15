@@ -1,3 +1,5 @@
+import json
+
 from venv import create
 from django.http import JsonResponse
 from django.conf import settings
@@ -29,6 +31,31 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
         for badge in badge_set.badges.all():
             print(badge.image_hash)
         return JsonResponse({'success': True})
+
+    @action(methods=['post'], detail=False)
+    def ipfs_pin(self, request):
+        set_name = request.data.get('set_name')
+        set_desc = request.data.get('set_desc')
+        set_img = request.data.get('set_img')
+        badge_imgs = request.data.getlist('badge_imgs')
+        
+        print('contractData', set_name, set_desc, set_img)
+        print('badge_imgs', badge_imgs)
+        try:
+            passwe  
+        except Exception as error:
+            return JsonResponse({'success': False, 'error': error})
+        # for images in badge_imgs:
+
+
+        # ## Pin the contract uri
+        # pin_response = pinata.pin_json_to_ipfs(contract_uri, options={'pinataMetadata': {'name': f'{setName}contracturi'}})
+        # contract_hash = ''
+        dummy_data = {'success': True, 'contract_hash': '1234', 'badge_imgs': ['ipfs', '123', '456']}
+
+        return JsonResponse(dummy_data)
+        
+
 
     @action(methods=["post"], detail=False)
     def new_set(self, request):

@@ -42,9 +42,10 @@ const BadgeForm = (props) => {
             'desc': badgeDesc,
             'imgFile': badgeImgFile
         }
+        let currentId = badgeId
         
-        // If there is data further in the array, save this data in the same index and move to the next index
-        if (badgeData[badgeId+1]) {
+        // If there is currently data at this index, save this data in the same index and move to the next
+        if (badgeData[badgeId]) {
             let newData = badgeData
             newData[badgeId] = badge
             setBadgeData(newData)
@@ -52,13 +53,14 @@ const BadgeForm = (props) => {
         }
         // If there is no data further in the array, save this data and redirect
         else {
-            // If the default value is still in there we dont want to push, we overwrite the array
-            badgeId === 0 ? 
-                setBadgeData([badge]) :
-                setBadgeData((badgeData) => [...badgeData, badge])
+            setBadgeData((badgeData) => [...badgeData, badge])
+            setBadgeId((badgeId) => badgeId+1)
+        }
+
+        // If there's no data in the next badge id we're moving on to finalize
+        if (!badgeData[currentId + 1]) {
             setStage('finalizeSet')
         }
-        
         // window.scrollTo(0, 0);
     }
 
@@ -88,7 +90,7 @@ const BadgeForm = (props) => {
         else setBadgeData((badgeData) => [...badgeData, badge])
         
         setBadgeId((badgeId) => badgeId+1);
-        window.scrollTo(0,0)
+        // window.scrollTo(0,0)
     }
 
     return (

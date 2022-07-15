@@ -62,6 +62,7 @@ const CreationManager = () => {
                     address={address}
                     signer={signer}
                     setContractAddress={setContractAddress}
+                    setBadgeId={setBadgeId}
                 />
             }
             {stage === 'mintBadges' &&

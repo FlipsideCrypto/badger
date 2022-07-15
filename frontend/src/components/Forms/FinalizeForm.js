@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
+import { Box, Typography, Button, Grid, Divider, LinearProgress } from '@mui/material';
 
-import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider, LinearProgress } from '@mui/material';
+import axios from 'axios';
 
 import BigBox from "../Blocks/BigBox"
 import CustomStepper from "../Blocks/CustomStepper"
@@ -8,11 +9,11 @@ import CollectionCard from "../Blocks/CollectionCard"
 import MiniPreview from "../Blocks/MiniPreview"
 
 const FinalizeForm = (props) => {
-    const { badgeSetData, badgeData, address, signer, setContractAddress, setStage } = props
+    const { badgeSetData, badgeData, address, signer, setContractAddress, setStage, setBadgeId } = props
 
     const [deploymentArgs, setDeploymentArgs] = useState();
-    const [loading, setLoading] = useState([false, false, false]);
-    const [btnSuccess, setBtnSuccess] = useState([false, false, false])
+    const [loading, setLoading] = useState([false, false, false, false]);
+    const [btnSuccess, setBtnSuccess] = useState([false, false, false, false])
     const [btnMsg, setButtonMsg] = useState([
         'Badger uploads your images and Badge Set data to IPFS',
         'Transaction cloning the Badger base contract, using 40x less fees than regular deployment',
@@ -20,6 +21,7 @@ const FinalizeForm = (props) => {
         'Your Badge info is sent to the contract',
         'Move on to minting the new Badges to your members'
     ])
+    const [errorMsg, setErrorMsg] = useState();
 
     const handleNext = () => {
         setStage('mintBadges')
@@ -27,53 +29,62 @@ const FinalizeForm = (props) => {
     }
 
     const handleBack = () => {
+        setBadgeId((badgeId) => badgeId-1)
         setStage('createBadge')
         // window.scrollTo(0,0)
     }
 
 
-    // const handleIpfsUpload = () => {
-    //     setLoading([true, false, false])
+    const handleIpfsUpload = () => {
+        setLoading([true, false, false, false])
 
-    //     const formData = new FormData();
-    //     const config = {
-    //         headers: {
-    //           'Content-Type': 'multipart/form-data',
-    //         },
-    //     };
+        const formData = new FormData();
+        const config = {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+        };
 
-    //     formData.append('file', imageFile)
-    //     formData.append('fileName', imageFile.name)
-    //     formData.append('name', collectionName)
-    //     formData.append('desc', collectionDesc)
-    //     formData.append('creator_address', address)
-    //     formData.append('chain', chain.name)
-        
-    //     let deploymentArgs;
+        // For all badges and the badge set, append image files
+        formData.append('set_name', badgeSetData.name)
+        formData.append('set_desc', badgeSetData.desc)
+        formData.append('set_img', badgeSetData.imgFile)
+        badgeData.forEach((badge) => {
+            console.log(badge)
+            formData.append('badge_imgs', badge.imgFile)
+        })
 
-    //     axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/new_set/`, formData, config)
-    //     .then(res => {
-    //             console.log('Uploading Data', res)
-    //             if(res.data['success']) {
-    //                 deploymentArgs = {
-    //                     baseuri: '',
-    //                     contract_uri_hash: res.data.contract_uri_hash,
-    //                     description: res.data.description
-    //                 }
+        console.log('formData', formData)
 
-    //                 setDeploymentArgs(deploymentArgs);
-    //                 setBtnSuccess([true, false, false]);
-    //             }
-    //             else {
-    //                 console.log('Invalid Upload')
-    //                 setBtnSuccess([false, false, false]);
-    //             }
-    //         }
-    //     )
-    //     .then(() => {
-    //         setLoading([false, false, false])
-    //     });
-    // }
+        axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/ipfs_pin/`, formData, config)
+        .then((res) => {
+                console.log(res)
+                if (res.data['success']) {
+                    console.log('Result Success', res.data)
+                    let setUpdate = badgeSetData
+                    setUpdate.ipfs_img = res.data.ipfs_img
+                    setUpdate.contract_hash = res.data.contract_hash
+                    let badgeUpdate = badgeData
+
+                    // how do we access the array we get returned?
+                    // badgeUpdate.forEach((badge, idx) => {
+                    //     badge.ipfs_img = res[]
+                    // })
+                    setLoading([false, false, false, false]);
+                    setBtnSuccess([true, false, false, false]);
+                } else {
+                    console.log('Error with IPFS upload:', res.data['error'])
+                    setErrorMsg({'step' : 1, 'error': res.data['error']})
+                    setLoading([false, false, false, false])
+                }
+            }
+        )
+        .catch((error) => {
+            console.log('Error with IPFS upload', error)
+            setErrorMsg({'step' : 1, 'error': error})
+            setLoading([false, false, false, false])
+        })
+    }
 
     // const cloneContract = () => {
     //     setLoading([false, true, false])
@@ -157,25 +168,32 @@ const FinalizeForm = (props) => {
     // }
 
 
-    // function buttonSuccessSx(btnIdx) {
-    //     if (!btnSuccess[btnIdx]) return {}
-    //     const style =  {
-    //         ...(btnSuccess[btnIdx] && {
-    //             bgcolor: '#A8FBB3',
-    //             pointerEvents: 'none',
-    //             opacity: '0.60'
-    //         }),
-    //     }
+    function buttonSuccessSx(btnIdx) {
+        if (!btnSuccess[btnIdx]) return {}
+        const style =  {
+            ...(btnSuccess[btnIdx] && {
+                bgcolor: '#A8FBB3',
+                pointerEvents: 'none',
+                opacity: '0.60'
+            }),
+        }
 
-    //     return style
-    // }
+        return style
+    }
 
 
     return (
         <div style={{marginLeft: '50px', marginRight: '50px'}}>
             <CustomStepper activeStep={2} />
 
-            
+            <div style={{marginTop: '50px'}} />
+            {/* <Grid container rowSpacing={{sm:4, md:4, lg:5}} columnSpacing={{sm:0, md:3, lg:5}} sx={{}}> */}
+                {/* <Grid item xs={1} /> */}
+                {/* <Grid item xs={10}>  */}
+                <MiniPreview badgeData={badgeData} />
+                {/* </Grid> */}
+                {/* <Grid item xs={1} /> */}
+            {/* </Grid> */}
 
             <Typography variant="h1" sx={{pt: '20px', textAlign: 'center'}}>
                 RUN TRANSACTIONS
@@ -194,20 +212,101 @@ const FinalizeForm = (props) => {
                 There will be a total of 3 transactions for you to run to finalize your Set collection
                 before moving on to minting your new Badges.
             </Typography>
-            {/* <Grid container rowSpacing={{sm:4, md:4, lg:5}} columnSpacing={{sm:0, md:3, lg:5}} sx={{}}> */}
-                {/* <Grid item xs={1} /> */}
-                {/* <Grid item xs={10}>  */}
-                    <MiniPreview badgeData={badgeData} />
-                {/* </Grid> */}
-                {/* <Grid item xs={1} /> */}
-            {/* </Grid> */}
 
             <Grid container rowSpacing={{sm:4, md:4, lg:5}} columnSpacing={{sm:0, md:3, lg:5}} sx={{textAlign: 'left'}}>
-                <Grid item sm={0} md={2} lg={3} />
-                <Grid item sm={12} md={8} lg={6}>
-                {/* TODO: Add stuff here */}
+                <Grid item sm={0} md={2} lg={4} />
+                <Grid item sm={12} md={8} lg={4} sx={{mt: '20px'}}>
+                    <Box>
+                        <Button
+                            variant="contained"
+                            sx={buttonSuccessSx(0)}
+                            disabled={false}
+                            onClick={() => handleIpfsUpload()}
+                        >
+                            UPLOAD DATA TO IPFS
+                        </Button>
+                        
+                        {loading[0] && (
+                            <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
+                                <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                            </Box>
+                        )}
+
+                        <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                            {btnMsg[0]}
+                        </Typography>
+
+                        <Button
+                            variant="contained"
+                            sx={buttonSuccessSx(1)}
+                            disabled={!btnSuccess[0]}
+                            onClick={() => handleIpfsUpload()}
+                        >
+                            CLONE CONTRACT
+                        </Button>
+                        
+                        {loading[1] && (
+                            <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
+                                <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                            </Box>
+                        )}
+
+                        <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                            {btnMsg[1]}
+                        </Typography>
+
+                        <Button
+                            variant="contained"
+                            sx={buttonSuccessSx(2)}
+                            disabled={!btnSuccess[1]}
+                            onClick={() => handleIpfsUpload()}
+                        >
+                            INITIALIZE CONTRACT
+                        </Button>
+                        
+                        {loading[2] && (
+                            <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
+                                <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                            </Box>
+                        )}
+
+                        <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                            {btnMsg[2]}
+                        </Typography>
+
+                        <Button
+                            variant="contained"
+                            sx={buttonSuccessSx(3)}
+                            disabled={!btnSuccess[2]}
+                            onClick={() => handleIpfsUpload()}
+                        >
+                            UPLOAD BADGES
+                        </Button>
+                        
+                        {loading[3] && (
+                            <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
+                                <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                            </Box>
+                        )}
+
+                        <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                            {btnMsg[3]}
+                        </Typography>
+
+                        <Button
+                            variant="contained"
+                            disabled={!btnSuccess[3]}
+                            onClick={() => handleIpfsUpload()}
+                        >
+                            START MINTING
+                        </Button>
+
+                        <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                            {btnMsg[4]}
+                        </Typography>
+                    </Box>
                 </Grid>
-                <Grid item sm={0} md={2} lg={3} />
+                <Grid item sm={0} md={2} lg={4} />
 
                 {/* Row 2 for Buttons */}
                 <Grid item sm={0} md={1} lg={2} />
