@@ -107,103 +107,58 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
         }
 
         return JsonResponse(response)
-        
-
-    ## TODO: OUTDATED
+    
     @action(methods=["post"], detail=False)
     def new_set(self, request):
+        set_name = request.data.get("set_name", None)
+        set_desc = request.data.get("set_desc", None)
+        set_img_hash = request.data.get("set_img_hash", None)
+        set_contract_address = request.data.get("set_contract_address", None)
+        set_creator = request.data.get("set_creator", None)
+        set_contract_uri_hash = request.data.get("set_contract_uri_hash", None)
+        chain = request.data.get("chain", None)
 
-        imgFile = request.FILES.get("file", None)
-        imgName = request.POST.get("fileName", None)
-        setName = request.POST.get("name", None)
-        setDesc = request.POST.get("desc", None)
-        creator_address = request.POST.get("creator_address", None)
-        chain = request.POST.get("chain", None)
-
-        ## TODO: Clean description and add line break unicode
-        
-        max_file_size = 20000000 # 20MB
-        if imgFile.size > max_file_size:
-            return JsonResponse({'success': False, 'error':f'File {imgName} too large. Max {max_file_size / 1000000}MB'})
-
-        ## pin collection image
-        img_pin_response = pin_image(imgFile, imgName)
-
-        ipfs_img_hash = img_pin_response['IpfsHash']
-        created_at = img_pin_response['Timestamp']
-
-        ## pin contract uri
-        contract_uri = {
-            "name": setName,
-            "description": setDesc,
-            "image": f'https://badger.mypinata.cloud/ipfs/{ipfs_img_hash}'
-        }
-
-        pin_response = pinata.pin_json_to_ipfs(contract_uri, options={'pinataMetadata': {'name': f'{setName}contracturi'}})
-        
-        contract_uri_hash = pin_response['IpfsHash']
-
-        response = {
-            'contract_uri_hash': contract_uri_hash,
-            'image_hash': ipfs_img_hash,
-            'description': setDesc,
-            'success': True
-        }
-
-        badgeSetObj = BadgeSet(
-            name=setName,
-            description=setDesc,
-            creator_address=creator_address,
-            image_hash=ipfs_img_hash,
-            created_at=created_at,
-            contract_uri_hash=contract_uri_hash,
-            chain=chain
-        )
-        badgeSetObj.save()
-
-        return JsonResponse(response)
-
-    ## TODO: OUTDATED
-    @action(methods=["post"], detail=False)
-    def finalize_set(self, request):
-        contract_uri_hash = request.POST.get('contract_hash')
-        contract_address = request.POST.get("contract_address", None)
-        chain = request.POST.get("chain", None)
-
-        badge_set = self.get_queryset().filter(contract_uri_hash=contract_uri_hash).first()
-
-        print(badge_set)
-
-        ## TODO: This is fuckin exploitable. What's a good way around this?
-        if badge_set.contract_initialized:
-            return JsonResponse({'success': False, 'message':'Contract already initialized.'})
-
-        badge_set.contract_address = contract_address
-        badge_set.contract_initialized = True
-        badge_set.updated_at = timezone.now()
-        badge_set.save()
+        try:
+            badgeSetObj = BadgeSet(
+                name=set_name,
+                description=set_desc,
+                creator_address=set_creator,
+                contract_address=set_contract_address,
+                image_hash=set_img_hash,
+                contract_uri_hash=set_contract_uri_hash,
+                chain=chain,
+                created_at=timezone.now()
+            )
+            badgeSetObj.save()
+        except Exception as error:
+            return JsonResponse('success': False, 'error': str(error))
 
         return JsonResponse({'success': True})
 
-    ## TODO: OUTDATED
     @action(methods=["post"], detail=False)
     def new_badges(self, request):
-        print('new badges', request.data)
-        contract_address=request.POST.get("contract_address", None)
-        tokenIdArr = request.POST.get("tokenId", None)
-        badgeNameArr = request.POST.get("name", None)
-        badgeDescArr = request.POST.get("desc", None)
+        badge_data = request.data.getlist('badge_imgs')
+        set_address = request.data.get('badge_imgs')
 
-        print('data:', tokenIdArr, badgeNameArr, badgeDescArr, contract_address)
+        print(badge_data, set_address)
+
         try:
-            badge_set = self.get_queryset().filter(contract_address=contract_address)
-            # print(badge_set.badges)
-            for badge in badge_set.badges.all:
-                print(badge)
+            # badge_set = self.get_queryset().filter(contract_address=set_address)
+            for badge in badge_data:
+                badgeObj = Badge(
+                    name=badge.name,
+                    description=badge.desc,
+                    token_id=badge.token_id,
+                    image_hash=badge.img_hash,
+                    parent_address=set_address,
+                    created_at=timezone.now()
+                )
+                badgeObj.save()
+
         except Exception as error:
             return JsonResponse({'success': False, 'error': error})
 
-        ## // 
+
         return JsonResponse({'success': True})
 
     @action(methods=["post"], detail=False)

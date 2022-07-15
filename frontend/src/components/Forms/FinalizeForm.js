@@ -142,6 +142,7 @@ const FinalizeForm = (props) => {
         formData.append('set_img_hash', badgeSetData.ipfs_img)
         formData.append('set_contract_address', contractAddress)
         formData.append('set_creator', address)
+        formData.append('set_contract_uri_hash', badgeSetData.contract_hash)
         formData.append('chain', chain)
 
         // TODO: This needs to be moved to within the .then for after the tx is finalized.
