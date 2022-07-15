@@ -13,8 +13,8 @@ from rest_framework.decorators import action
 from tempfile import NamedTemporaryFile
 from pinatapy import PinataPy
 
-from .models import BadgeSet, Badge
-from .serializers import BadgeSetSerializer, BadgeSerializer
+from .models import BadgeSet, Badge, User
+from .serializers import BadgeSetSerializer, BadgeSerializer, UserSerializer
 
 # pinata = PinataPy(settings.PINATA_API_KEY, settings.PINATA_API_SECRET_KEY)
 pinata = PinataPy('safasfasf', settings.PINATA_API_SECRET_KEY)
@@ -238,6 +238,11 @@ class BadgeViewSet(viewsets.ModelViewSet):
     serializer_class = BadgeSerializer
     permission_classes = (AllowAny,)
 
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (AllowAny,)
 
     
 def pin_image(imageFile, imageName):

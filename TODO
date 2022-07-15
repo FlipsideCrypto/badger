@@ -6,9 +6,9 @@ CRITICAL:
     ☐ Need a good way to show all queued data. Sidebar?
         ☐ FIX THE GODDAMN MINICARD AND COLLECTIONCARD WTF
         ☐ Finalize
-                ☐ After contract init, make API call to create the set obj
+                ☐ After contract init, make API call to create the set obj -- new_set
                 ☐ Include the creation of a profile for the admin
-                ☐ After badge method, make call to create the badges
+                ☐ After badge method, make call to create the badges -- new_badges
             ☐ Add Error Message pop up - can be closed
         ☐ Mint/Remove
             ☐ Small switch that changes from mint to revoke
