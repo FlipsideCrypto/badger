@@ -1,16 +1,14 @@
 CRITICAL:
+    ☐ Redeploy the contract to mumbai, we removed an arg in initialize
     ☐ Deploy Contract button behaves oddly in the UX.
         ☐ Does not have loading indicator
         ☐ Becomes non-disabled again after tx is signed?
-    ☐ Should I add back the scroll to top on back/next navigation??
     ☐ Need a good way to show all queued data. Sidebar?
         ☐ FIX THE GODDAMN MINICARD AND COLLECTIONCARD WTF
         ☐ Finalize
-            ☐ Might need a good way to show this but for now we can just flow with our current button stack
-            ☐ Make API calls when certain things get finalized
-                After contract init, make API call to create the set obj
-                Include the creation of a profile for the admin
-                After badge method, make call to create the badges
+                ☐ After contract init, make API call to create the set obj
+                ☐ Include the creation of a profile for the admin
+                ☐ After badge method, make call to create the badges
             ☐ Add Error Message pop up - can be closed
         ☐ Mint/Remove
             ☐ Small switch that changes from mint to revoke
@@ -19,7 +17,7 @@ CRITICAL:
             ☐ Table to allow addresses to be input with a selector for badge type
                 Is there a better method than a selector?
             ☐ Button to run
-            ☐ Check for if addresses length > 100? 80? 
+            ☐ Check for if minting amount > 100? 80? 
         ☐ Overhaul API endpoints
             ☐ Just one creation end point for both badges and sets
             ☐ Getter endpoint for both
@@ -35,9 +33,9 @@ CONTRACT:
 ACTIVE:
     ☐ Home Dashboard
         Displays all sets, can click into a set to see all badges and revoke or mint from here.
+    ☐ Minting/Revoking Dashboard
+
     ☐ SVGs not rendering from ipfs
-    ☐ Management UI and functionality
-            ☐ Error Messages
         ☐ Manage Badges
             ☐ Rename, new image for badges
             ☐ Revoke Badges
@@ -49,8 +47,7 @@ ACTIVE:
 
     
 Contract Interaction:
-    ☐ Have transaction errors
-    ☐ Do a final update of ABIs
+    ☐ Find best way to show errors
     ☐ Set up host
     
 V1.01:
@@ -65,6 +62,14 @@ V1.01:
     ☐ Mobile redesign
             
 ARCHIVED:
+    ✔ Management UI and functionality @done(22-07-15 03:21)
+            ✔ Error Messages @done(22-07-15 03:21)
+    ✔ Have transaction errors @done(22-07-15 03:19)
+    ✔ Do a final update of ABIs @done(22-07-15 03:19)
+    ✔ Can use improvement but for now flow with our current button stack for finalize UX @done(22-07-15 02:59)
+    ✔ Make API calls when certain things get finalized @done(22-07-15 03:00)
+    ✔ Replace the abis in the frontend folder @done(22-07-15 03:19)
+    ✘ Should I add back the scroll to top on back/next navigation?? @cancelled(22-07-15 02:59)
     ✔ Redesign flow of creation @done(22-07-14 17:27)
             ✔ Need a good way to show previous badges and let them move back and forth between them @done(22-07-14 17:27)
     ✔ All data kept in Home -- Rename home to something more suitable @done(22-07-14 15:17)

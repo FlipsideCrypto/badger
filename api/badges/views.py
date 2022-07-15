@@ -1,4 +1,5 @@
 import json
+from multiprocessing import dummy
 
 from venv import create
 from django.http import JsonResponse
@@ -15,7 +16,8 @@ from pinatapy import PinataPy
 from .models import BadgeSet, Badge
 from .serializers import BadgeSetSerializer, BadgeSerializer
 
-pinata = PinataPy(settings.PINATA_API_KEY, settings.PINATA_API_SECRET_KEY)
+# pinata = PinataPy(settings.PINATA_API_KEY, settings.PINATA_API_SECRET_KEY)
+pinata = PinataPy('safasfasf', settings.PINATA_API_SECRET_KEY)
 
 class BadgeSetViewSet(viewsets.ModelViewSet):
     queryset = BadgeSet.objects.all()
@@ -32,6 +34,7 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
             print(badge.image_hash)
         return JsonResponse({'success': True})
 
+    ## TODO: Clean description -- add line breaks if necessary
     @action(methods=['post'], detail=False)
     def ipfs_pin(self, request):
         set_name = request.data.get('set_name')
@@ -39,24 +42,65 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
         set_img = request.data.get('set_img')
         badge_imgs = request.data.getlist('badge_imgs')
         
-        print('contractData', set_name, set_desc, set_img)
-        print('badge_imgs', badge_imgs)
+        print(set_desc)
+        dummy_response = {
+            'success':True, 
+            'set_hash': 'asfasf', 
+            'set_img_hash': 'asfasf', 
+            'badge_img_hashes': ['1', '2', '3'],
+            'deployment_args': ['233113', set_desc]
+        }
+        return JsonResponse(dummy_response)
+        
         try:
-            passwe  
+            # pin contract image
+            img_pin_response = pin_image(set_img, set_img.name)
+            if img_pin_response['status']:
+                error_msg = json.loads(img_pin_response['text'])
+                error_msg = error_msg['error']['details']
+                raise Exception(error_msg)
+
+            set_img_hash = img_pin_response['IpfsHash']
+
+            contract_uri = {
+                "name": set_name,
+                "description": set_desc,
+                "image": f'https://badger.mypinata.cloud/ipfs/{set_img_hash}'
+            }
+
+            # pin contract uri
+            uri_pin_response = pinata.pin_json_to_ipfs(contract_uri, options={'pinataMetadata': {'name': f'{set_name}-contracturi'}})
+            if uri_pin_response['status']:
+                error_msg = json.loads(uri_pin_response['text'])
+                error_msg = error_msg['error']['details']
+                raise Exception(error_msg)
+            contract_uri_hash = uri_pin_response['IpfsHash']
+
+            # Pin all badge images
+            badge_img_hashes = []
+            for image in badge_imgs:
+                img_pin_response = pin_image(image, image.name)
+                if img_pin_response['status']:
+                    error_msg = json.loads(img_pin_response['text'])
+                    error_msg = error_msg['error']['details']
+                    raise Exception(error_msg)
+                badge_img_hashes.push(img_pin_response['IpfsHash'])
+
         except Exception as error:
-            return JsonResponse({'success': False, 'error': error})
-        # for images in badge_imgs:
+            return JsonResponse({'success': False, 'error': str(error)})
 
+        response = {
+            'success': True, 
+            'set_hash': contract_uri_hash, 
+            'set_img_hash': set_img_hash, 
+            'badge_img_hashes': badge_img_hashes,
+            'deployment_args': [contract_uri_hash, set_desc]
+        }
 
-        # ## Pin the contract uri
-        # pin_response = pinata.pin_json_to_ipfs(contract_uri, options={'pinataMetadata': {'name': f'{setName}contracturi'}})
-        # contract_hash = ''
-        dummy_data = {'success': True, 'contract_hash': '1234', 'badge_imgs': ['ipfs', '123', '456']}
-
-        return JsonResponse(dummy_data)
+        return JsonResponse(response)
         
 
-
+    ## TODO: OUTDATED
     @action(methods=["post"], detail=False)
     def new_set(self, request):
 

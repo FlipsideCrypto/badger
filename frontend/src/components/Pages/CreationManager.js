@@ -16,10 +16,12 @@ const CreationManager = () => {
     const [stage, setStage] = useState('createSet')
     
     const [badgeSetData, setBadgeSetData] = useState({'name': null, 'desc': null, 'imgFile': null});
-    const [badgeSetDeploymentArgs, setBadgeSetDeploymentArgs] = useState();
     const [badgeData, setBadgeData] = useState([{'name': null, 'desc': null, 'imgFile':null}]);
     const [badgeId, setBadgeId] = useState(0);
     const [contractAddress, setContractAddress] = useState();
+
+    // TODO: This need to be used in whatever component we use to manage the admin dashboard.
+    const [lastInitializedTokenId, setLastInitializedTokenId] = useState(0)
 
     useEffect(() => {        
         if(!address) {
@@ -61,8 +63,12 @@ const CreationManager = () => {
                     badgeData={badgeData}
                     address={address}
                     signer={signer}
+                    lastInitializedTokenId={lastInitializedTokenId}
+                    contractAddress={contractAddress}
                     setContractAddress={setContractAddress}
                     setBadgeId={setBadgeId}
+                    setBadgeSetData={setBadgeSetData}
+                    setBadgeData={setBadgeData}
                 />
             }
             {stage === 'mintBadges' &&
