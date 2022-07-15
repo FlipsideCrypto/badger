@@ -3,9 +3,9 @@ import { useState, useRef } from 'react';
 import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider, LinearProgress } from '@mui/material';
 
 import BigBox from "../Blocks/BigBox"
-
 import CustomStepper from "../Blocks/CustomStepper"
-
+import CollectionCard from "../Blocks/CollectionCard"
+import MiniPreview from "../Blocks/MiniPreview"
 
 const FinalizeForm = (props) => {
     const { badgeSetData, badgeData, address, signer, setContractAddress, setStage } = props
@@ -23,12 +23,12 @@ const FinalizeForm = (props) => {
 
     const handleNext = () => {
         setStage('mintBadges')
-        window.scrollTo(0, 0);
+        // window.scrollTo(0, 0);
     }
 
     const handleBack = () => {
         setStage('createBadge')
-        window.scrollTo(0,0)
+        // window.scrollTo(0,0)
     }
 
 
@@ -157,9 +157,26 @@ const FinalizeForm = (props) => {
     // }
 
 
+    // function buttonSuccessSx(btnIdx) {
+    //     if (!btnSuccess[btnIdx]) return {}
+    //     const style =  {
+    //         ...(btnSuccess[btnIdx] && {
+    //             bgcolor: '#A8FBB3',
+    //             pointerEvents: 'none',
+    //             opacity: '0.60'
+    //         }),
+    //     }
+
+    //     return style
+    // }
+
+
     return (
         <div style={{marginLeft: '50px', marginRight: '50px'}}>
             <CustomStepper activeStep={2} />
+
+            
+
             <Typography variant="h1" sx={{pt: '20px', textAlign: 'center'}}>
                 RUN TRANSACTIONS
             </Typography>
@@ -177,15 +194,18 @@ const FinalizeForm = (props) => {
                 There will be a total of 3 transactions for you to run to finalize your Set collection
                 before moving on to minting your new Badges.
             </Typography>
+            {/* <Grid container rowSpacing={{sm:4, md:4, lg:5}} columnSpacing={{sm:0, md:3, lg:5}} sx={{}}> */}
+                {/* <Grid item xs={1} /> */}
+                {/* <Grid item xs={10}>  */}
+                    <MiniPreview badgeData={badgeData} />
+                {/* </Grid> */}
+                {/* <Grid item xs={1} /> */}
+            {/* </Grid> */}
 
             <Grid container rowSpacing={{sm:4, md:4, lg:5}} columnSpacing={{sm:0, md:3, lg:5}} sx={{textAlign: 'left'}}>
                 <Grid item sm={0} md={2} lg={3} />
                 <Grid item sm={12} md={8} lg={6}>
-                    <BigBox>
-                        {badgeData.map((badge) => {
-                            return <h2 key={badge.name}>{badge.name} -- {badge.desc} -- {badge.imgFile}</h2>
-                        })}
-                    </BigBox>
+                {/* TODO: Add stuff here */}
                 </Grid>
                 <Grid item sm={0} md={2} lg={3} />
 

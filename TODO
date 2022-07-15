@@ -2,8 +2,9 @@ CRITICAL:
     ☐ Deploy Contract button behaves oddly in the UX.
         ☐ Does not have loading indicator
         ☐ Becomes non-disabled again after tx is signed?
-    ☐ Redesign flow of creation
-            ☐ Need a good way to show previous badges and let them move back and forth between them
+    ☐ Should I add back the scroll to top on back/next navigation??
+    ☐ Need a good way to show all queued data. Sidebar?
+        ☐ FIX THE GODDAMN MINICARD AND COLLECTIONCARD WTF
         ☐ Finalize
             ☐ Might need a good way to show this but for now we can just flow with our current button stack
             ☐ Make API calls when certain things get finalized
@@ -64,6 +65,8 @@ V1.01:
     ☐ Mobile redesign
             
 ARCHIVED:
+    ✔ Redesign flow of creation @done(22-07-14 17:27)
+            ✔ Need a good way to show previous badges and let them move back and forth between them @done(22-07-14 17:27)
     ✔ All data kept in Home -- Rename home to something more suitable @done(22-07-14 15:17)
     ✔ Create Set @done(22-07-14 12:43)
         ✔ No buttons other than to get to the next stage and file upload @done(22-07-14 12:43)

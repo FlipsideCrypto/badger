@@ -8,7 +8,7 @@ const BigBox = (props) => {
                 width: '100%',
                 height: '100%',
                 background: 'repeating-linear-gradient(-70deg, #FFFFFF 0 6px, #00000065 6px 7px);',
-                display: 'flex'
+                display: 'flex',
             }}
         >
             <Box

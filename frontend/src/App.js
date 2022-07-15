@@ -114,7 +114,12 @@ const theme = createTheme({
         color: '#000000',
         fontWeight: 600,
         fontSize: 18
-      }
+      },
+      h8: {
+        fontSize: 12,
+        fontWeight: 600,
+        color: '#000000'
+      },
   },
   components: {
     MuiButton: {

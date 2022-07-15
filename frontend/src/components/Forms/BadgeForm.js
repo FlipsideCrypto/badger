@@ -8,6 +8,7 @@ import { FormControl } from '@mui/material';
 import CollectionCard from '../Blocks/CollectionCard'
 import BigBox from "../Blocks/BigBox"
 import CustomStepper from "../Blocks/CustomStepper"
+import MiniPreview from "../Blocks/MiniPreview"
 
 const BadgeForm = (props) => {
     let navigate = useNavigate();
@@ -58,19 +59,17 @@ const BadgeForm = (props) => {
             setStage('finalizeSet')
         }
         
-        window.scrollTo(0, 0);
+        // window.scrollTo(0, 0);
     }
 
     const handleBack = () => {
         // Go back to create set if first badgeId, else go back to a previous badge
         if (badgeId === 0) setStage('createSet')
         else setBadgeId((badgeId) => badgeId-1)
-        window.scrollTo(0,0)
+        // window.scrollTo(0,0)
     }
 
     const handleNewBadgeForm = () => {
-        console.log('badgeData', badgeData)
-
         const badge = {
             'name': badgeName,
             'desc': badgeDesc,
@@ -94,10 +93,6 @@ const BadgeForm = (props) => {
 
     return (
         <div style={{marginLeft: '50px', marginRight: '50px'}}>
-            <h1>badgeId: {badgeId}</h1>
-            {/* {badgeData.map((badge) => {
-                <p key={badge.name}>{badge.name} - {badge.desc} - {badge.imgFile}</p>
-            })} */}
             <CustomStepper activeStep={1} />
             <Typography variant="h1" sx={{pt: '20px', textAlign: 'center'}}>
                 CREATE BADGES
@@ -246,6 +241,16 @@ const BadgeForm = (props) => {
                 </Grid>
                 <Grid item sm={0} md={1} lg={2} />
             </Grid>
+
+            {/* {badgeData.length > 0 &&
+                <Grid container rowSpacing={{sm:4, md:4, lg:5}} columnSpacing={{sm:0, md:3, lg:5}} sx={{mt: '50px'}}>
+                    <Grid item xs={1} />
+                    <Grid item xs={10}>
+                        <MiniPreview badgeData={badgeData} />
+                    </Grid>
+                    <Grid item xs={1} />
+                </Grid>
+            } */}
 
             <Box sx={{pt:'100px'}} />
         </div>
