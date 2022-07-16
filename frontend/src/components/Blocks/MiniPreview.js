@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Grid, Box } from '@mui/material'
 
 import BigBox from './BigBox'
@@ -55,4 +56,4 @@ const MiniPreview = (props) => {
     // )
 }
 
-export default MiniPreview;
+export default memo(MiniPreview);

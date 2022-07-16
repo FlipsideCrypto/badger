@@ -66,6 +66,7 @@ V1.01:
     ☐ Mobile redesign
             
 ARCHIVED:
+    ✔ Preview rerenders upon adding data to badgeData @done(22-07-15 19:40)
     ✔ Management UI and functionality @done(22-07-15 03:21)
             ✔ Error Messages @done(22-07-15 03:21)
     ✔ Have transaction errors @done(22-07-15 03:19)

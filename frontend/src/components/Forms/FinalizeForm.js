@@ -13,19 +13,19 @@ import MiniPreview from "../Blocks/MiniPreview"
 
 const FinalizeForm = (props) => {
     const { 
-        badgeSetData, 
-        badgeData, 
         address, 
         signer,
-        contractAddress,
         chain,
+        badgeSetData, 
+        setBadgeSetData,
+        badgeData, 
+        setBadgeData,
+        contractAddress,
+        setContractAddress,
         contractInitialized,
         setContractInitialized,
-        setContractAddress, 
         setStage, 
         setBadgeId,
-        setBadgeData,
-        setBadgeSetData,
         lastInitializedTokenId
     } = props
 
@@ -39,7 +39,7 @@ const FinalizeForm = (props) => {
         'A transaction sends the bundled Badge info to the contract',
     ])
     const [errorMsg, setErrorMsg] = useState();
-
+    
     const proxyHandlerContractAddress = chain?.name === 'polygon' ?
         process.env.REACT_APP_POLYGON_PROXY : 
         process.env.REACT_APP_MUMBAI_PROXY
@@ -63,6 +63,9 @@ const FinalizeForm = (props) => {
 
     const handleIpfsUpload = () => {
         setLoading([true, false, false, false])
+
+        // TODO: Remove this log
+        // console.log('preview data',previewData)
 
         const formData = new FormData();
 
@@ -95,7 +98,8 @@ const FinalizeForm = (props) => {
                     setBadgeData(badgeUpdate)
                     setDeploymentArgs(res.data.deployment_args)
                     setLoading([false, false, false, false])
-                    setBtnSuccess([true, false, false, false])
+                    // TODO: Remove comment
+                    // setBtnSuccess([true, false, false, false])
                 } else {
                     console.log('Error with IPFS upload:', res.data['error'])
                     setErrorMsg({'step' : 1, 'error': res.data['error']})
