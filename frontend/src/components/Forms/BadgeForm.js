@@ -48,6 +48,7 @@ const BadgeForm = (props) => {
         if (badgeData[badgeId]?.img_hash && badgeImgFile === badgeData[badgeId]?.imgFile) {
             setStage('finalizeSet')
             setBadgeId((badgeId) => badgeId+1)
+            window.scrollTo(0, 0);
             return
         }
         
@@ -67,8 +68,8 @@ const BadgeForm = (props) => {
         // If there's no data in the next badge id we're moving on to finalize
         if (!badgeData[currentId + 1]) {
             setStage('finalizeSet')
+            window.scrollTo(0, 0);
         }
-        // window.scrollTo(0, 0);
     }
 
     const handleBack = () => {

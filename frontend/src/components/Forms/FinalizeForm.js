@@ -58,6 +58,7 @@ const FinalizeForm = (props) => {
     const handleBack = () => {
         setBadgeId((badgeId) => badgeId-1)
         setStage('createBadge')
+        window.scrollTo(0, 0);
     }
 
 
