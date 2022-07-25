@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider, LinearProgress } from '@mui/material';
+import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider } from '@mui/material';
 import { FormControl } from '@mui/material';
 
 import CollectionCard from '../Blocks/CollectionCard'

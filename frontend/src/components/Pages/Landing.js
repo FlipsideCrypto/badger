@@ -3,11 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useAccount } from 'wagmi'
 
 import ConnectBtn from "../Blocks/ConnectBtn";
-import BigBox from "../Blocks/BigBox"
 
 const Landing = () => {
     let navigate = useNavigate()
-    const { address, isConnecting, isDisconnected } = useAccount();
+    const { address } = useAccount();
 
     const openInNewTab = (url) => {
         window.open(url, '_blank', 'noopener,noreferrer')
