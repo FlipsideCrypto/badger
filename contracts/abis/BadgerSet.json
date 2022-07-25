@@ -421,6 +421,28 @@
         "internalType": "string",
         "name": "_collectionDescription",
         "type": "string"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "imageHash",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct BadgerSet.Badge[]",
+        "name": "_badges",
+        "type": "tuple[]"
       }
     ],
     "name": "initialize",

@@ -3,11 +3,8 @@ SUMMARY:
     ☐ Finalize landing page with assets and the checklist
     ☐ Entering app needs some page to determine if they currently have a set or if they're new
     ☐ API GET for a wallet's sets and badges
-    ☐ Fix passing array of badge data through to API
-        ☐ Need to get serializer cleaning implemented
 
 CRITICAL:
-    ☐ Redeploy the contract to mumbai, we removed an arg in initialize
     ☐ Deploy Contract button behaves oddly in the UX.
         ☐ Does not have loading indicator
         ☐ Becomes non-disabled again after tx is signed?
@@ -74,6 +71,9 @@ V1.01:
     ☐ Mobile redesign
             
 ARCHIVED:
+    ✔ Redeploy the contract to mumbai, we removed an arg in initialize @done(22-07-25 11:52)
+    ✔ Fix passing array of badge data through to API @done(22-07-25 11:44)
+        ✔ Need to get serializer cleaning implemented @done(22-07-25 11:44)
     ✔ Preview rerenders upon adding data to badgeData @done(22-07-15 19:40)
     ✔ Management UI and functionality @done(22-07-15 03:21)
             ✔ Error Messages @done(22-07-15 03:21)

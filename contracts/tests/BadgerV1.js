@@ -33,11 +33,12 @@ describe("Badger", function() {
             await testOrg.connect(owner).initialize(
                   "CONTRACTURI"
                 , "This is the org description"
+                , [['Badge 0', 'Badge Desc', 'HASH']]
             )
 
             assert.equal("CONTRACTURI", (await testOrg.contractURIHash()).toString())
         });
-
+ 
         it('Test Org Owner is Admin', async() => {
             assert.equal(await testOrg.admins(owner.address), true)
         });
