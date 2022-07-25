@@ -11,7 +11,7 @@ body {
   min-height: 100vh;
 }
 
-@media screen and (max-width: 2400px) {
+@media screen and (max-width: 3000px) {
   .page-margins{
     margin-right: 300px;
     margin-left: 300px;

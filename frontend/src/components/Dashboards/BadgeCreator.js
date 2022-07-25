@@ -10,7 +10,7 @@ import { FormControl } from '@mui/material';
 
 import CollectionCard from '../Blocks/CollectionCard'
 import BigBox from "../Blocks/BigBox"
-import BadgeSetPreview from "../Blocks/BadgeSetPreview"
+import MiniPreview from "../Blocks/MiniPreview"
 
 const BadgeCreator = (props) => {
     const { 
@@ -362,9 +362,7 @@ const BadgeCreator = (props) => {
                             </Box>
                         </Grid>
                         <Grid item xs={1} md={3} lg={4}/>
-                    </Grid>
-    
-                    <BadgeSetPreview badgeData={badgeDataToFinalize} />
+                    </Grid>    
                 </>
             }
         </div>

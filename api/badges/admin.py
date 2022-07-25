@@ -1,3 +1,12 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import BadgeSet, Badge, User
+
+class BadgeSetAdmin(admin.ModelAdmin):
+    list_display = ('name', 'contract_address')
+
+class BadgeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'token_id')
+
+admin.site.register(Badge, BadgeAdmin)
+admin.site.register(BadgeSet, BadgeSetAdmin)

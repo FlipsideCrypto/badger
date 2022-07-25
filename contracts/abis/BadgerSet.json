@@ -414,11 +414,6 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "_baseURI",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
         "name": "_contractURI",
         "type": "string"
       },

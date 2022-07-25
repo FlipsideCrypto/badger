@@ -1,7 +1,42 @@
+SUMMARY:
+    Doing this because I need to recollect my thoughts after being away
+    ☐ Finalize landing page with assets and the checklist
+    ☐ Entering app needs some page to determine if they currently have a set or if they're new
+    ☐ API GET for a wallet's sets and badges
+    ☐ Fix passing array of badge data through to API
+        ☐ Need to get serializer cleaning implemented
+
 CRITICAL:
+    ☐ Redeploy the contract to mumbai, we removed an arg in initialize
     ☐ Deploy Contract button behaves oddly in the UX.
         ☐ Does not have loading indicator
         ☐ Becomes non-disabled again after tx is signed?
+    ☐ Need a good way to show all queued data. Sidebar?
+        ☐ FIX THE GODDAMN MINICARD AND COLLECTIONCARD WTF
+        ☐ Finalize
+                ☐ After contract init, make API call to create the set obj -- new_set
+                ☐ Include the creation of a profile for the admin
+                ☐ After badge method, make call to create the badges -- new_badges
+            ☐ Add Error Message pop up - can be closed
+        ☐ Mint/Remove
+            ☐ Small switch that changes from mint to revoke
+            ☐ API get for all badges of contract address
+            ☐ API get ownership records
+            ☐ Table to allow addresses to be input with a selector for badge type
+                Is there a better method than a selector?
+            ☐ Button to run
+            ☐ Check for if minting amount > 100? 80? 
+        ☐ Overhaul API endpoints
+            ☐ Just one creation end point for both badges and sets
+            ☐ Getter endpoint for both
+            ☐ Updater? maybe v(1.01)
+            ☐ Getter for ownership records of a contract address
+            ☐ Model for a "profile" -- Just an address pk with all the badges they own, if they are an admin anywhere
+    ☐ Stepper needs green font when completed 
+    
+    ☐ Remove dummy returns in API
+    ☐ Move API calls on FinalizeSet to behind the transaction
+        These two were done for easier testing
 
 
 CONTRACT: 
@@ -10,16 +45,9 @@ CONTRACT:
 ACTIVE:
     ☐ Home Dashboard
         Displays all sets, can click into a set to see all badges and revoke or mint from here.
+    ☐ Minting/Revoking Dashboard
+
     ☐ SVGs not rendering from ipfs
-    ☐ Flow should be able to be interrupted and go back to edit a certain step.
-    ☐ Management UI and functionality
-            ☐ Error Messages
-            ☐ Bread crumbs for set up process
-        ☐ Send Badges
-            ☐ Pull badges of org
-            ☐ Show badges on front end
-            ☐ create new fields to add addresses and a select option for badge Id
-            ☐ Send tx, might need a warning for 50+
         ☐ Manage Badges
             ☐ Rename, new image for badges
             ☐ Revoke Badges
@@ -31,19 +59,10 @@ ACTIVE:
 
     
 Contract Interaction:
-    ☐ Have transaction errors
-    ☐ Do a final update of ABIs
+    ☐ Find best way to show errors
     ☐ Set up host
     
 V1.01:
-    ☐ Move to the FinalizeSet flow.
-        ☐ Combine all waiting actions at the end.
-        Don't deploy contract or upload IPFS images until they confirm both their set and their badges.
-        Allow everything to be input, when they are done adding badges, have a final initialize dashboard,
-        The initialize dashboard does all of the current actions within the Badge and Set Creators.
-
-        Once the final initialize dashboard is complete, take them to their set managament dashboard.
-        Here they can create new badges, edit badges, or mint/revoke from their members.
     ☐ Signature to get into dashboard
     ☐ Rate limit IPFS upload
     ☐ Add webm conversion for preview and IPFS upload
@@ -55,6 +74,26 @@ V1.01:
     ☐ Mobile redesign
             
 ARCHIVED:
+    ✔ Preview rerenders upon adding data to badgeData @done(22-07-15 19:40)
+    ✔ Management UI and functionality @done(22-07-15 03:21)
+            ✔ Error Messages @done(22-07-15 03:21)
+    ✔ Have transaction errors @done(22-07-15 03:19)
+    ✔ Do a final update of ABIs @done(22-07-15 03:19)
+    ✔ Can use improvement but for now flow with our current button stack for finalize UX @done(22-07-15 02:59)
+    ✔ Make API calls when certain things get finalized @done(22-07-15 03:00)
+    ✔ Replace the abis in the frontend folder @done(22-07-15 03:19)
+    ✘ Should I add back the scroll to top on back/next navigation?? @cancelled(22-07-15 02:59)
+    ✔ Redesign flow of creation @done(22-07-14 17:27)
+            ✔ Need a good way to show previous badges and let them move back and forth between them @done(22-07-14 17:27)
+    ✔ All data kept in Home -- Rename home to something more suitable @done(22-07-14 15:17)
+    ✔ Create Set @done(22-07-14 12:43)
+        ✔ No buttons other than to get to the next stage and file upload @done(22-07-14 12:43)
+        ✔ Form data should be the default use state to allow for directing backwards @done(22-07-14 15:17)
+        ✔ No API calls @done(22-07-14 12:43)
+    ✔ Create Badges @done(22-07-14 15:17)
+        ✔ No buttons other than queueing up multiple badges. @done(22-07-14 15:17)
+        ✔ need array of image files in that data that maintains state @done(22-07-14 15:17)
+    ✔ Flow should be able to be interrupted and go back to edit a certain step. @started(22-07-14 02:53) @done(22-07-14 02:53) @lasted(11s)
     ✔ Is there a reason to have the createBadge/updateBadge as separate functions? @done(22-07-13 14:24)
     ✔ Full test suite @done(22-07-13 14:23)
     ✔ Set up Badge Creation quick so I can test to make sure the contract works well. @done(22-07-13 14:22)

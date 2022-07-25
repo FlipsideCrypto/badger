@@ -1,22 +1,43 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet'
 
-import { providers } from 'ethers';
 import { createClient, WagmiConfig, chain, configureChains } from "wagmi";
 import { alchemyProvider } from 'wagmi/providers/alchemy'; // Do I fuckin need this fr
-import { RainbowKitProvider, getDefaultWallets, darkTheme } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import Home from './components/Pages/Home';
 import Footer from "./components/Blocks/Footer";
-import NavBar from "./components/Blocks/Navbar";
+import Navbar from "./components/Blocks/Navbar";
 
 import Landing from './components/Pages/Landing';
-import SetCreator from "./components/Dashboards/SetCreator"
-import BadgeCreator from "./components/Dashboards/BadgeCreator"
+import CreationManager from './components/Pages/CreationManager';
+
 import "./App.css";
 
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
+
+// TODO: Make this gnosis, put in configure chains array
+// const avalancheChain: Chain = {
+//   id: 43_114,
+//   name: 'Avalanche',
+//   network: 'avalanche',
+//   iconUrl: 'https://example.com/icon.svg',
+//   iconBackground: '#fff',
+//   nativeCurrency: {
+//     decimals: 18,
+//     name: 'Avalanche',
+//     symbol: 'AVAX',
+//   },
+//   rpcUrls: {
+//     default: 'https://api.avax.network/ext/bc/C/rpc',
+//   },
+//   blockExplorers: {
+//     default: { name: 'SnowTrace', url: 'https://snowtrace.io' },
+//     etherscan: { name: 'SnowTrace', url: 'https://snowtrace.io' },
+//   },
+//   testnet: false,
+// };
+
 
 const { provider, chains } = configureChains(
   [chain.polygonMumbai, chain.polygon],
@@ -91,7 +112,12 @@ const theme = createTheme({
         color: '#000000',
         fontWeight: 600,
         fontSize: 18
-      }
+      },
+      h8: {
+        fontSize: 12,
+        fontWeight: 600,
+        color: '#000000'
+      },
   },
   components: {
     MuiButton: {
@@ -154,12 +180,11 @@ function App() {
                 <meta name="twitter:description" content="Badge-ify the roles that control the gates of your on-chain organization." />
               </Helmet>
 
-              <NavBar />
+              <Navbar />
               <Routes>
                 <Route exact path="/" element={<Landing />} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/create" element={<SetCreator />} />
-                <Route path="/create/badges" element={<BadgeCreator />} />
+                {/* <Route path="/home" element={<Home />} /> */}
+                <Route path="/home" element={<CreationManager />} />
               </Routes>
               <Footer />
             </Router>

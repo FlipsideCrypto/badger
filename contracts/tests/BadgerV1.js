@@ -31,8 +31,7 @@ describe("Badger", function() {
         it('Initialized Test Set', async() => {
 
             await testOrg.connect(owner).initialize(
-                  "BASEURI"
-                , "CONTRACTURI"
+                  "CONTRACTURI"
                 , "This is the org description"
             )
 

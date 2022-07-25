@@ -5,7 +5,6 @@ class Badge(models.Model):
     description = models.TextField(max_length=4000)
     token_id = models.PositiveIntegerField(default=0)
     image_hash = models.CharField(max_length=256)
-    on_chain = models.BooleanField(default=False)
     parent_address = models.CharField(max_length=50)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -24,13 +23,11 @@ class BadgeSet(models.Model):
     contract_uri_hash = models.CharField(max_length=256, blank=True, null=True)
     
     creator_address = models.CharField(max_length=50, blank=False, null=False)
-    # admin_addresses -- need a modeltomodel field maybe?
-
+    # admin_addresses -- need a manytomany field maybe?
     chain = models.CharField(max_length=50, blank=True, null=True)
     contract_address = models.CharField(max_length=50, blank=True, null=True)
 
-    contract_initialized = models.BooleanField(default=False, null=True)
-    badges = models.ManyToManyField(Badge)
+    badges = models.ManyToManyField(Badge, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -40,3 +37,13 @@ class BadgeSet(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+class User(models.Model):
+    address = models.CharField(max_length=50, blank=False, null=False)
+    admin_for = models.ManyToManyField(BadgeSet)
+    badges_owned = models.ManyToManyField(Badge)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.address

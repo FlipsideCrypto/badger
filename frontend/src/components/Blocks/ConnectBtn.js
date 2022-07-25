@@ -1,5 +1,5 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Button,Box } from "@mui/material";
+import { Button } from "@mui/material";
 import '@rainbow-me/rainbowkit/dist/index.css'
 
 const ConnectBtn = (props) => {

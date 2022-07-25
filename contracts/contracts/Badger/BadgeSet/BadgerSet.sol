@@ -67,19 +67,27 @@ contract BadgerSet is
 
     /// @dev Equivalent of constructors for Minimal Proxy cloning.
     function initialize(
-          string memory _baseURI        // ipfs hash
-        , string memory _contractURI    // ipfs hash
+          string memory _contractURI    // ipfs hash
         , string memory _collectionDescription
+        , Badge[] memory _badges
     ) 
         public
         virtual
         initializer
     {
-        __ERC1155_init(_baseURI);
+        __ERC1155_init('');
 
         contractURIHash = _contractURI;
         collectionDescription = _collectionDescription;
         admins[_msgSender()] = true;
+
+        for(
+            uint256 i;
+            i < _badges.length;
+            i++
+        ) {
+            badges[i] = _badges[i];
+        }
     }
 
     /// @dev Prevents actions by non-admin addresses.
