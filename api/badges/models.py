@@ -27,7 +27,7 @@ class BadgeSet(models.Model):
     chain = models.CharField(max_length=50, blank=True, null=True)
     contract_address = models.CharField(max_length=50, blank=True, null=True)
 
-    badges = models.ManyToManyField(Badge)
+    badges = models.ManyToManyField(Badge, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

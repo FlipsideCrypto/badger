@@ -1,16 +1,14 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet'
 
-import { providers } from 'ethers';
 import { createClient, WagmiConfig, chain, configureChains } from "wagmi";
 import { alchemyProvider } from 'wagmi/providers/alchemy'; // Do I fuckin need this fr
-import { RainbowKitProvider, getDefaultWallets, darkTheme } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import Footer from "./components/Blocks/Footer";
 import Navbar from "./components/Blocks/Navbar";
 
-import Home from './components/Pages/Home';
 import Landing from './components/Pages/Landing';
 import CreationManager from './components/Pages/CreationManager';
 

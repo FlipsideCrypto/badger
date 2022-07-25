@@ -114,26 +114,69 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
     
     @action(methods=["post"], detail=False)
     def new_set(self, request):
-        set_name = request.data.get("set_name", None)
-        set_desc = request.data.get("set_desc", None)
-        set_img_hash = request.data.get("set_img_hash", None)
-        set_contract_address = request.data.get("set_contract_address", None)
-        set_creator = request.data.get("set_creator", None)
-        set_contract_uri_hash = request.data.get("set_contract_uri_hash", None)
-        chain = request.data.get("chain", None)
+        # set_name = request.data.get("set_name", None)
+        # set_desc = request.data.get("set_desc", None)
+        # set_img_hash = request.data.get("set_img_hash", None)
+        # set_contract_address = request.data.get("set_contract_address", None)
+        # set_creator = request.data.get("set_creator", None)
+        # set_contract_uri_hash = request.data.get("set_contract_uri_hash", None)
+        # chain = request.data.get("chain", None)
+        badges_data = request.data.get("badges_data", None)
+
+        set_data = {
+            'name': request.data.get("set_name", None),
+            'description': request.data.get("set_desc", None),
+            'image_hash': request.data.get("set_img_hash", None),
+            'contract_address': request.data.get("set_contract_address", None),
+            'creator_address': request.data.get("set_creator", None),
+            'contract_uri_hash': request.data.get("set_contract_uri_hash", None),
+            'chain': request.data.get("chain", None),
+            'created_at': timezone.now()
+        }
+
 
         try:
-            badgeSetObj = BadgeSet(
-                name=set_name,
-                description=set_desc,
-                creator_address=set_creator,
-                contract_address=set_contract_address,
-                image_hash=set_img_hash,
-                contract_uri_hash=set_contract_uri_hash,
-                chain=chain,
-                created_at=timezone.now()
-            )
-            badgeSetObj.save()
+            badges_data = json.loads(badges_data)
+            badge_serializer = BadgeSerializer(data=badges_data, many=True)
+            badge_serializer.is_valid(raise_exception=True)
+            set_data['badges'] = badge_serializer.data
+
+            print(set_data)
+            set_serializer = self.get_serializer(data=set_data)
+            set_serializer.is_valid(raise_exception=True)
+
+            # for badge in badge_serializer.data:
+            #     print(badge)
+            #     set_serializer.badges.add(badge)
+            badgeSet = set_serializer.save()
+            # badge_serializer.save()
+            # badgeSetObj = BadgeSet(
+            #     name=set_name,
+            #     description=set_desc,
+            #     creator_address=set_creator,
+            #     contract_address=set_contract_address,
+            #     image_hash=set_img_hash,
+            #     contract_uri_hash=set_contract_uri_hash,
+            #     chain=chain,
+            #     created_at=timezone.now()
+            # )
+            # badgeSetObj.save()
+
+            # serializer.is_valid(raise_exception=True)
+            # if serializer.is_valid():
+            #     serializer.save()
+            # for badge in badges_data:
+            #     print(badge)
+            #     badgeObj = Badge(
+            #         name=badge.name,
+            #         description=badge.desc,
+            #         token_id=badge.token_id,
+            #         image_hash=badge.img_hash,
+            #         parent_address=set_contract_address,
+            #         created_at=timezone.now()
+            #     )
+            #     badgeObj.save()
+
         except Exception as error:
             return JsonResponse({'success': False, 'error': str(error)})
 
@@ -142,7 +185,7 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
     @action(methods=["post"], detail=False)
     def new_badges(self, request):
         badge_data = request.data.getlist('badge_imgs')
-        set_address = request.data.get('badge_imgs')
+        set_address = request.data.get('set_address')
 
         print(badge_data, set_address)
 
@@ -164,33 +207,6 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
 
 
         return JsonResponse({'success': True})
-
-    @action(methods=["post"], detail=False)
-    def pin_badge_image(self, request):
-        imgFile = request.FILES.get("imgFile", None)
-        imgName = request.POST.get("imgName", None)
-        contract_address = request.POST.get("contract_address", None)
-
-        max_file_size = 20000000 # 20MB
-        if imgFile.size > max_file_size:
-            return JsonResponse({'success': False, 'error':f'File {imgName} too large. Max {max_file_size / 1000000}MB'})
-
-        try:
-            pin_response = pin_image(imgFile, imgName)
-            badge_set = self.get_queryset().get(contract_address=contract_address)
-            token_id = badge_set.badges.count()
-
-            badge_obj = Badge(
-                image_hash=pin_response['IpfsHash'],
-                token_id=token_id,
-                parent_address=contract_address
-            )
-            badge_obj.save()
-            badge_set.badges.add(badge_obj)
-        except Exception as error: 
-            return JsonResponse({'success': False, 'error': error})
-        ## return success and the current amount of badges in set for usage
-        return JsonResponse({'success': True, 'token_id': token_id, 'image_hash': pin_response['IpfsHash']})
 
 class BadgeViewSet(viewsets.ModelViewSet):
     queryset = Badge.objects.all()

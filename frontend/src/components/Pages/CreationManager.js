@@ -14,8 +14,8 @@ const CreationManager = () => {
     const { chain } = useNetwork();
 
     const [stage, setStage] = useState('createSet')
-    const [badgeSetData, setBadgeSetData] = useState({'name': null, 'desc': null, 'imgFile': null});
-    const [badgeData, setBadgeData] = useState([{'name': null, 'desc': null, 'imgFile':null}]);
+    const [badgeSetData, setBadgeSetData] = useState({'name': null, 'description': null, 'imgFile': null});
+    const [badgeData, setBadgeData] = useState([{'name': null, 'description': null, 'imgFile':null}]);
     const [badgeId, setBadgeId] = useState(0);
     const [contractAddress, setContractAddress] = useState();
     const [contractInitialized, setContractInitialized] = useState(false);

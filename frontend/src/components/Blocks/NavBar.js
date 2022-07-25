@@ -1,20 +1,16 @@
 import { AppBar, Box, Toolbar, Typography } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import ConnectBtn from "./ConnectBtn";
 
 const Navbar = () => {
-    let navigate = useNavigate();
-
     return (
         <Box 
             sx={{ 
                 width: '100%',
                 height: '100px',
                 display: 'inline-flex',
-                // justifyContent: 'center',
                 border: '1px solid #000000',
-                display: 'flex',
                 flexDirection: "row",
                 mb: '20px'
             }} 

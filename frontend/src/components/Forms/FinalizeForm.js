@@ -30,25 +30,20 @@ const FinalizeForm = (props) => {
     } = props
 
     const [deploymentArgs, setDeploymentArgs] = useState();
-    const [loading, setLoading] = useState([false, false, false, false]);
-    const [btnSuccess, setBtnSuccess] = useState([false, false, false, false])
-    const [btnMsg, setButtonMsg] = useState([
+    const [loading, setLoading] = useState([false, false, false]);
+    const [btnSuccess, setBtnSuccess] = useState([false, false, false])
+    const [errorMsg, setErrorMsg] = useState({'step': null, 'error': null});
+    
+    const btnMsg = [
         'Badger uploads your images and Badge Set data to IPFS',
         'Transaction cloning the Badger base contract, using 40x less fees than regular deployment',
-        "Your Badge Set contract clone has to be 'made real' with a transaction",
-        'A transaction sends the bundled Badge info to the contract',
-    ])
-    const [errorMsg, setErrorMsg] = useState();
-    
+        "The Badge Set contract clone needs to be initialized with its first Badges",
+    ]
+
     const proxyHandlerContractAddress = chain?.name === 'polygon' ?
         process.env.REACT_APP_POLYGON_PROXY : 
         process.env.REACT_APP_MUMBAI_PROXY
 
-    const apiConfig = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-    };
     var connectedClonedContract;
 
     const handleNext = () => {
@@ -65,21 +60,24 @@ const FinalizeForm = (props) => {
     const handleIpfsUpload = () => {
         setLoading([true, false, false, false])
 
-        // TODO: Remove this log
-        // console.log('preview data',previewData)
-
         const formData = new FormData();
+        const config = {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+        };
 
         // For all badges and the badge set, append image files
         formData.append('set_name', badgeSetData.name)
-        formData.append('set_desc', badgeSetData.desc)
+        formData.append('set_desc', badgeSetData.description)
         formData.append('set_img', badgeSetData.imgFile)
         badgeData.forEach((badge) => {
             console.log(badge)
             formData.append('badge_imgs', badge.imgFile)
         })
+
         
-        axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/ipfs_pin/`, formData, apiConfig)
+        axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/ipfs_pin/`, formData, config)
         .then((res) => {
                 if (res.data['success']) {
                     console.log('Res', res.data)
@@ -90,28 +88,26 @@ const FinalizeForm = (props) => {
                     let badgeUpdate = badgeData
                     let badgeHashes = res.data.badge_img_hashes
                     badgeUpdate.forEach((badge, idx) => {
-                        badge.img_hash = badgeHashes[idx]
+                        badge.image_hash = badgeHashes[idx]
                         badgeUpdate[idx] = badge
                     })
 
-                    console.log('badgeUpdate', badgeUpdate)
                     setBadgeSetData(setUpdate)
                     setBadgeData(badgeUpdate)
                     setDeploymentArgs(res.data.deployment_args)
-                    setLoading([false, false, false, false])
-                    // TODO: Remove comment
-                    // setBtnSuccess([true, false, false, false])
+                    setBtnSuccess([true, false, false])
                 } else {
                     console.log('Error with IPFS upload:', res.data['error'])
                     setErrorMsg({'step' : 1, 'error': res.data['error']})
-                    setLoading([false, false, false, false])
                 }
             }
         )
         .catch((error) => {
             console.log('Error with IPFS upload', error)
             setErrorMsg({'step' : 1, 'error': error})
-            setLoading([false, false, false, false])
+        })
+        .finally(() => {
+            setLoading([false, false, false])
         })
     }
 
@@ -131,47 +127,71 @@ const FinalizeForm = (props) => {
         //         console.log('Badge Set Cloned', res)
 
         //         setContractAddress(res.events[0].args.setAddress)
-        //         setBtnSuccess([true, true, false, false])
-        //         setLoading([false, true, false, false])
+        //         setBtnSuccess([true, true, false])
+        //         setErrorMsg({'step': null, 'error': null})
         //     })
         //     .catch((res) => {
         //         console.log('Error Cloning', res)
         //         setErrorMsg({'step' : 2, 'error': res})
-        //         setLoading([false, false, false, false])
         //     })
+        //     .finally(() => {
+            //     setLoading([false, false, false])
+            //  })
         // })
 
         // TODO: Remove this -- just added for testing
-        setBtnSuccess([true, true, false, false])
-        setLoading([false, false, false, false])
+        setBtnSuccess([true, true, false])
+        setLoading([false, false, false])
+        setErrorMsg({'step': null, 'error': null})
     }
 
     const initializeContract = () => {
-        setLoading([false, false, true, false])
+        setLoading([false, false, true])
 
+        const config = {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+        };
         const formData = new FormData();
         formData.append('set_name', badgeSetData.name)
-        formData.append('set_desc', badgeSetData.desc)
+        formData.append('set_desc', badgeSetData.description)
         formData.append('set_img_hash', badgeSetData.ipfs_img)
         formData.append('set_contract_address', contractAddress)
         formData.append('set_creator', address)
         formData.append('set_contract_uri_hash', badgeSetData.contract_hash)
-        formData.append('chain', chain)
+        formData.append('chain', chain.name)
+
+        let badgeArgs = []
+        let badgeUpdate = badgeData
+        badgeData.forEach((badge, idx) => {
+            badgeArgs.push([badge.name, badge.description, badge.image_hash])            
+            badgeUpdate[idx].token_id = idx
+            // TODO: Replace this
+            badgeUpdate[idx].parent_address = '1111111'
+            // badgeUpdate[idx].parent_address = contractAddress
+        })
+        console.log('badgeUpdate', badgeUpdate)
+        formData.append('badges_data', JSON.stringify(badgeUpdate))
+        console.log('form data', formData)
 
         // TODO: This needs to be moved to within the .then for after the tx is finalized.
-        axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/new_set/`, formData, apiConfig)
+        axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/new_set/`, formData, config)
         .then((res) => {
                 if (res.data['success']) {
+                    console.log('Uploading set to db successful.', res.data)
                     setContractInitialized(true);
-                    setLoading([false, false, false, false])
-                    setBtnSuccess([true, true, true, false])
+                    setBtnSuccess([true, true, true])
+                    setErrorMsg({'step': null, 'error': null})
                 } else {
                     console.log('Error with uploading set data to database:', res.data['error'])
                     setErrorMsg({'step' : 3, 'error': res.data['error']})
-                    setLoading([false, false, false, false])
                 }
             }
         )
+        .finally(() => {
+            setLoading([false, false, false])
+        })
         
         /* TODO: Move post request inside the .then
 
@@ -183,7 +203,8 @@ const FinalizeForm = (props) => {
 
         connectedClonedContract.initialize(
             deploymentArgs.contract_uri_hash,
-            deploymentArgs.description
+            deploymentArgs.description,
+            badgeArgs
         )
         .then((transaction) => {            
             transaction.wait()
@@ -200,88 +221,92 @@ const FinalizeForm = (props) => {
         */
     }
 
-    const uploadBadges = () => {
-        setLoading([false, false, false, true])
 
-        const formData = new FormData();
 
-        let badgeArgs = []
-        let tokenIds = []
-        let badgeUpdate = badgeData
-        badgeData.forEach((badge, idx) => {
-            let tokenId = lastInitializedTokenId + idx
-            badgeArgs.push([badge.name, badge.desc, badge.img_hash])
-            tokenIds.push(tokenId)
+    // const uploadBadges = () => {
+    //     setLoading([false, false, false, true])
+
+    //     const formData = new FormData();
+
+    //     let badgeArgs = []
+    //     let tokenIds = []
+    //     let badgeUpdate = badgeData
+    //     badgeData.forEach((badge, idx) => {
+    //         let tokenId = lastInitializedTokenId + idx
+    //         badgeArgs.push([badge.name, badge.description, badge.image_hash])
+    //         tokenIds.push(tokenId)
             
-            badgeUpdate[idx].token_id = tokenId
-        })
-        formData.append('badges_data', badgeUpdate)
-        formData.append('set_address', contractAddress)
+    //         badgeUpdate[idx].token_id = tokenId
+    //     })
+    //     formData.append('badges_data', badgeUpdate)
+    //     formData.append('set_address', contractAddress)
 
-        console.log('tokenIds', tokenIds, 'badgeUpdate', badgeUpdate)
+    //     console.log('tokenIds', tokenIds, 'badgeUpdate', badgeUpdate)
 
-        // We need to move this to after the transaction.wait but this is here for testing just to be sure
-        axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/new_badges/`, formData, apiConfig)
-        .then((res) => {
-            if (res.data['success']) {
-                setLoading([false, false, false, false])
-                setBtnSuccess([true, true, true, true])
-            } else {
-                console.log('Error with uploading badges to database:', res.data['error'])
-                setErrorMsg({'step' : 4, 'error': res.data['error']})
-                setLoading([false, false, false, false])
-            }
-        })
+    //     // We need to move this to after the transaction.wait but this is here for testing just to be sure
+    //     axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/new_badges/`, formData, apiConfig)
+    //     .then((res) => {
+    //         if (res.data['success']) {
+    //             setLoading([false, false, false])
+    //             setBtnSuccess([true, true, true])
+    //             setErrorMsg({'step': null, 'error': null})
+    //         } else {
+    //             console.log('Error with uploading badges to database:', res.data['error'])
+    //             setErrorMsg({'step' : 4, 'error': res.data['error']})
+    //         }
+    //     })
+    //     .finally(() => {
+    //         setLoading([false, false, false, false])
+    //     })
 
-        /* TODO: move the post request inside the .then
+    //     /* TODO: move the post request inside the .then
 
-        connectedClonedContract.createBadgeTypeBundle(
-            tokenIds,
-            badgeArgs
-        )
-        .then((transaction) => {
-            transaction.wait()
-            .then((res) => {
-                // move post request here                
-            })
-        })
-        .catch((res) => {
-            console.log('Error Uploading Badges:', res)
-            setErrorMsg({'step' : 4, 'error': res})
-            setLoading([false, false, false, false])
-        })
-        */
-    }
+    //     connectedClonedContract.createBadgeTypeBundle(
+    //         tokenIds,
+    //         badgeArgs
+    //     )
+    //     .then((transaction) => {
+    //         transaction.wait()
+    //         .then((res) => {
+    //             // move post request here                
+    //         })
+    //     })
+    //     .catch((res) => {
+    //         console.log('Error Uploading Badges:', res)
+    //         setErrorMsg({'step' : 4, 'error': res})
+    //         setLoading([false, false, false, false])
+    //     })
+    //     */
+    // }
 
     function buttonSuccessSx(btnIdx) {
-        if (!btnSuccess[btnIdx]) return {}
-        const style =  {
-            ...(btnSuccess[btnIdx] && {
-                bgcolor: '#A8FBB3',
-                pointerEvents: 'none',
-                opacity: '0.60'
-            }),
-        }
+        if (btnIdx === errorMsg.step) 
+            return {
+                ...({
+                    bgcolor: '#FBA8A8',
+                })
+            }
 
-        return style
+
+        if (btnSuccess[btnIdx]) 
+            return {
+                ...({
+                    bgcolor: '#A8FBB3',
+                    pointerEvents: 'none',
+                    opacity: '0.60'
+                }),
+            }
     }
 
     // Handles if they have completed a step then went back
     useEffect(() => {
-        console.log('Stored Badge Data', badgeData)
-
-        if (contractInitialized) {
-            setBtnSuccess([true, true, true, false])
-            return
-        }
-
         if (contractAddress) {
-            setBtnSuccess([true, true, false, false])
+            setBtnSuccess([true, true, false])
             return
         }
 
-        if (badgeData[badgeData.length - 1].img_hash) {
-            setBtnSuccess([true, false, false, false])
+        if (badgeData[badgeData.length - 1].image_hash) {
+            setBtnSuccess([true, false, false])
             return
         }
     }, [])
@@ -366,7 +391,7 @@ const FinalizeForm = (props) => {
                             disabled={!btnSuccess[1]}
                             onClick={() => initializeContract()}
                         >
-                            INITIALIZE CONTRACT
+                            INITIALIZE BADGES
                         </Button>
                         
                         {loading[2] && (
@@ -377,25 +402,6 @@ const FinalizeForm = (props) => {
 
                         <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
                             {btnMsg[2]}
-                        </Typography>
-
-                        <Button
-                            variant="contained"
-                            sx={buttonSuccessSx(3)}
-                            disabled={!btnSuccess[2]}
-                            onClick={() => uploadBadges()}
-                        >
-                            UPLOAD BADGES
-                        </Button>
-                        
-                        {loading[3] && (
-                            <Box sx={{width: '100%', height:'100%', color:'#A8FBB3'}}>
-                                <LinearProgress color='inherit' sx={{height: '5px'}}/>
-                            </Box>
-                        )}
-
-                        <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
-                            {btnMsg[3]}
                         </Typography>
                     </Box>
                 </Grid>
@@ -415,7 +421,7 @@ const FinalizeForm = (props) => {
                     <Grid item sm={6} md={6} lg={4} />
 
                     <Grid item sm={3} md={2} lg={2}>
-                        {btnSuccess[3] ?
+                        {btnSuccess[2] ?
                             <Button
                                 variant="contained"
                                 disabled={false}

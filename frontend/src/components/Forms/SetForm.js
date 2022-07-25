@@ -15,7 +15,7 @@ const SetForm = (props) => {
     const { badgeSetData, setBadgeSetData, setStage } = props;
 
     const [collectionName, setCollectionName] = useState(badgeSetData.name);
-    const [collectionDesc, setCollectionDesc] = useState(badgeSetData.desc);
+    const [collectionDesc, setCollectionDesc] = useState(badgeSetData.description);
     const [imageFile, setImageFile] = useState(badgeSetData.imgFile);
 
     const defaultName = 'Badger Badges'
@@ -38,7 +38,7 @@ const SetForm = (props) => {
     const handleNext = () => {
         const setData = {
             'name': collectionName,
-            'desc': collectionDesc,
+            'description': collectionDesc,
             'imgFile': imageFile
         }
         

@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider, LinearProgress } from '@mui/material';
+import { Box, TextField, Typography, Button, Input, FormHelperText, Grid, Divider } from '@mui/material';
 import { FormControl } from '@mui/material';
 
 import CollectionCard from '../Blocks/CollectionCard'
@@ -16,7 +16,7 @@ const BadgeForm = (props) => {
     const { badgeData, setBadgeData, setStage, badgeId, setBadgeId } = props;
 
     const [badgeName, setBadgeName] = useState(badgeData[badgeId] ? badgeData[badgeId].name : null);
-    const [badgeDesc, setBadgeDesc] = useState(badgeData[badgeId] ? badgeData[badgeId].desc : null);
+    const [badgeDesc, setBadgeDesc] = useState(badgeData[badgeId] ? badgeData[badgeId].description : null);
     const [badgeImgFile, setBadgeImgFile] = useState(badgeData[badgeId] ? badgeData[badgeId].imgFile : null);
 
     const defaultName = 'Badger Badge'
@@ -39,7 +39,7 @@ const BadgeForm = (props) => {
     const handleNext = () => {
         const badge = {
             'name': badgeName,
-            'desc': badgeDesc,
+            'description': badgeDesc,
             'imgFile': badgeImgFile
         }
         let currentId = badgeId
@@ -82,7 +82,7 @@ const BadgeForm = (props) => {
     const handleNewBadgeForm = () => {
         const badge = {
             'name': badgeName,
-            'desc': badgeDesc,
+            'description': badgeDesc,
             'imgFile': badgeImgFile
         }
 

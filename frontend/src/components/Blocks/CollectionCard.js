@@ -20,13 +20,13 @@ const CollectionCard = (props) => {
                 {imageFile ?
                     <img
                         style={{width: '100%', height: '100%', objectFit: 'contain', margin:'auto', display:'block', borderRadius: '10px',}}
-                        alt="Collection Image"
+                        alt="Set Collection"
                         src={URL.createObjectURL(imageFile)}
                     />
                     :
                     <img
                         style={{width: '100%', height: '100%', objectFit: 'contain', margin:'auto', display:'block', borderRadius: '10px',}}
-                        alt="Collection Image"
+                        alt="Set Collection"
                         src={'/badger-logo-whiteblackbg.png'}
                     />
                 }

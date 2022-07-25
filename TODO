@@ -1,3 +1,11 @@
+SUMMARY:
+    Doing this because I need to recollect my thoughts after being away
+    ☐ Finalize landing page with assets and the checklist
+    ☐ Entering app needs some page to determine if they currently have a set or if they're new
+    ☐ API GET for a wallet's sets and badges
+    ☐ Fix passing array of badge data through to API
+        ☐ Need to get serializer cleaning implemented
+
 CRITICAL:
     ☐ Redeploy the contract to mumbai, we removed an arg in initialize
     ☐ Deploy Contract button behaves oddly in the UX.

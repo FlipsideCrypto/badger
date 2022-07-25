@@ -1,11 +1,10 @@
 import { memo } from 'react'
-import { Grid, Box } from '@mui/material'
 
 import BigBox from './BigBox'
 import MiniCard from './MiniCard'
 
 const MiniPreview = (props) => {
-    const { badgeData, badgeSetData } = props;
+    const { badgeData } = props;
 
     return (
         // <Box

@@ -1,11 +1,7 @@
 import { AppBar, Box, Toolbar, Typography } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
-
-import ConnectBtn from "./ConnectBtn";
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
-    let navigate = useNavigate();
-
     return (
       <>
         <Box sx={{pt: '200px'}} />
@@ -14,9 +10,7 @@ const Footer = () => {
                 width: '100%',
                 height: '100px',
                 display: 'inline-flex',
-                // justifyContent: 'center',
                 border: '1px solid black',
-                display: 'flex',
                 flexDirection: "row",
                 position: 'absolute',
                 bottom: '0'
@@ -25,7 +19,6 @@ const Footer = () => {
           <AppBar 
             position="static" 
             sx={{
-                // bgcolor: '#FFFFFF00',
                 justifyContent: 'center',
                 margin: '0',
             }}

@@ -69,6 +69,7 @@ contract BadgerSet is
     function initialize(
           string memory _contractURI    // ipfs hash
         , string memory _collectionDescription
+        , Badge[] memory _badges
     ) 
         public
         virtual
@@ -79,6 +80,14 @@ contract BadgerSet is
         contractURIHash = _contractURI;
         collectionDescription = _collectionDescription;
         admins[_msgSender()] = true;
+
+        for(
+            uint256 i;
+            i < _badges.length;
+            i++
+        ) {
+            badges[i] = _badges[i];
+        }
     }
 
     /// @dev Prevents actions by non-admin addresses.
