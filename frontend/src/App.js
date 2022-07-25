@@ -7,7 +7,7 @@ import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import Footer from "./components/Blocks/Footer";
-import Navbar from "./components/Blocks/Nav";
+import Navbar from "./components/Blocks/Navbar";
 
 import Landing from './components/Pages/Landing';
 import CreationManager from './components/Pages/CreationManager';
