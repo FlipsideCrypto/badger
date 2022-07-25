@@ -167,13 +167,9 @@ const FinalizeForm = (props) => {
         badgeData.forEach((badge, idx) => {
             badgeArgs.push([badge.name, badge.description, badge.image_hash])            
             badgeUpdate[idx].token_id = idx
-            // TODO: Replace this
-            badgeUpdate[idx].parent_address = '1111111'
-            // badgeUpdate[idx].parent_address = contractAddress
+            badgeUpdate[idx].parent_address = contractAddress
         })
-        console.log('badgeUpdate', badgeUpdate)
         formData.append('badges_data', JSON.stringify(badgeUpdate))
-        console.log('form data', formData)
 
         // TODO: This needs to be moved to within the .then for after the tx is finalized.
         axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/new_set/`, formData, config)
@@ -220,64 +216,6 @@ const FinalizeForm = (props) => {
 
         */
     }
-
-
-
-    // const uploadBadges = () => {
-    //     setLoading([false, false, false, true])
-
-    //     const formData = new FormData();
-
-    //     let badgeArgs = []
-    //     let tokenIds = []
-    //     let badgeUpdate = badgeData
-    //     badgeData.forEach((badge, idx) => {
-    //         let tokenId = lastInitializedTokenId + idx
-    //         badgeArgs.push([badge.name, badge.description, badge.image_hash])
-    //         tokenIds.push(tokenId)
-            
-    //         badgeUpdate[idx].token_id = tokenId
-    //     })
-    //     formData.append('badges_data', badgeUpdate)
-    //     formData.append('set_address', contractAddress)
-
-    //     console.log('tokenIds', tokenIds, 'badgeUpdate', badgeUpdate)
-
-    //     // We need to move this to after the transaction.wait but this is here for testing just to be sure
-    //     axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/new_badges/`, formData, apiConfig)
-    //     .then((res) => {
-    //         if (res.data['success']) {
-    //             setLoading([false, false, false])
-    //             setBtnSuccess([true, true, true])
-    //             setErrorMsg({'step': null, 'error': null})
-    //         } else {
-    //             console.log('Error with uploading badges to database:', res.data['error'])
-    //             setErrorMsg({'step' : 4, 'error': res.data['error']})
-    //         }
-    //     })
-    //     .finally(() => {
-    //         setLoading([false, false, false, false])
-    //     })
-
-    //     /* TODO: move the post request inside the .then
-
-    //     connectedClonedContract.createBadgeTypeBundle(
-    //         tokenIds,
-    //         badgeArgs
-    //     )
-    //     .then((transaction) => {
-    //         transaction.wait()
-    //         .then((res) => {
-    //             // move post request here                
-    //         })
-    //     })
-    //     .catch((res) => {
-    //         console.log('Error Uploading Badges:', res)
-    //         setErrorMsg({'step' : 4, 'error': res})
-    //         setLoading([false, false, false, false])
-    //     })
-    //     */
-    // }
 
     function buttonSuccessSx(btnIdx) {
         if (btnIdx === errorMsg.step) 
