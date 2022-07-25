@@ -6,11 +6,11 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'; // Do I fuckin need t
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import Footer from "./components/Blocks/Footer";
-import Navbar from "./components/Blocks/Navbar";
+import Footer from "./components/Blocks/Footer.js";
+import Navbar from "./components/Blocks/Navbar.js";
 
-import Landing from './components/Pages/Landing';
-import CreationManager from './components/Pages/CreationManager';
+import Landing from './components/Pages/Landing.js';
+import CreationManager from './components/Pages/CreationManager.js';
 
 import "./App.css";
 
