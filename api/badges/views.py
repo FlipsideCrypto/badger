@@ -16,8 +16,8 @@ from pinatapy import PinataPy
 from .models import BadgeSet, Badge, User
 from .serializers import BadgeSetSerializer, BadgeSerializer, UserSerializer
 
-# pinata = PinataPy(settings.PINATA_API_KEY, settings.PINATA_API_SECRET_KEY)
-pinata = PinataPy('safasfasf', settings.PINATA_API_SECRET_KEY)
+pinata = PinataPy(settings.PINATA_API_KEY, settings.PINATA_API_SECRET_KEY)
+# pinata = PinataPy('safasfasf', settings.PINATA_API_SECRET_KEY)
 
 class BadgeSetViewSet(viewsets.ModelViewSet):
     queryset = BadgeSet.objects.all()
@@ -44,19 +44,18 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
         
         max_file_size = 20000000 # 20MB
         
-        print(set_desc)
         ## TODO: does the \r\n\r\n work in the uri?
         # set_desc = set_desc.replace('\r\n\r\n', '\\n')
         # print('replaced set_desc', set_desc)
 
-        dummy_response = {
-            'success':True, 
-            'set_hash': 'asfasf', 
-            'set_img_hash': 'asfasf', 
-            'badge_img_hashes': ['1', '2', '3'],
-            'deployment_args': ['233113', set_desc]
-        }
-        return JsonResponse(dummy_response)
+        # dummy_response = {
+        #     'success':True, 
+        #     'set_hash': 'asfasf', 
+        #     'set_img_hash': 'asfasf', 
+        #     'badge_img_hashes': ['1', '2', '3'],
+        #     'deployment_args': {'contract_uri_hash': '12412412412412', 'description': set_desc}
+        # }
+        # return JsonResponse(dummy_response)
         
         
         try:
@@ -65,7 +64,8 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
 
             # pin contract image
             img_pin_response = pin_image(set_img, set_img.name)
-            if img_pin_response['status']:
+            if 'status' in img_pin_response:
+                print('Error pinning Set image', img_pin_response)
                 error_msg = json.loads(img_pin_response['text'])
                 error_msg = error_msg['error']['details']
                 raise Exception(error_msg)
@@ -80,7 +80,9 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
 
             # pin contract uri
             uri_pin_response = pinata.pin_json_to_ipfs(contract_uri, options={'pinataMetadata': {'name': f'{set_name}-contracturi'}})
-            if uri_pin_response['status']:
+            print('URI PIN', uri_pin_response)
+            if 'status' in uri_pin_response:
+                print('Error pinning URI', uri_pin_response)
                 error_msg = json.loads(uri_pin_response['text'])
                 error_msg = error_msg['error']['details']
                 raise Exception(error_msg)
@@ -93,11 +95,12 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
                     raise Exception('File {imgName} too large. Max {max_file_size / 1000000}MB')
                 
                 img_pin_response = pin_image(image, image.name)
-                if img_pin_response['status']:
+                if 'status' in img_pin_response:
+                    print('Error pinning Badge', image.name, img_pin_response)
                     error_msg = json.loads(img_pin_response['text'])
                     error_msg = error_msg['error']['details']
                     raise Exception(error_msg)
-                badge_img_hashes.push(img_pin_response['IpfsHash'])
+                badge_img_hashes.append(img_pin_response['IpfsHash'])
 
         except Exception as error:
             return JsonResponse({'success': False, 'error': str(error)})
@@ -107,9 +110,10 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
             'set_hash': contract_uri_hash, 
             'set_img_hash': set_img_hash, 
             'badge_img_hashes': badge_img_hashes,
-            'deployment_args': [contract_uri_hash, set_desc]
+            'deployment_args': {'contract_uri_hash': contract_uri_hash, 'description': set_desc}
         }
 
+        print('Response: ', response)
         return JsonResponse(response)
     
     @action(methods=["post"], detail=False)
@@ -124,7 +128,6 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
             'creator_address': request.data.get("set_creator", None),
             'contract_uri_hash': request.data.get("set_contract_uri_hash", None),
             'chain': request.data.get("chain", None),
-            'created_at': timezone.now()
         }
 
 
@@ -145,7 +148,6 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
             set_serializer = self.get_serializer(data=set_data)
             set_serializer.is_valid(raise_exception=True)
             badge_set = set_serializer.save()
-            print('badge set', badge_set)
 
             user.admin_for.add(badge_set)
 

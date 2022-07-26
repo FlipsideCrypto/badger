@@ -13,18 +13,12 @@ const CreationManager = () => {
     const { data: signer } = useSigner();
     const { chain } = useNetwork();
 
-    const [stage, setStage] = useState('mintBadges')
+    const [stage, setStage] = useState('createSet')
     const [badgeSetData, setBadgeSetData] = useState({'name': null, 'description': null, 'imgFile': null});
-    const [badgeData, setBadgeData] = useState([{'name': null, 'description': null, 'imgFile':null}]);
+    const [badgeData, setBadgeData] = useState([{'name': null, 'description': null, 'imgFile': null}]);
     const [badgeId, setBadgeId] = useState(0);
     const [contractAddress, setContractAddress] = useState();
     const [contractInitialized, setContractInitialized] = useState(false);
-
-    useEffect(() => {        
-        if(!address) {
-            navigate('/')
-        }
-    }, [])
 
     function renderNewBadgeCreator() {
         return <BadgeForm
@@ -36,6 +30,12 @@ const CreationManager = () => {
             badgeId={badgeId}
         />
     }
+
+    useEffect(() => {        
+        if(!address) {
+            navigate('/')
+        }
+    }, [])
 
     useEffect(() => {
         renderNewBadgeCreator()

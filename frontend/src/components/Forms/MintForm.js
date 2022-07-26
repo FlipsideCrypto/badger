@@ -1,58 +1,133 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Divider, Typography, TextField, FormControl, Select, InputLabel, Button, Grid, MenuItem } from '@mui/material'
-import ethers from 'ethers';
+import { ethers } from 'ethers';
+import cloneAbi from "../../BadgerSet.json"
+
+import { Divider, Typography, TextField, FormControl, LinearProgress, Button, Grid, MenuItem } from '@mui/material'
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 
 import CustomStepper from '../Blocks/CustomStepper';
 import MiniPreview from '../Blocks/MiniPreview';
 import BigBox from '../Blocks/BigBox';
 
 const MintForm = (props) => {
-    // const {
-    //     signer,
-    //     badgeData,
-    //     badgeSetData,
-    //     contractAddress,
-    //     setStage,
-    // } = props
-    const { setStage } = props;
+    const {
+        signer,
+        badgeData,
+        badgeSetData,
+        contractAddress,
+        setStage,
+    } = props
 
-    var badgeData = [{'name': 'Badge 1'}, {'name': 'Badge 2'}]
-
-    const [fieldData, setFieldData] = useState([{'address': null, 'badge': {'name': null, 'index': null}, 'error': null}]);
+    const [fieldData, setFieldData] = useState([{'address': '', 'badge': {'name': '', 'index': null, 'error': null}, 'error': null}]);
     const [mintSuccess, setMintSuccess] = useState(null);
+    const [mintLoading, setMintLoading] = useState(false);
+    const [mintError, setMintError] = useState();
 
     let navigate = useNavigate();
 
     const handleAddressChange = (idx, event) => {
         let fields = [...fieldData]
         fields[idx].address = event.target.value
+        
+        // Clear errors if they're changing an error field
+        if (fields[idx].error) {
+            fields[idx].error = null
+            setMintError(null)
+        }
         setFieldData(fields)
-
-        console.log('FieldData', fieldData)
     }
 
     const handleBadgeChange = (idx, event) => {
         let fields = [...fieldData]
         // This way of finding badge index is messy, need to find a better way to handle it.
         const badgeIdx = badgeData.findIndex((badge) => badge.name === event.target.value)
-        fields[idx].badge = {'name': event.target.value, 'index': badgeIdx}
+        fields[idx].badge = {'name': event.target.value, 'index': badgeIdx, 'error': null}
+
+        // Clear errors if they're changing an error field
+        if (fields[idx].badge.error) {
+            setMintError(null)
+        }
+
+        setFieldData(fields)
     }
 
     const removeField = (idx) => {
         let fields = [...fieldData]
-        fields.splice(idx, 1)
+        if (fields.length == 1) {
+            const newField = {'address': '', 'badge': {'name': '', 'index': null, 'error': null}, 'error': null}
+            fields[0] = newField
+        } 
+        else {
+            fields.splice(idx, 1)
+        }
         setFieldData(fields)
     }
 
     const addField = () => {
-        const newField = [{'address': null, 'badge': {'name': null, 'index': null}, 'error': null}]
+        const newField = {'address': '', 'badge': {'name': '', 'index': null, 'error': null}, 'error': null}
         setFieldData([...fieldData, newField])
     }
 
-    const handleMint = () => {
+    const validateData = () => {
+        let addresses = []
+        let badgeIds = []
+        let validationError;
+        let fields = [...fieldData]
+        console.log('fields', fields)
+        fields.forEach((field, idx) => {
+            if (!ethers.utils.isAddress(field.address)) {
+                fields[idx].error = 'Invalid!'
+                validationError = `Invalid address in row ${idx + 1}.`
+            }
 
+            if (field.badge.index === null) {
+                validationError = `Badge not found in row ${idx + 1}.`
+                fields[idx].badge.error = 'Invalid!'
+            }
+
+            addresses.push(field.address)
+            badgeIds.push(field.badge.index)
+        })
+
+        if (validationError) setFieldData(fields)
+        return [validationError, addresses, badgeIds]
+    }
+
+    const handleMint = () => {
+        setMintLoading(true)
+        setMintError(null)
+        const [validationError, addresses, badgeIds] = validateData();        
+
+        if (validationError) {
+            setMintError(validationError)
+            setMintLoading(false)
+            setMintSuccess(false)
+            return
+        }
+
+        const connectedContract = new ethers.Contract(
+            contractAddress,
+            cloneAbi,
+            signer
+        )
+
+        connectedContract.mintBadgeBundle(
+            addresses,
+            badgeIds
+        )
+        .then((transaction) => {
+            transaction.wait()
+            .then((res) => {
+
+            })
+        })
+        .catch((res) => {
+            setMintLoading(false);
+            setMintError(res)
+        })
     }
 
     const handleBack = () => {
@@ -60,11 +135,11 @@ const MintForm = (props) => {
     }
 
     const handleHome = () => {
-
+        navigate('/home')
     }
 
     function buttonSuccessSx() {
-        if (mintSuccess === false) 
+        if (mintError) 
             return {
                 ...({
                     bgcolor: '#FBA8A8',
@@ -87,7 +162,7 @@ const MintForm = (props) => {
             <CustomStepper activeStep={3} />
 
             <div style={{marginTop: '50px'}} />
-            {/* <MiniPreview badgeData={badgeData} /> */}
+            <MiniPreview badgeData={badgeData} />
 
             <Typography variant="h1" sx={{pt: '20px', textAlign: 'center'}}>
                 MINT BADGES
@@ -95,7 +170,7 @@ const MintForm = (props) => {
             <Divider 
                 sx={{
                     mx: 'auto',
-                    mb:'15px', 
+                    mb: '15px', 
                     width: '50%',
                     height: '3px'
                 }}
@@ -110,8 +185,8 @@ const MintForm = (props) => {
             <BigBox>
                 <div
                     style={{
-                        marginRight: '10%',
-                        marginLeft: '10%',
+                        marginRight: '5%',
+                        marginLeft: '5%',
                         paddingTop: '20px',
                         paddingBottom: '20px'
                     }}
@@ -122,35 +197,55 @@ const MintForm = (props) => {
                             style={{
                                 display: 'flex', 
                                 flexDirection: 'row', 
-                                // gap: 16,
+                                gap: 12,
                             }}
                         >
                             <FormControl sx={{width: '100%'}}>
                                 <TextField
-                                    label="Address"
+                                    label={field.error || "Address"}
                                     onChange={(event) => handleAddressChange(idx, event)}
                                     color='info'
+                                    error={field.error !== null}
+                                    value={field.address || ''}
                                     sx={{width: '100%'}}
+                                    InputProps={{ style: {fontSize: 14}}}
+                                    InputLabelProps={{ style: {fontSize: 14}}}
                                 />
                             </FormControl>
-                            <FormControl sx={{display: 'inline', width: '100%'}}>
-                                <InputLabel id="badge-label">Badge</InputLabel>
-                                <Select 
-                                    labelid="badge-label"
-                                    onChange={(event) => handleBadgeChange(idx, event)}
-                                    sx={{width: '100%'}}
+                            <FormControl sx={{display: 'inline', width: '60%', mb: '8px'}}>
+                                <TextField 
                                     label="Badge"
+                                    select
+                                    onChange={(event) => handleBadgeChange(idx, event)}
                                     color='info'
+                                    value={field.badge.name || ''}
+                                    error={field.badge.error !== null}
+                                    sx={{width: '100%'}}
+                                    InputProps={{ style: {fontSize: 14}}}
+                                    InputLabelProps={{ style: {fontSize: 14}}}
                                 >
                                     {badgeData.map((badge) => (
-                                        <MenuItem key={`${badge.name}`} value={badge.name} />
+                                        <MenuItem key={`${badge.name}`} value={badge.name}>{badge.name}</MenuItem>
                                     ))}
-                                </Select>
+                                </TextField>
                             </FormControl>
+
+                            <div 
+                                onClick={(field) => removeField(idx)} 
+                                style={{cursor: 'pointer', display: 'inline-flex', alignItems: 'center', marginBottom:'8px'}}
+                            >
+                                <RemoveCircleOutlineOutlinedIcon />
+                            </div>    
                         </div>
                     ))}
 
-                    <div style={{width: '50%', margin: 'auto', marginTop: '20px'}}>
+                    <div style={{display: 'flex', justifyItems: 'center', width: '100%', marginTop:'10px', marginBottom: '20px'}}>
+                        <div onClick={addField} style={{cursor: 'pointer', margin: 'auto'}}>
+                            <AddCircleOutlineOutlinedIcon />
+                        </div>
+                    </div>
+
+                    <div style={{width: '30%', margin: 'auto'}}>
                         <Button
                             variant="contained"
                             disabled={false}
@@ -159,7 +254,21 @@ const MintForm = (props) => {
                         >
                             MINT
                         </Button>
+                        {mintLoading && (
+                            <div style={{width: '100%', height:'100%', color:'#A8FBB3'}}>
+                                <LinearProgress color='inherit' sx={{height: '5px'}}/>
+                            </div>
+                        )}
                     </div>
+                    {mintError ?
+                        <Typography variant="body1" sx={{pt: '10px', textAlign: 'center', color: '#FBA8A8'}}>
+                            {mintError}
+                        </Typography>
+                        :
+                        <Typography variant="body1" sx={{pt: '10px', textAlign: 'center', visibility: 'hidden'}}>
+                            Maintain the padding
+                        </Typography>
+                    }
                 </div>
             </BigBox>
 
@@ -178,7 +287,7 @@ const MintForm = (props) => {
                 <Grid item sm={6} md={6} lg={4} />
 
                 <Grid item sm={3} md={2} lg={2}>
-                    {!fieldData[0].badge.name ?
+                    {!mintSuccess ?
                         <Button
                             variant="contained"
                             disabled={true}

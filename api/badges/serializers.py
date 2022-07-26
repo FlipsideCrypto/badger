@@ -25,7 +25,7 @@ class BadgeSetSerializer(serializers.ModelSerializer):
         return badge_set
 
 class UserSerializer(serializers.ModelSerializer):
-    admin_for = BadgeSetSerializer(many=False, required=False)
+    admin_for = BadgeSetSerializer(many=True, required=False)
     badges_owned = BadgeSerializer(many=True, required=False)
 
     class Meta:

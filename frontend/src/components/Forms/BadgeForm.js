@@ -8,11 +8,8 @@ import { FormControl } from '@mui/material';
 import CollectionCard from '../Blocks/CollectionCard'
 import BigBox from "../Blocks/BigBox"
 import CustomStepper from "../Blocks/CustomStepper"
-import MiniPreview from "../Blocks/MiniPreview"
 
 const BadgeForm = (props) => {
-    let navigate = useNavigate();
-
     const { badgeData, setBadgeData, setStage, badgeId, setBadgeId } = props;
 
     const [badgeName, setBadgeName] = useState(badgeData[badgeId] ? badgeData[badgeId].name : null);
@@ -76,7 +73,6 @@ const BadgeForm = (props) => {
         // Go back to create set if first badgeId, else go back to a previous badge
         if (badgeId === 0) setStage('createSet')
         else setBadgeId((badgeId) => badgeId-1)
-        // window.scrollTo(0,0)
     }
 
     const handleNewBadgeForm = () => {
@@ -98,7 +94,6 @@ const BadgeForm = (props) => {
         else setBadgeData((badgeData) => [...badgeData, badge])
         
         setBadgeId((badgeId) => badgeId+1);
-        // window.scrollTo(0,0)
     }
 
     return (
@@ -251,16 +246,6 @@ const BadgeForm = (props) => {
                 </Grid>
                 <Grid item sm={0} md={1} lg={2} />
             </Grid>
-
-            {/* {badgeData.length > 0 &&
-                <Grid container rowSpacing={{sm:4, md:4, lg:5}} columnSpacing={{sm:0, md:3, lg:5}} sx={{mt: '50px'}}>
-                    <Grid item xs={1} />
-                    <Grid item xs={10}>
-                        <MiniPreview badgeData={badgeData} />
-                    </Grid>
-                    <Grid item xs={1} />
-                </Grid>
-            } */}
 
             <Box sx={{pt:'100px'}} />
         </div>

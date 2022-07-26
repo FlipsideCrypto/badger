@@ -70,6 +70,9 @@ const theme = createTheme({
         light: '#000000',
         dark: '#000000',
         contrastText: '#000000'
+      },
+      error: {
+        main: '#FBA8A8'
       }
   },
   typography: {

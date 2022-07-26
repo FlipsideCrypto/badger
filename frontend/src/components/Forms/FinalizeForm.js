@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Typography, Button, Grid, Divider, LinearProgress } from '@mui/material';
 
 import axios from 'axios';
@@ -8,7 +8,6 @@ import cloneAbi from "../../BadgerSet.json"
 
 import BigBox from "../Blocks/BigBox"
 import CustomStepper from "../Blocks/CustomStepper"
-import CollectionCard from "../Blocks/CollectionCard"
 import MiniPreview from "../Blocks/MiniPreview"
 
 const FinalizeForm = (props) => {
@@ -71,7 +70,6 @@ const FinalizeForm = (props) => {
         formData.append('set_desc', badgeSetData.description)
         formData.append('set_img', badgeSetData.imgFile)
         badgeData.forEach((badge) => {
-            console.log(badge)
             formData.append('badge_imgs', badge.imgFile)
         })
 
@@ -95,15 +93,16 @@ const FinalizeForm = (props) => {
                     setBadgeData(badgeUpdate)
                     setDeploymentArgs(res.data.deployment_args)
                     setBtnSuccess([true, false, false])
+                    setErrorMsg({'step': null, 'error': null})
                 } else {
                     console.log('Error with IPFS upload:', res.data['error'])
-                    setErrorMsg({'step' : 1, 'error': res.data['error']})
+                    setErrorMsg({'step' : 0, 'error': res.data['error']})
                 }
             }
         )
         .catch((error) => {
             console.log('Error with IPFS upload', error)
-            setErrorMsg({'step' : 1, 'error': error})
+            setErrorMsg({'step' : 0, 'error': error})
         })
         .finally(() => {
             setLoading([false, false, false])
@@ -119,36 +118,40 @@ const FinalizeForm = (props) => {
             signer
         );
 
-        // proxyContract.deploySet()
-        // .then((transaction) => {
-        //     transaction.wait()
-        //     .then((res) => {
-        //         console.log('Badge Set Cloned', res)
+        proxyContract.deploySet()
+        .then((transaction) => {
+            transaction.wait()
+            .then((res) => {
+                console.log('Badge Set Cloned', res)
 
-        //         setContractAddress(res.events[0].args.setAddress)
-        //         setBtnSuccess([true, true, false])
-        //         setErrorMsg({'step': null, 'error': null})
-        //     })
-        //     .catch((res) => {
-        //         console.log('Error Cloning', res)
-        //         setErrorMsg({'step' : 2, 'error': res})
-        //     })
-        //     .finally(() => {
-            //     setLoading([false, false, false])
-            //  })
-        // })
+                setContractAddress(res.events[0].args.setAddress)
+                setBtnSuccess([true, true, false])
+                setErrorMsg({'step': null, 'error': null})
+            })
+            .catch((res) => {
+                console.log('Error Cloning', res)
+                if (typeof(res) == 'string')
+                    setErrorMsg({'step' : 1, 'error': res})
+                else
+                    setErrorMsg({'step': 2, 'error': 'Unparseable Error. See Inspect Element -> Console'})
+
+            })
+            .finally(() => {
+                setLoading([false, false, false])
+             })
+        })
 
         // TODO: Remove this -- just added for testing
-        setBtnSuccess([true, true, false])
-        setLoading([false, false, false])
-        setErrorMsg({'step': null, 'error': null})
+        // setBtnSuccess([true, true, false])
+        // setLoading([false, false, false])
+        // setErrorMsg({'step': null, 'error': null})
     }
 
     const initializeContract = () => {
         setLoading([false, false, true])
 
         // TODO: Remove dummyContractAddress for just contractAddress
-        let dummyContractAddress = '0x0asf0saf0saf0saf0saf0as0f'
+        // let dummyContractAddress = '0x0asf0saf0saf0saf0saf0as0f'
 
         const config = {
             headers: {
@@ -159,7 +162,7 @@ const FinalizeForm = (props) => {
         formData.append('set_name', badgeSetData.name)
         formData.append('set_desc', badgeSetData.description)
         formData.append('set_img_hash', badgeSetData.ipfs_img)
-        formData.append('set_contract_address', dummyContractAddress)
+        formData.append('set_contract_address', contractAddress)
         formData.append('set_creator', address)
         formData.append('set_contract_uri_hash', badgeSetData.contract_hash)
         formData.append('chain', chain.name)
@@ -169,36 +172,18 @@ const FinalizeForm = (props) => {
         badgeData.forEach((badge, idx) => {
             badgeArgs.push([badge.name, badge.description, badge.image_hash])            
             badgeUpdate[idx].token_id = idx
-            badgeUpdate[idx].parent_address = dummyContractAddress
+            badgeUpdate[idx].parent_address = contractAddress
         })
         formData.append('badges_data', JSON.stringify(badgeUpdate))
 
-        // TODO: This needs to be moved to within the .then for after the tx is finalized.
-        axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/new_set/`, formData, config)
-        .then((res) => {
-                if (res.data['success']) {
-                    console.log('Uploading set to db successful.', res.data)
-                    setContractInitialized(true);
-                    setBtnSuccess([true, true, true])
-                    setErrorMsg({'step': null, 'error': null})
-                } else {
-                    console.log('Error with uploading set data to database:', res.data['error'])
-                    setErrorMsg({'step' : 3, 'error': res.data['error']})
-                }
-            }
-        )
-        .finally(() => {
-            setLoading([false, false, false])
-        })
         
-        /* TODO: Move post request inside the .then
-
         connectedClonedContract = new ethers.Contract(
             contractAddress,
             cloneAbi,
             signer
         );
 
+        console.log('Deployment Args', deploymentArgs.contract_uri_hash, deploymentArgs.description, badgeArgs)
         connectedClonedContract.initialize(
             deploymentArgs.contract_uri_hash,
             deploymentArgs.description,
@@ -207,16 +192,33 @@ const FinalizeForm = (props) => {
         .then((transaction) => {            
             transaction.wait()
             .then((res) => {
-                // move post request here
+                axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/new_set/`, formData, config)
+                .then((res) => {
+                        if (res.data['success']) {
+                            console.log('Uploading set to db successful.', res.data)
+                            setContractInitialized(true);
+                            setBtnSuccess([true, true, true])
+                            setErrorMsg({'step': null, 'error': null})
+                        } else {
+                            console.log('Error with uploading set data to database:', res.data['error'])
+                            setErrorMsg({'step' : 2, 'error': res.data['error']})
+                        }
+                    }
+                )
+                .finally(() => {
+                    setLoading([false, false, false])
+                })            
             })
         })
         .catch((res) => {
             console.log('Error Initializing Contract:', res)
-            setErrorMsg({'step' : 3, 'error': res})
+            if (typeof(res) == 'string')
+                setErrorMsg({'step' : 2, 'error': res})
+            else {
+                setErrorMsg({'step': 2, 'error': 'Unparseable Error. See Inspect Element -> Console'})
+            }
             setLoading([false, false, false, false])
         })
-
-        */
     }
 
     function buttonSuccessSx(btnIdx) {
@@ -300,9 +302,15 @@ const FinalizeForm = (props) => {
                             </Box>
                         )}
 
-                        <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
-                            {btnMsg[0]}
-                        </Typography>
+                        {errorMsg.step === 0 ?
+                            <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px', color: '#FBA8A8'}}>
+                                {errorMsg.error}
+                            </Typography>
+                            :
+                            <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                                {btnMsg[0]}
+                            </Typography>
+                        }
 
                         <Button
                             variant="contained"
@@ -319,9 +327,15 @@ const FinalizeForm = (props) => {
                             </Box>
                         )}
 
-                        <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
-                            {btnMsg[1]}
-                        </Typography>
+                        {errorMsg.step === 1 ?
+                            <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px', color: '#FBA8A8'}}>
+                                {errorMsg.error}
+                            </Typography>
+                            :
+                            <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                                {btnMsg[1]}
+                            </Typography>
+                        }
 
                         <Button
                             variant="contained"
@@ -338,9 +352,15 @@ const FinalizeForm = (props) => {
                             </Box>
                         )}
 
-                        <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
-                            {btnMsg[2]}
-                        </Typography>
+                        {errorMsg.step === 2 ?
+                            <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px', color: '#FBA8A8'}}>
+                                {errorMsg.error}
+                            </Typography>
+                            :
+                            <Typography variant="body1" sx={{textAlign: 'center', mb:'20px', mt: '5px'}}>
+                                {btnMsg[2]}
+                            </Typography>
+                        }
                     </Box>
                 </Grid>
                 <Grid item sm={0} md={2} lg={4} />
