@@ -40,8 +40,8 @@ class BadgeSet(models.Model):
 
 class User(models.Model):
     address = models.CharField(max_length=50, blank=False, null=False)
-    admin_for = models.ManyToManyField(BadgeSet)
-    badges_owned = models.ManyToManyField(Badge)
+    admin_for = models.ManyToManyField(BadgeSet, blank=True)
+    badges_owned = models.ManyToManyField(Badge, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

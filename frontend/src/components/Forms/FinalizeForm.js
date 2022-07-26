@@ -26,7 +26,6 @@ const FinalizeForm = (props) => {
         setContractInitialized,
         setStage, 
         setBadgeId,
-        lastInitializedTokenId
     } = props
 
     const [deploymentArgs, setDeploymentArgs] = useState();
@@ -148,6 +147,9 @@ const FinalizeForm = (props) => {
     const initializeContract = () => {
         setLoading([false, false, true])
 
+        // TODO: Remove dummyContractAddress for just contractAddress
+        let dummyContractAddress = '0x0asf0saf0saf0saf0saf0as0f'
+
         const config = {
             headers: {
               'Content-Type': 'application/json',
@@ -157,7 +159,7 @@ const FinalizeForm = (props) => {
         formData.append('set_name', badgeSetData.name)
         formData.append('set_desc', badgeSetData.description)
         formData.append('set_img_hash', badgeSetData.ipfs_img)
-        formData.append('set_contract_address', contractAddress)
+        formData.append('set_contract_address', dummyContractAddress)
         formData.append('set_creator', address)
         formData.append('set_contract_uri_hash', badgeSetData.contract_hash)
         formData.append('chain', chain.name)
@@ -167,7 +169,7 @@ const FinalizeForm = (props) => {
         badgeData.forEach((badge, idx) => {
             badgeArgs.push([badge.name, badge.description, badge.image_hash])            
             badgeUpdate[idx].token_id = idx
-            badgeUpdate[idx].parent_address = contractAddress
+            badgeUpdate[idx].parent_address = dummyContractAddress
         })
         formData.append('badges_data', JSON.stringify(badgeUpdate))
 
@@ -238,6 +240,10 @@ const FinalizeForm = (props) => {
 
     // Handles if they have completed a step then went back
     useEffect(() => {
+        if (contractInitialized) {
+            setBtnSuccess([true, true, true])
+            return
+        }
         if (contractAddress) {
             setBtnSuccess([true, true, false])
             return
@@ -255,13 +261,7 @@ const FinalizeForm = (props) => {
             <CustomStepper activeStep={2} />
 
             <div style={{marginTop: '50px'}} />
-            {/* <Grid container rowSpacing={{sm:4, md:4, lg:5}} columnSpacing={{sm:0, md:3, lg:5}} sx={{}}> */}
-                {/* <Grid item xs={1} /> */}
-                {/* <Grid item xs={10}>  */}
-                <MiniPreview badgeData={badgeData} />
-                {/* </Grid> */}
-                {/* <Grid item xs={1} /> */}
-            {/* </Grid> */}
+            <MiniPreview badgeData={badgeData} />
 
             <Typography variant="h1" sx={{pt: '20px', textAlign: 'center'}}>
                 RUN TRANSACTIONS
@@ -350,7 +350,7 @@ const FinalizeForm = (props) => {
                     <Grid item sm={3} md={2} lg={2}>
                         <Button
                             variant="contained"
-                            disabled={false}
+                            disabled={contractInitialized}
                             onClick={() => handleBack()}
                         >
                             BACK

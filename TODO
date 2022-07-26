@@ -1,36 +1,28 @@
 SUMMARY:
-    Doing this because I need to recollect my thoughts after being away
-    ☐ Finalize landing page with assets and the checklist
+    ☐ Finalize landing page layout -- Checklist below "Step into the new world"
     ☐ Entering app needs some page to determine if they currently have a set or if they're new
     ☐ API GET for a wallet's sets and badges
+    ☐ Fix where the deployment args gets initialized in API.
+    ☐ Fix sizing and styling of landing page images.
+    ☐ Need link to a usable Flipside query.
 
 CRITICAL:
-    ☐ Deploy Contract button behaves oddly in the UX.
-        ☐ Does not have loading indicator
-        ☐ Becomes non-disabled again after tx is signed?
-    ☐ Need a good way to show all queued data. Sidebar?
-        ☐ FIX THE GODDAMN MINICARD AND COLLECTIONCARD WTF
-        ☐ Finalize
-                ☐ After contract init, make API call to create the set obj -- new_set
-                ☐ Include the creation of a profile for the admin
-                ☐ After badge method, make call to create the badges -- new_badges
-            ☐ Add Error Message pop up - can be closed
-        ☐ Mint/Remove
-            ☐ Small switch that changes from mint to revoke
-            ☐ API get for all badges of contract address
-            ☐ API get ownership records
-            ☐ Table to allow addresses to be input with a selector for badge type
-                Is there a better method than a selector?
-            ☐ Button to run
-            ☐ Check for if minting amount > 100? 80? 
-        ☐ Overhaul API endpoints
-            ☐ Just one creation end point for both badges and sets
-            ☐ Getter endpoint for both
-            ☐ Updater? maybe v(1.01)
-            ☐ Getter for ownership records of a contract address
-            ☐ Model for a "profile" -- Just an address pk with all the badges they own, if they are an admin anywhere
-    ☐ Stepper needs green font when completed 
-    
+    ☐ Finalize
+        ☐ Include the creation of a profile for the admin
+    ☐ Mint/Remove
+        ☐ Small switch that changes from mint to revoke
+        ☐ API get for all badges of contract address
+        ☐ API get ownership records
+        ☐ Table to allow addresses to be input with a selector for badge type
+            Is there a better method than a selector?
+        ☐ Button to run
+        ☐ Check for if minting amount > 100? 80? 
+    ☐ Overhaul API endpoints
+        ☐ Getter endpoint for both
+        ☐ Updater? (maybe v1.01)
+        ☐ Getter for ownership records of a contract address
+    ☐ Stepper needs green font when completed
+    ☐ SVGs not rendering from ipfs
     ☐ Remove dummy returns in API
     ☐ Move API calls on FinalizeSet to behind the transaction
         These two were done for easier testing
@@ -42,22 +34,17 @@ CONTRACT:
 ACTIVE:
     ☐ Home Dashboard
         Displays all sets, can click into a set to see all badges and revoke or mint from here.
-    ☐ Minting/Revoking Dashboard
-
-    ☐ SVGs not rendering from ipfs
-        ☐ Manage Badges
-            ☐ Rename, new image for badges
-            ☐ Revoke Badges
-    
+    ☐ Manage Badges
+        ☐ Rename, new image for badges
+    ☐ Description may have to be cleaned before IPFS interaction
+    ☐ Convert line breaks to /n/n
     ☐ ENSURE THAT ONLY THE FRONT END CAN MAKE POST REQUESTS TO THE BACKEND.
         Need Chance to help me out with this
-    ☐ Make sure image preview is vertical and center aligned, outline box should not fit image.
+        CORS perms is probably fucked
     ☐ Do test walk throughs and polish UX
-
     
 Contract Interaction:
     ☐ Find best way to show errors
-    ☐ Set up host
     
 V1.01:
     ☐ Signature to get into dashboard
@@ -66,11 +53,19 @@ V1.01:
     ☐ Blocknative events for tx not done through our front end
     ☐ FAQ Page
     ☐ Add gnosis as a chain
-    ☐ Description may have to be cleaned before IPFS interaction
-        ☐ Convert line breaks to /n/n
     ☐ Mobile redesign
             
 ARCHIVED:
+    ✔ Make sure image preview is vertical and center aligned, outline box should not fit image. @done(22-07-26 10:34)
+    ✔ Model for a "profile" -- Just an address pk with all the badges they own, if they are an admin anywhere @done(22-07-26 10:33)
+    ✔ FIX THE GODDAMN MINICARD AND COLLECTIONCARD WTF @done(22-07-25 12:07)
+    ✔ Just one creation end point for both badges and sets @done(22-07-25 12:06)
+    ✔ Need a good way to show all queued data. Sidebar? @done(22-07-25 12:05)
+    ✔ Deploy Contract button behaves oddly in the UX. @done(22-07-25 12:05)
+        ✔ Does not have loading indicator @done(22-07-25 12:05)
+        ✔ Becomes non-disabled again after tx is signed? @done(22-07-25 12:05)
+    ✔ After contract init, make API call to create the set obj -- new_set @done(22-07-25 11:58)
+    ✘ After badge method, make call to create the badges -- new_badges @cancelled(22-07-25 12:00)
     ✔ Redeploy the contract to mumbai, we removed an arg in initialize @done(22-07-25 11:52)
     ✔ Fix passing array of badge data through to API @done(22-07-25 11:44)
         ✔ Need to get serializer cleaning implemented @done(22-07-25 11:44)

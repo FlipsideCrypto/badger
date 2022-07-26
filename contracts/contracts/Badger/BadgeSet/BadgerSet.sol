@@ -10,7 +10,7 @@ import { Base64 } from "../Base64.sol";
 
 
 /**
- * @title Badgem V1: On Chain Credential Issuer and Membership Manager
+ * @title Badger V1: On Chain Credential Issuer and Membership Manager
  * @author @masonthechain and @nftchance 
  * @dev Implementation of ERC1155 Token Standard with account bound ownership and
  *      role based management of tokens to allow organizations to frictionlessly 
@@ -519,7 +519,7 @@ contract BadgerSet is
 
     /**
      * @notice This function will return true only for operation by a community admin, 
-     *         as all Badger Badges are intended to be account bound wit the exception
+     *         as all Badger Badges are intended to be account bound with the exception
      *         of admin management.
      * @notice For more information on this design choice see { revokeBadge() }.
      */

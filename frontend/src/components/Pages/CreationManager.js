@@ -13,15 +13,12 @@ const CreationManager = () => {
     const { data: signer } = useSigner();
     const { chain } = useNetwork();
 
-    const [stage, setStage] = useState('createSet')
+    const [stage, setStage] = useState('mintBadges')
     const [badgeSetData, setBadgeSetData] = useState({'name': null, 'description': null, 'imgFile': null});
     const [badgeData, setBadgeData] = useState([{'name': null, 'description': null, 'imgFile':null}]);
     const [badgeId, setBadgeId] = useState(0);
     const [contractAddress, setContractAddress] = useState();
     const [contractInitialized, setContractInitialized] = useState(false);
-
-    // TODO: This need to be used in whatever component we use to manage the admin dashboard.
-    const [lastInitializedTokenId, setLastInitializedTokenId] = useState(0)
 
     useEffect(() => {        
         if(!address) {
@@ -63,7 +60,6 @@ const CreationManager = () => {
                     badgeData={badgeData}
                     address={address}
                     signer={signer}
-                    lastInitializedTokenId={lastInitializedTokenId}
                     contractAddress={contractAddress}
                     chain={chain}
                     contractInitialized={contractInitialized}
@@ -77,8 +73,10 @@ const CreationManager = () => {
             {stage === 'mintBadges' &&
                 <MintForm
                     setStage={setStage}
-                    address={address}
                     signer={signer}
+                    contractAddress={contractAddress}
+                    badgeData={badgeData}
+                    badgeSetData={badgeSetData}
                 />
             }
         </>

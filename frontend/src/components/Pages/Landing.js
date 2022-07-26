@@ -22,9 +22,11 @@ const Landing = () => {
                     </Typography>
                 </Grid>
                 <Grid item xs={4} sm={6} lg={6} sx={{flexGrow: 1}}>
-                    <Box sx={{backgroundColor: '#000000', height: '150%', width: '100%'}}>
-                        <p style={{color: '#FFFFFF'}}>PLACEHOLDER IMAGE</p>
-                    </Box>
+                    <img 
+                        alt="Big Blocks" 
+                        src={'/BigBlocks.svg'} 
+                        style={{width: '100%', height: '100%', objectFit: 'contain'}}
+                    />
                 </Grid>
 
                 <Grid item xs={8} sm={6} md={4} lg={3} sx={{mt: '40px'}}>
@@ -59,9 +61,11 @@ const Landing = () => {
                     </Typography>
                 </Grid>
                 <Grid item xs={6} sm={5} md={6}>
-                    <Box sx={{backgroundColor: '#000000', height: '150%', width: '100%'}}>
-                        <p style={{color: '#FFFFFF'}}>PLACEHOLDER IMAGE</p>
-                    </Box>
+                    <img 
+                        alt="House Blocks" 
+                        src={'/HouseBlocks.svg'} 
+                        style={{width: '100%', height: '100%', objectFit: 'contain'}}
+                    />
                 </Grid>
                 <Grid item xs={0} sm={1} xl={2} />
 
@@ -178,12 +182,14 @@ const Landing = () => {
                     </Typography>
                 </Grid>
                 <Grid item xs={2} sm={3} lg={6} sx={{flexGrow: 1}}>
-                    <Box sx={{backgroundColor: '#000000', height: '100%', width: '100%'}}>
-                        <p style={{color: '#FFFFFF'}}>PLACEHOLDER IMAGE</p>
-                    </Box>
+                    <img 
+                        alt="Tall Blocks" 
+                        src={'/TallBlocks.svg'} 
+                        style={{width: '100%', height: '100%', objectFit: 'contain'}}
+                    />
                 </Grid>
 
-                <Grid item xs={8} sm={6} md={4} lg={3} sx={{mt: '40px'}}>
+                <Grid item xs={8} sm={6} md={4} lg={3} sx={{mt: '40px', mb:'100px'}}>
                     {address ?
                         <Button
                             onClick={() => navigate('/home')}

@@ -129,6 +129,13 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
 
 
         try:
+            user_data = {
+                'address': set_data['creator_address'],
+            }
+            user_serializer = UserSerializer(data=user_data)
+            user_serializer.is_valid(raise_exception=True)
+            user = user_serializer.save()
+
             badges_data = json.loads(badges_data)
             badge_serializer = BadgeSerializer(data=badges_data, many=True)
             badge_serializer.is_valid(raise_exception=True)
@@ -137,7 +144,10 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
 
             set_serializer = self.get_serializer(data=set_data)
             set_serializer.is_valid(raise_exception=True)
-            set_serializer.save()
+            badge_set = set_serializer.save()
+            print('badge set', badge_set)
+
+            user.admin_for.add(badge_set)
 
         except Exception as error:
             return JsonResponse({'success': False, 'error': str(error)})
