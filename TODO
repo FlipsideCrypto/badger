@@ -1,7 +1,5 @@
 SUMMARY:
-    ☐ Description line breaks are fucky
-        ☐ Set Description works properly
-        ☐ Badge description is not
+    ☐ React Helmet is outdated, need to move to React Helmet Async
     ☐ Finalize landing page layout -- Checklist below "Step into the new world"
     ☐ Entering app needs some page to determine if they currently have a set or if they're new
     ☐ API GET for a wallet's sets and badges
@@ -48,6 +46,9 @@ V1.01:
     ☐ Mobile redesign
             
 ARCHIVED:
+    ✔ Description line breaks are fucky @done(22-07-27 13:52)
+        ✔ Set Description works properly @done(22-07-27 13:52)
+        ✔ Badge description is not @done(22-07-27 13:52)
     ✔ API post request for new users is also fucked what the hell @done(22-07-27 11:06)
     ✔ INITIALIZE FUNCTION IS FAILING FOR SOME REASON @done(22-07-26 23:40)
     ✘ Description may have to be cleaned before IPFS interaction @cancelled(22-07-26 23:40)
