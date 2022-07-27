@@ -213,10 +213,10 @@ const FinalizeForm = (props) => {
                     else {
                         setErrorMsg({'step': 2, 'error': 'Unparseable Error. See Inspect Element -> Console'})
                     }
-                }
+                })
                 .finally(() => {
                     setLoading([false, false, false])
-                })            
+                })    
             })
         })
         .catch((res) => {
