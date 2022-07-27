@@ -44,9 +44,9 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
         
         max_file_size = 20000000 # 20MB
         
-        ## TODO: does the \r\n\r\n work in the uri?
-        # set_desc = set_desc.replace('\r\n\r\n', '\\n')
-        # print('replaced set_desc', set_desc)
+        ## TODO: does the \r\n\r\n work in the uri? No
+        cleaned_set_desc = set_desc.replace('\r\n\r\n', '\\n\\n')
+        print('replaced set_desc', cleaned_set_desc)
 
         # dummy_response = {
         #     'success':True, 
@@ -109,7 +109,7 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
             'set_hash': contract_uri_hash, 
             'set_img_hash': set_img_hash, 
             'badge_img_hashes': badge_img_hashes,
-            'deployment_args': {'contract_uri_hash': contract_uri_hash, 'description': set_desc}
+            'deployment_args': {'contract_uri_hash': contract_uri_hash, 'description': cleaned_set_desc}
         }
 
         print('Response: ', response)
@@ -131,13 +131,6 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
 
 
         try:
-            user_data = {
-                'address': set_data['creator_address'],
-            }
-            user_serializer = UserSerializer(data=user_data)
-            user_serializer.is_valid(raise_exception=True)
-            user = user_serializer.save()
-
             badges_data = json.loads(badges_data)
             badge_serializer = BadgeSerializer(data=badges_data, many=True)
             badge_serializer.is_valid(raise_exception=True)
@@ -148,6 +141,7 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
             set_serializer.is_valid(raise_exception=True)
             badge_set = set_serializer.save()
 
+            user, created = User.objects.get_or_create(address=set_data['creator_address'])
             user.admin_for.add(badge_set)
 
         except Exception as error:
@@ -192,10 +186,10 @@ class UserViewSet(viewsets.ModelViewSet):
         badge_ids = request.data.get("badge_ids", None)
         addresses = request.data.get("addresses", None)
         set_address = request.data.get('set_address', None)
-        addresses = json.loads(addresses)
-        badge_ids = json.loads(badge_ids)
-        
+
         try:
+            addresses = json.loads(addresses)
+            badge_ids = json.loads(badge_ids)
             # Finding how many unique token_ids
             unique_badge_ids = []
             for token_id in badge_ids:
@@ -208,6 +202,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 badgeObj = Badge.objects.get(parent_address=set_address, token_id=token_id)
                 badge_objs[token_id] = badgeObj
 
+            # Getting or creating a User model and saving their new Badges
             for index, address in enumerate(addresses):
                 userObj, created = self.get_queryset().get_or_create(address=address)
                 badge_id = badge_ids[index]

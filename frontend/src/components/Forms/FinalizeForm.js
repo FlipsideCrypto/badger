@@ -170,7 +170,9 @@ const FinalizeForm = (props) => {
         let badgeArgs = []
         let badgeUpdate = badgeData
         badgeData.forEach((badge, idx) => {
-            badgeArgs.push([badge.name, badge.description, badge.image_hash])            
+            let cleanedDesc = badge.description.replace('\n', '\\n')
+            console.log('cleaned desc', cleanedDesc, 'previous', badge.description)
+            badgeArgs.push([badge.name, cleanedDesc, badge.image_hash])            
             badgeUpdate[idx].token_id = idx
             badgeUpdate[idx].parent_address = contractAddress
         })
