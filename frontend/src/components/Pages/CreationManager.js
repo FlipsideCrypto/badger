@@ -20,7 +20,7 @@ const CreationManager = () => {
     const [contractAddress, setContractAddress] = useState();
     const [contractInitialized, setContractInitialized] = useState(false);
 
-    function renderNewBadgeCreator() {
+    const renderNewBadgeCreator = () => {
         return <BadgeForm
             key={`badge-${badgeId}`}
             setStage={setStage}
@@ -33,12 +33,14 @@ const CreationManager = () => {
 
     useEffect(() => {        
         if(!address) {
-            navigate('/')
+            navigate('/home')
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
         renderNewBadgeCreator()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [badgeId])
 
     return (
@@ -76,7 +78,6 @@ const CreationManager = () => {
                     signer={signer}
                     contractAddress={contractAddress}
                     badgeData={badgeData}
-                    badgeSetData={badgeSetData}
                 />
             }
         </>

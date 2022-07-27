@@ -6,7 +6,6 @@ import { ethers } from 'ethers';
 import proxyAbi from "../../Badger.json"
 import cloneAbi from "../../BadgerSet.json"
 
-import BigBox from "../Blocks/BigBox"
 import CustomStepper from "../Blocks/CustomStepper"
 import MiniPreview from "../Blocks/MiniPreview"
 
@@ -259,6 +258,7 @@ const FinalizeForm = (props) => {
             setBtnSuccess([true, false, false])
             return
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
 

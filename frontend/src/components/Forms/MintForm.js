@@ -17,7 +17,6 @@ const MintForm = (props) => {
     const {
         signer,
         badgeData,
-        badgeSetData,
         contractAddress,
         setStage,
     } = props
@@ -57,7 +56,7 @@ const MintForm = (props) => {
 
     const removeField = (idx) => {
         let fields = [...fieldData]
-        if (fields.length == 1) {
+        if (fields.length === 1) {
             const newField = {'address': '', 'badge': {'name': '', 'index': null, 'error': null}, 'error': null}
             fields[0] = newField
         } 

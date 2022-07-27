@@ -14,6 +14,9 @@ const Home = () => {
     return (
         <>
             <h3>Home</h3>
+            <div onClick={() => navigate('/create')} style={{cursor: 'pointer'}}>
+                <h3>Create</h3>
+            </div>
         </>
     )
 }

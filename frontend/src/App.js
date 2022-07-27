@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet'
 
 import { createClient, WagmiConfig, chain, configureChains } from "wagmi";
-import { alchemyProvider } from 'wagmi/providers/alchemy'; // Do I fuckin need this fr
+import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
@@ -11,6 +11,7 @@ import Navbar from "./components/Blocks/Navbar";
 
 import Landing from './components/Pages/Landing';
 import CreationManager from './components/Pages/CreationManager';
+import Home from './components/Pages/Home';
 
 import "./App.css";
 
@@ -186,8 +187,8 @@ function App() {
               <Navbar />
               <Routes>
                 <Route exact path="/" element={<Landing />} />
-                {/* <Route path="/home" element={<Home />} /> */}
-                <Route path="/home" element={<CreationManager />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/create" element={<CreationManager />} />
               </Routes>
               <Footer />
             </Router>
