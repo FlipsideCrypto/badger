@@ -80,7 +80,6 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
 
             # pin contract uri
             uri_pin_response = pinata.pin_json_to_ipfs(contract_uri, options={'pinataMetadata': {'name': f'{set_name}-contracturi'}})
-            print('URI PIN', uri_pin_response)
             if 'status' in uri_pin_response:
                 print('Error pinning URI', uri_pin_response)
                 error_msg = json.loads(uri_pin_response['text'])
@@ -160,7 +159,7 @@ class BadgeSetViewSet(viewsets.ModelViewSet):
     @action(methods=["post"], detail=False)
     def new_badges(self, request):
         badges_data = request.data.get("badges_data", None)
-        set_address = request.data.get('set_address')
+        set_address = request.data.get('set_address', None)
 
         try:
             badge_set = self.get_queryset().filter(contract_address=set_address)
@@ -188,32 +187,34 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
 
-    # get badge objects using contract address and unique badgeIds, 
-        # store them in a dict with id as key
-    # for each address, get_or_create a new User profile
-        # user.badges_owned.add(badge[badgeId])
     @action(methods=["post"], detail=False)
     def new_mints(self, request):
         badge_ids = request.data.get("badge_ids", None)
         addresses = request.data.get("addresses", None)
         set_address = request.data.get('set_address', None)
-
+        addresses = json.loads(addresses)
+        badge_ids = json.loads(badge_ids)
+        
         try:
-            badge_ids_set = set(badge_ids)
-            unique_badge_ids = list(badge_ids_set)
-            badge_objs = []
+            # Finding how many unique token_ids
+            unique_badge_ids = []
+            for token_id in badge_ids:
+                if token_id not in unique_badge_ids:
+                    unique_badge_ids.append(token_id)
 
+            # Getting just one instance of each Badge
+            badge_objs = {}
             for token_id in unique_badge_ids:
                 badgeObj = Badge.objects.get(parent_address=set_address, token_id=token_id)
-                badge_objs.append({ token_id: badgeObj })
+                badge_objs[token_id] = badgeObj
 
-            for address, index in addresses:
-                userObj = self.get_queryset().get_or_create(address=address)
-                badge_index = badge_ids[index]
-                userObj.badges_owned.add(badge_objs[badge_index])
+            for index, address in enumerate(addresses):
+                userObj, created = self.get_queryset().get_or_create(address=address)
+                badge_id = badge_ids[index]
+                userObj.badges_owned.add(badge_objs[badge_id])
         except Exception as error:
             return JsonResponse({'success': False, 'error': error})
-            
+
         return JsonResponse({'success': True})
 
 

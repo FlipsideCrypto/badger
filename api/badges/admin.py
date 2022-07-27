@@ -8,5 +8,9 @@ class BadgeSetAdmin(admin.ModelAdmin):
 class BadgeAdmin(admin.ModelAdmin):
     list_display = ('name', 'token_id')
 
+class UserAdmin(admin.ModelAdmin):
+    display = ('address')
+
 admin.site.register(Badge, BadgeAdmin)
 admin.site.register(BadgeSet, BadgeSetAdmin)
+admin.site.register(User, UserAdmin)
