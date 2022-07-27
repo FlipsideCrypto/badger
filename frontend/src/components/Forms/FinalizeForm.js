@@ -73,11 +73,11 @@ const FinalizeForm = (props) => {
             formData.append('badge_imgs', badge.imgFile)
         })
 
-        
+        // Post to our upload endpoint
         axios.post(`${process.env.REACT_APP_API_URL}/badge_sets/ipfs_pin/`, formData, config)
         .then((res) => {
                 if (res.data['success']) {
-                    console.log('Res', res.data)
+                    // Update set and badge data with relevant IPFS hashes
                     let setUpdate = badgeSetData
                     setUpdate.ipfs_img = res.data.set_img_hash
                     setUpdate.contract_hash = res.data.set_hash
@@ -140,24 +140,17 @@ const FinalizeForm = (props) => {
                 setLoading([false, false, false])
              })
         })
-
-        // TODO: Remove this -- just added for testing
-        // setBtnSuccess([true, true, false])
-        // setLoading([false, false, false])
-        // setErrorMsg({'step': null, 'error': null})
     }
 
     const initializeContract = () => {
         setLoading([false, false, true])
-
-        // TODO: Remove dummyContractAddress for just contractAddress
-        // let dummyContractAddress = '0x0asf0saf0saf0saf0saf0as0f'
 
         const config = {
             headers: {
               'Content-Type': 'application/json',
             },
         };
+        // Create formdata with all relevant info for our backend
         const formData = new FormData();
         formData.append('set_name', badgeSetData.name)
         formData.append('set_desc', badgeSetData.description)
@@ -167,10 +160,12 @@ const FinalizeForm = (props) => {
         formData.append('set_contract_uri_hash', badgeSetData.contract_hash)
         formData.append('chain', chain.name)
 
+        // Creating badge arguments and formdata for API post
         let badgeArgs = []
         let badgeUpdate = badgeData
         badgeData.forEach((badge, idx) => {
-            let cleanedDesc = badge.description.replace('\n', '\\n')
+            // Have to replace with \\n for within solidity.
+            let cleanedDesc = badge.description.replace(/\n/g, '\\n')
             console.log('cleaned desc', cleanedDesc, 'previous', badge.description)
             badgeArgs.push([badge.name, cleanedDesc, badge.image_hash])            
             badgeUpdate[idx].token_id = idx
@@ -185,7 +180,6 @@ const FinalizeForm = (props) => {
             signer
         );
 
-        console.log('Deployment Args', deploymentArgs.contract_uri_hash, deploymentArgs.description, badgeArgs, contractAddress)
         connectedClonedContract.initialize(
             deploymentArgs.contract_uri_hash,
             deploymentArgs.description,

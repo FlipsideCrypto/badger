@@ -44,12 +44,10 @@ const SetForm = (props) => {
         
         setBadgeSetData(setData)
         setStage('createBadge')
-        // window.scrollTo(0, 0);
     }
 
     const handleBack = () => {
         navigate('/home')
-        // window.scrollTo(0,0);
     }
 
     return (

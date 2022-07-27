@@ -72,6 +72,7 @@ const MintForm = (props) => {
         setFieldData([...fieldData, newField])
     }
 
+    // Checks all fields and ensures that addresses are valid and all addresses have a badge to mint
     const validateData = () => {
         let addresses = []
         let badgeIds = []
@@ -96,6 +97,7 @@ const MintForm = (props) => {
         return [validationError, addresses, badgeIds]
     }
 
+    // Handles mint transaction and updating User objects in our database.
     const handleMint = () => {
         setMintLoading(true)
         setMintError(null)
@@ -123,54 +125,48 @@ const MintForm = (props) => {
         formData.append('badge_ids', JSON.stringify(badgeIds))
         formData.append('set_address', contractAddress)
 
-        // TODO: Remove this after ensuring it works correctly.
-        axios.post(`${process.env.REACT_APP_API_URL}/users/new_mints/`, formData, config)
-        .then((res) => {
-            console.log(res)
+        connectedContract.mintBadgeBundle(
+            addresses,
+            badgeIds
+        )
+        .then((transaction) => {
+            transaction.wait()
+            .then((res) => {
+                // Not throwing an error if API post fails as ideally we have an indexer on our backend that catches it.
+                axios.post(`${process.env.REACT_APP_API_URL}/users/new_mints/`, formData, config)
+                .then((res) => {
+                    if (res.data['success']) {
+                        setMintSuccess(true)
+                    }
+                })
+                .catch((res) => {
+                    console.log('Error Indexing Mints:', res)
+                })
+                .finally(() => {
+                    setMintLoading(false)
+                })
+            })
+            .catch((res) => {
+                console.log('Error Minting:', res)
+                setMintSuccess(false)
+                setMintLoading(false)
+                if (typeof(res) == 'string')
+                    setMintError(res)
+                else {
+                    setMintError('Unparseable Error. See Inspect Element -> Console')
+                }
+            })
         })
-
-        // connectedContract.mintBadgeBundle(
-        //     addresses,
-        //     badgeIds
-        // )
-        // .then((transaction) => {
-        //     transaction.wait()
-        //     .then((res) => {
-        //         axios.post(`${process.env.REACT_APP_API_URL}/users/new_mints/`, formData, config)
-        //         .then((res) => {
-        //             if (res.data['success']) {
-        //                 setMintSuccess(true)
-        //                 // Need a better way to break out the steps here in
-        //             }
-        //         })
-        //         .catch((res) => {
-        //             console.log('Error Indexing Mints:', res)
-        //         })
-        //         .finally(() => {
-        //             setMintLoading(false)
-        //         })
-        //     })
-        //     .catch((res) => {
-        //         console.log('Error Minting:', res)
-        //         setMintSuccess(false)
-        //         setMintLoading(false)
-        //         if (typeof(res) == 'string')
-        //             setMintError(res)
-        //         else {
-        //             setMintError('Unparseable Error. See Inspect Element -> Console')
-        //         }
-        //     })
-        // })
-        // .catch((res) => {
-        //     console.log('Error Minting:', res)
-        //     setMintLoading(false);
-        //     setMintSuccess(false);
-        //     if (typeof(res) == 'string')
-        //         setMintError(res)
-        //     else {
-        //         setMintError('Unparseable Error. See Inspect Element -> Console')
-        //     }
-        // })
+        .catch((res) => {
+            console.log('Error Minting:', res)
+            setMintLoading(false);
+            setMintSuccess(false);
+            if (typeof(res) == 'string')
+                setMintError(res)
+            else {
+                setMintError('Unparseable Error. See Inspect Element -> Console')
+            }
+        })
     }
 
     const handleBack = () => {

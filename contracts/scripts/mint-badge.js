@@ -27,8 +27,14 @@ async function main() {
         deployer
     );
 
-    var response = await clonedContract.uri(0);
-    console.log(response)
+    var response = await clonedContract.mintBadgeBundle(
+          ['0x1ccb2945F1325e061b40Fe5b0B452f0E76fB7278', '0x1ccb2945F1325e061b40Fe5b0B452f0E76fB7278']
+        , [0,1]
+    );
+    response.wait()
+    .then((res) => {
+        console.log(res)
+    })
 }
 
 main()
