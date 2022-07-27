@@ -188,6 +188,35 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
 
+    # get badge objects using contract address and unique badgeIds, 
+        # store them in a dict with id as key
+    # for each address, get_or_create a new User profile
+        # user.badges_owned.add(badge[badgeId])
+    @action(methods=["post"], detail=False)
+    def new_mints(self, request):
+        badge_ids = request.data.get("badge_ids", None)
+        addresses = request.data.get("addresses", None)
+        set_address = request.data.get('set_address', None)
+
+        try:
+            badge_ids_set = set(badge_ids)
+            unique_badge_ids = list(badge_ids_set)
+            badge_objs = []
+
+            for token_id in unique_badge_ids:
+                badgeObj = Badge.objects.get(parent_address=set_address, token_id=token_id)
+                badge_objs.append({ token_id: badgeObj })
+
+            for address, index in addresses:
+                userObj = self.get_queryset().get_or_create(address=address)
+                badge_index = badge_ids[index]
+                userObj.badges_owned.add(badge_objs[badge_index])
+        except Exception as error:
+            return JsonResponse({'success': False, 'error': error})
+            
+        return JsonResponse({'success': True})
+
+
     
 def pin_image(imageFile, imageName):
     suffix = imageName.split('.').pop()

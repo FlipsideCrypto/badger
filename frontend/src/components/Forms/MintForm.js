@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ethers } from 'ethers';
+import axios from 'axios';
 import cloneAbi from "../../BadgerSet.json"
 
 import { Divider, Typography, TextField, FormControl, LinearProgress, Button, Grid, MenuItem } from '@mui/material'
@@ -113,6 +114,15 @@ const MintForm = (props) => {
             cloneAbi,
             signer
         )
+        const config = {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+        };
+        const formData = new FormData();
+        formData.append('addresses', addresses)
+        formData.append('badge_ids', badgeIds)
+        formData.append('set_address', contractAddress)
 
         connectedContract.mintBadgeBundle(
             addresses,
@@ -121,12 +131,40 @@ const MintForm = (props) => {
         .then((transaction) => {
             transaction.wait()
             .then((res) => {
-
+                axios.post(`${process.env.REACT_APP_API_URL}/users/new_mints/`, formData, config)
+                .then((res) => {
+                    if (res.data['success']) {
+                        setMintSuccess(true)
+                        // Need a better way to break out the steps here in
+                    }
+                })
+                .catch((res) => {
+                    console.log('Error Indexing Mints:', res)
+                })
+                .finally(() => {
+                    setMintLoading(false)
+                })
+            })
+            .catch((res) => {
+                console.log('Error Minting:', res)
+                setMintSuccess(false)
+                setMintLoading(false)
+                if (typeof(res) == 'string')
+                    setMintError(res)
+                else {
+                    setMintError('Unparseable Error. See Inspect Element -> Console')
+                }
             })
         })
         .catch((res) => {
+            console.log('Error Minting:', res)
             setMintLoading(false);
-            setMintError(res)
+            setMintSuccess(false);
+            if (typeof(res) == 'string')
+                setMintError(res)
+            else {
+                setMintError('Unparseable Error. See Inspect Element -> Console')
+            }
         })
     }
 

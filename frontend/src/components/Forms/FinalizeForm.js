@@ -187,8 +187,7 @@ const FinalizeForm = (props) => {
         connectedClonedContract.initialize(
             deploymentArgs.contract_uri_hash,
             deploymentArgs.description,
-            badgeArgs,
-            {gasLimit: 500000}
+            badgeArgs
         )
         .then((transaction) => {            
             transaction.wait()

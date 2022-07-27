@@ -1,10 +1,12 @@
 SUMMARY:
-    ☐ INITIALIZE FUNCTION IS FAILING FOR SOME REASON
+    ✔ INITIALIZE FUNCTION IS FAILING FOR SOME REASON @done(22-07-26 23:40)
     ☐ Finalize landing page layout -- Checklist below "Step into the new world"
     ☐ Entering app needs some page to determine if they currently have a set or if they're new
     ☐ API GET for a wallet's sets and badges
     ☐ Fix sizing and styling of landing page images.
     ☐ Need link to a usable Flipside query.
+    ☐ Make sure the post minting API post works properly.
+    
 
 CRITICAL:
     ☐ Mint Page
@@ -29,9 +31,8 @@ ACTIVE:
         Displays all sets, can click into a set to see all badges and revoke or mint from here.
     ☐ Manage Badges
         ☐ Rename, new image for badges
-    ☐ Description may have to be cleaned before IPFS interaction
-    ☐ Convert line breaks to /n/n
     ☐ ENSURE THAT ONLY THE FRONT END CAN MAKE POST REQUESTS TO THE BACKEND.
+        ☐ Fix permissions classes for end points
         Need Chance to help me out with this
         CORS perms is probably fucked
     ☐ Do test walk throughs and polish UX
@@ -46,6 +47,8 @@ V1.01:
     ☐ Mobile redesign
             
 ARCHIVED:
+    ✘ Description may have to be cleaned before IPFS interaction @cancelled(22-07-26 23:40)
+    ✘ Convert line breaks to /n/n @cancelled(22-07-26 23:32)
     ✔ Find best way to show errors @done(22-07-26 18:27)
     ✔ Move API calls on FinalizeSet to behind the transaction @done(22-07-26 18:26)
     ✔ Remove dummy returns in API @done(22-07-26 18:26)
