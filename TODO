@@ -1,35 +1,28 @@
 SUMMARY:
+    ☐ INITIALIZE FUNCTION IS FAILING FOR SOME REASON
     ☐ Finalize landing page layout -- Checklist below "Step into the new world"
     ☐ Entering app needs some page to determine if they currently have a set or if they're new
     ☐ API GET for a wallet's sets and badges
-    ☐ Fix where the deployment args gets initialized in API.
     ☐ Fix sizing and styling of landing page images.
     ☐ Need link to a usable Flipside query.
 
 CRITICAL:
-    ☐ Finalize
-        ☐ Include the creation of a profile for the admin
-    ☐ Mint/Remove
+    ☐ Mint Page
+        ☐ Check for if minting amount > 100? 80? 
+    ☐ Manage Set Page
         ☐ Small switch that changes from mint to revoke
         ☐ API get for all badges of contract address
         ☐ API get ownership records
-        ☐ Table to allow addresses to be input with a selector for badge type
-            Is there a better method than a selector?
-        ☐ Button to run
-        ☐ Check for if minting amount > 100? 80? 
     ☐ Overhaul API endpoints
         ☐ Getter endpoint for both
         ☐ Updater? (maybe v1.01)
         ☐ Getter for ownership records of a contract address
     ☐ Stepper needs green font when completed
     ☐ SVGs not rendering from ipfs
-    ☐ Remove dummy returns in API
-    ☐ Move API calls on FinalizeSet to behind the transaction
-        These two were done for easier testing
-
 
 CONTRACT: 
     ☐ Contract deployed on Polygon and tested
+    ☐ Find way to parse RPC errors
     
 ACTIVE:
     ☐ Home Dashboard
@@ -43,9 +36,6 @@ ACTIVE:
         CORS perms is probably fucked
     ☐ Do test walk throughs and polish UX
     
-Contract Interaction:
-    ☐ Find best way to show errors
-    
 V1.01:
     ☐ Signature to get into dashboard
     ☐ Rate limit IPFS upload
@@ -56,6 +46,16 @@ V1.01:
     ☐ Mobile redesign
             
 ARCHIVED:
+    ✔ Find best way to show errors @done(22-07-26 18:27)
+    ✔ Move API calls on FinalizeSet to behind the transaction @done(22-07-26 18:26)
+    ✔ Remove dummy returns in API @done(22-07-26 18:26)
+    ✔ Finalize @done(22-07-26 18:25)
+    ✔ Include the creation of a profile for the admin @done(22-07-26 18:25)
+    ✔ Mint/Remove @done(22-07-26 18:25)
+    ✔ Table to allow addresses to be input with a selector for badge type @done(22-07-26 18:25)
+        Is there a better method than a selector?
+    ✔ Button to run @done(22-07-26 18:25)
+    ✔ Fix where the deployment args gets initialized in API. @done(22-07-26 18:25)
     ✔ Make sure image preview is vertical and center aligned, outline box should not fit image. @done(22-07-26 10:34)
     ✔ Model for a "profile" -- Just an address pk with all the badges they own, if they are an admin anywhere @done(22-07-26 10:33)
     ✔ FIX THE GODDAMN MINICARD AND COLLECTIONCARD WTF @done(22-07-25 12:07)

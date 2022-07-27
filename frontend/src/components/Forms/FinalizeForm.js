@@ -183,11 +183,12 @@ const FinalizeForm = (props) => {
             signer
         );
 
-        console.log('Deployment Args', deploymentArgs.contract_uri_hash, deploymentArgs.description, badgeArgs)
+        console.log('Deployment Args', deploymentArgs.contract_uri_hash, deploymentArgs.description, badgeArgs, contractAddress)
         connectedClonedContract.initialize(
             deploymentArgs.contract_uri_hash,
             deploymentArgs.description,
-            badgeArgs
+            badgeArgs,
+            {gasLimit: 500000}
         )
         .then((transaction) => {            
             transaction.wait()
@@ -205,6 +206,14 @@ const FinalizeForm = (props) => {
                         }
                     }
                 )
+                .catch((res) => {
+                    console.log('Error Initializing Contract:', res)
+                    if (typeof(res) == 'string')
+                        setErrorMsg({'step' : 2, 'error': res})
+                    else {
+                        setErrorMsg({'step': 2, 'error': 'Unparseable Error. See Inspect Element -> Console'})
+                    }
+                }
                 .finally(() => {
                     setLoading([false, false, false])
                 })            
