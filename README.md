@@ -1,4 +1,3 @@
-# Badger
 ![opengraph](https://user-images.githubusercontent.com/33527785/181653044-e74b11e2-ad4d-4302-9919-410e5e72cf35.png)
 
 NFT Credential Issuer for organizations implementing on chain roles, titles, payment plans, and other tracking functions for their members and employees.
