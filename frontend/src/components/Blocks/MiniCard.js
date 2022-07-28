@@ -31,34 +31,7 @@ const MiniCard = (props) => {
                 {name}
             </Typography>
         </div>
-    )
-
-    // return (
-    //     <div style={{alignContent: 'center', textAlign: 'center'}}>
-    //         <Box sx={{
-    //                 border: '1px solid black',
-    //                 borderRadius: '10px',
-    //                 alignSelf: 'center',
-    //                 alignContent: 'center',
-    //                 margin: 'auto',
-    //                 width: '70%',
-    //                 height: '70%',
-    //                 mt: '20px'
-    //             }}
-    //         >
-    //             <Box sx={{display: 'flex', justifyContent: 'center',}}>
-    //                 <img
-    //                     style={{width: '100%', height: '100%', objectFit: 'contain', margin:'auto', display:'block', borderRadius: '10px',}}
-    //                     alt={`badge-${name}-image`}
-    //                     src={URL.createObjectURL(imageFile)}
-    //                 />
-    //             </Box>
-    //         </Box>
-    //         <Typography variant="body1">
-    //             {name}
-    //         </Typography>
-    //     </div>
-    // )
+    ) 
 }
 
 export default MiniCard;
