@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Helmet } from 'react-helmet'
+import { Helmet, HelmetProvider } from 'react-helmet-async'
 
 import { createClient, WagmiConfig, chain, configureChains } from "wagmi";
 import { alchemyProvider } from 'wagmi/providers/alchemy';
@@ -170,31 +170,33 @@ const theme = createTheme({
 function App() {
   return (
     <div className="App">
-      <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider coolMode chains={chains}>
-          <ThemeProvider theme={theme}>
-            <Router>
-              <Helmet>
-                <title>BADGER</title>
-                <meta property="og:title" content="BADGER" />
-                <meta name="twitter:title" content="BADGER" />
-                
-                <meta name="description" content="Badge-ify the roles that control the gates of your on-chain organization." />
-                <meta property="og:description" content="Badge-ify the roles that control the gates of your on-chain organization." />
-                <meta name="twitter:description" content="Badge-ify the roles that control the gates of your on-chain organization." />
-              </Helmet>
+      <HelmetProvider>
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider coolMode chains={chains}>
+            <ThemeProvider theme={theme}>
+              <Router>
+                <Helmet>
+                  <title>BADGER</title>
+                  <meta property="og:title" content="BADGER" />
+                  <meta name="twitter:title" content="BADGER" />
+                  
+                  <meta name="description" content="Badge-ify the roles that control the gates of your on-chain organization." />
+                  <meta property="og:description" content="Badge-ify the roles that control the gates of your on-chain organization." />
+                  <meta name="twitter:description" content="Badge-ify the roles that control the gates of your on-chain organization." />
+                </Helmet>
 
-              <Navbar />
-              <Routes>
-                <Route exact path="/" element={<Landing />} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/create" element={<CreationManager />} />
-              </Routes>
-              <Footer />
-            </Router>
-          </ThemeProvider>
-        </RainbowKitProvider>
-      </WagmiConfig>
+                <Navbar />
+                <Routes>
+                  <Route exact path="/" element={<Landing />} />
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/create" element={<CreationManager />} />
+                </Routes>
+                <Footer />
+              </Router>
+            </ThemeProvider>
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </HelmetProvider>
     </div>
   );
 }
