@@ -3,10 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { useAccount } from 'wagmi'
 
 import ConnectBtn from "../Blocks/ConnectBtn";
+import BigBox from "../Blocks/BigBox";
 
 const Landing = () => {
     let navigate = useNavigate()
     const { address } = useAccount();
+    const rundown = [
+        {1: 'Represent your community on chain'},
+        {2: 'Mint access tokens for your team'},
+        {3: 'Utilize the composability of DAO tools'},
+        {4: 'Out of the box integration with leading DAO tools'},
+        {5: 'Low tech tool for early community definition'},
+        {6: 'DAO prototyping and community management'}
+    ]
 
     const openInNewTab = (url) => {
         window.open(url, '_blank', 'noopener,noreferrer')
@@ -152,23 +161,32 @@ const Landing = () => {
                             <Typography variant="h2" sx={{textAlign: 'center', }}>
                                 Step into the new world enabled by a community with on-chain Badges.                   
                             </Typography>
-                            {/* <Grid container spacing={2} sx={{mt: '20px'}}>
-                                    <Grid item xs={6}>
-                                        <BigBox>
-                                            <Box sx={{borderRadius: '10px', backgroundColor: 'FFFFFF'}}>
-                                                <Typography variant="h7">1</Typography>
-                                            </Box>
-                                            <Typography variant="body1">Represent your community on chain.</Typography>
-                                        </BigBox>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <BigBox>
-                                            <Typography variant="body1">
-                                                4. Out of the box integration with leading DAO tools
-                                            </Typography>
-                                        </BigBox>
-                                    </Grid>
-                            </Grid> */}
+                            <Grid container spacing={2} sx={{mt: '20px'}}>
+                                    {rundown.map((step) => (
+                                        <Grid item xs={12} md={6} key={`step-${Object.keys(step)}`}>
+                                            <BigBox>
+                                                <div style={{padding: '10px', display:'inline-flex', flexDirection: 'row'}}>
+                                                    <div style={{display: 'flex', flexGrow: 1}}>
+                                                        <div style={{
+                                                            width: '40px',
+                                                            height: '40px',
+                                                            lineHeight: '40px',
+                                                            borderRadius: '50%',
+                                                            textAlign: 'center',
+                                                            border: '1px solid black',
+                                                            display: 'block',
+                                                        }}>
+                                                            <Typography variant="h7">{Object.keys(step)}</Typography>
+                                                        </div>
+                                                    </div>
+                                                    <div style={{display: 'flex', marginLeft: '15px'}}>
+                                                        <Typography variant="body1">{Object.values(step)}</Typography>
+                                                    </div>
+                                                </div>
+                                            </BigBox>
+                                        </Grid>
+                                    ))}
+                            </Grid>
                         </Grid>
                         <Grid item xs={1} xl={3}/>
                     </Grid>

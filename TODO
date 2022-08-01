@@ -18,7 +18,12 @@ CRITICAL:
         ☐ Updater? (maybe v1.01)
         ☐ Getter for ownership records of a contract address
     ☐ Stepper needs green font when completed
-    ☐ SVGs not rendering from ipfs
+    ☐ Mobile redesign
+    ☐ ENSURE THAT ONLY THE FRONT END CAN MAKE POST REQUESTS TO THE BACKEND.
+    ☐ Fix permissions classes for end points
+        Need Chance to help me out with this
+        CORS perms is probably fucked
+    ☐ Preview bar needs better sizing and distribution of children
 
 CONTRACT: 
     ☐ Contract deployed on Polygon and tested
@@ -29,10 +34,6 @@ ACTIVE:
         Displays all sets, can click into a set to see all badges and revoke or mint from here.
     ☐ Manage Badges
         ☐ Rename, new image for badges
-    ☐ ENSURE THAT ONLY THE FRONT END CAN MAKE POST REQUESTS TO THE BACKEND.
-        ☐ Fix permissions classes for end points
-        Need Chance to help me out with this
-        CORS perms is probably fucked
     ☐ Do test walk throughs and polish UX
     
 V1.01:
@@ -42,7 +43,7 @@ V1.01:
     ☐ Blocknative events for tx not done through our front end
     ☐ FAQ Page
     ☐ Add gnosis as a chain
-    ☐ Mobile redesign
+    ☐ SVGs not rendering from ipfs
             
 ARCHIVED:
     ✔ React Helmet is outdated, need to move to React Helmet Async @done(22-08-01 10:30)

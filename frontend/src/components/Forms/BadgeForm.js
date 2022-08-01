@@ -171,7 +171,7 @@ const BadgeForm = (props) => {
                                     </Typography>
                                 </Button>
                                 <FormHelperText>
-                                    Image for the Badge token
+                                    Image for the Badge token (.png, .gif, .jpeg)
                                 </FormHelperText>
                             </label>
                         </FormControl>

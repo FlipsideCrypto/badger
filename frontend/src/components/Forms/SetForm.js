@@ -127,7 +127,7 @@ const SetForm = (props) => {
                                     </Typography>
                                 </Button>
                                 <FormHelperText>
-                                    Image for the Badge Set contract collection
+                                    Image for the Badge Set contract collection (.png, .gif, .jpeg)
                                 </FormHelperText>
                             </label>
                         </FormControl>
