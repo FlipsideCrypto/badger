@@ -1,20 +1,14 @@
-require("@nomiclabs/hardhat-waffle");
-require("hardhat-gas-reporter");
-require('hardhat-deploy');
-require("hardhat-watcher");
-require("hardhat-tracer");
-require('hardhat-abi-exporter');
+require ("hardhat-gas-reporter");
+require ('hardhat-deploy');
+require ("hardhat-watcher");
+require ("hardhat-tracer");
+require ("hardhat-abi-exporter");
+require ("hardhat-api-builder");
+require ("hardhat-docgen");
+require ("@nomiclabs/hardhat-waffle");
+require ("@nomiclabs/hardhat-etherscan");
 
-require("@nomiclabs/hardhat-etherscan");
-
-const { 
-    PRIVATE_KEY, 
-    ALCHEMY_API_KEY, 
-    ETHERSCAN_API_KEY,
-    POLYGON_API_KEY,
-    SEED_PHRASE,
-    ALCHEMY_MUMBAI_KEY
-} = require("./secrets.json");
+require ("dotenv").config();
 
 task("accounts", "Prints the list of accounts", async(taskArgs, hre) => {
     const accounts = await hre.ethers.getSigners();
@@ -24,9 +18,6 @@ task("accounts", "Prints the list of accounts", async(taskArgs, hre) => {
     }
 });
 
-/**
- * @type import('hardhat/config').HardhatUserConfig
- */
 module.exports = {
     solidity: {
         compilers: [
@@ -53,7 +44,7 @@ module.exports = {
     gasReporter: {
         currency: 'USD',
         gasPrice: 60,
-        coinmarketcap: '9896bb6e-1429-4e65-8ba8-eb45302f849b',
+        coinmarketcap: process.env.COINMARKETCAP_API_KEY,
         showMethodSig: true,
         showTimeSpent: true,
     },
@@ -76,7 +67,7 @@ module.exports = {
     },
     etherscan: {
         // apiKey: ETHERSCAN_API_KEY
-        apiKey: POLYGON_API_KEY
+        apiKey: process.env.POLYGON_API_KEY
     },
     defaultNetwork: "hardhat",
     networks: {
@@ -87,23 +78,23 @@ module.exports = {
             saveDeployments: false,
         },
         rinkeby: {
-            url: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-            accounts: [`0x${PRIVATE_KEY}`],
+            url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+            accounts: [`0x${process.env.PRIVATE_KEY}`],
             gasPrice: 5000000000, // 5 gwei
         },
         mainnet: {
-            url: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-            accounts: { mnemonic: SEED_PHRASE },
+            url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+            accounts: { mnemonic: process.env.SEED_PHRASE },
             gasPrice: 50000000000, // 50 gwei
         },
         polygon: {
-            url: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
-            accounts: [`0x${PRIVATE_KEY}`],
+            url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+            accounts: [`0x${process.env.PRIVATE_KEY}`],
             gasPrice: 'auto'
         },
         mumbai: {
-            url: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_MUMBAI_KEY}`,
-            accounts: [`0x${PRIVATE_KEY}`],
+            url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_KEY}`,
+            accounts: [`0x${process.env.PRIVATE_KEY}`],
             gas: 3000000,
             gasPrice: 100000000000 // 100 gwei
         }
