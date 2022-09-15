@@ -139,7 +139,7 @@ contract BadgerHouse is
         returns (bytes4) 
     {
         require(
-              msg.sender == address(subscriptionImplementation)
+              _msgSender() == address(subscriptionImplementation)
             , "BadgerHouse::onERC1155Received: Only the subscription implementation can call this function."
         );
 

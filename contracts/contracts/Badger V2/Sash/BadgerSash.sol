@@ -2,30 +2,30 @@
 
 pragma solidity ^0.8.16;
 
-import { ERC1155NonFungible } from "../ERC/ERC1155NonFungible.sol";
+import { ERC1155 } from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 contract BadgerSash is
-      ERC1155NonFungible
+      ERC1155
     , Initializable
 { 
-    address public badger;
+    address public leader;
 
     uint256 totalSupply;
 
     constructor(
         string memory _uri
     ) 
-        ERC1155NonFungible(_uri)
+        ERC1155(_uri)
     {}
 
     function initialize(
-        address _badger
+        address _leader
     )
         external
         initializer
     { 
-        badger = _badger;
+        leader = _leader;
     }
 
     /**
@@ -40,6 +40,8 @@ contract BadgerSash is
             , 1
             , "0x"
         );
+
+        
     }
 
     function burn(

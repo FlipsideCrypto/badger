@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.9;
 
-import { ERC1155Badger } from "../ERC1155/ERC1155Badger.sol";
+import { ERC1155Badger } from "./ERC1155/ERC1155Badger.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 import { Clones } from "@openzeppelin/contracts/proxy/Clones.sol";
