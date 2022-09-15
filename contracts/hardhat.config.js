@@ -22,22 +22,13 @@ module.exports = {
     solidity: {
         compilers: [
             {
-              version: "0.8.7",
-                settings: {
-                    optimizer: { // Keeps the amount of gas used in check
+              version: "0.8.16",
+              settings: {
+                optimizer: { // Keeps the amount of gas used in check
                         enabled: true,
                         runs: 1000
                     }
                 }
-            },
-            {
-              version: "0.8.9",
-              settings: {
-                optimizer: { // Keeps the amount of gas used in check
-                    enabled: true,
-                    runs: 1000
-                }
-            }
             }
         ],
     },
