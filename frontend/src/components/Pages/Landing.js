@@ -29,6 +29,22 @@ const Landing = () => {
                         Effortlessly create and distribute on-chain Badges for your community 
                         members to display and track their roles, permissions, and accolades.
                     </Typography>
+                    <Grid item xs={10} sm={8} md={6} lg={4} sx={{mt: '40px'}}>
+                        {address ?
+                            <Button
+                                onClick={() => navigate('/home')}
+                                variant="contained"
+                                sx={{ 
+                                    display: 'flex',
+                                    width: '100%',
+                                }}
+                            >
+                                ENTER APP
+                            </Button>
+                            :
+                            <ConnectBtn enterApp={true} />
+                        }
+                    </Grid>
                 </Grid>
                 <Grid item xs={4} sm={6} lg={6} sx={{flexGrow: 1}}>
                     <img 
@@ -38,22 +54,7 @@ const Landing = () => {
                     />
                 </Grid>
 
-                <Grid item xs={8} sm={6} md={4} lg={3} sx={{mt: '40px'}}>
-                    {address ?
-                        <Button
-                            onClick={() => navigate('/home')}
-                            variant="contained"
-                            sx={{ 
-                                display: 'flex',
-                                width: '100%',
-                            }}
-                        >
-                            ENTER APP
-                        </Button>
-                        :
-                        <ConnectBtn enterApp={true} />
-                    }
-                </Grid>
+                
                 <Grid item xs={4} sm={6} md={8} lg={9} />
 
                 <div className='page-divider' style={{paddingTop: '50vh', width:'100%'}} />
@@ -120,7 +121,7 @@ const Landing = () => {
                         </Typography>
 
                         <Grid container>
-                            <Grid item xs={8} sm={6} sx={{mt: '40px'}}>
+                            <Grid item xs={10} sm={8} sx={{mt: '40px'}}>
                                 <Button
                                     onClick={() => openInNewTab('https://app.flipsidecrypto.com/velocity?nav=Discover')}
                                     variant="contained"
@@ -198,6 +199,22 @@ const Landing = () => {
                     <Typography variant="h2">
                         Create your organization and setup the roles of your organization in under 120 seconds now!
                     </Typography>
+                        <Grid item xs={8} sm={5} md={4} lg={3} sx={{mt: '40px', mb:'100px'}}>
+                        {address ?
+                            <Button
+                                onClick={() => navigate('/home')}
+                                variant="contained"
+                                sx={{ 
+                                    display: 'flex',
+                                    width: '100%',
+                                }}
+                            >
+                                ENTER APP
+                            </Button>
+                            :
+                            <ConnectBtn enterApp={true} />
+                        }
+                    </Grid>
                 </Grid>
                 <Grid item xs={2} sm={3} lg={6} sx={{flexGrow: 1}}>
                     <img 
@@ -205,23 +222,6 @@ const Landing = () => {
                         src={'/TallBlocks.svg'} 
                         style={{width: '100%', height: '100%', objectFit: 'contain'}}
                     />
-                </Grid>
-
-                <Grid item xs={8} sm={6} md={4} lg={3} sx={{mt: '40px', mb:'100px'}}>
-                    {address ?
-                        <Button
-                            onClick={() => navigate('/home')}
-                            variant="contained"
-                            sx={{ 
-                                display: 'flex',
-                                width: '100%',
-                            }}
-                        >
-                            ENTER APP
-                        </Button>
-                        :
-                        <ConnectBtn enterApp={true} />
-                    }
                 </Grid>
                 <Grid item xs={4} sm={6} md={8} lg={9} />
             </Grid>

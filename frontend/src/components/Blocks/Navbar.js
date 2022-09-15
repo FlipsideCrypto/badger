@@ -10,7 +10,8 @@ const Navbar = () => {
                 width: '100%',
                 height: '100px',
                 display: 'inline-flex',
-                border: '1px solid #000000',
+                borderBottom: '1px solid #000000',
+                borderTop: '1px solid #000000',
                 flexDirection: "row",
                 mb: '20px'
             }} 

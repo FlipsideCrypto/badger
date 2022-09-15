@@ -10,7 +10,8 @@ const Footer = () => {
                 width: '100%',
                 height: '100px',
                 display: 'inline-flex',
-                border: '1px solid black',
+                borderBottom: '1px solid black',
+                borderTop: '1px solid black',
                 flexDirection: "row",
                 position: 'absolute',
                 bottom: '0'

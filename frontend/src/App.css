@@ -27,28 +27,28 @@ body {
 
 @media screen and (max-width: 1200px) {
   .page-margins{
-    margin-right: 150px;
-    margin-left: 150px;
+    margin-right: 100px;
+    margin-left: 100px;
   }
   .page-margin-left{
-    margin-left: 150px;
+    margin-left: 100px;
   }
   .page-margin-right{
     width: 100%;
-    margin-right: 150px;
+    margin-right: 100px;
   }
 }
 @media screen and (max-width: 900px) {
   .page-margins{
-    margin-right: 80px;
-    margin-left: 80px;
+    margin-right: 50px;
+    margin-left: 50px;
   }
   .page-margin-left{
-    margin-left: 80px;
+    margin-left: 50px;
   }
   .page-margin-right{
     width: 100%;
-    margin-right: 80px;
+    margin-right: 50px;
   }
 }
 

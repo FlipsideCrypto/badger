@@ -1,10 +1,11 @@
 SUMMARY:
-    ☐ Finalize landing page layout -- Checklist below "Step into the new world"
     ☐ Entering app needs some page to determine if they currently have a set or if they're new
     ☐ API GET for a wallet's sets and badges
     ☐ Fix sizing and styling of landing page images.
     ☐ Need link to a usable Flipside query.
     ☐ Make sure the post minting API post works properly.
+    ☐ Mobile resizing
+        ☐ Navbar needs mobile hamburger
 
 CRITICAL:
     ☐ Mint Page
@@ -24,6 +25,9 @@ CRITICAL:
         Need Chance to help me out with this
         CORS perms is probably fucked
     ☐ Preview bar needs better sizing and distribution of children
+    ☐ Check out runner tests
+        Need to implement these and dev around them to be sure the security of org data is correct.
+        As of now everything is open and there's probably a plethora of security bugs.
 
 CONTRACT: 
     ☐ Contract deployed on Polygon and tested
@@ -46,6 +50,7 @@ V1.01:
     ☐ SVGs not rendering from ipfs
             
 ARCHIVED:
+    ✔ Finalize landing page layout -- Checklist below "Step into the new world" @done(22-08-01 11:25)
     ✔ React Helmet is outdated, need to move to React Helmet Async @done(22-08-01 10:30)
     ✔ Description line breaks are fucky @done(22-07-27 13:52)
         ✔ Set Description works properly @done(22-07-27 13:52)
