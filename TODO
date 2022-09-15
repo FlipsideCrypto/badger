@@ -1,155 +1,165 @@
-SUMMARY:
-    ☐ Entering app needs some page to determine if they currently have a set or if they're new
-    ☐ API GET for a wallet's sets and badges
-    ☐ Fix sizing and styling of landing page images.
-    ☐ Need link to a usable Flipside query.
-    ☐ Make sure the post minting API post works properly.
-    ☐ Mobile resizing
-        ☐ Navbar needs mobile hamburger
+GENERAL:
+    ☐ Clean out old stuff that needs revamping
+    ☐ API is dog shit, but worth keeping for referencing a few things as it gets completely redone.
+    ☐ 
 
-CRITICAL:
-    ☐ Mint Page
-        ☐ Check for if minting amount > 100? 80? 
-    ☐ Manage Set Page
-        ☐ Small switch that changes from mint to revoke
-        ☐ API get for all badges of contract address
-        ☐ API get ownership records
-    ☐ Overhaul API endpoints
-        ☐ Getter endpoint for both
-        ☐ Updater? (maybe v1.01)
-        ☐ Getter for ownership records of a contract address
-    ☐ Stepper needs green font when completed
-    ☐ Mobile redesign
-    ☐ ENSURE THAT ONLY THE FRONT END CAN MAKE POST REQUESTS TO THE BACKEND.
-    ☐ Fix permissions classes for end points
-        Need Chance to help me out with this
-        CORS perms is probably fucked
-    ☐ Preview bar needs better sizing and distribution of children
-    ☐ Check out runner tests
-        Need to implement these and dev around them to be sure the security of org data is correct.
-        As of now everything is open and there's probably a plethora of security bugs.
 
-CONTRACT: 
-    ☐ Contract deployed on Polygon and tested
-    ☐ Find way to parse RPC errors
+
+
+OLD TODO:
+    This needs to be cleaned out with the new v2 functionality in mind
+    SUMMARY:
+        ☐ Entering app needs some page to determine if they currently have a set or if they're new
+        ☐ API GET for a wallet's sets and badges
+        ☐ Fix sizing and styling of landing page images.
+        ☐ Need link to a usable Flipside query.
+        ☐ Make sure the post minting API post works properly.
+        ☐ Mobile resizing
+            ☐ Navbar needs mobile hamburger
     
-ACTIVE:
-    ☐ Home Dashboard
-        Displays all sets, can click into a set to see all badges and revoke or mint from here.
-    ☐ Manage Badges
-        ☐ Rename, new image for badges
-    ☐ Do test walk throughs and polish UX
+    CRITICAL:
+        ☐ Mint Page
+            ☐ Check for if minting amount > 100? 80? 
+        ☐ Manage Set Page
+            ☐ Small switch that changes from mint to revoke
+            ☐ API get for all badges of contract address
+            ☐ API get ownership records
+        ☐ Overhaul API endpoints
+            ☐ Getter endpoint for both
+            ☐ Updater? (maybe v1.01)
+            ☐ Getter for ownership records of a contract address
+        ☐ Stepper needs green font when completed
+        ☐ Mobile redesign
+        ☐ ENSURE THAT ONLY THE FRONT END CAN MAKE POST REQUESTS TO THE BACKEND.
+        ☐ Fix permissions classes for end points
+            Need Chance to help me out with this
+            CORS perms is probably fucked
+        ☐ Preview bar needs better sizing and distribution of children
+        ☐ Check out runner tests
+            Need to implement these and dev around them to be sure the security of org data is correct.
+            As of now everything is open and there's probably a plethora of security bugs.
     
-V1.01:
-    ☐ Signature to get into dashboard
-    ☐ Rate limit IPFS upload
-    ☐ Add webm conversion for preview and IPFS upload
-    ☐ Blocknative events for tx not done through our front end
-    ☐ FAQ Page
-    ☐ Add gnosis as a chain
-    ☐ SVGs not rendering from ipfs
-            
-ARCHIVED:
-    ✔ Finalize landing page layout -- Checklist below "Step into the new world" @done(22-08-01 11:25)
-    ✔ React Helmet is outdated, need to move to React Helmet Async @done(22-08-01 10:30)
-    ✔ Description line breaks are fucky @done(22-07-27 13:52)
-        ✔ Set Description works properly @done(22-07-27 13:52)
-        ✔ Badge description is not @done(22-07-27 13:52)
-    ✔ API post request for new users is also fucked what the hell @done(22-07-27 11:06)
-    ✔ INITIALIZE FUNCTION IS FAILING FOR SOME REASON @done(22-07-26 23:40)
-    ✘ Description may have to be cleaned before IPFS interaction @cancelled(22-07-26 23:40)
-    ✘ Convert line breaks to /n/n @cancelled(22-07-26 23:32)
-    ✔ Find best way to show errors @done(22-07-26 18:27)
-    ✔ Move API calls on FinalizeSet to behind the transaction @done(22-07-26 18:26)
-    ✔ Remove dummy returns in API @done(22-07-26 18:26)
-    ✔ Finalize @done(22-07-26 18:25)
-    ✔ Include the creation of a profile for the admin @done(22-07-26 18:25)
-    ✔ Mint/Remove @done(22-07-26 18:25)
-    ✔ Table to allow addresses to be input with a selector for badge type @done(22-07-26 18:25)
-        Is there a better method than a selector?
-    ✔ Button to run @done(22-07-26 18:25)
-    ✔ Fix where the deployment args gets initialized in API. @done(22-07-26 18:25)
-    ✔ Make sure image preview is vertical and center aligned, outline box should not fit image. @done(22-07-26 10:34)
-    ✔ Model for a "profile" -- Just an address pk with all the badges they own, if they are an admin anywhere @done(22-07-26 10:33)
-    ✔ FIX THE GODDAMN MINICARD AND COLLECTIONCARD WTF @done(22-07-25 12:07)
-    ✔ Just one creation end point for both badges and sets @done(22-07-25 12:06)
-    ✔ Need a good way to show all queued data. Sidebar? @done(22-07-25 12:05)
-    ✔ Deploy Contract button behaves oddly in the UX. @done(22-07-25 12:05)
-        ✔ Does not have loading indicator @done(22-07-25 12:05)
-        ✔ Becomes non-disabled again after tx is signed? @done(22-07-25 12:05)
-    ✔ After contract init, make API call to create the set obj -- new_set @done(22-07-25 11:58)
-    ✘ After badge method, make call to create the badges -- new_badges @cancelled(22-07-25 12:00)
-    ✔ Redeploy the contract to mumbai, we removed an arg in initialize @done(22-07-25 11:52)
-    ✔ Fix passing array of badge data through to API @done(22-07-25 11:44)
-        ✔ Need to get serializer cleaning implemented @done(22-07-25 11:44)
-    ✔ Preview rerenders upon adding data to badgeData @done(22-07-15 19:40)
-    ✔ Management UI and functionality @done(22-07-15 03:21)
-            ✔ Error Messages @done(22-07-15 03:21)
-    ✔ Have transaction errors @done(22-07-15 03:19)
-    ✔ Do a final update of ABIs @done(22-07-15 03:19)
-    ✔ Can use improvement but for now flow with our current button stack for finalize UX @done(22-07-15 02:59)
-    ✔ Make API calls when certain things get finalized @done(22-07-15 03:00)
-    ✔ Replace the abis in the frontend folder @done(22-07-15 03:19)
-    ✘ Should I add back the scroll to top on back/next navigation?? @cancelled(22-07-15 02:59)
-    ✔ Redesign flow of creation @done(22-07-14 17:27)
-            ✔ Need a good way to show previous badges and let them move back and forth between them @done(22-07-14 17:27)
-    ✔ All data kept in Home -- Rename home to something more suitable @done(22-07-14 15:17)
-    ✔ Create Set @done(22-07-14 12:43)
-        ✔ No buttons other than to get to the next stage and file upload @done(22-07-14 12:43)
-        ✔ Form data should be the default use state to allow for directing backwards @done(22-07-14 15:17)
-        ✔ No API calls @done(22-07-14 12:43)
-    ✔ Create Badges @done(22-07-14 15:17)
-        ✔ No buttons other than queueing up multiple badges. @done(22-07-14 15:17)
-        ✔ need array of image files in that data that maintains state @done(22-07-14 15:17)
-    ✔ Flow should be able to be interrupted and go back to edit a certain step. @started(22-07-14 02:53) @done(22-07-14 02:53) @lasted(11s)
-    ✔ Is there a reason to have the createBadge/updateBadge as separate functions? @done(22-07-13 14:24)
-    ✔ Full test suite @done(22-07-13 14:23)
-    ✔ Set up Badge Creation quick so I can test to make sure the contract works well. @done(22-07-13 14:22)
-    ✔ Badge Preview @started(22-07-13 14:21) @done(22-07-13 14:21) @lasted(43s)
-    ✔ Create Badges @done(22-07-13 14:21)
-            ✔ Front end dash @done(22-07-13 14:21)
-            ✔ Interaction UX @done(22-07-13 14:21)
-            ✔ Should be able to queue up a bunch of badges to send in one tx @done(22-07-13 14:21)
-    ✔ Fix form outline on click @done(22-07-13 14:21)
-    ✔ Implement new brand @done(22-07-13 14:21)
-    ✔ Create Collection @done(22-07-12 11:01)
-        ✔ Update request @done(22-07-13 02:52)
-        ✔ Post deployment request @done(22-07-13 02:53)
-        ✔ Status Message For Uploading @done(22-07-12 11:01)
-    ✔ Way to show transaction errors @done(22-07-11 21:20)
-    ✔ Better explanation of the clone and initialize double transaction. @done(22-07-11 21:19)
-    ✘ Is there any case where someone could rightfully need multiple copies of the same badge? @cancelled(22-07-11 20:28)
-    ✔ Contract deployed on Mumbai for testing @done(22-07-11 20:25)
-    ✔ Get basic landing page @done(22-07-11 20:25)
-    ✔ Upload image and contract uri to IPFS @done(22-07-10 15:06)
-    ✔ Make sure it is returning correctly in the js @done(22-07-10 15:06)
-    ✔ Save obj in database @done(22-07-10 15:21)
-    ✔ Clean up interaction ux @done(22-07-11 20:25)
-    ✔ Deploy a contract via front end @done(22-07-10 21:33)
-    ✘ Blocknative for events not done through our front end? @cancelled(22-07-10 15:06)
-    ✔ File Uploading @done(22-07-10 14:58)
-    ✔ IPFS upload @done(22-07-10 14:58)
-    ✔ Set up hardhat for polygon and mumbai @done(22-07-09 22:23)
-    ✔ Button to direct to admin @done(22-07-09 22:23)
-    ✔ Some login and account UI @done(22-07-09 14:24)
-    ✔ Collection Preview @done(22-07-10 00:33)
-    ✔ API and database to store different roles and deeper info on an org than what is on chain @done(22-07-10 01:48)
-    ✔ On chain metadata for tokens @done(22-07-08 02:38)
-    ✔ MadHatterOrg deployed first, then MadHatter is deployed and points at that version @done(22-07-07 22:39)
-        See: Test script
-    ✔ Onchain metadata @done(22-07-07 13:36)
-    ✔ Basic Contract @done(22-07-06 16:58)
-    ✔ Minimal proxies @done(22-07-06 16:58)
-    ✔ CRUD Roles @done(22-07-06 16:58)
-    ✔ Permissions for certain @done(22-07-06 16:58)
-    ✘ IF MAINNET: Airdrop Via EIP 2309 and a Merkle Root @cancelled(22-07-06 16:57)
-    ✔ Initialize react project @done(22-07-06 10:54)
-    ✔ Contract for Multi Level Membership Tokens @done(22-07-06 16:57)
-    ✔ Utilize Minimal Proxies to allow for multiple contracts @done(22-07-06 14:02)
-    ✔ Option For Soul Bound @done(22-07-06 16:57)
-    ✔ Different Ranks/Roles @done(22-07-06 15:19)
-        ✔ CRUD of roles in contract @done(22-07-06 15:19)
-        ✔ Admin @done(22-07-06 15:19)
-        ✔ Levels of Contributors @done(22-07-06 15:19)
-        ✔ Participation Badges @done(22-07-06 15:19)
-    ✔ Ability for Admins to revoke tokens @done(22-07-06 15:19)
+    CONTRACT: 
+        ☐ Contract deployed on Polygon and tested
+        ☐ Find way to parse RPC errors
+        
+    ACTIVE:
+        ☐ Home Dashboard
+            Displays all sets, can click into a set to see all badges and revoke or mint from here.
+        ☐ Manage Badges
+            ☐ Rename, new image for badges
+        ☐ Do test walk throughs and polish UX
+        
+    V1.01:
+        ☐ Signature to get into dashboard
+        ☐ Rate limit IPFS upload
+        ☐ Add webm conversion for preview and IPFS upload
+        ☐ Blocknative events for tx not done through our front end
+        ☐ FAQ Page
+        ☐ Add gnosis as a chain
+        ☐ SVGs not rendering from ipfs
+                
+    ARCHIVED:
+        ✔ Finalize landing page layout -- Checklist below "Step into the new world" @done(22-08-01 11:25)
+        ✔ React Helmet is outdated, need to move to React Helmet Async @done(22-08-01 10:30)
+        ✔ Description line breaks are fucky @done(22-07-27 13:52)
+            ✔ Set Description works properly @done(22-07-27 13:52)
+            ✔ Badge description is not @done(22-07-27 13:52)
+        ✔ API post request for new users is also fucked what the hell @done(22-07-27 11:06)
+        ✔ INITIALIZE FUNCTION IS FAILING FOR SOME REASON @done(22-07-26 23:40)
+        ✘ Description may have to be cleaned before IPFS interaction @cancelled(22-07-26 23:40)
+        ✘ Convert line breaks to /n/n @cancelled(22-07-26 23:32)
+        ✔ Find best way to show errors @done(22-07-26 18:27)
+        ✔ Move API calls on FinalizeSet to behind the transaction @done(22-07-26 18:26)
+        ✔ Remove dummy returns in API @done(22-07-26 18:26)
+        ✔ Finalize @done(22-07-26 18:25)
+        ✔ Include the creation of a profile for the admin @done(22-07-26 18:25)
+        ✔ Mint/Remove @done(22-07-26 18:25)
+        ✔ Table to allow addresses to be input with a selector for badge type @done(22-07-26 18:25)
+            Is there a better method than a selector?
+        ✔ Button to run @done(22-07-26 18:25)
+        ✔ Fix where the deployment args gets initialized in API. @done(22-07-26 18:25)
+        ✔ Make sure image preview is vertical and center aligned, outline box should not fit image. @done(22-07-26 10:34)
+        ✔ Model for a "profile" -- Just an address pk with all the badges they own, if they are an admin anywhere @done(22-07-26 10:33)
+        ✔ FIX THE GODDAMN MINICARD AND COLLECTIONCARD WTF @done(22-07-25 12:07)
+        ✔ Just one creation end point for both badges and sets @done(22-07-25 12:06)
+        ✔ Need a good way to show all queued data. Sidebar? @done(22-07-25 12:05)
+        ✔ Deploy Contract button behaves oddly in the UX. @done(22-07-25 12:05)
+            ✔ Does not have loading indicator @done(22-07-25 12:05)
+            ✔ Becomes non-disabled again after tx is signed? @done(22-07-25 12:05)
+        ✔ After contract init, make API call to create the set obj -- new_set @done(22-07-25 11:58)
+        ✘ After badge method, make call to create the badges -- new_badges @cancelled(22-07-25 12:00)
+        ✔ Redeploy the contract to mumbai, we removed an arg in initialize @done(22-07-25 11:52)
+        ✔ Fix passing array of badge data through to API @done(22-07-25 11:44)
+            ✔ Need to get serializer cleaning implemented @done(22-07-25 11:44)
+        ✔ Preview rerenders upon adding data to badgeData @done(22-07-15 19:40)
+        ✔ Management UI and functionality @done(22-07-15 03:21)
+                ✔ Error Messages @done(22-07-15 03:21)
+        ✔ Have transaction errors @done(22-07-15 03:19)
+        ✔ Do a final update of ABIs @done(22-07-15 03:19)
+        ✔ Can use improvement but for now flow with our current button stack for finalize UX @done(22-07-15 02:59)
+        ✔ Make API calls when certain things get finalized @done(22-07-15 03:00)
+        ✔ Replace the abis in the frontend folder @done(22-07-15 03:19)
+        ✘ Should I add back the scroll to top on back/next navigation?? @cancelled(22-07-15 02:59)
+        ✔ Redesign flow of creation @done(22-07-14 17:27)
+                ✔ Need a good way to show previous badges and let them move back and forth between them @done(22-07-14 17:27)
+        ✔ All data kept in Home -- Rename home to something more suitable @done(22-07-14 15:17)
+        ✔ Create Set @done(22-07-14 12:43)
+            ✔ No buttons other than to get to the next stage and file upload @done(22-07-14 12:43)
+            ✔ Form data should be the default use state to allow for directing backwards @done(22-07-14 15:17)
+            ✔ No API calls @done(22-07-14 12:43)
+        ✔ Create Badges @done(22-07-14 15:17)
+            ✔ No buttons other than queueing up multiple badges. @done(22-07-14 15:17)
+            ✔ need array of image files in that data that maintains state @done(22-07-14 15:17)
+        ✔ Flow should be able to be interrupted and go back to edit a certain step. @started(22-07-14 02:53) @done(22-07-14 02:53) @lasted(11s)
+        ✔ Is there a reason to have the createBadge/updateBadge as separate functions? @done(22-07-13 14:24)
+        ✔ Full test suite @done(22-07-13 14:23)
+        ✔ Set up Badge Creation quick so I can test to make sure the contract works well. @done(22-07-13 14:22)
+        ✔ Badge Preview @started(22-07-13 14:21) @done(22-07-13 14:21) @lasted(43s)
+        ✔ Create Badges @done(22-07-13 14:21)
+                ✔ Front end dash @done(22-07-13 14:21)
+                ✔ Interaction UX @done(22-07-13 14:21)
+                ✔ Should be able to queue up a bunch of badges to send in one tx @done(22-07-13 14:21)
+        ✔ Fix form outline on click @done(22-07-13 14:21)
+        ✔ Implement new brand @done(22-07-13 14:21)
+        ✔ Create Collection @done(22-07-12 11:01)
+            ✔ Update request @done(22-07-13 02:52)
+            ✔ Post deployment request @done(22-07-13 02:53)
+            ✔ Status Message For Uploading @done(22-07-12 11:01)
+        ✔ Way to show transaction errors @done(22-07-11 21:20)
+        ✔ Better explanation of the clone and initialize double transaction. @done(22-07-11 21:19)
+        ✘ Is there any case where someone could rightfully need multiple copies of the same badge? @cancelled(22-07-11 20:28)
+        ✔ Contract deployed on Mumbai for testing @done(22-07-11 20:25)
+        ✔ Get basic landing page @done(22-07-11 20:25)
+        ✔ Upload image and contract uri to IPFS @done(22-07-10 15:06)
+        ✔ Make sure it is returning correctly in the js @done(22-07-10 15:06)
+        ✔ Save obj in database @done(22-07-10 15:21)
+        ✔ Clean up interaction ux @done(22-07-11 20:25)
+        ✔ Deploy a contract via front end @done(22-07-10 21:33)
+        ✘ Blocknative for events not done through our front end? @cancelled(22-07-10 15:06)
+        ✔ File Uploading @done(22-07-10 14:58)
+        ✔ IPFS upload @done(22-07-10 14:58)
+        ✔ Set up hardhat for polygon and mumbai @done(22-07-09 22:23)
+        ✔ Button to direct to admin @done(22-07-09 22:23)
+        ✔ Some login and account UI @done(22-07-09 14:24)
+        ✔ Collection Preview @done(22-07-10 00:33)
+        ✔ API and database to store different roles and deeper info on an org than what is on chain @done(22-07-10 01:48)
+        ✔ On chain metadata for tokens @done(22-07-08 02:38)
+        ✔ MadHatterOrg deployed first, then MadHatter is deployed and points at that version @done(22-07-07 22:39)
+            See: Test script
+        ✔ Onchain metadata @done(22-07-07 13:36)
+        ✔ Basic Contract @done(22-07-06 16:58)
+        ✔ Minimal proxies @done(22-07-06 16:58)
+        ✔ CRUD Roles @done(22-07-06 16:58)
+        ✔ Permissions for certain @done(22-07-06 16:58)
+        ✘ IF MAINNET: Airdrop Via EIP 2309 and a Merkle Root @cancelled(22-07-06 16:57)
+        ✔ Initialize react project @done(22-07-06 10:54)
+        ✔ Contract for Multi Level Membership Tokens @done(22-07-06 16:57)
+        ✔ Utilize Minimal Proxies to allow for multiple contracts @done(22-07-06 14:02)
+        ✔ Option For Soul Bound @done(22-07-06 16:57)
+        ✔ Different Ranks/Roles @done(22-07-06 15:19)
+            ✔ CRUD of roles in contract @done(22-07-06 15:19)
+            ✔ Admin @done(22-07-06 15:19)
+            ✔ Levels of Contributors @done(22-07-06 15:19)
+            ✔ Participation Badges @done(22-07-06 15:19)
+        ✔ Ability for Admins to revoke tokens @done(22-07-06 15:19)
