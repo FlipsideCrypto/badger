@@ -2,36 +2,15 @@
 
 pragma solidity ^0.8.16;
 
-import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol"; 
 import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
-import { ERC1155HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
 import { ERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol";
 
-import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-
-import "hardhat/console.sol";
+import { BadgerScout } from "./BadgerScout.sol";
 
 contract BadgerSash is 
-      Initializable 
-    , OwnableUpgradeable
-    , ERC1155Upgradeable
-    , ERC1155HolderUpgradeable 
+      ERC1155Upgradeable
+    , BadgerScout
 {
-    using ECDSA for bytes32;
-    
-    /// @dev The processing information for this token.
-    struct Badge { 
-        bool accountBound;
-        address signer;
-        string uri;
-        uint256 price;
-        mapping(address => bool) addressIsLeader;
-    }
-
-    /// @dev Mapping from token ID to badge
-    mapping(uint256 => Badge) public badges;
-
     /**
      * @notice Initialize the Sash with the starting state needed.
      * @param _owner The owner of the Sash. (Ideally a multi-sig).
@@ -44,40 +23,11 @@ contract BadgerSash is
         external
         initializer
     { 
-        /// @dev Initialize the ownership structure of this Sash.
-        __Ownable_init();
-        transferOwnership(_owner);
-        
+        /// @dev Initialize the BadgeScout contract.
+        _initialize(_owner);
+
         /// @dev Initialize the NFT side of the Sash.
         __ERC1155_init(_uri);
-    }
-
-    /**
-     * @notice Make sure that only owner or the leader of a badge passes.
-     * @param _id The id of the badge being accessed.
-     */
-    modifier onlyLeader(
-        uint256 _id
-    ) {
-        require (
-            _msgSender() == owner() ||
-            badges[_id].addressIsLeader[_msgSender()],
-            "BadgeSash::onlyLeader: Only leaders can call this."
-        );
-        _;
-    }
-
-    /**
-     * @notice Make sure that actions can only be performed on badges that exist.
-     */    
-    modifier onlySewnBadge(
-        uint256 _id
-    ) { 
-        require (
-            badges[_id].signer != address(0),
-            "BadgeSash::onlySewnSash: Only sewn sashes can call this."
-        );
-        _;
     }
 
     /**
@@ -113,122 +63,6 @@ contract BadgerSash is
                  )
             )
         );
-    }
-
-    /**
-     * @notice Create a badge in the sash.
-     * @param _id The id of the badge being created.
-     * @param _accountBound Whether or not the badge is account bound.
-     * @param _signer The address of the signer.
-     * @param _uri The URI for the badge.
-     * @param _price The price of the badge.
-     * @param _leaders The addresses of the leaders.
-     * 
-     * Requirements:
-     * - `_id` must not already exist.
-     */
-    function setBadge(
-          uint256 _id
-        , bool _accountBound
-        , address _signer
-        , string memory _uri
-        , uint256 _price
-        , address[] memory _leaders
-    )
-        external
-        virtual
-        onlyOwner()
-    {
-        Badge storage badge = badges[_id];
-
-        require(
-            badge.signer == address(0),
-            "BadgeSash::setBadge: Badge already exists."
-        );
-
-        /// @dev Set the state variables of the Badge.
-        badge.accountBound = _accountBound;
-        badge.signer = _signer;
-        badge.uri = _uri;
-        badge.price = _price;
-
-        for (
-            uint256 i; 
-            i < _leaders.length; 
-            i++
-        ) {
-            badge.addressIsLeader[_leaders[i]] = true;
-        }
-    }
-
-    /**
-     * @notice Set the signer for the contract.
-     * @param _signer The address of the signer.
-     */
-    function setSigner(
-          uint256 _id
-        , address _signer
-    )
-        external
-        virtual
-        onlyLeader(_id)
-        onlySewnBadge(_id)
-    {
-        badges[_id].signer = _signer;
-    }
-
-    /**
-     * @notice Allow the owner of the organization to control the leaders of the Badge.
-     * @param _id The id of the badge.
-     * @param _leaders The address of the leader that we are updating the status of.
-     * @param _isLeader The status of the leaders being updated.
-     * 
-     * Requirements:
-     * - Only the owner of the contract can call this function.
-     */
-    function setLeaders(
-          uint256 _id
-        , address[] calldata _leaders
-        , bool[] calldata _isLeader
-    )
-        external
-        virtual
-        onlyOwner()
-        onlySewnBadge(_id)
-    {
-        require(
-              _leaders.length == _isLeader.length
-            , "BadgeSash::setLeaders: Leaders and isLeader arrays must be the same length."
-        );
-
-        /// @dev Loop through the leaders and update their status.        
-        for (
-            uint256 i; 
-            i < _leaders.length; 
-            i++
-        ) {
-            badges[_id].addressIsLeader[_leaders[i]] = _isLeader[i];
-        }
-    }
-
-    /**
-     * @notice Allow anyone to see the leaders of the Badge.
-     * @param _id The id of the badge.
-     * @return The leaders of the badge.
-     */
-    function isLeader(
-          uint256 _id
-        , address _leader
-    )
-        external
-        view
-        virtual
-        onlySewnBadge(_id)
-        returns (
-            bool
-        )
-    {
-        return badges[_id].addressIsLeader[_leader];
     }
 
     /**
@@ -299,49 +133,16 @@ contract BadgerSash is
     }
 
     /**
-     * @notice Allows a sash to define a signer that will enable the claiming of a badge.
-     * @param _to The address to mint the badge to.
-     * @param _id The id of the badge to mint.
-     * @param _amount The amount of the badge to mint.
-     * @param _data The data to pass to the receiver.
-     * @param _signature The signature of the signer.
-     * @return true if signer of the signature was the signer that gives permission to mint.
-     */
-    function _verify(
-        address _to,
-        uint256 _id,
-        uint256 _amount,
-        bytes memory _data,
-        bytes memory _signature
-    )
-        internal
-        view
-        returns (
-            bool
-        )
-    {
-        /// @dev Compile the message that would have been signed.
-        bytes32 message = keccak256(
-            abi.encodePacked(
-                  _to
-                , _id
-                , _amount
-                , _data
-            )
-        );
-
-        /// @dev Recover the signer from the signature.
-        return message.toEthSignedMessageHash().recover(_signature) == badges[_id].signer;
-    }
-
-    /**
      * @notice Allows a user to mint a claim that has been designated to them.
+     * @dev This function is only used when the mint is being paid with ETH or has no payment at all.
+     *      To use this with no payment, the `tokenType` of NATIVE with `quantity` of 0 must be used.
      * @param _signature The signature that is being used to verify the authenticity of claim.
      * @param _id The id of the badge being claimed.
      * @param _quantity The amount of the badge being claimed.
      * @param _data Any data that is being passed to the mint function.
      * 
      * Requirements:
+     * - `_id` must corresponding to an existing Badge config.
      * - `_signature` must be a valid signature of the claim.
      */
     function claimMint(
@@ -368,9 +169,13 @@ contract BadgerSash is
             "BadgerSash::claimMint: Invalid signature."
         );
 
+        /// @dev Confirm that the payment token is valid.
+        PaymentToken memory paymentToken = badges[_id].paymentToken;
+
         /// @dev Determine that the claimer is providing sufficient funds.
         require(
-              badges[_id].price * _quantity == msg.value
+                 paymentToken.tokenType == TOKEN_TYPE.NATIVE 
+              && paymentToken.quantity  * _quantity == msg.value
             , "BadgerSash::claimMint: Incorrect amount of ETH sent."
         );
                 
@@ -412,26 +217,38 @@ contract BadgerSash is
     /**
      * @notice Allows the owner and leaders of a contract to revoke badges from a user.
      * @param _from The addresses to revoke the badge from.
-     * @param _ids The id of the badge to revoke.
+     * @param _id The id of the badge to revoke.
      * @param _amounts The amount of the badge to revoke.
      *
      * Requirements:
      * - `_msgSender` must be the owner or leader of the badge.
      */
     function revokeBatch(
-          address _from
-        , uint256[] memory _ids
+          address[] memory _from
+        , uint256 _id
         , uint256[] memory _amounts
     )
         external
         virtual
-        onlyLeader(_ids[0])
+        onlyLeader(_id)
     {
-        _burnBatch(
-              _from
-            , _ids
-            , _amounts
+        require(
+            _from.length == _amounts.length,
+            "BadgeSash::revokeBatch: _from and _amounts must be the same length."
         );
+
+        for(
+            uint256 i;
+            i < _from.length;
+            i++
+        ) { 
+            /// @dev Revoke the badge from the user.
+            _burn(
+                  _from[i]
+                , _id
+                , _amounts[i]
+            );
+        }
     }
 
     /**
@@ -462,6 +279,11 @@ contract BadgerSash is
      * @param _id The id of the badge to transfer.
      * @param _amount The amount of the badge to transfer.
      * @param _data The data to pass to the receiver.
+     * 
+     * Requirements:
+     * - Badge must not be account bound.
+     *  OR the target of this token is this contract.
+     *  OR the sender is a leader of the badge being transferred.
      */    
     function safeTransferFrom(
         address _from,
@@ -477,13 +299,22 @@ contract BadgerSash is
         /// @dev Confirm that the transfer can proceed if the account is not token bound
         ///      or the message sender is a leader of the badge.
         require(
+              /// @dev Prevent a normal user from transferring an account bound token.
+              ///      While allowing them to transfer if the token is not account bound.
               !badges[_id].accountBound 
-              || _to == address(this)
               || (
-                    _msgSender() == owner() 
-                    || badges[_id].addressIsLeader[_msgSender()]
-                )
-            , "BadgeSash::safeTransferFrom: Account bound badges cannot be transferred by anyone but Leaders."
+                  /// @dev If the target or source is the internal contract
+                  (
+                       _to == address(this) 
+                    || _from == address(this)
+                  )
+                  /// @dev If the sender is a leader of the badge.
+                  || (
+                        _msgSender() == owner() 
+                        || badges[_id].addressIsLeader[_msgSender()]
+                     )
+              )
+            , "BadgeSash::safeTransferFrom: Missing the proper transfer permissions."
         );
 
         /// @dev Transfer the badge.
@@ -537,24 +368,62 @@ contract BadgerSash is
         (
               uint256 badgeId
             , bytes memory signature
-        ) = abi.decode(_data, (uint256, bytes));
+        ) = abi.decode(
+              _data
+            , (
+                  uint256
+                , bytes
+              )
+        );
+
+        Badge storage badge = badges[badgeId];
 
         /// @dev If the Badge has a signer, verify that the signature is valid.
-        if (badges[badgeId].signer != address(0)) {
+        if (badge.signer != address(0)) {
             require(
-                _verify(
-                      _from
-                    , badgeId
-                    , _amount
-                    , _data
-                    , signature
-                ),
-                "BadgeSash::onERC1155Received: Invalid signature."
+                  _verify(
+                        _from
+                      , badgeId
+                      , _amount
+                      , _data
+                      , signature
+                  )
+                , "BadgeSash::onERC1155Received: Invalid signature."
             );
         }
 
-        // TODO: Implement the use of payment tokens and checking if the payment token for the target badge is the one being sent
-        // TODO: Mint the token.
+        /// @dev If the badge is account bound, add the user to the list of leaders.
+        PaymentToken storage paymentToken = badge.paymentToken;
+
+        /// @dev Handle the Payment Token if there is one. Native token would be handled
+        ///      through `claimMint`.
+        if (paymentToken.quantity != 0) { 
+            /// @dev Confirm that the payment token being supplied is the one expected.
+            require(
+                  paymentToken.tokenAddress == _msgSender()
+                , "BadgeSash::onERC1155Received: Invalid payment token."
+            );
+
+            ///  @dev Confirm that the payment token being supplied is the correct amount.
+            require(
+                  paymentToken.tokenId == _id
+                , "BadgeSash::onERC1155Received: Incorrect payment token."
+            );
+
+            /// @dev Confirm that the payment token being supplied is the correct amount.
+            require(
+                  paymentToken.quantity <= _amount
+                , "BadgeSash::onERC1155Received: Insufficient payment token."
+            );
+        }
+
+        /// @dev Mint the badge to the user.
+        _mint(
+              _from
+            , badgeId
+            , _amount
+            , "0x"
+        );
 
         return this.onERC1155Received.selector;
     }    
