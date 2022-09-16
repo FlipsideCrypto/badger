@@ -161,20 +161,20 @@ describe("BadgerV3", function() {
             const _quantity = 1;
 
             const messageHash = ethers.utils.solidityKeccak256(
-                  ["address", "uint256", "uint256"], 
-                  [userSigner.address, _badgeId, _quantity]
+                ["address", "uint256", "uint256"], 
+                [userSigner.address, _badgeId, _quantity]
             )
 
-            const messageHashBinary = ethers.utils.arrayify(messageHash);
+            const messageHashArrayify = ethers.utils.arrayify(messageHash);
 
-            const _signature = await sigSigner.signMessage(messageHashBinary);
+            const _signature = await sigSigner.signMessage(messageHashArrayify);
 
-            await sashPress.claimMint(
+            await sashPress.connect(userSigner).claimMint(
                   _signature        // bytes calldata _signature
                 , _badgeId          // uint256 _id
                 , _quantity         // uint256 _quantity
-                , ""              // bytes memory _data
-            )
+                , "0x"              // bytes memory _data
+            );
         });
 
         it('User can revoke own badge', async() => {
