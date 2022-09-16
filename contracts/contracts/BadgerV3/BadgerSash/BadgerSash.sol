@@ -6,6 +6,7 @@ import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/I
 import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol"; 
 import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import { ERC1155HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
+import { ERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol";
 
 import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
@@ -516,7 +517,7 @@ contract BadgerSash is
     }
 
     function onERC1155Received(
-          address _operator
+          address
         , address _from
         , uint256 _id
         , uint256 _amount 
@@ -532,19 +533,38 @@ contract BadgerSash is
             , "BadgeSash::onERC1155Received: Only BadgeSash can receive tokens."
         );
 
-        // TODO: Use `_data` to determine which badge this is being used to pay the mint for.
-        // TODO: Process the mint.
-        // TODO: Figure out if we can also send the signature through _data
+        /// @dev Get the badge id and signature from the data.
+        (
+              uint256 badgeId
+            , bytes memory signature
+        ) = abi.decode(_data, (uint256, bytes));
+
+        /// @dev If the Badge has a signer, verify that the signature is valid.
+        if (badges[badgeId].signer != address(0)) {
+            require(
+                _verify(
+                      _from
+                    , badgeId
+                    , _amount
+                    , _data
+                    , signature
+                ),
+                "BadgeSash::onERC1155Received: Invalid signature."
+            );
+        }
+
+        // TODO: Implement the use of payment tokens and checking if the payment token for the target badge is the one being sent
+        // TODO: Mint the token.
 
         return this.onERC1155Received.selector;
     }    
 
     function onERC1155BatchReceived(
-          address _operator
-        , address _from
-        , uint256[] memory _ids
-        , uint256[] memory _amounts
-        , bytes memory _data
+          address
+        , address
+        , uint256[] memory
+        , uint256[] memory
+        , bytes memory
     )
         override
         public
@@ -576,5 +596,20 @@ contract BadgerSash is
               success
             , "BadgeSash::withdrawETH: Failed to withdraw ETH."
         );
+    }
+
+    function supportsInterface(
+        bytes4 _interfaceId
+    )
+        override(
+            ERC1155Upgradeable
+          , ERC1155ReceiverUpgradeable
+        )
+        public
+        virtual
+        view
+        returns (bool)
+    {
+        return super.supportsInterface(_interfaceId);
     }
 }
