@@ -30,13 +30,7 @@
     "type": "event"
   },
   {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_uri",
-        "type": "string"
-      }
-    ],
+    "inputs": [],
     "name": "createSashPress",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -145,7 +139,7 @@
     "name": "sashImplementation",
     "outputs": [
       {
-        "internalType": "contract BadgerSashInterface",
+        "internalType": "contract BadgerSashInterfaceV2",
         "name": "",
         "type": "address"
       }

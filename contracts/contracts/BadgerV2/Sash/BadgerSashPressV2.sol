@@ -2,12 +2,12 @@
 
 // Dynamic contract that handles the minting of a new Sash + any future Badges
 
-import { BadgerSashInterface } from "./interfaces/BadgerSashInterface.sol";
+import { BadgerSashInterfaceV2 } from "./interfaces/BadgerSashInterfaceV2.sol";
 
 pragma solidity ^0.8.16;
 
 // contract BadgerSashPress is 
 //     BadgerSashInterface
 // { 
-    
+
 // }

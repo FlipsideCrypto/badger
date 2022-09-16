@@ -4,6 +4,6 @@
 
 pragma solidity ^0.8.16;
 
-contract BadgeSashFunnel {
-
+contract BadgeSashFunnelV2 {
+    // TODO: Handle the receipt of all the things
 }
