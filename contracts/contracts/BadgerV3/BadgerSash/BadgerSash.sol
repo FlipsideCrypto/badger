@@ -2,9 +2,10 @@
 
 pragma solidity ^0.8.16;
 
-import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
-import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol"; 
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol"; 
+import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
+import { ERC1155HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
 
 import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
@@ -14,9 +15,10 @@ contract BadgerSash is
       Initializable 
     , OwnableUpgradeable
     , ERC1155Upgradeable
+    , ERC1155HolderUpgradeable 
 {
     using ECDSA for bytes32;
-
+    
     /// @dev The processing information for this token.
     struct Badge { 
         bool accountBound;
@@ -206,6 +208,26 @@ contract BadgerSash is
         ) {
             badges[_id].addressIsLeader[_leaders[i]] = _isLeader[i];
         }
+    }
+
+    /**
+     * @notice Allow anyone to see the leaders of the Badge.
+     * @param _id The id of the badge.
+     * @return The leaders of the badge.
+     */
+    function isLeader(
+          uint256 _id
+        , address _leader
+    )
+        external
+        view
+        virtual
+        onlySewnBadge(_id)
+        returns (
+            bool
+        )
+    {
+        return badges[_id].addressIsLeader[_leader];
     }
 
     /**
@@ -454,10 +476,12 @@ contract BadgerSash is
         /// @dev Confirm that the transfer can proceed if the account is not token bound
         ///      or the message sender is a leader of the badge.
         require(
-              !badges[_id].accountBound || (
+              !badges[_id].accountBound 
+              || _to == address(this)
+              || (
                     _msgSender() == owner() 
                     || badges[_id].addressIsLeader[_msgSender()]
-              )
+                )
             , "BadgeSash::safeTransferFrom: Account bound badges cannot be transferred by anyone but Leaders."
         );
 
@@ -489,6 +513,50 @@ contract BadgerSash is
         virtual
     {
         revert("BadgeSash::safeBatchTransferFrom: Batch transfers are not supported.");
+    }
+
+    function onERC1155Received(
+          address _operator
+        , address _from
+        , uint256 _id
+        , uint256 _amount 
+        , bytes memory _data
+    )
+        override
+        public
+        virtual
+        returns (bytes4)
+    {
+        require(
+              _msgSender() == address(this)
+            , "BadgeSash::onERC1155Received: Only BadgeSash can receive tokens."
+        );
+
+        // TODO: Use `_data` to determine which badge this is being used to pay the mint for.
+        // TODO: Process the mint.
+        // TODO: Figure out if we can also send the signature through _data
+
+        return this.onERC1155Received.selector;
+    }    
+
+    function onERC1155BatchReceived(
+          address _operator
+        , address _from
+        , uint256[] memory _ids
+        , uint256[] memory _amounts
+        , bytes memory _data
+    )
+        override
+        public
+        virtual
+        returns (bytes4)
+    {
+        require(
+              _msgSender() == address(this)
+            , "BadgeSash::onERC1155BatchReceived: Only BadgeSash can receive tokens."
+        );
+
+        return this.onERC1155BatchReceived.selector;
     }
 
     /**

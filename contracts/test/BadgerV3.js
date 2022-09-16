@@ -50,18 +50,14 @@ describe("BadgerV3", function() {
         it('Owner can designate leader', async() => {
             await sashPress.setLeaders(0, [leaderSigner.address, signer1.address], [true, true]);
 
-            const badge = await sashPress.badges(0);
-            // How to get the mappings out of the struct? Do we need a view function for this?
-            assert.equal(badge.addressIsLeader[leaderSigner.address], true);
-            assert.equal(badge.addressIsLeader[signer1.address], true);
+            assert.equal(await sashPress.isLeader(0, leaderSigner.address), true);
+            assert.equal(await sashPress.isLeader(0, signer1.address), true);
         });
 
         it('Owner can revoke leader', async() => {
             await sashPress.setLeaders(0, [signer1.address], [false]);
 
-            const badge = await sashPress.badges(0);
-            // How to get the mappings out of the struct? Do we need a view function for this?
-            assert.equal(badge.addressIsLeader[signer1.address], false);
+            assert.equal(await sashPress.isLeader(0, signer1.address), false);
         });
 
         it('Leader and user cannot designate leader', async() => {
@@ -165,20 +161,20 @@ describe("BadgerV3", function() {
             const _quantity = 1;
 
             const messageHash = ethers.utils.solidityKeccak256(
-                ["address", "uint256", "uint256"]
-                [userSigner.address, _badgeId, _quantity]
-            );
+                  ["address", "uint256", "uint256"], 
+                  [userSigner.address, _badgeId, _quantity]
+            )
 
             const messageHashBinary = ethers.utils.arrayify(messageHash);
 
-            const _signature = await adminWallet.signMessage(messageHashBinary);
+            const _signature = await sigSigner.signMessage(messageHashBinary);
 
-            // await sashPress.claimMint(
-            //       _signature        // bytes calldata _signature
-            //     , _badgeId          // uint256 _id
-            //     , _quantity         // uint256 _quantity
-            //     , "0x"              // bytes memory _data
-            // )
+            await sashPress.claimMint(
+                  _signature        // bytes calldata _signature
+                , _badgeId          // uint256 _id
+                , _quantity         // uint256 _quantity
+                , ""              // bytes memory _data
+            )
         });
 
         it('User can revoke own badge', async() => {
