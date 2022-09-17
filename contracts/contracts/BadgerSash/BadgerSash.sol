@@ -15,6 +15,12 @@ contract BadgerSash is
     , BadgerScout
 {
     /**
+     * @notice Allow money to be sent to this contract just in case some organization
+     *         has that use case.
+     */
+    receive() external payable {}
+
+    /**
      * @notice Initialize the Sash with the starting state needed.
      * @param _owner The owner of the Sash. (Ideally a multi-sig).
      * @param _uri The base URI for the Sash.
@@ -440,6 +446,11 @@ contract BadgerSash is
         return this.onERC1155Received.selector;
     }    
 
+    /**
+     * @notice Prohibits anyone from making a batch transfer of tokens. This is in place because
+     *         doing so would be extremely inefficient gas wise and introduces many significant
+     *         holes in the opening and closing of permissions.
+     */
     function onERC1155BatchReceived(
           address
         , address
@@ -460,6 +471,11 @@ contract BadgerSash is
         return this.onERC1155BatchReceived.selector;
     }
 
+    /**
+     * @notice Handles the interface detection for ERC-1155 and the Receiver of ERC-1155s.
+     * @param _interfaceId The interface to check.  
+     * @return True if the interface is supported.
+     */
     function supportsInterface(
         bytes4 _interfaceId
     )
@@ -470,7 +486,9 @@ contract BadgerSash is
         public
         virtual
         view
-        returns (bool)
+        returns (
+            bool
+        )
     {
         return super.supportsInterface(_interfaceId);
     }
