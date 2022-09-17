@@ -9,6 +9,8 @@ import { ERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/
 
 import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
+import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+
 contract BadgerScout is 
       Initializable 
     , OwnableUpgradeable
@@ -16,13 +18,13 @@ contract BadgerScout is
 { 
     using ECDSA for bytes32;
     
+    /// @dev The types of tokens that are accepted as payment.
     enum TOKEN_TYPE { 
           NATIVE
-        , ERC20
         , ERC1155
-        , ERC721
     }
 
+    /// @dev The structure of a Payment Token.
     struct PaymentToken { 
         TOKEN_TYPE tokenType;
         address tokenAddress;
@@ -40,7 +42,6 @@ contract BadgerScout is
     }
 
     /// @dev Mapping from token ID to badge
-    // mapping(uint256 => Badge) public badges;
     mapping(uint256 => Badge) public badges;
 
     /**
@@ -112,10 +113,9 @@ contract BadgerScout is
     {
         Badge storage badge = badges[_id];
 
-        /// TODO: Fix this requirement check
         require(
-            badge.signer == address(0),
-            "BadgeSash::setBadge: Badge already exists."
+              bytes(badge.uri).length == 0
+            , "BadgeSash::setBadge: Badge already exists."
         );
 
         /// @dev Set the state variables of the Badge.
@@ -266,5 +266,51 @@ contract BadgerScout is
 
         /// @dev Recover the signer from the signature.
         return message.toEthSignedMessageHash().recover(_signature) == badges[_id].signer;
+    }
+
+
+    /**
+     * @notice Allows the owner of a Sash to withdraw funds that it has generated.
+     * 
+     * Requirements:
+     * - `_msgSender` must be the owner of the Sash.
+     */
+    function withdrawETH()
+        external
+        virtual
+        onlyOwner()
+    {
+        (bool success, ) = owner().call{value: address(this).balance}("");
+
+        require(
+              success
+            , "BadgeSash::withdrawETH: Failed to withdraw ETH."
+        );
+    }
+
+    /**
+     * @notice Allows the owner of a Sash to withdraw any 1155s that it has generated. 
+     * @param _token The address of the token to withdraw.
+     * @param _to The address to send the tokens to.
+     * @param _id The id of the token to withdraw.
+     * @param _amount The amount of the token to withdraw.
+     */
+    function withdrawERC1155(
+          address _token
+        , address _to
+        , uint256 _id
+        , uint256 _amount
+    )
+        external
+        virtual
+        onlyOwner()
+    {
+        IERC1155(_token).safeTransferFrom(
+              address(this)
+            , _to
+            , _id
+            , _amount
+            , ""
+        );
     }
 }

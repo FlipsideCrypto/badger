@@ -2,13 +2,16 @@
 
 pragma solidity ^0.8.16;
 
+import { BadgerSashInterface } from "./interfaces/BadgerSashInterface.sol";
+
 import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import { ERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol";
 
 import { BadgerScout } from "./BadgerScout.sol";
 
 contract BadgerSash is 
-      ERC1155Upgradeable
+      BadgerSashInterface
+    , ERC1155Upgradeable
     , BadgerScout
 {
     /**
@@ -38,10 +41,10 @@ contract BadgerSash is
     function uri(
         uint256 _id
     )
+        override
         public
         view
         virtual
-        override
         returns (
             string memory
         )
@@ -81,6 +84,7 @@ contract BadgerSash is
         , uint256 _amount
         , bytes memory _data
     ) 
+        override
         external
         virtual
         onlyLeader(_id)
@@ -151,6 +155,7 @@ contract BadgerSash is
         , uint256 _quantity
         , bytes memory _data
     ) 
+        override
         external
         payable
         virtual
@@ -216,7 +221,7 @@ contract BadgerSash is
 
     /**
      * @notice Allows the owner and leaders of a contract to revoke badges from a user.
-     * @param _from The addresses to revoke the badge from.
+     * @param _froms The addresses to revoke the badge from.
      * @param _id The id of the badge to revoke.
      * @param _amounts The amount of the badge to revoke.
      *
@@ -224,7 +229,7 @@ contract BadgerSash is
      * - `_msgSender` must be the owner or leader of the badge.
      */
     function revokeBatch(
-          address[] memory _from
+          address[] memory _froms
         , uint256 _id
         , uint256[] memory _amounts
     )
@@ -233,18 +238,18 @@ contract BadgerSash is
         onlyLeader(_id)
     {
         require(
-            _from.length == _amounts.length,
+            _froms.length == _amounts.length,
             "BadgeSash::revokeBatch: _from and _amounts must be the same length."
         );
 
         for(
             uint256 i;
-            i < _from.length;
+            i < _froms.length;
             i++
         ) { 
             /// @dev Revoke the badge from the user.
             _burn(
-                  _from[i]
+                  _froms[i]
                 , _id
                 , _amounts[i]
             );
@@ -347,6 +352,16 @@ contract BadgerSash is
         revert("BadgeSash::safeBatchTransferFrom: Batch transfers are not supported.");
     }
 
+    /**
+     * @notice Allows seamless payment & minting of a Badge when the full criteria has been met. 
+     * @param _from The source of the payment token.
+     * @param _id The id of payment token.
+     * @param _amount The amount of payment token.
+     * @param _data The minting data.
+     *
+     * Requirements:
+     * - `badgeId
+     */
     function onERC1155Received(
           address
         , address _from
@@ -357,13 +372,10 @@ contract BadgerSash is
         override
         public
         virtual
-        returns (bytes4)
+        returns (
+            bytes4
+        )
     {
-        require(
-              _msgSender() == address(this)
-            , "BadgeSash::onERC1155Received: Only BadgeSash can receive tokens."
-        );
-
         /// @dev Get the badge id and signature from the data.
         (
               uint256 badgeId
@@ -422,7 +434,7 @@ contract BadgerSash is
               _from
             , badgeId
             , _amount
-            , "0x"
+            , ""
         );
 
         return this.onERC1155Received.selector;
@@ -446,25 +458,6 @@ contract BadgerSash is
         );
 
         return this.onERC1155BatchReceived.selector;
-    }
-
-    /**
-     * @notice Allows the owner of a Sash to withdraw funds that it has generated.
-     * 
-     * Requirements:
-     * - `_msgSender` must be the owner of the Sash.
-     */
-    function withdrawETH()
-        external
-        virtual
-        onlyOwner()
-    {
-        (bool success, ) = owner().call{value: address(this).balance}("");
-
-        require(
-              success
-            , "BadgeSash::withdrawETH: Failed to withdraw ETH."
-        );
     }
 
     function supportsInterface(
