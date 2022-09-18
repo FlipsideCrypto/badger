@@ -10,6 +10,7 @@ import { fal } from '@fortawesome/pro-light-svg-icons'
 // import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
 
 import Landing from './components/Landing';
+import Dashboard from './components/Dashboard/Dashboard';
 
 import "./App.css";
 
@@ -49,6 +50,7 @@ function App() {
 
           <Routes>
             <Route exact path="/" element={<Landing />} />
+            <Route path="dashboard/" element={<Dashboard />} />
           </Routes>
           {/* <Footer /> */}
         </Router>
