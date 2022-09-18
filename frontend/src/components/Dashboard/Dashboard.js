@@ -1,7 +1,9 @@
 import OrgSidebar from "./Sidebar/OrgSidebar";
+import HelpSidebar from "./Sidebar/HelpSidebar";
+
+import DashboardContent from "./Content/DashboardContent";
 
 import "../../style/Dashboard/Dashboard.css";
-import HelpSidebar from "./Sidebar/HelpSidebar";
 
 const Dashboard = () => {
     // const [organizations, setOrganizations] = useState([]);
@@ -15,9 +17,7 @@ const Dashboard = () => {
     return (
         <div className="dashboard">
             <OrgSidebar organizations={organizations} />
-            {/* <DashboardContent /> */}
-            <div></div>
-
+            <DashboardContent />
             <HelpSidebar />
         </div>
     )
