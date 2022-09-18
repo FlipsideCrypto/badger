@@ -2,15 +2,19 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const IconButton = (icon) => { 
+import "../../style/Button/IconButton.css"
+
+const IconButton = ({ icon, text, style }) => {
     return (
-        <button className="button">
-            <span>{Text}</span>
+        <button className="button" style={style}>
+            <span className="button__text">
+                {text}
+            </span>
             <div className="button__icon">
                 <FontAwesomeIcon icon={icon} />
             </div>
         </button>
-    )    
+    )
 }
 
 export default IconButton;

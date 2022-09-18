@@ -1,5 +1,9 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import IconButton from './Button/IconButton';
+
+import logo from "../static/images/badger-logo-headline.png";
+
 import "../style/Landing.css";
 
 const Landing = () => {
@@ -28,13 +32,29 @@ const Landing = () => {
 
     return (
         <div className="landing">
+            <div className="navbar">
+                <div className="container">
+                    <div className="navbar__logo">
+                        <img src={logo} alt="logo" />
+                    </div>
+
+                    <div className="navbar__links__left">
+                        <a href="https://app.gitbook.com/o/uh3wvRXawCOXvkfIEWJ7/s/QZWCUfgiU4xiUvp0OWx4/">Docs</a>
+                    </div>
+
+                    <div className="navbar__links__right">
+                        <a href="http://localhost">Enter App</a>
+                    </div>
+                </div>
+            </div>
+
             <div className="hero">
                 <div className="container">
                     <div className="hero__content">
                         <h1>Give your organization their keys to Web3.</h1>
                         <p className="lead">Deploy and manage flexible group policies for your team’s decentralized tool stack. </p>
 
-                        <button>Manage Org</button>
+                        <IconButton icon={['fal', 'arrow-right']} text="Issue Keys" />
                     </div>
                 </div>
             </div>
@@ -42,25 +62,38 @@ const Landing = () => {
             <div className="trusted__container"></div>
 
             <div className="features">
-                <div className="container">
-                    <h2>An on-chain organization permissions primitive designed to support every use case.</h2>
+                <div className="background">
+                    <div className="container">
+                        <h2>An on-chain organization permissions primitive designed to support every use case.</h2>
 
-                    <div className="features__grid">
-                        {features.map((feature, index) => (
-                            <div className="feature__card" key={index}>
-                                <div className="feature__icon">
-                                    <FontAwesomeIcon icon={feature.icon} />
-                                </div>
+                        <div className="features__grid">
+                            {features.map((feature, index) => (
+                                <div className="feature__card" key={index}>
+                                    <div className="feature__icon">
+                                        <FontAwesomeIcon icon={feature.icon} />
+                                    </div>
 
-                                <div className="feature__content">
-                                    <h3>{feature.title}</h3>
-                                    <p>{feature.description}</p>
+                                    <div className="feature__content">
+                                        <h3>{feature.title}</h3>
+                                        <p>{feature.description}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
+
+                        <IconButton icon={['fal', 'arrow-right']} text="Create Org Now" style={{
+                            marginLeft: "auto"
+                        }} />
                     </div>
+                </div>
+            </div>
 
-                    <button>Create Org Now</button>
+            {/* Footer */}
+            <div className="footer">
+                <div className="container">
+                    <div className="footer__logo">
+                        <img src={logo} alt="logo" />
+                    </div>
                 </div>
             </div>
         </div>

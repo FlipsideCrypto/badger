@@ -1,0 +1,36 @@
+.button {
+    padding: 0;
+    display: grid;
+    grid-template-columns: auto auto;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .1s all ease-in-out;
+}
+
+.button__text {
+    padding-inline: 10px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    transition: .1s all ease-in-out;
+}
+
+.button__icon {
+    border: 1px solid #000;
+    background: #000;
+    color: #fff;
+    padding: 5px 10px;
+    transition: .1s all ease-in-out;
+}
+
+.button:hover .button__text,
+.button:active .button__text,
+.button:focus .button__text {
+    background: #000;
+    color: #fff;
+}
+
+/* When the button is hovered do a little bump to the icon */
+.button:hover .button__icon svg {
+    transform: translateX(2px);
+}
