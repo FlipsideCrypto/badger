@@ -72,8 +72,21 @@
     right: 0;
     width: 85%;
     height: 100%;
-    background: linear-gradient(90deg, #FFFFFF, #E9F8FF);
+    background: linear-gradient(90deg, #FFFFFF, #cbe7f5);
     z-index: -1;
+}
+
+.hero::after { 
+    content: "";
+    background-image: url(../static/images/key.gif);
+    background-repeat: no-repeat;
+    background-size: auto 65%;
+    background-position: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 65%;
+    height: 100%;
 }
 
 .container {
