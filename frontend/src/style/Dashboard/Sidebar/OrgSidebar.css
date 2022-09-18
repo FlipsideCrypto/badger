@@ -9,8 +9,30 @@
     border-right: 1px solid #E3E0E0;
     position: absolute;
     right: 0;
-    top: 32px;
-    bottom: 32px;
+    top: 0px;
+    bottom: 0px;
+}
+
+.sidebar .sidebar__header * { 
+    margin: 0;
+}
+
+.sidebar .sidebar__header { 
+    display: grid;
+    align-items: center;
+    grid-template-columns: 34px auto;
+    margin-bottom: 30px;
+}
+
+.sidebar .sidebar__header img { 
+    border-radius: 50%;
+    height: 24px;
+    width: 24px;
+    margin-right: 10px;
+}
+
+.sidebar .sidebar__header a { 
+    color: #000;
 }
 
 .sidebar__category * {
@@ -56,6 +78,10 @@
 .sidebar .logout {
     position: absolute;
     bottom: 32px;
+}
+
+.sidebar .logout span { 
+    color:rgba(0, 0, 0, .35);
 }
 
 .sidebar .logout svg { 
