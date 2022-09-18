@@ -126,12 +126,12 @@ contract BadgerHouse is
      * @notice Creates a new Sash when the subscription model is enabled and the user has
      *         transfer their subscription token to this contract. The subscription, is a lifetime
      *         subscription.
-     * @param _operator The address of the operator who is creating the Sash.
+     * @param _from The address of the account who owns the created Organization.
      * @return Selector response of the subscription token successful transfer.
      */
     function onERC1155Received(
-          address _operator
-        , address 
+          address 
+        , address _from
         , uint256 
         , uint256 
         , bytes memory 
@@ -147,7 +147,7 @@ contract BadgerHouse is
 
         /// @dev Deploy the Sash contract.
         _createSashPress(
-              _operator
+              _from
             , ""
         );
 

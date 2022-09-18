@@ -1,6 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
+/.netlify
 /node_modules
 /.pnp
 .pnp.js
@@ -12,8 +13,8 @@
 /build
 
 # misc
-.env
 .DS_Store
+.envrc
 .env.local
 .env.development.local
 .env.test.local

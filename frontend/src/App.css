@@ -11,6 +11,19 @@ body {
   min-height: 100vh;
 }
 
+button { 
+  background: transparent;
+  border: 1px solid #000;
+  outline: none;
+  padding: 5px 20px;
+  cursor: pointer;
+}
+
+.lead { 
+  font-size: 18px;
+}
+
+
 @media screen and (max-width: 3000px) {
   .page-margins{
     margin-right: 300px;
