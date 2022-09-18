@@ -14,10 +14,10 @@ const Header = ({ back, actions }) => {
     return (
         <header className="header">
             <div className="header__back">
-                <a href="#" onClick={() => { handleAction(back) }}>
+                {back && <a href="#" onClick={() => { handleAction(back) }}>
                     <FontAwesomeIcon icon={['fal', 'chevron-left']} />
                     <span>Back</span>
-                </a>
+                </a>}
             </div>
 
             <div className="header__actions">
