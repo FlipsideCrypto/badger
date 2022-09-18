@@ -1,0 +1,9 @@
+.sidebar {
+    height: 100%;
+    position: relative;
+    margin: 20px;
+}
+
+.sidebar h5 { 
+    color:rgba(0, 0, 0, .35)
+}

@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Logout from "./Logout/Logout";
 
+import "../../../style/Dashboard/Sidebar/Sidebar.css";
 import "../../../style/Dashboard/Sidebar/OrgSidebar.css";
 
 const OrgSidebar = ({ organizations }) => {

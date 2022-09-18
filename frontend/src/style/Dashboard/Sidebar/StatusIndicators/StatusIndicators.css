@@ -1,0 +1,21 @@
+.status__indicators { 
+
+}
+
+.status__indicators * { 
+    margin: 0;
+}
+
+.status__indicators .status__indicator {
+    display: grid;
+    grid-template-columns: 24px auto;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.status__indicators .status__indicator .status__indicator__circle  {
+    background: red;
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+}

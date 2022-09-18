@@ -50,7 +50,7 @@ function App() {
 
           <Routes>
             <Route exact path="/" element={<Landing />} />
-            <Route path="dashboard/" element={<Dashboard />} />
+            <Route exact path="/dashboard/" element={<Dashboard />} />
           </Routes>
           {/* <Footer /> */}
         </Router>

@@ -1,0 +1,26 @@
+.sidebar.right::after { 
+    content: "";
+    border-left: 1px solid #E3E0E0;
+    position: absolute;
+    left: -20px;
+    top: 0px;
+    bottom: 0px;
+}
+
+.sidebar.right .sidebar__header { 
+    display: flex;
+}
+
+.sidebar.right .sidebar__header svg { 
+    color:rgba(0, 0, 0, .35);
+    margin-right: 10px;
+}
+
+.sidebar.right p { 
+    color: rgba(0, 0, 0, .65);
+}
+
+.sidebar.right .sidebar__content { 
+    margin-bottom: 20px;
+}
+
