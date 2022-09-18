@@ -72,7 +72,7 @@
     right: 0;
     width: 85%;
     height: 100%;
-    background: linear-gradient(90deg, #FFFFFF, #cbe7f5);
+    background: linear-gradient(90deg, rgb(255, 255, 255, 0), rgb(203, 231, 245, .85));
     z-index: -1;
 }
 
@@ -196,6 +196,12 @@
 
     .hero .container .hero__content h1 { 
         max-width: 100%;
+    }
+
+    .hero::after { 
+        background-size: auto 100%;
+        background-position: left;
+        z-index: -1;
     }
 
     .features .container {
