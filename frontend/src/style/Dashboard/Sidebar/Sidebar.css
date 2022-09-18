@@ -4,6 +4,11 @@
     margin: 20px;
 }
 
-.sidebar h5 { 
-    color:rgba(0, 0, 0, .35)
+.sidebar h5 {
+    color: rgba(0, 0, 0, .35)
+}
+
+.sidebar .sidebar__footer { 
+    position: absolute;
+    bottom: 0;
 }

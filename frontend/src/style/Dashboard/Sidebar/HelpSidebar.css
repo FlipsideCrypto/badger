@@ -1,3 +1,7 @@
+.sidebar.right { 
+    width: 300px;
+}
+
 .sidebar.right::after { 
     content: "";
     border-left: 1px solid #E3E0E0;
@@ -8,12 +12,15 @@
 }
 
 .sidebar.right .sidebar__header { 
-    display: flex;
+    display: grid;
+}
+
+.sidebar.right .sidebar__header div { 
+    margin-left: auto;
 }
 
 .sidebar.right .sidebar__header svg { 
     color:rgba(0, 0, 0, .35);
-    margin-right: 10px;
 }
 
 .sidebar.right p { 
@@ -24,3 +31,29 @@
     margin-bottom: 20px;
 }
 
+.sidebar.right .sidebar__footer {
+    display: grid;
+    grid-template-columns: 200px auto auto;
+    align-items: center;
+}
+
+.sidebar.right .sidebar__footer svg { 
+    color:rgba(0, 0, 0, .35);
+    margin-right: 10px;
+}
+
+.sidebar.right.collapsed { 
+    width: fit-content;
+    padding-right: 30px;
+}
+
+.sidebar.right.collapsed::after { 
+    border-left: none;
+}
+
+.sidebar.right.collapsed .sidebar__header h5,
+.sidebar.right.collapsed .sidebar__content, 
+.sidebar.right.collapsed .sidebar__statuses,
+.sidebar.right.collapsed .sidebar__footer { 
+        display: none; 
+}

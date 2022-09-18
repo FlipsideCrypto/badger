@@ -1,6 +1,6 @@
 .dashboard {
     display: grid;
-    grid-template-columns: 250px auto 300px;
+    grid-template-columns: 250px auto min-content;
     min-height: calc(100vh - 40px);
     position: relative;
 }

@@ -17,6 +17,7 @@ const Dashboard = () => {
             <OrgSidebar organizations={organizations} />
             {/* <DashboardContent /> */}
             <div></div>
+
             <HelpSidebar />
         </div>
     )
