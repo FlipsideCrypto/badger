@@ -13,6 +13,10 @@
     margin-bottom: 10px;
 }
 
+.status__indicators .status__indicator p { 
+    font-size: 12px;
+}
+
 .status__indicators .status__indicator .status__indicator__circle  {
     background: red;
     border-radius: 50%;
