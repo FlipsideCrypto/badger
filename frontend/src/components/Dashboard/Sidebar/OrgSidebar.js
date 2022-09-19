@@ -1,11 +1,22 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useAccount, useEnsName, useEnsAvatar } from "wagmi";
 
+import ConnectWalletButton from "../../Button/ConnectWalletButton";
 import Logout from "./Logout/Logout";
 
 import "../../../style/Dashboard/Sidebar/Sidebar.css";
 import "../../../style/Dashboard/Sidebar/OrgSidebar.css";
 
 const OrgSidebar = ({ organizations }) => {
+    const { address } = useAccount();
+    const { data: ensName } = useEnsName({
+        address: address,
+      })
+    const { data: ensAvatar } = useEnsAvatar({
+        address: address,
+    })
+
+    console.log(ensAvatar)
 
     const account = {
         monocre: "nftchance.eth",
@@ -16,8 +27,14 @@ const OrgSidebar = ({ organizations }) => {
         <div className="sidebar left">
             {/* Logged in user header */}
             <div className="sidebar__header">
-                <img src={account.avatar} alt="avatar" />
-                <a href="#">{account.monocre}</a>
+                {address ? 
+                    <>
+                        <img src={ensAvatar || account.avatar} alt="avatar" />
+                        <a href="#">{ensName}</a>
+                    </>
+                    :
+                    <ConnectWalletButton />
+                }
             </div>
 
 

@@ -26,6 +26,7 @@ function App() {
             <meta name="twitter:description" content="Badge-ify the roles that control the gates of your on-chain organization." />
           </Helmet>
 
+        
           <Routes>
             <Route exact path="/" element={<Landing />} />
 

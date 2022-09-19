@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import IconButton from './Button/IconButton';
@@ -44,7 +45,7 @@ const Landing = () => {
                     </div>
 
                     <div className="navbar__links__right">
-                        <a href="http://localhost">Enter App</a>
+                        <Link className="internal-link" to="/dashboard/">Enter App</Link>
                     </div>
                 </div>
             </div>
@@ -55,7 +56,9 @@ const Landing = () => {
                         <h1>Give your organization their keys to Web3.</h1>
                         <p className="lead">Deploy and manage flexible group policies for your team’s decentralized tool stack. </p>
 
-                        <IconButton icon={['fal', 'arrow-right']} text="Issue Keys" />
+                        <Link className="internal-link" to="/dashboard/">
+                            <IconButton icon={['fal', 'arrow-right']} text="Issue Keys" />
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -82,9 +85,11 @@ const Landing = () => {
                             ))}
                         </div>
 
-                        <IconButton icon={['fal', 'arrow-right']} text="Create Org Now" style={{
-                            marginLeft: "auto"
-                        }} />
+                        <Link className="internal-link" to="/dashboard/">
+                            <IconButton icon={['fal', 'arrow-right']} text="Create Org Now" style={{
+                                marginLeft: "auto"
+                            }} />
+                        </Link>
                     </div>
                 </div>
             </div>

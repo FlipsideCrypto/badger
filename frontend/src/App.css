@@ -23,6 +23,9 @@ button {
   font-size: 18px;
 }
 
+.internal-link {
+  text-decoration: none;
+}
 
 @media screen and (max-width: 3000px) {
   .page-margins{

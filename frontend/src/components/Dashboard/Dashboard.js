@@ -2,6 +2,7 @@ import OrgSidebar from "./Sidebar/OrgSidebar";
 import HelpSidebar from "./Sidebar/HelpSidebar";
 
 import DashboardContent from "./Content/DashboardContent";
+import WalletWrapper from "../Wallet/WalletWrapper";
 
 import "../../style/Dashboard/Dashboard.css";
 
@@ -15,11 +16,13 @@ const Dashboard = ({ children }) => {
     ]
 
     return (
-        <div className="dashboard">
-            <OrgSidebar organizations={organizations} />
-            <DashboardContent children={children} />
-            <HelpSidebar />
-        </div>
+        <WalletWrapper>
+            <div className="dashboard">
+                <OrgSidebar organizations={organizations} />
+                <DashboardContent children={children} />
+                <HelpSidebar />
+            </div>
+        </WalletWrapper>
     )
 }
 
