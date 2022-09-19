@@ -210,6 +210,48 @@ contract BadgerScout is
     }
 
     /**
+     * @notice Allow the owner of the organization to control the leaders of multiple badges in one transaction.
+     * @dev This functionality is not exposed through the Dashboard UI however you can call this function directly.
+     * @param _ids The ids of the badges.
+     * @param _leaders The address of the leader that we are updating the status of.
+     * @param _isLeader The status of the leaders being updated.
+     * 
+     * Requirements:
+     * - Only the owner of the contract can call this function.
+     * - `_id` must corresponding to an existing Badge config.
+     */
+    function setLeadersBatch(
+          uint256[] calldata _ids
+        , address[] calldata _leaders
+        , bool[] calldata _isLeader
+    )
+        external
+        virtual
+        onlyOwner()
+    {
+        require(
+                   _ids.length == _leaders.length 
+                && _leaders.length == _isLeader.length
+            , "BadgeSash::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
+        );
+
+        /// @dev Loop through the leaders and update their status.        
+        for (
+            uint256 i; 
+            i < _ids.length; 
+            i++
+        ) {
+            /// @dev Make sure that this badge exists
+            require(
+                  bytes(badges[_ids[i]].uri).length != 0
+                , "BadgeSash::setLeadersBatch: Badge does not exist."
+            );
+
+            badges[_ids[i]].addressIsLeader[_leaders[i]] = _isLeader[i];
+        }
+    }
+
+    /**
      * @notice Allow anyone to see the leaders of the Badge.
      * @param _id The id of the badge.
      * @return The leaders of the badge.

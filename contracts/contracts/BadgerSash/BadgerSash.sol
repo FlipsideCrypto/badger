@@ -143,6 +143,60 @@ contract BadgerSash is
     }
 
     /**
+     * @notice Allows the owner and leaders of a contract to batch mint badges.
+     * @dev This is an extremely gassy and bad implementation of batch processing 
+     *      for Ethereum mainnet. However, because many organizations do not live on ETH
+     *      this function enables the user a simpler front-end experience.
+     * @dev If you are minting through a custom contract. Recommended usage is 
+     *      to use the `mintBatch` function instead by doing 1 Badge at a time.
+     * @param _tos The addresses to mint the badge to.
+     * @param _ids The id of the badge to revoke.
+     * @param _amounts The amount of the badge to revoke.
+     *
+     * Requirements:
+     * - `_froms`, `_ids`, and `_amounts` must be the same length.
+     * - `_msgSender` must be the owner or leader of the badge.
+     */
+    function leaderMintFullBatch(
+          address[] memory _tos
+        , uint256[] memory _ids
+        , uint256[] memory _amounts
+        , bytes memory _data
+    )
+        external
+        virtual
+    {
+        require(
+                   _tos.length == _ids.length 
+                && _ids.length == _amounts.length
+            , "BadgeSash::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
+        );
+
+        /// @dev Mint the badge to all of the recipients with their given amount.
+        for (uint256 i = 0; i < _tos.length; i++) {
+            /// @dev Only allow the owner or leader to mint the badge.
+            require (
+                _msgSender() == owner() ||
+                badges[_ids[i]].addressIsLeader[_msgSender()],
+                "BadgeSash::leaderMintFullBatch: Only leaders can call this."
+            );
+
+            /// @dev Make sure that this badge exists
+            require(
+                  bytes(badges[_ids[i]].uri).length != 0
+                , "BadgeSash::setLeadersBatch: Badge does not exist."
+            );
+
+            _mint(
+                _tos[i]
+                , _ids[i]
+                , _amounts[i]
+                , _data
+            );
+        }
+    }
+
+    /**
      * @notice Allows a user to mint a claim that has been designated to them.
      * @dev This function is only used when the mint is being paid with ETH or has no payment at all.
      *      To use this with no payment, the `tokenType` of NATIVE with `quantity` of 0 must be used.
@@ -257,6 +311,61 @@ contract BadgerSash is
             _burn(
                   _froms[i]
                 , _id
+                , _amounts[i]
+            );
+        }
+    }
+
+    /**
+     * @notice Allows the owner and leaders of a contract to revoke badges from a user.
+     * @dev This is an extremely gassy and bad implementation of batch processing 
+     *      for Ethereum mainnet. However, because many organizations do not live on ETH
+     *      this function enables the user a simpler front-end experience.
+     * @dev If you are revoking through a custom contract. Recommended usage is 
+     *      to use the `revokeBatch` function instead.
+     * @param _froms The addresses to revoke the badge from.
+     * @param _ids The id of the badge to revoke.
+     * @param _amounts The amount of the badge to revoke.
+     *
+     * Requirements:
+     * - `_froms`, `_ids`, and `_amounts` must be the same length.
+     * - `_msgSender` must be the owner or leader of the badge.
+     */
+    function revokeFullBatch(
+          address[] memory _froms
+        , uint256[] memory _ids
+        , uint256[] memory _amounts
+    )
+        external
+        virtual
+    {
+        require(
+                   _froms.length == _ids.length 
+                && _ids.length == _amounts.length
+            , "BadgeSash::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
+        );
+
+        for(
+            uint256 i;
+            i < _froms.length;
+            i++
+        ) {
+            require (
+                _msgSender() == owner() ||
+                badges[_ids[i]].addressIsLeader[_msgSender()],
+                "BadgeSash::revokeFullBatch: Only leaders can call this."
+            );
+
+            /// @dev Make sure that this badge exists
+            require(
+                  bytes(badges[_ids[i]].uri).length != 0
+                , "BadgeSash::setLeadersBatch: Badge does not exist."
+            );
+
+            /// @dev Revoke the badge from the user.
+            _burn(
+                  _froms[i]
+                , _ids[i]
                 , _amounts[i]
             );
         }
