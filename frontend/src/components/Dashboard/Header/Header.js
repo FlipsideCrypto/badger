@@ -11,8 +11,12 @@ const Header = ({ back, actions }) => {
         navigate(action);
     }
 
+    const isShowing = actions?.length > 0 || back;
+
     return (
-        <header className="header">
+        <header className="header" style={{
+            margin: isShowing ? '20px' : '0'
+        }}>
             <div className="header__back">
                 {back && <a href="#" onClick={() => { handleAction(back) }}>
                     <FontAwesomeIcon icon={['fal', 'chevron-left']} />

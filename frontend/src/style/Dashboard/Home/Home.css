@@ -3,6 +3,7 @@
 .home .home__announcement {}
 
 .home .home__cards { 
+    margin-top: 20px;
     display: grid;
     gap: 10px;
     grid-template: 'card1 card2'
