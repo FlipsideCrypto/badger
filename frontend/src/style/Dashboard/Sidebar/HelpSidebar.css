@@ -46,6 +46,7 @@
 .sidebar.right.collapsed { 
     width: fit-content;
     padding-right: 30px;
+    margin-left: 0px;
 }
 
 .sidebar.right.collapsed::after { 

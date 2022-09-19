@@ -22,7 +22,7 @@ const Home = () => {
                         <div className="announcement__status" style={{ 
                             backgroundColor: announcement.color
                         }}></div>
-                        <p>{announcement.message}</p>
+                        {announcement.message}
                     </Card>
                 </div>
 
@@ -35,9 +35,9 @@ const Home = () => {
                                     height="300"
                                     src="https://www.youtube-nocookie.com/embed/C1ofCsq75GY"
                                     title="Live Walkthrough Video"
-                                    frameborder="0"
                                     allow="accelerometer; picture-in-picture"
-                                    allowfullscreen
+                                    frameBorder={0}
+                                    allowFullScreen={true}
                                 ></iframe>
                             </div>
                             <div className="home__card__content">
@@ -67,7 +67,7 @@ const Home = () => {
 
                     <div className="home__cards__column">
                         <Card>
-                            <div class="home__card__content">
+                            <div className="home__card__content">
                                 <FontAwesomeIcon icon={['fal', 'sitemap']} />
                                 <div>
                                     <h2>Create your first Organization</h2>
