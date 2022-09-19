@@ -1,12 +1,13 @@
 .sidebar.right { 
     width: 300px;
+    padding-left: 20px;
 }
 
 .sidebar.right::after { 
     content: "";
     border-left: 1px solid #E3E0E0;
     position: absolute;
-    left: -20px;
+    left: 0px;
     top: 0px;
     bottom: 0px;
 }

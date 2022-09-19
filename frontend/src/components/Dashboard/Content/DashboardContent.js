@@ -1,8 +1,11 @@
 import Header from '../Header/Header';
 
-const DashboardContent = () => { 
+const DashboardContent = ({ children }) => {
     return (
-        <Header />
+        <div className="dashboard__content">
+            <Header />
+            {children}
+        </div>
     )
 }
 

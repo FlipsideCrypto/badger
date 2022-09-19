@@ -1,0 +1,15 @@
+.card * {
+    margin: 0;
+}
+
+.card {
+    border: 1px solid #E0E0E0;
+}
+
+.card h2 { 
+    margin-bottom: 10px;
+}
+
+.card a {
+    margin-top: 40px; 
+}

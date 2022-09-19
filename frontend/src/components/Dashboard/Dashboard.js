@@ -5,7 +5,7 @@ import DashboardContent from "./Content/DashboardContent";
 
 import "../../style/Dashboard/Dashboard.css";
 
-const Dashboard = () => {
+const Dashboard = ({ children }) => {
     // const [organizations, setOrganizations] = useState([]);
     const organizations = [
         {
@@ -17,7 +17,7 @@ const Dashboard = () => {
     return (
         <div className="dashboard">
             <OrgSidebar organizations={organizations} />
-            <DashboardContent />
+            <DashboardContent children={children} />
             <HelpSidebar />
         </div>
     )

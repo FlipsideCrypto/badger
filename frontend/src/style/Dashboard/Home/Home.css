@@ -1,0 +1,35 @@
+.home { }
+
+.home .home__announcement {}
+
+.home .home__cards { 
+    display: grid;
+    gap: 10px;
+    grid-template: 'card1 card2'
+                   'card1 card3'
+                   'card1 card4'
+                   'card5 card6';
+}
+
+.home .home__cards .home__cards__column { 
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 10px;
+}
+
+.home__cards .card__video { 
+    background: #000;
+    min-height: 300px;
+    margin-bottom: 20px;
+}
+
+.home__cards .card .home__card__content { 
+    display: grid;
+    grid-template-columns: 32px auto;
+    padding: 20px;
+}
+
+.home__cards .card svg { 
+    margin-top: 10px;
+    color: rgba(0,0,0,.35);
+}
