@@ -2,13 +2,7 @@
 
 pragma solidity ^0.8.16;
 
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { ERC1155Holder } from "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
-
-import { BadgerSashInterface } from "../BadgerSash/interfaces/BadgerSashInterface.sol";
-import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-
-import { Clones } from "@openzeppelin/contracts/proxy/Clones.sol";
+import { BadgerVersions } from "./BadgerVersions.sol";
 
 /**
  * @title  Badger House
@@ -19,89 +13,13 @@ import { Clones } from "@openzeppelin/contracts/proxy/Clones.sol";
  *         to as a form of permanent staking. 
  */
 contract BadgerHouse is 
-      Ownable
-    , ERC1155Holder
+    BadgerVersions
 { 
-    using Clones for address;
-
-    /// @dev The sash contract that is being used for current deployments.
-    BadgerSashInterface public sashImplementation;
-
-    /// @dev The contract that is being used as the Subscription implementation.
-    IERC1155 public subscriptionImplementation;
-
     constructor(
-        address _sashImplementation
-    ) {
-        _setSashImplementation(_sashImplementation);
-    }
-
-    /**
-     * @notice Stores and controls which contract is used when creating new Sashs.
-     * @param _sashImplementation The address of the Sash implementation.
-     */
-    function _setSashImplementation(
-        address _sashImplementation
+        address _implementation
     ) 
-        internal 
-    {
-        sashImplementation = BadgerSashInterface(_sashImplementation);
-    }
-
-    /**
-     * See {BadgerHouse._setSashImplementation}
-     * 
-     * Requirements:
-     * - The caller must be the owner.
-     */    
-    function setSashImplementation(
-        address _sashImplementation
-    ) 
-        public 
-        onlyOwner()
-    {
-        _setSashImplementation(_sashImplementation);
-    }    
-
-    /**
-     * @notice Sets the subscription implementation which allows the Badger protocol to
-     *         exit growth mode and enable the subscription feature.
-     *
-     * Requirements:
-     * - The caller must be the owner.
-     */
-    function setSubscriptionImplementation(
-        address _subscriptionImplementation
-    )
-        public 
-        onlyOwner()
-    {
-        subscriptionImplementation = IERC1155(_subscriptionImplementation);
-    }
-
-    /**
-     * @notice Creates a new Sash contract to be led by the deploying address.
-     * @param _deployer The address that will be the deployer of the Sash contract.
-     * @dev The Sash contract is created using the Sash implementation contract.
-     */
-    function _createSashPress(
-          address _deployer
-        , string memory _uri
-    )
-        internal
-    {
-        /// @dev Get the address of the target.
-        address sashAddress = address(sashImplementation).clone();
-
-        /// @dev Interface with the newly created contract to initialize it. 
-        BadgerSashInterface sash = BadgerSashInterface(sashAddress);
-
-        /// @dev Deploy the clone contract to serve as the Press for the Sash and it's badges.
-        sash.initialize(
-              _deployer
-            , _uri
-        );
-    }
+        BadgerVersions(_implementation) 
+    {}
 
     /**
      * @notice Creates a new Sash act whie while the subscription model is NOT enabled.
@@ -114,12 +32,16 @@ contract BadgerHouse is
         virtual
     { 
         require(
-                address(subscriptionImplementation) == address(0)
+                versions[activeVersion].license.tokenAddress == address(0)
               , "BadgerHouse::createSashPress: Subscription mode is enabled." 
         );
 
         /// @dev Deploy the Sash contract.
-        _createSashPress(_msgSender(), _uri);
+        _createSashPress(
+              activeVersion
+            , _msgSender()
+            , _uri
+        );
     }
 
     /**
@@ -134,20 +56,25 @@ contract BadgerHouse is
         , address _from
         , uint256 
         , uint256 
-        , bytes memory 
+        , bytes memory _data 
     ) 
         override 
         public 
         returns (bytes4) 
     {
+        /// @dev Get the version of the Sash contract to be deployed.
+        uint256 version = abi.decode(_data, (uint256));
+
+        /// @dev Confirm the token received is the payment token for the license id being deployed.
         require(
-              _msgSender() == address(subscriptionImplementation)
+              _msgSender() == versions[version].license.tokenAddress
             , "BadgerHouse::onERC1155Received: Only the subscription implementation can call this function."
         );
 
         /// @dev Deploy the Sash contract.
         _createSashPress(
-              _from
+              version
+            , _from
             , ""
         );
 
