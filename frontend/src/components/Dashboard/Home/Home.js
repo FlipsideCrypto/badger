@@ -7,21 +7,39 @@ import Card from "../Card/Card";
 import "../../../style/Dashboard/Home/Home.css";
 
 const Home = () => {
-    const announcement = [
-
-    ]
+    const announcement = {
+        color: 'cyan',
+        message: <>
+            <p>Badger is building in the open and did not have a beta phase. If you have any struggles or feedback, please reach out to us on <a href="https://discord.gg/8qZ7Y4Z" target="_blank" rel="noreferrer">Discord</a>.</p>
+        </>,
+    }
 
     return (
         <Dashboard>
             <div className="home">
-                <div className="home__announcement"></div>
+                <div className="home__announcement">
+                    <Card className="announcement">
+                        <div className="announcement__status" style={{ 
+                            backgroundColor: announcement.color
+                        }}></div>
+                        <p>{announcement.message}</p>
+                    </Card>
+                </div>
 
                 <div className="home__cards">
                     <div className="home__cards__column">
-                        <Card style={{
-                            gridTemplateArea: "card1"
-                        }}>
-                            <div className="card__video"></div>
+                        <Card>
+                            <div className="card__video">
+                                <iframe
+                                    width="100%"
+                                    height="300"
+                                    src="https://www.youtube-nocookie.com/embed/C1ofCsq75GY"
+                                    title="Live Walkthrough Video"
+                                    frameborder="0"
+                                    allow="accelerometer; picture-in-picture"
+                                    allowfullscreen
+                                ></iframe>
+                            </div>
                             <div className="home__card__content">
                                 <FontAwesomeIcon icon={['fal', 'play']} />
 

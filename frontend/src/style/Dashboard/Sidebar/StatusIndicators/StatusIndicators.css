@@ -1,8 +1,6 @@
-.status__indicators { 
+.status__indicators {}
 
-}
-
-.status__indicators * { 
+.status__indicators * {
     margin: 0;
 }
 
@@ -13,13 +11,14 @@
     margin-bottom: 10px;
 }
 
-.status__indicators .status__indicator p { 
+.status__indicators .status__indicator p {
     font-size: 12px;
 }
 
-.status__indicators .status__indicator .status__indicator__circle  {
+.status__indicators .status__indicator .status__indicator__circle {
     background: red;
     border-radius: 50%;
     width: 10px;
+    border: 1px solid #E0E0E0;
     height: 10px;
 }

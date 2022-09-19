@@ -1,6 +1,19 @@
 .home { }
 
-.home .home__announcement {}
+.home .home__announcement .card {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 32px auto;
+    margin-top: 20px;
+    align-items: center;
+}
+
+.home .home__announcement .card .announcement__status { 
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    border: 1px solid #E0E0E0;
+}
 
 .home .home__cards { 
     margin-top: 20px;
