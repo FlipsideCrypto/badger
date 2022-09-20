@@ -5,7 +5,6 @@ import DashboardContent from "./Content/DashboardContent";
 import WalletWrapper from "../Wallet/WalletWrapper";
 
 import "../../style/Dashboard/Dashboard.css";
-import { renderMatches } from "react-router-dom";
 
 const Dashboard = ({ children }) => {
     // const [organizations, setOrganizations] = useState([]);
