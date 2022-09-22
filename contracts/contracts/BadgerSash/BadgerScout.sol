@@ -310,49 +310,22 @@ contract BadgerScout is
         return message.toEthSignedMessageHash().recover(_signature) == badges[_id].signer;
     }
 
-
     /**
-     * @notice Allows the owner of a Sash to withdraw funds that it has generated.
-     * 
-     * Requirements:
-     * - `_msgSender` must be the owner of the Sash.
+     * @notice Allows the owner of a sash to execute an Organization level transaction.
+     * @param _to The address to execute the transaction on.
+     * @param _data The data to pass to the receiver.
+     * @param _value The amount of ETH to send with the transaction.
      */
-    function withdrawETH()
-        external
-        virtual
-        onlyOwner()
-    {
-        (bool success, ) = owner().call{value: address(this).balance}("");
-
-        require(
-              success
-            , "BadgeSash::withdrawETH: Failed to withdraw ETH."
-        );
-    }
-
-    /**
-     * @notice Allows the owner of a Sash to withdraw any 1155s that it has generated. 
-     * @param _token The address of the token to withdraw.
-     * @param _to The address to send the tokens to.
-     * @param _id The id of the token to withdraw.
-     * @param _amount The amount of the token to withdraw.
-     */
-    function withdrawERC1155(
-          address _token
-        , address _to
-        , uint256 _id
-        , uint256 _amount
+    function execTransaction(
+          address _to
+        , bytes calldata _data
+        , uint256 _value
     )
         external
-        virtual
+        payable
         onlyOwner()
     {
-        IERC1155(_token).safeTransferFrom(
-              address(this)
-            , _to
-            , _id
-            , _amount
-            , ""
-        );
+        (bool success, bytes memory returnData) = _to.call{value: _value}(_data);
+        require(success, string(returnData));
     }
 }
