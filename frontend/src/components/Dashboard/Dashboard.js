@@ -8,6 +8,7 @@ import "../../style/Dashboard/Dashboard.css";
 
 const Dashboard = ({ children }) => {
     // const [organizations, setOrganizations] = useState([]);
+
     const organizations = [
         {
             name: "Badger",
