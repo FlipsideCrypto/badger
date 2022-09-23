@@ -311,7 +311,7 @@ contract BadgerScout is
     }
 
     /**
-     * @notice Allows the owner of a sash to execute an Organization level transaction.
+     * @notice Allows the Owner to execute an Organization level transaction.
      * @param _to The address to execute the transaction on.
      * @param _data The data to pass to the receiver.
      * @param _value The amount of ETH to send with the transaction.
