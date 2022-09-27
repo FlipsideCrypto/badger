@@ -9,20 +9,20 @@ import Header from "../Header/Header";
 
 
 const NewOrg = () => {
-    const [ orgName, setOrgName ] = useState();
-    const [ orgSymbol, setOrgSymbol ] = useState();
+    const [ orgName, setOrgName ] = useState("");
+    const [ orgSymbol, setOrgSymbol ] = useState("");
 
     let navigate = useNavigate();
 
     // TODO: Hook up contracts/API
     const handleCreateOrg = () => {
         console.log('Org Name', orgName, "orgSymbol", orgSymbol)
-        navigate("/dashboard/new/badge")
+        navigate("/dashboard/badge/new")
     }
 
     return (
         <div id="new-org">
-            <Header back={"/dashboard"}/>
+            <Header back={-1}/>
 
             <h2>Create Organization</h2>
             <FormControl>

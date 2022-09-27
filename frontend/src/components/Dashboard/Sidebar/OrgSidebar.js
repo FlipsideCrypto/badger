@@ -1,5 +1,7 @@
-import { useConnectModal, useAccountModal } from "@rainbow-me/rainbowkit"
+import { useConnectModal } from "@rainbow-me/rainbowkit"
 import { useEffect } from "react";
+
+import { Link } from 'react-router-dom';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAccount, useEnsName, useEnsAvatar } from "wagmi";
@@ -10,17 +12,14 @@ import '@rainbow-me/rainbowkit/dist/index.css';
 import "../../../style/Dashboard/Sidebar/Sidebar.css";
 import "../../../style/Dashboard/Sidebar/OrgSidebar.css";
 
-// TODO: No button for connect modal
-// TODO: if no ENS then trim address
 
 const OrgSidebar = ({ organizations }) => {
     const { openConnectModal } = useConnectModal();
-    const { openAccountModal } = useAccountModal();
 
     const { address } = useAccount();
     const { data: ensName } = useEnsName({
         address: address,
-      })
+    })
     const { data: ensAvatar } = useEnsAvatar({
         address: address,
     })
@@ -44,12 +43,12 @@ const OrgSidebar = ({ organizations }) => {
             {address ?
                 <div className="sidebar__header">
                     <img src={ensAvatar || account.avatar} alt="avatar" />
-                    <button className="button-unstyled" onClick={() => openAccountModal()}>
-                        {ensName || address.slice([0, 6] + "...")}
-                    </button>
+                    <Link to="/dashboard/">
+                        {ensName ? ensName : address.slice(0, 6) + "..." + address.slice(-4)}
+                    </Link>
                 </div>
                 :
-                <button onClick={() => openConnectModal()} style={{marginBottom: '20px'}}>
+                <button onClick={() => openConnectModal()} style={{ marginBottom: '20px' }}>
                     Connect Wallet
                 </button>
             }
@@ -58,7 +57,9 @@ const OrgSidebar = ({ organizations }) => {
             {/* Category header with + button */}
             <div className="sidebar__category">
                 <h5>Organizations</h5>
-                <FontAwesomeIcon icon={['fal', 'plus']} />
+                <Link className="link-wrapper" to="/dashboard/organization/new">
+                    <FontAwesomeIcon icon={['fal', 'plus']} />
+                </Link>
             </div>
 
             {/* List of organizations */}

@@ -10,9 +10,9 @@ import { csvFileToArray } from "../../../utils/helpers";
 import Header from "../Header/Header";
 
 const NewBadge = () => {
-    const [ badgeName, setBadgeName ] = useState();
-    const [ badgeImage, setBadgeImage ] = useState();
-    const [ badgeDelegates, setBadgeDelegates ] = useState([]);
+    const [ badgeName, setBadgeName ] = useState("");
+    const [ badgeImage, setBadgeImage ] = useState("");
+    const [ badgeDelegates, setBadgeDelegates ] = useState([""]);
     const [ csvFile, setCSVFile ] = useState();
 
     const imageInput = useRef();
@@ -26,18 +26,19 @@ const NewBadge = () => {
         console.log("Badge Delegates:", badgeDelegates)
     }
 
-    // TODO: add rows
-    const handleAddRow = () => {
-
+    const handleDelegateChange = (index, event) => {
+        let newDelegates = [...badgeDelegates];
+        newDelegates[index] = event.target.value;
+        setBadgeDelegates(newDelegates);
     }
 
-    // TODO: add rows dynamically after parsing csv
     useEffect(() => {
         console.log('here', csvFile)
         if (csvFile) {
             console.log('now here')
             csvReader.onload = function (event) {
                 const csvOutput = csvFileToArray(event.target.result);
+                console.log("csv", csvOutput)
                 setBadgeDelegates(csvOutput);
             };
 
@@ -47,13 +48,13 @@ const NewBadge = () => {
 
     return (        
         <div id="new-badge">
-            <Header back={"/dashboard/new/organization"}/>
+            <Header back={-1}/>
 
             <h2>Create Badge</h2>
             <FormControl>
                 <InputLabel htmlFor="badge-name">Name</InputLabel>
                 <Input 
-                    id="badge-name" 
+                    id="badge-name"
                     value={badgeName} 
                     onChange={(event) => setBadgeName(event.target.value)}
                 />
@@ -94,20 +95,33 @@ const NewBadge = () => {
             </button>
             <button 
                 className="button-unstyled" 
-                onClick={handleAddRow}
+                onClick={() => setBadgeDelegates([...badgeDelegates, ""])}
             >
                 <FontAwesomeIcon icon={['fal', 'fa-plus']} />
                 <span>Add Another</span>
             </button>
 
-            <FormControl>
+            {/* <FormControl>
                 <InputLabel htmlFor="badge-delegates">Delegate(s)</InputLabel>
                 <Input 
                     id="badge-delegates"
                     value={badgeDelegates}
                     onChange={(event) => setBadgeDelegates(event.target.value)}
                 />
-            </FormControl>
+            </FormControl> */}
+            {badgeDelegates.map((delegate, index) => (
+                <FormControl key={"delegate-" + index}>
+                    {index === 0 && 
+                        <InputLabel htmlFor="badge-delegate-0">Delegate(s)</InputLabel>
+                    }
+                    <Input 
+                        key={"badge-delegate-" + index}
+                        id={"badge-delegate-" + index}
+                        value={delegate}
+                        onChange={(event) => handleDelegateChange(index, event)}
+                    />
+                </FormControl>
+            ))}
 
             <div>
                 <p>

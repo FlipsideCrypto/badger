@@ -31,7 +31,7 @@ const Header = ({ back, actions }) => {
                 {actions && actions.map((action, index) => (
                     <button 
                         className="button-unstyled" 
-                        key={index} onClick={() => { handleAction(action) }}
+                        key={index} onClick={() => { handleAction(action.link) }}
                     >
                         <FontAwesomeIcon icon={action.icon} />
                         <span>{action.text}</span>

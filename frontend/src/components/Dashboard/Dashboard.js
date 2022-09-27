@@ -6,9 +6,10 @@ import HelpSidebar from "./Sidebar/HelpSidebar";
 import DashboardContent from "./Content/DashboardContent";
 import WalletWrapper from "../Wallet/WalletWrapper";
 
+import Home from "./Home/Home";
 import NewOrg from '../Dashboard/Org/NewOrg';
 import NewBadge from "../Dashboard/Org/NewBadge";
-import Home from "./Home/Home";
+import Badge from "../Dashboard/Org/Badge";
 
 import "../../style/Dashboard/Dashboard.css";
 // import { useState } from "react";
@@ -32,8 +33,9 @@ const Dashboard = () => {
                 <DashboardContent>
                     <Routes>
                         <Route path="/" element={ <Home /> } />
-                        <Route path="/new/organization" element={ <NewOrg /> } />
-                        <Route path="/new/badge" element={ <NewBadge /> } />
+                        <Route path="/organization/new" element={ <NewOrg /> } />
+                        <Route path="/badge/new" element={ <NewBadge /> } />
+                        <Route path="/badge/:organization&:id" element={ <Badge /> } />
                     </Routes>
                 </DashboardContent>
     

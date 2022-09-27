@@ -70,7 +70,7 @@ const Home = () => {
                         <Card>
                             <div className="home__card__content">
                                 <FontAwesomeIcon icon={['fal', 'sitemap']} />
-                                <Link className="link-wrapper" to="/dashboard/new/organization">
+                                <Link className="link-wrapper" to="/dashboard/organization/new">
                                     <h2>Create your first Organization</h2>
                                     <p>It only takes a few seconds to create your first Organization and be on your way. Badger isn't like your normal tool that takes hours to setup.</p>
                                 </Link>
