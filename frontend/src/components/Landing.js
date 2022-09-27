@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import IconButton from './Button/IconButton';
 
 import logo from "../static/images/badger-logo-headline.png";
-import key from "../static/images/key.gif";
+// import key from "../static/images/key.gif";
 
 import "../style/Landing.css";
 

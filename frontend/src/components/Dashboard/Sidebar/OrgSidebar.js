@@ -1,5 +1,5 @@
 import { useConnectModal, useAccountModal } from "@rainbow-me/rainbowkit"
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAccount, useEnsName, useEnsAvatar } from "wagmi";
@@ -45,7 +45,7 @@ const OrgSidebar = ({ organizations }) => {
                 <div className="sidebar__header">
                     <img src={ensAvatar || account.avatar} alt="avatar" />
                     <button className="button-unstyled" onClick={() => openAccountModal()}>
-                        {ensName || address}
+                        {ensName || address.slice([0, 6] + "...")}
                     </button>
                 </div>
                 :
@@ -66,7 +66,7 @@ const OrgSidebar = ({ organizations }) => {
                 {organizations.map((org, index) => (
                     <div className="sidebar__organization" key={index}>
                         <img src={org.avatar} alt="avatar" />
-                        <a href="#">{org.name}</a>
+                        <button className="button-unstyled">{org.name}</button>
                     </div>
                 ))}
             </div>

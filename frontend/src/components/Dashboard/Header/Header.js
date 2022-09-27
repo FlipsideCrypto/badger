@@ -18,18 +18,24 @@ const Header = ({ back, actions }) => {
             margin: isShowing ? '20px' : '0'
         }}>
             <div className="header__back">
-                {back && <a href="#" onClick={() => { handleAction(back) }}>
+                {back && <button 
+                    className="button-unstyled" 
+                    onClick={() => { handleAction(back) }}
+                >
                     <FontAwesomeIcon icon={['fal', 'chevron-left']} />
                     <span>Back</span>
-                </a>}
+                </button>}
             </div>
 
             <div className="header__actions">
                 {actions && actions.map((action, index) => (
-                    <a href="#" key={index} onClick={() => { handleAction(action) }}>
+                    <button 
+                        className="button-unstyled" 
+                        key={index} onClick={() => { handleAction(action) }}
+                    >
                         <FontAwesomeIcon icon={action.icon} />
                         <span>{action.text}</span>
-                    </a>
+                    </button>
                 ))}
             </div>
         </header>

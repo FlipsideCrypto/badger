@@ -5,10 +5,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { fal } from '@fortawesome/pro-light-svg-icons'
 
 import Landing from './components/Landing';
-import Home from "./components/Dashboard/Home/Home";
-import OrgsDashboard from "./components/Dashboard/Orgs/OrgsDashboard";
 
 import "./App.css";
+import Dashboard from './components/Dashboard/Dashboard';
 
 library.add(fal)
 
@@ -32,10 +31,7 @@ function App() {
             <Route exact path="/" element={<Landing />} />
 
             {/* Dashboard pages */}
-            <Route exact path="/dashboard/" element={<Home />} />
-            <Route path="/organizations/:address" element={ <OrgsDashboard /> } />
-            
-            {/* <Route path="/org/:id" element={<OrgDashboard /> } /> */}
+            <Route exact path="/dashboard/*" element={<Dashboard />} />
           </Routes>
           {/* <Footer /> */}
         </Router>

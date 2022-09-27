@@ -1,12 +1,10 @@
 This todo is using Kanban format. Every number next to it is the priority. Just choose what you want and knock it out:
 
 [] Todo
-[3] - Setup redirecting of the actual deployment.
-    - This will take just a few seconds. It would be nice to go ahead and get namespace. Should just do this next time someone hits a wall.
-    - Reminder that FontAwesome is going to be bad when deploying due to it's key management process.
-[2] - Contract integration
 [1] - (v3) Wallet based JWT tokens
 [2] - API Endpoint that returns which "tutorial state" should be shown on a users profile page.
+[1] - Enable SSL on Netlify
+[2] - Contract integration
 
 [] Stating
 [6] - Standing API to process base requests of v2. @chance
@@ -19,6 +17,9 @@ This todo is using Kanban format. Every number next to it is the priority. Just 
     - Pending completion of contract integration.
 
 [] Done
+[3] - Setup redirecting of the actual deployment.
+    - This will take just a few seconds. It would be nice to go ahead and get namespace. Should just do this next time someone hits a wall.
+    - Reminder that FontAwesome is going to be bad when deploying due to it's key management process.
 
 =========================================
                 OLD TODO

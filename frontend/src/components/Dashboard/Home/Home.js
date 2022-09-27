@@ -1,6 +1,7 @@
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import Dashboard from "../Dashboard";
+// import Dashboard from "../Dashboard";
 
 import Card from "../../Card/Card"
 
@@ -15,7 +16,7 @@ const Home = () => {
     }
 
     return (
-        <Dashboard>
+        // <Dashboard>
             <div className="home">
                 <div className="home__announcement">
                     <Card className="announcement">
@@ -49,7 +50,7 @@ const Home = () => {
                                         marginBottom: "40px"
                                     }}>Want to see what the live experience of setting up and using Badge is like? Follow along the walk-through and have your Organization, Delegates and Members handled in just minutes.</p>
 
-                                    <a href="#">See full video</a>
+                                    <button className="button-unstyled">See full video</button>
                                 </div>
                             </div>
                         </Card>
@@ -69,10 +70,10 @@ const Home = () => {
                         <Card>
                             <div className="home__card__content">
                                 <FontAwesomeIcon icon={['fal', 'sitemap']} />
-                                <div>
+                                <Link className="link-wrapper" to="/dashboard/new/organization">
                                     <h2>Create your first Organization</h2>
                                     <p>It only takes a few seconds to create your first Organization and be on your way. Badger isn't like your normal tool that takes hours to setup.</p>
-                                </div>
+                                </Link>
                             </div>
                         </Card>
 
@@ -108,7 +109,7 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-        </Dashboard>
+        // </Dashboard>
     )
 }
 

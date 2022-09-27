@@ -1,12 +1,20 @@
+import { Route, Routes } from "react-router-dom";
+
 import OrgSidebar from "./Sidebar/OrgSidebar";
 import HelpSidebar from "./Sidebar/HelpSidebar";
 
 import DashboardContent from "./Content/DashboardContent";
 import WalletWrapper from "../Wallet/WalletWrapper";
 
-import "../../style/Dashboard/Dashboard.css";
+import NewOrg from '../Dashboard/Org/NewOrg';
+import NewBadge from "../Dashboard/Org/NewBadge";
+import Home from "./Home/Home";
 
-const Dashboard = ({ children }) => {
+import "../../style/Dashboard/Dashboard.css";
+// import { useState } from "react";
+
+const Dashboard = () => {
+    // TODO: get orgs back as a state var. Removed for build preview
     // const [organizations, setOrganizations] = useState([]);
 
     const organizations = [
@@ -20,7 +28,15 @@ const Dashboard = ({ children }) => {
         <WalletWrapper>
             <div className="dashboard">
                 <OrgSidebar organizations={organizations} />
-                <DashboardContent children={children} />
+
+                <DashboardContent>
+                    <Routes>
+                        <Route path="/" element={ <Home /> } />
+                        <Route path="/new/organization" element={ <NewOrg /> } />
+                        <Route path="/new/badge" element={ <NewBadge /> } />
+                    </Routes>
+                </DashboardContent>
+    
                 <HelpSidebar />
             </div>
         </WalletWrapper>

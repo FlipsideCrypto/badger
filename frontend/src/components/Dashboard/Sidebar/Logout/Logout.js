@@ -5,14 +5,14 @@ const Logout = () => {
     const { disconnect } = useDisconnect();
 
     return (
-        <a className="logout" href="#" onClick={() => {
+        <button className="logout button-unstyled" onClick={() => {
             localStorage.removeItem("token");
             window.location.href = "/";
             disconnect()
         }}>
             <FontAwesomeIcon icon={['fal', 'sign-out']} />
             <span>Logout</span>
-        </a>
+        </button>
     )
 }
 
