@@ -6,6 +6,7 @@ import { fal } from '@fortawesome/pro-light-svg-icons'
 
 import Landing from './components/Landing';
 import Home from "./components/Dashboard/Home/Home";
+import OrgsDashboard from "./components/Dashboard/Orgs/OrgsDashboard";
 
 import "./App.css";
 
@@ -32,6 +33,9 @@ function App() {
 
             {/* Dashboard pages */}
             <Route exact path="/dashboard/" element={<Home />} />
+            <Route path="/organizations/:address" element={ <OrgsDashboard /> } />
+            
+            {/* <Route path="/org/:id" element={<OrgDashboard /> } /> */}
           </Routes>
           {/* <Footer /> */}
         </Router>
