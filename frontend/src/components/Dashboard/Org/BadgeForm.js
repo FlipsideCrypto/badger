@@ -2,14 +2,13 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { 
     FormControl,
     InputLabel,
-    Input,
 } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { csvFileToArray } from "../../../utils/helpers";
 import Header from "../Header/Header";
 
-const NewBadge = () => {
+const BadgeForm = () => {
     const [ badgeName, setBadgeName ] = useState("");
     const [ badgeImage, setBadgeImage ] = useState("");
     const [ badgeDelegates, setBadgeDelegates ] = useState([""]);
@@ -20,13 +19,13 @@ const NewBadge = () => {
     const csvReader = useMemo(() => new FileReader(), []);
 
     // TODO: Hook this up to something
-    const handleCreateBadge = () => {
+    const onCreateBadge = () => {
         console.log("Badge Name:", badgeName)
         console.log("Badge Image:", badgeImage)
         console.log("Badge Delegates:", badgeDelegates)
     }
 
-    const handleDelegateChange = (index, event) => {
+    const onDelegateChange = (index, event) => {
         let newDelegates = [...badgeDelegates];
         newDelegates[index] = event.target.value;
         setBadgeDelegates(newDelegates);
@@ -53,7 +52,7 @@ const NewBadge = () => {
             <h2>Create Badge</h2>
             <FormControl>
                 <InputLabel htmlFor="badge-name">Name</InputLabel>
-                <Input 
+                <input 
                     id="badge-name"
                     value={badgeName} 
                     onChange={(event) => setBadgeName(event.target.value)}
@@ -101,24 +100,15 @@ const NewBadge = () => {
                 <span>Add Another</span>
             </button>
 
-            {/* <FormControl>
-                <InputLabel htmlFor="badge-delegates">Delegate(s)</InputLabel>
-                <Input 
-                    id="badge-delegates"
-                    value={badgeDelegates}
-                    onChange={(event) => setBadgeDelegates(event.target.value)}
-                />
-            </FormControl> */}
             {badgeDelegates.map((delegate, index) => (
                 <FormControl key={"delegate-" + index}>
                     {index === 0 && 
                         <InputLabel htmlFor="badge-delegate-0">Delegate(s)</InputLabel>
                     }
-                    <Input 
-                        key={"badge-delegate-" + index}
+                    <input 
                         id={"badge-delegate-" + index}
                         value={delegate}
-                        onChange={(event) => handleDelegateChange(index, event)}
+                        onChange={(event) => onDelegateChange(index, event)}
                     />
                 </FormControl>
             ))}
@@ -127,7 +117,7 @@ const NewBadge = () => {
                 <p>
                     After creating a badge, you (or your delegates) can issue badges to team members.
                 </p>
-                <button className="btn-secondary" onClick={() => handleCreateBadge()}>
+                <button className="btn-secondary" onClick={() => onCreateBadge()}>
                     CREATE
                 </button>
             </div>
@@ -135,4 +125,4 @@ const NewBadge = () => {
     )
 }
 
-export default NewBadge;
+export default BadgeForm;

@@ -1,11 +1,11 @@
-import { useConnectModal } from "@rainbow-me/rainbowkit"
 import { useEffect } from "react";
-
 import { Link } from 'react-router-dom';
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useConnectModal } from "@rainbow-me/rainbowkit"
 import { useAccount, useEnsName, useEnsAvatar } from "wagmi";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import { sliceAddress } from "../../../utils/helpers";
 import Logout from "./Logout/Logout";
 
 import '@rainbow-me/rainbowkit/dist/index.css';
@@ -44,7 +44,7 @@ const OrgSidebar = ({ organizations }) => {
                 <div className="sidebar__header">
                     <img src={ensAvatar || account.avatar} alt="avatar" />
                     <Link to="/dashboard/">
-                        {ensName ? ensName : address.slice(0, 6) + "..." + address.slice(-4)}
+                        {ensName ? ensName : sliceAddress(address)}
                     </Link>
                 </div>
                 :

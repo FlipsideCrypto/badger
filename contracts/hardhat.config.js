@@ -55,6 +55,7 @@ module.exports = {
         clear: true,
         flat: true,
         spacing: 2,
+        format: "minimal"
     },
     etherscan: {
         // apiKey: ETHERSCAN_API_KEY
