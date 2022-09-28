@@ -1,17 +1,22 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Header from "../Header/Header";
 import ActionBar from "../Form/ActionBar";
+
+import Input from "../Form/Input";
 
 const OrgForm = () => {
     const [orgName, setOrgName] = useState("");
     const [orgSymbol, setOrgSymbol] = useState("");
 
-    let navigate = useNavigate();
+    const navigate = useNavigate();
+    const { org } = useParams();
 
     const nameToSymbol = (name) => {
-        return name.toUpperCase().replace(/[AEIO]/g, "");
+        // Remove all non-alphanumeric characters and conver to uppercase
+        // with a max length of 5 characters
+        return name.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().substring(0, 5);
     }
 
     const onOrgNameChange = (e) => {
@@ -25,54 +30,36 @@ const OrgForm = () => {
     // TODO: Hook up contracts/API
     const onOrgFormSubmission = () => {
         console.log('Org Name', orgName, "orgSymbol", orgSymbol)
-        navigate("/dashboard/badge/new")
+        const orgAddress = "0x1234567890";
+
+        navigate(`/dashboard/organization/org=${orgAddress}`);
     }
 
     return (
         <div id="new-org">
-            <Header back={-1} />
+            <Header back={() => navigate(-1)} />
 
             <h2>Create Organization</h2>
-            <div className="form-group">
-                <label htmlFor="orgName">Organization Name</label>
-                <input type="text" id="orgName" value={orgName} onChange={onOrgNameChange} />
-            </div>
 
-            <div className="form-group">
-                <label htmlFor="orgSymbol">Organization Symbol</label>
-                <input type="text" id="orgSymbol" value={orgSymbol} onChange={(e) => setOrgSymbol(e.target.value)} />
-            </div>
+            <Input 
+                name="orgName"
+                label="Organization Name" 
+                value={orgName} 
+                onChange={onOrgNameChange} 
+            />
+
+            <Input
+                name="orgSymbol"
+                label="Organization Symbol"
+                value={orgSymbol}
+                onChange={(e) => setOrgSymbol(e.target.value)}
+            />
 
             <ActionBar help={
                 "Badge creation occurs after your organization has been established."
             } actions={
                 <button onClick={onOrgFormSubmission}>Create</button>
             } />
-
-            {/* <FormControl>
-                <InputLabel htmlFor="org-name">Organization Name</InputLabel>
-                <Input 
-                    id="org-name" 
-                    value={orgName} 
-                    onChange={(event) => setOrgName(event.target.value)}
-                />
-            </FormControl> */}
-
-            {/* <FormControl>
-                <InputLabel htmlFor="org-symbol">Organization Symbol</InputLabel>
-                <Input 
-                    id="org-symbol" 
-                    value={orgSymbol}
-                    onChange={(event) => setOrgSymbol(event.target.value)}
-                />
-            </FormControl> */}
-
-            {/* <div id="new-org-action">
-                <p>/p>
-                <button className="btn-secondary" onClick={onOrgFormSubmission}>
-                    CREATE
-                </button>
-            </div> */}
         </div>
     )
 }

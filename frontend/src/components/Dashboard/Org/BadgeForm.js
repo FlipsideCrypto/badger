@@ -1,53 +1,31 @@
-import { useState, useRef, useEffect, useMemo } from "react";
-import { 
-    FormControl,
-    InputLabel,
-} from "@mui/material";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { FormControl, InputLabel } from "@mui/material";
 
-import { csvFileToArray } from "../../../utils/helpers";
 import Header from "../Header/Header";
+import InputListCSV from "../../Inputs/InputListCSV";
 
 const BadgeForm = () => {
     const [ badgeName, setBadgeName ] = useState("");
     const [ badgeImage, setBadgeImage ] = useState("");
     const [ badgeDelegates, setBadgeDelegates ] = useState([""]);
-    const [ csvFile, setCSVFile ] = useState();
 
     const imageInput = useRef();
-    const csvInput = useRef();
-    const csvReader = useMemo(() => new FileReader(), []);
+
+    const navigate = useNavigate();
+    const { org } = useParams();
 
     // TODO: Hook this up to something
     const onCreateBadge = () => {
         console.log("Badge Name:", badgeName)
         console.log("Badge Image:", badgeImage)
         console.log("Badge Delegates:", badgeDelegates)
+        navigate(`/dashboard/badge/${org}&id=0`)
     }
-
-    const onDelegateChange = (index, event) => {
-        let newDelegates = [...badgeDelegates];
-        newDelegates[index] = event.target.value;
-        setBadgeDelegates(newDelegates);
-    }
-
-    useEffect(() => {
-        console.log('here', csvFile)
-        if (csvFile) {
-            console.log('now here')
-            csvReader.onload = function (event) {
-                const csvOutput = csvFileToArray(event.target.result);
-                console.log("csv", csvOutput)
-                setBadgeDelegates(csvOutput);
-            };
-
-            csvReader.readAsText(csvFile);
-        }
-    }, [csvFile, csvReader])
 
     return (        
         <div id="new-badge">
-            <Header back={-1}/>
+            <Header back={() => navigate(-1)} />
 
             <h2>Create Badge</h2>
             <FormControl>
@@ -77,41 +55,11 @@ const BadgeForm = () => {
                 </button>
             </FormControl>
 
-            <input
-                type="file"
-                accept=".xlsx, .xls, .csv"
-                ref={csvInput}
-                style={{display: "none"}}
-                onChange={(event) => setCSVFile(event.target.files[0])}
+            <InputListCSV 
+                label={"Delegates"} 
+                inputList={badgeDelegates} 
+                setInputList={setBadgeDelegates}
             />
-
-            <button 
-                className="button-unstyled" 
-                onClick={() => csvInput.current.click()}
-            >
-                <FontAwesomeIcon icon={['fal', 'fa-plus']} />
-                <span>Upload CSV</span>
-            </button>
-            <button 
-                className="button-unstyled" 
-                onClick={() => setBadgeDelegates([...badgeDelegates, ""])}
-            >
-                <FontAwesomeIcon icon={['fal', 'fa-plus']} />
-                <span>Add Another</span>
-            </button>
-
-            {badgeDelegates.map((delegate, index) => (
-                <FormControl key={"delegate-" + index}>
-                    {index === 0 && 
-                        <InputLabel htmlFor="badge-delegate-0">Delegate(s)</InputLabel>
-                    }
-                    <input 
-                        id={"badge-delegate-" + index}
-                        value={delegate}
-                        onChange={(event) => onDelegateChange(index, event)}
-                    />
-                </FormControl>
-            ))}
 
             <div>
                 <p>

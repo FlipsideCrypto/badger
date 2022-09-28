@@ -10,6 +10,7 @@ import Home from "./Home/Home";
 import OrgForm from './Org/OrgForm';
 import BadgeForm from "./Org/BadgeForm";
 import Badge from "../Dashboard/Org/Badge";
+import Org from "../Dashboard/Org/Org";
 
 import "../../style/Dashboard/Dashboard.css";
 // import { useState } from "react";
@@ -34,8 +35,9 @@ const Dashboard = () => {
                     <Routes>
                         <Route path="/" element={ <Home /> } />
                         <Route path="/organization/new" element={ <OrgForm /> } />
-                        <Route path="/badge/new" element={ <BadgeForm /> } />
-                        <Route path="/badge/:organization&:id" element={ <Badge /> } />
+                        <Route path="/organization/:org" element={ <Org /> } />
+                        <Route path="/badge/new/:org" element={ <BadgeForm /> } />
+                        <Route path="/badge/:org&:id" element={ <Badge /> } />
                     </Routes>
                 </DashboardContent>
     

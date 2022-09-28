@@ -4,7 +4,7 @@ import "../../../style/Dashboard/Form/ActionBar.css"
 
 const ActionBar = ({ help, actions }) => { 
     return (
-        <div className="action-bar">
+        <div className="action__bar">
             {help && <div className="action__bar__help">
                 <Help text={help} />
             </div>}

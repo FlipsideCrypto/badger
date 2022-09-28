@@ -1,16 +1,9 @@
-import { useNavigate } from 'react-router-dom';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import "../../../style/Dashboard/Header/Header.css";
 
 const Header = ({ back, actions }) => {
-    const navigate = useNavigate()
-
-    const handleAction = (action) => {
-        navigate(action);
-    }
-
+    console.log(typeof(back))
     const isShowing = actions?.length > 0 || back;
 
     return (
@@ -20,7 +13,7 @@ const Header = ({ back, actions }) => {
             <div className="header__back">
                 {back && <button 
                     className="button-unstyled" 
-                    onClick={() => { handleAction(back) }}
+                    onClick={back}
                 >
                     <FontAwesomeIcon icon={['fal', 'chevron-left']} />
                     <span>Back</span>
@@ -31,7 +24,7 @@ const Header = ({ back, actions }) => {
                 {actions && actions.map((action, index) => (
                     <button 
                         className="button-unstyled" 
-                        key={index} onClick={() => { handleAction(action.link) }}
+                        key={index} onClick={action.event}
                     >
                         <FontAwesomeIcon icon={action.icon} />
                         <span>{action.text}</span>
