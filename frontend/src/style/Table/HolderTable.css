@@ -1,0 +1,19 @@
+.delegate__status__true {
+    background-color: #00FF9D;
+    color: rgb(0,0,0);
+    border-radius: 50px;
+    text-align: center;
+    width: 40px;
+    margin-left: auto;
+    padding: 1px;
+}
+
+.delegate__status__false {
+    background-color: #FF0000;
+    color: rgb(255, 255, 255);
+    border-radius: 50px;
+    text-align: center;
+    width: 40px;
+    margin-left: auto;
+    padding: 1px;
+}

@@ -32,17 +32,31 @@ const Badge = () => {
             },
             {
                 address: "0x1ccb2945F1325e061b40Fe5b0B452f0E76fB7279",
-                receivedAt: "2022-01-01",
-                nickname: "Mason",
-                pod: "Operations",
+                receivedAt: "2022-01-03",
+                nickname: "Chance",
+                pod: "Governance",
                 delegate: false
             },
             {
                 address: "0x1ccb2945F1325e061b40Fe5b0B452f0E76fB7270",
-                receivedAt: "2022-01-01",
-                nickname: "Mason",
-                pod: "Operations",
+                receivedAt: "2022-01-02",
+                nickname: "Drake",
+                pod: "Contributor",
                 delegate: false
+            },
+            {
+                address: "0x1ccb2945F1325e061b40Fe5b0B452f0E76fB7271",
+                receivedAt: "2022-01-02",
+                nickname: "Drake",
+                pod: "Contributor",
+                delegate: false
+            },
+            {
+                address: "0x1ccb2945F1325e061b40Fe5b0B452f0E76fB7273",
+                receivedAt: "2022-01-02",
+                nickname: "Drake",
+                pod: "Contributor",
+                delegate: true
             },
         ]
     }
@@ -69,7 +83,6 @@ const Badge = () => {
                         setInputList={setMembersToUpdate}
                     />
                 </>
-
                 :
                 <button 
                     className="button-unstyled" 
@@ -80,8 +93,20 @@ const Badge = () => {
                 </button>
             }
 
-
-            <HolderTable holders={badge.holders} />
+            {badge.holders && badge.holders.length > 0 ?
+                <HolderTable holders={badge.holders} />
+                :
+                <div>
+                    <h1>Your Organization is almost alive, it just needs members!</h1>
+                    <p>
+                        You've set up your Organization and your Badge. 
+                        Now for the final step of sending the first set of keys to your team members.
+                    </p>
+                    <button onClick={() => setIsManage(true)}>
+                        DISTRIBUTE KEYS
+                    </button>
+                </div>
+            }
         </div>
     )
 }

@@ -27,6 +27,10 @@ button {
   all: none;
 }
 
+.button-primary { }
+
+.button-secondary {}
+
 .lead { 
   font-size: 18px;
 }

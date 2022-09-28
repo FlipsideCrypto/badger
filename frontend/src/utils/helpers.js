@@ -16,3 +16,14 @@ export const csvFileToArray = (file) => {
 export const sliceAddress = (address) => {
     return address.slice(0, 6) + "..." + address.slice(-4)
 }
+
+export const compareByProperty = (property, direction, a, b) => {
+    const inverse = direction === "asc" ? 1 : -1;
+    if (a[property] > b[property]) return 1 * inverse;
+    if (a[property] < b[property]) return -1 * inverse;
+    return 0;
+}
+
+export const findObjByProperty = (property, value, array) => {
+    return array[array.findIndex((obj) => obj[property] === value)]
+}

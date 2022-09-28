@@ -51,6 +51,7 @@ const OrgForm = () => {
             <Input 
                 name="orgName"
                 label="Organization Name" 
+                required={true}
                 value={orgName} 
                 onChange={onOrgNameChange} 
             />
@@ -58,6 +59,7 @@ const OrgForm = () => {
             <Input
                 name="orgSymbol"
                 label="Organization Symbol"
+                required={true}
                 value={orgSymbol}
                 onChange={(e) => setOrgSymbol(e.target.value)}
             />
