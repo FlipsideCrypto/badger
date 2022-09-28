@@ -1,9 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import "../../../style/Dashboard/Header/Header.css";
+import "@style/Dashboard/Header/Header.css";
 
 const Header = ({ back, actions }) => {
-    console.log(typeof(back))
     const isShowing = actions?.length > 0 || back;
 
     return (

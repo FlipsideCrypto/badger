@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
-import IconButton from "../../Button/IconButton";
 
+import IconButton from "@components/Button/IconButton";
 import Header from "../Header/Header";
 
 const Org = () => {

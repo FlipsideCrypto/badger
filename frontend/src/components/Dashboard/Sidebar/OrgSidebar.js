@@ -5,12 +5,12 @@ import { useConnectModal } from "@rainbow-me/rainbowkit"
 import { useAccount, useEnsName, useEnsAvatar } from "wagmi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { sliceAddress } from "../../../utils/helpers";
+import { sliceAddress } from "@utils/helpers";
 import Logout from "./Logout/Logout";
 
 import '@rainbow-me/rainbowkit/dist/index.css';
-import "../../../style/Dashboard/Sidebar/Sidebar.css";
-import "../../../style/Dashboard/Sidebar/OrgSidebar.css";
+import "@style/Dashboard/Sidebar/Sidebar.css";
+import "@style/Dashboard/Sidebar/OrgSidebar.css";
 
 
 const OrgSidebar = ({ organizations }) => {

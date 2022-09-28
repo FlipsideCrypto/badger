@@ -1,4 +1,4 @@
-import "../../../../style/Dashboard/Sidebar/StatusIndicators/StatusIndicators.css";
+import "@style/Dashboard/Sidebar/StatusIndicators/StatusIndicators.css";
 
 const StatusIndicators = () => { 
     const statuses = [ 

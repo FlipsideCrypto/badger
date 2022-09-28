@@ -1,0 +1,13 @@
+.help__bar { 
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+}
+
+.help__bar svg { 
+    margin-right: 10px;
+}
+
+.help__bar p { 
+    font-size: 12px !important;
+}

@@ -2,7 +2,7 @@ import {
     Paper, Table, TableHead, TableRow, 
     TableContainer, TableCell, TableBody 
 } from "@mui/material"
-import { sliceAddress } from "../../utils/helpers"
+import { sliceAddress } from "@utils/helpers"
 
 const HolderTable = ({ holders }) => {
     return (

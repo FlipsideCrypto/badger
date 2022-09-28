@@ -2,7 +2,7 @@ import { useEffect, useRef, useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FormControl, InputLabel } from "@mui/material";
 
-import { csvFileToArray } from "../../utils/helpers";
+import { csvFileToArray } from "@utils/helpers";
 
 const InputListCSV = ({ label, inputList, setInputList }) => {
     const [ csvFile, setCSVFile ] = useState();

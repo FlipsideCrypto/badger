@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // import Dashboard from "../Dashboard";
 
-import Card from "../../Card/Card"
+import Card from "@components/Card/Card"
 
-import "../../../style/Dashboard/Home/Home.css"
+import "@style/Dashboard/Home/Home.css"
 
 const Home = () => {
     const announcement = {

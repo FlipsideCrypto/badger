@@ -1,16 +1,14 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
+import "@style/Dashboard/Form/Help.css"
+
 const Help = ({ text }) => {
     return (
-        <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'auto 1fr',
-        }}>
+        <div className="help__bar">
             <FontAwesomeIcon icon={['fal', 'question-circle']} />
             <p>{text}</p>
         </div>
     )
-
 }
 
 export default Help;

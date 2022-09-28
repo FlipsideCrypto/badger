@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FormControl, InputLabel } from "@mui/material";
 
 import Header from "../Header/Header";
-import InputListCSV from "../../Inputs/InputListCSV";
+import InputListCSV from "@components/Inputs/InputListCSV";
 
 const BadgeForm = () => {
     const [ badgeName, setBadgeName ] = useState("");
@@ -20,7 +20,9 @@ const BadgeForm = () => {
         console.log("Badge Name:", badgeName)
         console.log("Badge Image:", badgeImage)
         console.log("Badge Delegates:", badgeDelegates)
-        navigate(`/dashboard/badge/${org}&id=0`)
+        const id = 0;
+
+        navigate(`/dashboard/badge/${org}&id=${id}`);
     }
 
     return (        

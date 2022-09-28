@@ -2,7 +2,7 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import "../../style/Button/IconButton.css"
+import "@style/Button/IconButton.css"
 
 const IconButton = ({ icon, text, style }) => {
     return (

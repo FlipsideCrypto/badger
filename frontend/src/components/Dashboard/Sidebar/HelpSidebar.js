@@ -6,8 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import StatusIndicators from './StatusIndicators/StatusIndicators'
 
-import "../../../style/Dashboard/Sidebar/Sidebar.css";
-import "../../../style/Dashboard/Sidebar/HelpSidebar.css";
+import "@style/Dashboard/Sidebar/Sidebar.css";
+import "@style/Dashboard/Sidebar/HelpSidebar.css";
 
 const HelpSidebar = () => {
     const [collapsed, setCollapsed] = useState(false);

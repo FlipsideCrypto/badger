@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Header from "../Header/Header";
 import ActionBar from "../Form/ActionBar";
@@ -11,7 +11,14 @@ const OrgForm = () => {
     const [orgSymbol, setOrgSymbol] = useState("");
 
     const navigate = useNavigate();
-    const { org } = useParams();
+
+    const actions = [
+        {
+            text: "CREATE",
+            icon: ["fal", "arrow-right"],
+            event: () => onOrgFormSubmission()
+        }
+    ]
 
     const nameToSymbol = (name) => {
         // Remove all non-alphanumeric characters and conver to uppercase
@@ -55,11 +62,10 @@ const OrgForm = () => {
                 onChange={(e) => setOrgSymbol(e.target.value)}
             />
 
-            <ActionBar help={
-                "Badge creation occurs after your organization has been established."
-            } actions={
-                <button onClick={onOrgFormSubmission}>Create</button>
-            } />
+            <ActionBar 
+                help={"Badge creation occurs after your organization has been established."} 
+                actions={actions} 
+            />
         </div>
     )
 }

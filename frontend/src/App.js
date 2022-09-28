@@ -4,10 +4,10 @@ import { Helmet, HelmetProvider } from 'react-helmet-async'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fal } from '@fortawesome/pro-light-svg-icons'
 
-import Landing from './components/Landing';
+import Landing from '@components/Landing';
 
 import "./App.css";
-import Dashboard from './components/Dashboard/Dashboard';
+import Dashboard from '@components/Dashboard/Dashboard';
 
 library.add(fal)
 

@@ -12,7 +12,7 @@ import BadgeForm from "./Org/BadgeForm";
 import Badge from "../Dashboard/Org/Badge";
 import Org from "../Dashboard/Org/Org";
 
-import "../../style/Dashboard/Dashboard.css";
+import "@style/Dashboard/Dashboard.css";
 // import { useState } from "react";
 
 const Dashboard = () => {

@@ -3,11 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Header from "../Header/Header";
-import HolderTable from "../../Table/HolderTable";
+import HolderTable from "@components/Table/HolderTable";
+import InputListCSV from "@components/Inputs/InputListCSV";
 
 // TODO: Table -- happy to do this but passing on it for now as it'll take me a while tbh
 const Badge = () => {
     const [ isManage, setIsManage ] = useState(false);
+    const [ membersToUpdate, setMembersToUpdate ] = useState([""]);
 
     const { org, id } = useParams();
     const navigate = useNavigate();
@@ -60,6 +62,12 @@ const Badge = () => {
                         <option>Add Leader</option>
                         <option>Remove Leader</option>
                     </select>
+
+                    <InputListCSV
+                        label="Members to update"
+                        inputList={membersToUpdate}
+                        setInputList={setMembersToUpdate}
+                    />
                 </>
 
                 :
@@ -70,7 +78,7 @@ const Badge = () => {
                     <FontAwesomeIcon icon={["fal", "fa-chart-simple"]} />
                     <span>Analytics</span>
                 </button>
-            }  
+            }
 
 
             <HolderTable holders={badge.holders} />

@@ -1,6 +1,8 @@
-import Help from '../Help/Help'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import "../../../style/Dashboard/Form/ActionBar.css"
+import Help from './Help'
+
+import "@style/Dashboard/Form/ActionBar.css"
 
 const ActionBar = ({ help, actions }) => { 
     return (
@@ -10,7 +12,15 @@ const ActionBar = ({ help, actions }) => {
             </div>}
 
             <div className="action__bar__actions">
-                {actions}
+                {actions && actions.map((action, index) => (
+                    <button 
+                        className="button-secondary" 
+                        key={index} onClick={action.event}
+                    >
+                        <span>{action.text}</span>
+                        <FontAwesomeIcon icon={action.icon} />
+                    </button>
+                ))}
             </div>
         </div>
     )
