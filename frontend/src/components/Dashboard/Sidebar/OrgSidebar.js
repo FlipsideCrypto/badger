@@ -24,10 +24,7 @@ const OrgSidebar = ({ organizations }) => {
         addressOrName: address,
     })
 
-    const account = {
-        monocre: "nftchance.eth",
-        avatar: "https://avatars.githubusercontent.com/u/77760087?s=200&v=4"
-    }
+    const placeholderAvatar = "https://avatars.githubusercontent.com/u/77760087?s=200&v=4";
 
     useEffect(() => {
         if (openConnectModal) {
@@ -40,7 +37,7 @@ const OrgSidebar = ({ organizations }) => {
             {/* Logged in user header */}
             {address ?
                 <div className="sidebar__header">
-                    <img src={ensAvatar || account.avatar} alt="avatar" />
+                    <img src={ensAvatar || placeholderAvatar} alt="avatar" />
                     <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
                         {ensName ? ensName : sliceAddress(address)}
                     </Link>

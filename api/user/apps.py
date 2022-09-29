@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class BadgeConfig(AppConfig):
+class UserConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'badges'
+    name = 'user'

@@ -134,7 +134,7 @@ contract BadgerScout is
     }
 
     /**
-     * @notice Set the signer for the contract.
+     * @notice Set the signer for the Badge.
      * @param _signer The address of the signer.
      * 
      * Requirements:
@@ -151,6 +151,32 @@ contract BadgerScout is
         onlySewnBadge(_id)
     {
         badges[_id].signer = _signer;
+    }
+
+    /**
+     * @notice Set the uri for a Badge.
+     * @param _uri The address of the signer.
+     * 
+     * Requirements:
+     * - `_msgSender()` must be a leader of the Badge.
+     * - `_id` must corresponding to an existing Badge config.
+     * - `_uri` must not be null.
+     */
+    function setURI(
+          uint256 _id
+        , string memory _uri
+    )
+        external
+        virtual
+        onlyLeader(_id)
+        onlySewnBadge(_id)
+    {
+        require(
+              bytes(_uri).length > 0
+            , "BadgeSash::setUri: URI cannot be null."
+        );
+        
+        badges[_id].uri = _uri;
     }
 
     /**

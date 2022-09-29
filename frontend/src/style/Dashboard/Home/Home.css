@@ -15,6 +15,10 @@
     border: 1px solid #E0E0E0;
 }
 
+.home .home__announcement .card .announcement__message {
+    line-height: 16px;
+}
+
 .home .home__cards { 
     margin-top: 20px;
     display: grid;
