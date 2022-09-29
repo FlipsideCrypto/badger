@@ -21,10 +21,8 @@ const OrgSidebar = ({ organizations }) => {
         address: address,
     })
     const { data: ensAvatar } = useEnsAvatar({
-        address: address,
+        addressOrName: address,
     })
-
-    console.log("ensAvatar", ensAvatar)
 
     const account = {
         monocre: "nftchance.eth",
@@ -43,7 +41,7 @@ const OrgSidebar = ({ organizations }) => {
             {address ?
                 <div className="sidebar__header">
                     <img src={ensAvatar || account.avatar} alt="avatar" />
-                    <Link to="/dashboard/">
+                    <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
                         {ensName ? ensName : sliceAddress(address)}
                     </Link>
                 </div>

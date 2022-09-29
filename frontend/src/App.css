@@ -43,6 +43,22 @@ button {
   text-decoration: none;
 }
 
+.link-wrapper {
+  margin: none !important;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  height: 100%;
+  width: 100%;
+  display: block;
+}
+
+.link-text {
+  font-weight: 700;
+  color: rgba(0, 0, 0, .65);
+  text-decoration: unset;
+}
+
 @media screen and (max-width: 3000px) {
   .page-margins{
     margin-right: 300px;
