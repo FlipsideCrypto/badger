@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import IconButton from "@components/Button/IconButton";
 import Header from "../Header/Header";
 
+import "@style/Dashboard/Org/Org.css";
+
 const Org = () => {
     const { org } = useParams();
     const navigate = useNavigate();
@@ -24,7 +26,7 @@ const Org = () => {
                     </div>
                 ))
                 :
-                <div>
+                <div className="org__container empty">
                     <h1>No keys in the Organization yet!</h1>
                     <p>
                         Congrats! You are one step closer to having the keys to your on-chain Organization. 
@@ -35,7 +37,6 @@ const Org = () => {
                     </Link>
                 </div>
             }
-            
         </>
     )
 }

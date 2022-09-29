@@ -21,8 +21,6 @@ const OrgForm = () => {
     ]
 
     const nameToSymbol = (name) => {
-        // Remove all non-alphanumeric characters and conver to uppercase
-        // with a max length of 5 characters
         return name.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().substring(0, 5);
     }
 

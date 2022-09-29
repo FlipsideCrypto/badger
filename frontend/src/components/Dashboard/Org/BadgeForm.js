@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FormControl, InputLabel } from "@mui/material";
 
 import Header from "../Header/Header";
-import InputListCSV from "@components/Inputs/InputListCSV";
+import InputListCSV from "@components/Input/InputListCSV";
 
 const BadgeForm = () => {
     const [ badgeName, setBadgeName ] = useState("");

@@ -11,7 +11,7 @@ const Header = ({ back, actions }) => {
         }}>
             <div className="header__back">
                 {back && <button 
-                    className="button-unstyled" 
+                    className="button__unstyled" 
                     onClick={back}
                 >
                     <FontAwesomeIcon icon={['fal', 'chevron-left']} />
@@ -22,7 +22,7 @@ const Header = ({ back, actions }) => {
             <div className="header__actions">
                 {actions && actions.map((action, index) => (
                     <button 
-                        className="button-unstyled" 
+                        className="button__unstyled" 
                         key={index} onClick={action.event}
                     >
                         <FontAwesomeIcon icon={action.icon} />

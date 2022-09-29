@@ -50,7 +50,7 @@ const Home = () => {
                                         marginBottom: "40px"
                                     }}>Want to see what the live experience of setting up and using Badge is like? Follow along the walk-through and have your Organization, Delegates and Members handled in just minutes.</p>
 
-                                    <button className="button-unstyled">See full video</button>
+                                    <button className="button__unstyled">See full video</button>
                                 </div>
                             </div>
                         </Card>

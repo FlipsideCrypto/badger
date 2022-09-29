@@ -1,0 +1,24 @@
+.org__container * { 
+    margin: 0;
+}
+
+.org__container.empty { 
+    min-height: 100%;
+    display: grid;
+    align-content: center;
+    max-width: 45%;
+    margin: auto;
+    text-align: center;
+}
+
+.org__container.empty h1 { 
+    margin-bottom: 20px;
+}
+
+.org__container.empty p { 
+    margin-bottom: 40px;
+}
+
+.org__container.empty a { 
+    margin-inline: auto;
+}

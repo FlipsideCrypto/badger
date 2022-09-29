@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import "@style/Button/IconButton.css"
 
-const IconButton = ({ icon, text, style }) => {
+const IconButton = ({ icon, text, style, onClick}) => {
     return (
-        <button className="button" style={style}>
+        <button className="button" style={style} onClick={onClick}>
             <span className="button__text">
                 {text}
             </span>

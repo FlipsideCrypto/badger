@@ -67,7 +67,7 @@ const OrgSidebar = ({ organizations }) => {
                 {organizations.map((org, index) => (
                     <div className="sidebar__organization" key={index}>
                         <img src={org.avatar} alt="avatar" />
-                        <button className="button-unstyled">{org.name}</button>
+                        <button className="button__unstyled">{org.name}</button>
                     </div>
                 ))}
             </div>

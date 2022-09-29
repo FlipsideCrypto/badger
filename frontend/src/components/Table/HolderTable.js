@@ -1,40 +1,34 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { 
     Paper, Table, TableHead, TableRow, 
     TableContainer, TableCell, TableBody 
 } from "@mui/material"
 
 import TableSortHead from "./TableSortHead";
-import { sliceAddress, compareByProperty, findObjByProperty } from "@utils/helpers";
-import { holderHeadRows, holderSortingDefaults } from "@static/constants/tableconfigs";
+import { sliceAddress, compareByProperty } from "@utils/helpers";
+import { holderHeadRows } from "@static/constants/constants";
 
 import "@style/Table/HolderTable.css";
 
 const HolderTable = ({ holders }) => {
-    const [ sorting, setSorting ] = useState(holderSortingDefaults);
+    const [ headRows, setHeadRows ] = useState(holderHeadRows);
     const [ sortedList, setSortedList ] = useState(holders);
 
-    const onSortChange = (property) => {
-        let sorted = [...sorting];
-        let index = sorted.findIndex((sort) => sort.property === property);
-        sorted[index].method = sorted[index].method === "asc" ? "desc" : "asc";
-        sorted[index].priority = sorted[sorted.length - 1].priority + 1;
-        sorted = sorted.sort((a, b) => compareByProperty("priority", "asc", a, b));
+    const onSortChange = (key) => {
+        // Get the current sort method and inverse it for chevron display.
+        let newHeadRows = {...headRows};
+        let method = newHeadRows[key].method 
+        method = !method || method === "desc" ? "asc" : "desc"
+        newHeadRows[key].method = method;
+        setHeadRows(newHeadRows);
 
-        setSorting(sorted);
+        // Sort the list by the key and the method.
+        let newSortedList = [...sortedList];
+        newSortedList = newSortedList.sort((a,b) => 
+            compareByProperty(key, method, a, b)
+        );
+        setSortedList(newSortedList);
     }
-
-    useEffect(() => {
-        let sorted = [...holders];
-        sorting.forEach((sort) => {
-            if (sort.priority > 0) {
-                sorted.sort((a, b) => 
-                    compareByProperty(sort.property, sort.method, a, b)
-                );
-            }
-        })
-        setSortedList(sorted);
-    }, [sorting, setSortedList, holders])
 
     return (
         <div id="holder__table">
@@ -42,12 +36,12 @@ const HolderTable = ({ holders }) => {
                 <Table aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            {holderHeadRows.map((row) => (
+                            {Object.keys(headRows).map((key) => (
                                  <TableSortHead
-                                    key={row.id}
-                                    id={row.id}
-                                    label={row.label}
-                                    sorted={findObjByProperty("property", row.id, sorting)}
+                                    key={key}
+                                    id={key}
+                                    label={headRows[key].label}
+                                    sortMethod={headRows[key].method}
                                     onSortChange={onSortChange}
                                 />
                             ))}

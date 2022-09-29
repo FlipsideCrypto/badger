@@ -16,7 +16,6 @@ const InputListCSV = ({ label, inputList, setInputList }) => {
     }
 
     useEffect(() => {
-        console.log('here', csvFile)
         if (csvFile) {
             console.log('now here')
             csvReader.onload = function (event) {
@@ -32,22 +31,22 @@ const InputListCSV = ({ label, inputList, setInputList }) => {
     return (
         <>
             <input
-            type="file"
-            accept=".xlsx, .xls, .csv"
-            ref={csvInput}
-            style={{display: "none"}}
-            onChange={(event) => setCSVFile(event.target.files[0])}
+                type="file"
+                accept=".xlsx, .xls, .csv"
+                ref={csvInput}
+                style={{display: "none"}}
+                onChange={(event) => setCSVFile(event.target.files[0])}
             />
 
             <button 
-                className="button-unstyled" 
+                className="button__unstyled" 
                 onClick={() => csvInput.current.click()}
             >
                 <FontAwesomeIcon icon={['fal', 'fa-plus']} />
                 <span>Upload CSV</span>
             </button>
             <button 
-                className="button-unstyled" 
+                className="button__unstyled" 
                 onClick={() => setInputList([...inputList, ""])}
             >
                 <FontAwesomeIcon icon={['fal', 'fa-plus']} />

@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import IconButton from "@components/Button/IconButton";
 import Help from './Help'
 
@@ -17,12 +15,21 @@ const ActionBar = ({ help, actions }) => {
             <div className="action__bar__actions">
                 {actions && actions.map(action => (
                     <>
+                        <p>{action.to}</p>
                         {
                             action.to ?
                                 <Link className="internal-link" to={action.to}>
-                                    <IconButton icon={action.icon} text={action.text} />
+                                    <IconButton 
+                                        icon={action.icon} 
+                                        text={action.text} 
+                                    />
                                 </Link>
-                                : <IconButton icon={action.icon} text={action.text} onClick={action.event} />
+                                : 
+                                <IconButton
+                                    icon={action.icon}
+                                    text={action.text}
+                                    onClick={action.event}
+                                />
                         }
                     </>
                 ))}

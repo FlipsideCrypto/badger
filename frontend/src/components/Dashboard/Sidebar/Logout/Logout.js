@@ -5,7 +5,7 @@ const Logout = () => {
     const { disconnect } = useDisconnect();
 
     return (
-        <button className="logout button-unstyled" onClick={() => {
+        <button className="logout button__unstyled" onClick={() => {
             localStorage.removeItem("token");
             window.location.href = "/";
             disconnect()

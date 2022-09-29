@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Header from "../Header/Header";
 import HolderTable from "@components/Table/HolderTable";
-import InputListCSV from "@components/Inputs/InputListCSV";
+import InputListCSV from "@components/Input/InputListCSV";
 
 // TODO: Table -- happy to do this but passing on it for now as it'll take me a while tbh
 const Badge = () => {
@@ -85,7 +85,7 @@ const Badge = () => {
                 </>
                 :
                 <button 
-                    className="button-unstyled" 
+                    className="button__unstyled" 
                     onClick={() => { navigate(`/dashboard/badge/analytics/${org}&${id}`)}}
                 >
                     <FontAwesomeIcon icon={["fal", "fa-chart-simple"]} />
