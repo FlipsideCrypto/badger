@@ -1,7 +1,12 @@
 .form__group {
     display: grid;
     grid-template-columns: auto;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+}
+
+.form__group.input__group { 
+    grid-template-columns: auto min-content;
+    grid-template-rows: auto;
 }
 
 .form__group label {
@@ -17,4 +22,22 @@
     padding: 10px 20px;
     border-radius: 0px;
     outline: none;
+}
+
+.form__group.input__group label {
+    grid-column: 1;
+}
+
+.form__group.input__group input {
+    grid-column: 1;
+}
+
+.form__group.input__group button { 
+    grid-column: 2;
+    height: 100%;
+} 
+
+input:disabled {
+    background-color: #F0F0F0;
+    cursor: not-allowed;
 }

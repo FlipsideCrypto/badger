@@ -22,7 +22,7 @@ const Header = ({ back, actions }) => {
             <div className="header__actions">
                 {actions && actions.map((action, index) => (
                     <button 
-                        className="button__unstyled" 
+                        className="button__unstyled header__action" 
                         key={index} onClick={action.event}
                     >
                         <FontAwesomeIcon icon={action.icon} />

@@ -19,6 +19,12 @@
     color: rgba(0, 0, 0, .35);
 }
 
+.table__sort__icon svg {
+    margin-top: 2px;
+    width: 20px;
+    height: 20px;
+}
+
 .table__sort__head:hover {
     color: rgba(0, 0, 0, .35);
 }

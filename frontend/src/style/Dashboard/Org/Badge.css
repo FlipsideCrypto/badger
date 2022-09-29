@@ -1,0 +1,19 @@
+.center__gutter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: baseline;
+    margin: 20px;
+}
+
+.center__gutter .badge__actions {
+    margin-left: auto;
+}
+
+.badge__actions svg {
+    color: rgba(0, 0, 0, 0.35);
+    margin-right: 10px;
+}
+
+.badge__action span {
+    color:rgba(0, 0, 0, 0.65);
+}

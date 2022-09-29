@@ -1,3 +1,7 @@
+th {
+    padding: 8px 16px 8px 16px;
+}
+
 .delegate__status__true {
     background-color: #00FF9D;
     color: rgb(0,0,0);

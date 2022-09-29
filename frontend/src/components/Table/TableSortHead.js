@@ -3,7 +3,7 @@ import { TableCell } from "@mui/material";
 
 import "@style/Table/TableSortHead.css";
 
-const TableSortHead = ({ id, label, sortMethod, onSortChange }) => {
+const TableSortHead = ({ id, label, sortMethod, onSortChange, align }) => {
     function getIcon() {
         if (sortMethod=== "asc") return (
             <FontAwesomeIcon 
@@ -20,7 +20,7 @@ const TableSortHead = ({ id, label, sortMethod, onSortChange }) => {
     }
 
     return (
-        <TableCell>
+        <TableCell align={align}>
             <button className="button__unstyled" onClick={() => onSortChange(id)}>
                 <div className="table__sort__head">
                     <div className="table__sort__head__label">

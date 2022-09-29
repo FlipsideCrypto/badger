@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { 
-    Paper, Table, TableHead, TableRow, 
+    Table, TableHead, TableRow, 
     TableContainer, TableCell, TableBody 
 } from "@mui/material"
 
@@ -32,7 +32,7 @@ const HolderTable = ({ holders }) => {
 
     return (
         <div id="holder__table">
-            <TableContainer component={Paper}>
+            <TableContainer>
                 <Table aria-label="simple table">
                     <TableHead>
                         <TableRow>
@@ -43,6 +43,7 @@ const HolderTable = ({ holders }) => {
                                     label={headRows[key].label}
                                     sortMethod={headRows[key].method}
                                     onSortChange={onSortChange}
+                                    align={key === "delegate" ? "right" : "left"}
                                 />
                             ))}
                         </TableRow>

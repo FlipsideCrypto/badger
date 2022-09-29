@@ -14,24 +14,23 @@ const ActionBar = ({ help, actions }) => {
 
             <div className="action__bar__actions">
                 {actions && actions.map(action => (
-                    <>
+                    <div key={action.text}>
                         <p>{action.to}</p>
-                        {
-                            action.to ?
-                                <Link className="internal-link" to={action.to}>
-                                    <IconButton 
-                                        icon={action.icon} 
-                                        text={action.text} 
-                                    />
-                                </Link>
-                                : 
-                                <IconButton
-                                    icon={action.icon}
-                                    text={action.text}
-                                    onClick={action.event}
+                        {action.to ?
+                            <Link className="internal-link" to={action.to}>
+                                <IconButton 
+                                    icon={action.icon} 
+                                    text={action.text} 
                                 />
+                            </Link>
+                            : 
+                            <IconButton
+                                icon={action.icon}
+                                text={action.text}
+                                onClick={action.event}
+                            />
                         }
-                    </>
+                    </div>
                 ))}
             </div>
         </div>
