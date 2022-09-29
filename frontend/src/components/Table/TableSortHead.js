@@ -4,7 +4,6 @@ import { TableCell } from "@mui/material";
 import "@style/Table/TableSortHead.css";
 
 const TableSortHead = ({ id, label, sortMethod, onSortChange, align, width }) => {
-    console.log(width)
     return (
         <TableCell align={align} sx={{width: width}}>
             <button 

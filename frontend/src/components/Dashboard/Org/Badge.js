@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import Header from "../Header/Header";
+import Header from "@components/Dashboard/Header/Header";
 import HolderTable from "@components/Table/HolderTable";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
+import Select from "@components/Dashboard/Form/Select";
 
 import "@style/Dashboard/Org/Badge.css";
 
@@ -47,14 +48,10 @@ const Badge = () => {
 
                 {isManage && 
                     <>
-                        <h3>Update Type</h3>
-                            <select>
-                                <option>Mint</option>
-                                <option>Revoke</option>
-                                <option>Add Leader</option>
-                                <option>Remove Leader</option>
-                            </select>
-
+                        <Select 
+                            label="Update Type"
+                            options={["Mint", "Revoke", "Add Leader", "Remove Leader"]} 
+                        />
                         <InputListCSV
                             label="Members to update"
                             inputList={membersToUpdate}

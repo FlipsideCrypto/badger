@@ -4,7 +4,6 @@ const Input = (props) => {
     const {
         label,
         required,
-        disabled,
         prepend,
         append,
         reference

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { FormControl, InputLabel } from "@mui/material";
 
 import Input from "@components/Dashboard/Form/Input";
 
@@ -20,7 +19,7 @@ const InputListCSV = ({ label, inputList, setInputList }) => {
     const labelDOM = <>
         <div style={{
             display: "grid",
-            gridTemplateColumns: "min-content auto",
+            gridTemplateColumns: "max-content auto",
         }}>
             <label htmlFor={label}>
                 {label}
@@ -79,16 +78,6 @@ const InputListCSV = ({ label, inputList, setInputList }) => {
                     value={input}
                     onChange={(event) => onInputChange(index, event)}
                 />
-                // <FormControl key={"input-" + index}>
-                //     {index === 0 && 
-                //         <InputLabel htmlFor="input-0">{label}</InputLabel>
-                //     }
-                //     <input 
-                //         id={"input-" + index}
-                //         value={input}
-                //         onChange={(event) => onInputChange(index, event)}
-                //     />
-                // </FormControl>
             ))}
         </>
     )
