@@ -1,8 +1,12 @@
+#badge {
+    margin-left: var(--page-margins);
+    margin-right: var(--page-margins);
+}
+
 .center__gutter {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: baseline;
-    margin: 20px;
 }
 
 .center__gutter .badge__actions {

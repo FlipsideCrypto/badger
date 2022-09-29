@@ -3,26 +3,31 @@ export const holderHeadRows = {
         label: "Address",
         sortable: true,
         method: "",
+        width: "15%"
     },
     receivedAt: {
         label: "Received At",
         sortable: true,
         method: "desc",
+        width: "20%"
     },
     nickname: {
         label: "Nickname",
         sortable: true,
         method: "",
+        width: "20%"
     },
     pod: {
         label: "Pod",
         sortable: true,
         method: "",
+        width: "35%"
     },
     delegate: {
         label: "Delegate",
         sortable: true,
         method: "",
+        width: "10%"
     },
 }
 

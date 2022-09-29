@@ -1,3 +1,7 @@
+:root {
+  --page-margins: 20px;
+}
+
 * {
   font-family: 'Poppins', sans-serif;
 }

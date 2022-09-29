@@ -33,7 +33,7 @@ const HolderTable = ({ holders }) => {
     return (
         <div id="holder__table">
             <TableContainer>
-                <Table aria-label="simple table">
+                <Table>
                     <TableHead>
                         <TableRow>
                             {Object.keys(headRows).map((key) => (
@@ -44,6 +44,7 @@ const HolderTable = ({ holders }) => {
                                     sortMethod={headRows[key].method}
                                     onSortChange={onSortChange}
                                     align={key === "delegate" ? "right" : "left"}
+                                    width={headRows[key].width}
                                 />
                             ))}
                         </TableRow>
@@ -53,7 +54,6 @@ const HolderTable = ({ holders }) => {
                     {sortedList.map((holder) => (
                         <TableRow
                             key={holder.address}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell component="th" scope="row">
                                 {sliceAddress(holder.address)}

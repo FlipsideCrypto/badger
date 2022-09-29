@@ -1,6 +1,6 @@
 .sidebar.right { 
     width: 300px;
-    padding-left: 20px;
+    padding-left: var(--page-margins);
 }
 
 .sidebar.right::after { 

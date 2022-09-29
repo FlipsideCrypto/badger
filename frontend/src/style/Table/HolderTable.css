@@ -1,5 +1,31 @@
+tr {
+    height: 48px !important;
+}
+
+td {
+    padding: 0px !important;
+}
+
 th {
-    padding: 8px 16px 8px 16px;
+    padding: 0px !important;
+}
+
+th:first-child {
+    padding-left: 40px !important;
+}
+
+th:last-child,
+td:last-child {
+    padding-right: 40px !important;
+}
+
+th:not(:last-child) {
+    padding-right: 20px !important;
+}
+
+
+#holder__table {
+    margin-inline: calc(-2 * var(--page-margins));
 }
 
 .delegate__status__true {

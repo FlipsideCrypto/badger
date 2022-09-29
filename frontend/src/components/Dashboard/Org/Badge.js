@@ -26,13 +26,26 @@ const Badge = () => {
     const badge = DummyBadgeData;
 
     return (
-        <div id="badge">
+        <>
             <Header back={() => navigate(-1)} actions={actions} />
 
-            <div className="center__gutter">
-                <h1>{badge.name}</h1>
+            <div id="badge">
+                <div className="center__gutter">
+                    <h1>{badge.name}</h1>
+                    {!isManage && 
+                        <div className="badge__actions">
+                            <button 
+                                className="button__unstyled badge__action" 
+                                onClick={() => { navigate(`/dashboard/badge/analytics/${org}&${id}`)}}
+                            >
+                                <FontAwesomeIcon icon={["fal", "fa-chart-simple"]} />
+                                <span>Analytics</span>
+                            </button>
+                        </div>
+                    }
+                </div>
 
-                {isManage ? 
+                {isManage && 
                     <>
                         <h3>Update Type</h3>
                             <select>
@@ -48,34 +61,24 @@ const Badge = () => {
                             setInputList={setMembersToUpdate}
                         />
                     </>
+                }
+
+                {badge.holders && badge.holders.length > 0 ?
+                    <HolderTable holders={badge.holders} />
                     :
-                    <div className="badge__actions">
-                        <button 
-                            className="button__unstyled badge__action" 
-                            onClick={() => { navigate(`/dashboard/badge/analytics/${org}&${id}`)}}
-                        >
-                            <FontAwesomeIcon icon={["fal", "fa-chart-simple"]} />
-                            <span>Analytics</span>
+                    <div>
+                        <h1>Your Organization is almost alive, it just needs members!</h1>
+                        <p>
+                            You've set up your Organization and your Badge. 
+                            Now for the final step of sending the first set of keys to your team members.
+                        </p>
+                        <button onClick={() => setIsManage(true)}>
+                            DISTRIBUTE KEYS
                         </button>
                     </div>
                 }
             </div>
-
-            {badge.holders && badge.holders.length > 0 ?
-                <HolderTable holders={badge.holders} />
-                :
-                <div>
-                    <h1>Your Organization is almost alive, it just needs members!</h1>
-                    <p>
-                        You've set up your Organization and your Badge. 
-                        Now for the final step of sending the first set of keys to your team members.
-                    </p>
-                    <button onClick={() => setIsManage(true)}>
-                        DISTRIBUTE KEYS
-                    </button>
-                </div>
-            }
-        </div>
+        </>
     )
 }
 

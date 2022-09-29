@@ -3,31 +3,24 @@ import { TableCell } from "@mui/material";
 
 import "@style/Table/TableSortHead.css";
 
-const TableSortHead = ({ id, label, sortMethod, onSortChange, align }) => {
-    function getIcon() {
-        if (sortMethod=== "asc") return (
-            <FontAwesomeIcon 
-                className="table__sort__icon__solid" 
-                icon={["fal", "chevron-up"]} 
-            />
-        )
-        return (
-            <FontAwesomeIcon 
-                className="table__sort__icon__solid" 
-                icon={["fal", "chevron-down"]} 
-            />
-        )
-    }
-
+const TableSortHead = ({ id, label, sortMethod, onSortChange, align, width }) => {
+    console.log(width)
     return (
-        <TableCell align={align}>
-            <button className="button__unstyled" onClick={() => onSortChange(id)}>
+        <TableCell align={align} sx={{width: width}}>
+            <button 
+                className="button__unstyled" 
+                onClick={() => onSortChange(id)}
+                style={{ width: "100%" }}
+            >
                 <div className="table__sort__head">
                     <div className="table__sort__head__label">
                         <span>{label}</span>
                     </div>
                     <div className="table__sort__icon">
-                        {getIcon()}
+                            <FontAwesomeIcon 
+                                className="table__sort__icon__solid" 
+                                icon={ ["fal", `${sortMethod==="asc" ? "chevron-up" : "chevron-down"}`] } 
+                            />
                     </div>
                 </div>
             </button>
