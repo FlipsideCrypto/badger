@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useNetwork } from "wagmi";
+import { useNetwork, useAccount } from "wagmi";
 
 import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 
-import { useOrganizationData, useUserData } from "@components/Hooks/Api";
+import { useOrgData, useUserData } from "@components/Hooks/Api";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -14,10 +14,10 @@ const OrgForm = () => {
     const [orgName, setOrgName] = useState("");
     const [orgSymbol, setOrgSymbol] = useState("");
 
-    const { address } = useNetwork();
+    const { address } = useAccount();
     const { chain } = useNetwork();
     const navigate = useNavigate();
-    const { orgData, setOrgData } = useOrganizationData(orgId);
+    // const { orgData, setOrgData } = useOrgData(orgId);
     const { userData, setUserData } = useUserData(address);
 
     const actions = [
@@ -41,35 +41,39 @@ const OrgForm = () => {
     }
 
     const onOrgFormSubmission = () => {
-        console.log('orgName', orgName, 'chain', chain)
-
+        const orgObj = {
+            active: false,
+            chain: chain.name,
+            name: orgName,
+            symbol: orgSymbol,
+            description: 'This is a super cool description.',
+            image_hash: '',
+            contract_uri_hash: '',
+            contract_address: ''
+        }
+        
         fetch(`${API_URL}/organizations/`, {
             method: "POST",
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
             },
-            data: JSON.stringify(
-                {
-                    active: false,
-                    chain: "TEST",
-                    name: "TEST",
-                    symbol: orgSymbol,
-                    description: 'This is a super cool description.',
-                    image_hash: '',
-                    contract_uri_hash: '',
-                    contract_address: ''
-                }
-            )
+            data: JSON.stringify(orgObj)
         })
         .then(res => res.json())
         .then(data => {
             console.log('got org response', data);
         })
 
-        // DUMMY DATA
-        let orgId = 1;
-        navigate(`/dashboard/organization/orgId=${orgId}`);
+        orgObj.id = 0; // DUMMY value
+        addOrgToState(orgObj);
+        navigate(`/dashboard/organization/orgId=${orgObj.id}`);
+    }
+
+    const addOrgToState = (org) => {
+        let newUserData = userData;
+        newUserData.organizations.push(org);
+        setUserData(newUserData);
     }
 
     return (

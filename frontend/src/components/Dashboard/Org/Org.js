@@ -2,14 +2,14 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 
 import IconButton from "@components/Button/IconButton";
 import Header from "@components/Dashboard/Header/Header";
-import { useOrganizationData } from "@components/Hooks/Api";
+import { useOrgData } from "@components/Hooks/Api";
 
 import "@style/Dashboard/Org/Org.css";
 
 const Org = () => {
     const { orgId } = useParams();
     const navigate = useNavigate();
-    const { orgData } = useOrganizationData(1);
+    const { orgData } = useOrgData(orgId);
     console.log('orgData', orgData)
 
     return (

@@ -24,8 +24,6 @@ const Dashboard = () => {
         <div className="dashboard">
             <OrgSidebar
                 address={address}
-                organizations={userData?.organizations}
-                ensName={userData?.ens_name}
             />
 
             <DashboardContent>

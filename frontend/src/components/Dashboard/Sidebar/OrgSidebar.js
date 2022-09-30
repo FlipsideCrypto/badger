@@ -5,20 +5,25 @@ import { useEnsAvatar } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { sliceAddress } from "@utils/helpers";
 import Logout from "./Logout/Logout";
+
+import { sliceAddress } from "@utils/helpers";
+import { useOrgData, useUserData } from "@components/Hooks/Api";
 
 import '@rainbow-me/rainbowkit/dist/index.css';
 import "@style/Dashboard/Sidebar/Sidebar.css";
 import "@style/Dashboard/Sidebar/OrgSidebar.css";
 
-const OrgSidebar = ({ organizations, address, ensName }) => {
-    const { data: ensAvatar } = useEnsAvatar({
-        addressOrName: address,
-    })
-
+const OrgSidebar = ({ address }) => {
     const { openConnectModal } = useConnectModal();
     const placeholderAvatar = "https://avatars.githubusercontent.com/u/77760087?s=200&v=4";
+    const { data: ensAvatar } = useEnsAvatar({
+        addressOrName: address,
+    });
+
+    const { userData } = useUserData(address);
+    // const { orgData } = useOrganizationData();
+
 
     useEffect(() => {
         if (!openConnectModal) return;
@@ -33,7 +38,7 @@ const OrgSidebar = ({ organizations, address, ensName }) => {
                 <div className="sidebar__header">
                     <img src={ensAvatar || placeholderAvatar} alt="avatar" />
                     <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
-                        {ensName ? ensName : sliceAddress(address)}
+                        {userData?.ens_name ? userData.ens_name : sliceAddress(address)}
                     </Link>
                 </div>
                 :
@@ -53,13 +58,17 @@ const OrgSidebar = ({ organizations, address, ensName }) => {
 
             {/* List of organizations */}
             <div className="sidebar__organizations">
-                {organizations?.map((org, index) => (
+                {userData?.organizations?.map((org, index) => (
                     <div className="sidebar__organization" key={index}>
                         <img src={org.avatar} alt="avatar" />
                         <button className="button__unstyled">{org.name}</button>
                     </div>
                 ))}
             </div>
+
+            <button onClick={() => console.log('sidebar', userData)}>
+                    TEST
+            </button>
 
             {/* Logout button */}
             <Logout />

@@ -8,7 +8,7 @@ import IconButton from "@components/Button/IconButton";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import Select from "@components/Dashboard/Form/Select";
 
-import { useOrganizationData } from "@components/Hooks/Api";
+import { useOrgData } from "@components/Hooks/Api";
 
 import "@style/Dashboard/Org/Badge.css";
 
@@ -18,7 +18,7 @@ const Badge = () => {
     const [ updateOption, setUpdateOption ] = useState("Mint");
 
     const { orgId, badgeId } = useParams();
-    const { orgData } = useOrganizationData(orgId);
+    const { orgData } = useOrgData(orgId);
     const navigate = useNavigate();
 
     const badge = orgData?.[badgeId];
