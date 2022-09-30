@@ -6,18 +6,15 @@ import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 
-import { useOrganizationData } from "@components/Hooks/Api";
-
-const BadgeForm = () => {
-    const [badgeName, setBadgeName] = useState("");
-    const [badgeDescription, setBadgeDescription] = useState("");
-    const [badgeImage, setBadgeImage] = useState({name: ""});
-    const [badgeDelegates, setBadgeDelegates] = useState([""]);
+const BadgeForm = ({name, desc, image, delegates}) => {
+    const [badgeName, setBadgeName] = useState(name);
+    const [badgeDescription, setBadgeDescription] = useState(desc);
+    const [badgeImage, setBadgeImage] = useState(image || {name: ""});
+    const [badgeDelegates, setBadgeDelegates] = useState(delegates || [""]);
 
     const imageInput = useRef();
     const navigate = useNavigate();
     const { orgId } = useParams();
-    const { orgData, setOrgData } = useOrganizationData(orgId);
 
     const actions = [
         {

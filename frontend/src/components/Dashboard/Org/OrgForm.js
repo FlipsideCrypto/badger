@@ -6,7 +6,7 @@ import Header from "../Header/Header";
 import ActionBar from "../Form/ActionBar";
 import Input from "../Form/Input";
 
-import { API_URL } from "@static/constants/links";
+const API_URL = process.env.REACT_APP_API_URL;
 
 const OrgForm = () => {
     const [orgName, setOrgName] = useState("");
@@ -36,7 +36,7 @@ const OrgForm = () => {
     }
 
     const onOrgFormSubmission = () => {
-        console.log('orgName', orgName)
+        console.log('orgName', orgName, 'chain', chain)
 
         fetch(`${API_URL}/organizations/`, {
             method: "POST",
