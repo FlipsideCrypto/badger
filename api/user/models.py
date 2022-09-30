@@ -3,11 +3,12 @@ from django.db import models
 
 from utils.web3 import get_ens_name, verify_signature
 
+from address.models import AddressField
 from badge.models import Badge
 from organization.models import Organization
 
 class User(AbstractUser):
-    address = models.CharField(max_length=50, blank=False, default=None)
+    address = AddressField(unique=True, blank=False, default=None)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -17,7 +17,7 @@ class Organization(models.Model):
 
     owner = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='organization_owner', null=True)
     delegates = models.ManyToManyField('user.User', blank=True, related_name='organization_delegates')
-    badges = models.ManyToManyField(Badge)
+    badges = models.ManyToManyField(Badge, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
