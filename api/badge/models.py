@@ -20,12 +20,22 @@ class Badge(models.Model):
         return self.name
 
     def delegate(self, delegate):
-        print("GOT DELEGATE", delegate)
+        if delegate is None:
+            raise ValueError("Delegate cannot be None")
+        if self.delegates.filter(pk=delegate.pk).exists():
+            raise ValueError("Delegate already exists")            
 
-    def undelegate(self, user):
-        if user in self.delegates.all():
-            self.delegates.remove(user)
-        raise ValueError('User is not a delegate')  
+        self.delegates.add(delegate)
+        self.save()
+
+    def undelegate(self, delegate):
+        if delegate is None:
+            raise ValueError("Delegate cannot be None")
+        if not self.delegates.filter(pk=delegate.pk).exists():
+            raise ValueError("Delegate does not exist")
+
+        self.delegates.remove(delegate)
+        self.save()
 
     class Meta:
-        ordering = ['-created_at'] 
+        ordering = ['-created_at']

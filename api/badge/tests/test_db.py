@@ -30,29 +30,24 @@ class BadgeTestCase(TestCase):
         with self.assertRaises(ValueError):
             self.badge.delegate(None)
 
-    # def test_badge_delegation(self):
-    #     self.assertEqual(str(self.badge), "Test Badge")
+    def test_badge_delegation(self):
+        self.assertEqual(str(self.badge), "Test Badge")
 
-    #     self.assertEqual(user.organizations.count(), 0)
-    #     self.assertNotEqual(user, None)
-    #     self.badge.delegate(user)
+        self.assertEqual(self.user.organizations.count(), 0)
+        self.assertNotEqual(self.user, None)
 
-    #     self.assertEqual(self.badge.delegates.filter(pk=user.pk).count(), 1)
-    
-    #     self.badge.delegate(User.objects.get(pk=user.pk))
+        self.badge.delegate(self.user)
+        self.assertEqual(self.badge.delegates.count(), 1)
 
-    #     with self.assertRaises(ValueError):
-    #         self.badge.delegate(user)
+        with self.assertRaises(ValueError):
+            self.badge.delegate(self.user)
 
-    # def test_badge_undelegation(self):
-    #     user = create_user()
-    #     self.badge.delegate(user)
-
-    #     self.assertEqual(self.badge.delegates.filter(pk=user.pk).count(), 1)
+    def test_badge_undelegation(self):
+        self.badge.delegate(self.user)
+        self.assertEqual(self.badge.delegates.filter(pk=self.user.pk).count(), 1)
         
-    #     self.badge.undelegate(user)
-
-    #     self.assertEqual(self.badge.delegates.filter(pk=user.pk).count(), 0)
+        self.badge.undelegate(self.user)
+        self.assertEqual(self.badge.delegates.filter(pk=self.user.pk).count(), 0)
         
-    #     with self.assertRaises(ValueError):
-    #         self.badge.undelegate(user)
+        with self.assertRaises(ValueError):
+            self.badge.undelegate(self.user)

@@ -1,9 +1,10 @@
+/.pnp
+
 venv/
 cache
-.env
 *.pyc
 db.sqlite3
-/.pnp
+.env
 .pnp.js
 
 # testing
@@ -12,9 +13,10 @@ db.sqlite3
 # production
 /build
 
-# misc
+# Django 
+.env
 local.py
-production.py
+
 .DS_Store
 .env.local
 .env.development.local

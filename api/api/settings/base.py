@@ -1,10 +1,14 @@
+import os
+
+from dotenv import load_dotenv
 from pathlib import Path
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
+DEBUG = os.getenv('DEBUG', False)
 
 # Application definition
 INSTALLED_APPS = [
@@ -37,7 +41,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'api.urls'
 
-AUTH_USER_MODEL = "user.User"  
+AUTH_USER_MODEL = "user.User"
 
 TEMPLATES = [
     {
@@ -57,16 +61,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'api.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("PGDATABASE", "badger"),
+        "USER": os.getenv("PGUSER", "badger"),
+        "PASSWORD": os.getenv("PGPASSWORD", "badger"),
+        "HOST": os.getenv("PGHOST", "localhost"),
+        "PORT": os.getenv("PGPORT", "5432"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -85,10 +91,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
@@ -121,3 +125,6 @@ REST_FRAMEWORK = {
 
 # Cors headers settings
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Web3 settings
+ALCHEMY_API_KEY = os.getenv("ALCHEMY_API_KEY")
