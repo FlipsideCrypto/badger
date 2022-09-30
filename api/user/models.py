@@ -1,5 +1,5 @@
 from django.db import models
-from utils.web3 import get_ens_name
+from utils.web3 import get_ens_name, verify_signature
 
 class User(models.Model):
     address = models.CharField(max_length=50, blank=False, null=False)
@@ -33,6 +33,9 @@ class User(models.Model):
     @property
     def ens_name(self):
         return get_ens_name(self.address)
+
+    def verify_signature(self, signature):
+        return verify_signature(self.address, signature)
 
     def __str__(self):
         return self.address

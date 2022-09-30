@@ -4,19 +4,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Header from "@components/Dashboard/Header/Header";
 import HolderTable from "@components/Table/HolderTable";
+import IconButton from "@components/Button/IconButton";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import Select from "@components/Dashboard/Form/Select";
 
-import "@style/Dashboard/Org/Badge.css";
+import { useOrganizationData } from "@components/Hooks/Api";
 
-import { DummyBadgeData } from "@static/constants/constants";
+import "@style/Dashboard/Org/Badge.css";
 
 const Badge = () => {
     const [ isManage, setIsManage ] = useState(false);
     const [ membersToUpdate, setMembersToUpdate ] = useState([""]);
+    const [ updateOption, setUpdateOption ] = useState("Mint");
 
-    const { org, id } = useParams();
+    const { orgId, badgeId } = useParams();
+    const { orgData } = useOrganizationData(orgId);
     const navigate = useNavigate();
+
+    const badge = orgData?.[badgeId];
 
     const actions = [{
         text: "Manage",
@@ -24,7 +29,17 @@ const Badge = () => {
         event: () => setIsManage(!isManage)
     }]
 
-    const badge = DummyBadgeData;
+    const selectMethods = {
+        "Mint": "mintBundle",
+        "Revoke": "revokeBundle",
+        "Add Leader": "setLeaders",
+        "Remove Leader": "removeLeaders",
+    }
+
+    const onMemberUpdate = () => {
+        console.log(membersToUpdate)
+        console.log(updateOption)
+    }
 
     return (
         <>
@@ -32,12 +47,12 @@ const Badge = () => {
 
             <div id="badge">
                 <div className="center__gutter">
-                    <h1>{badge.name}</h1>
-                    {!isManage && 
+                    <h1>{badge?.name}</h1>
+                    {!isManage && badge?.name &&
                         <div className="badge__actions">
                             <button 
                                 className="button__unstyled badge__action" 
-                                onClick={() => { navigate(`/dashboard/badge/analytics/${org}&${id}`)}}
+                                onClick={() => { navigate(`/dashboard/badge/analytics/orgId=${orgId}&badgeId=${badgeId}`)}}
                             >
                                 <FontAwesomeIcon icon={["fal", "fa-chart-simple"]} />
                                 <span>Analytics</span>
@@ -50,20 +65,28 @@ const Badge = () => {
                     <>
                         <Select 
                             label="Update Type"
-                            options={["Mint", "Revoke", "Add Leader", "Remove Leader"]} 
+                            options={Object.keys(selectMethods)} 
+                            value={updateOption}
+                            setValue={(e) => setUpdateOption(e.target.value)}
                         />
                         <InputListCSV
                             label="Members to update"
                             inputList={membersToUpdate}
                             setInputList={setMembersToUpdate}
                         />
+                        <IconButton
+                            icon={['fal', 'arrow-right']} 
+                            text="UPDATE MEMBERS" 
+                            onClick={onMemberUpdate}
+                            style={{margin: "20px 0px 20px auto"}}
+                        />
                     </>
                 }
 
-                {badge.holders && badge.holders.length > 0 ?
+                {badge?.holders && badge?.holders.length > 0 ?
                     <HolderTable holders={badge.holders} />
                     :
-                    <div>
+                    <div className="org__container empty">
                         <h1>Your Organization is almost alive, it just needs members!</h1>
                         <p>
                             You've set up your Organization and your Badge. 

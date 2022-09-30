@@ -10,3 +10,8 @@ def get_ens_name(address):
     if w3.isAddress(address):
         return ns.name(address=address)
     return None
+
+def verify_signature(signature, message, address):
+    if w3.isAddress(address):
+        return w3.eth.account.recoverHash(message, signature=signature) == address
+    return False

@@ -1,4 +1,5 @@
 #badge {
+    height: 80%;
     margin-left: var(--page-margins);
     margin-right: var(--page-margins);
 }
@@ -20,4 +21,10 @@
 
 .badge__action span {
     color:rgba(0, 0, 0, 0.65);
+}
+
+#manage__button {
+    float: right; 
+    margin-top: 20px; 
+    margin-bottom: 20px;
 }

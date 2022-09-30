@@ -3,9 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
-
 import Input from "@components/Dashboard/Form/Input";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
+
+import { useOrganizationData } from "@components/Hooks/Api";
 
 const BadgeForm = () => {
     const [badgeName, setBadgeName] = useState("");
@@ -14,9 +15,9 @@ const BadgeForm = () => {
     const [badgeDelegates, setBadgeDelegates] = useState([""]);
 
     const imageInput = useRef();
-
     const navigate = useNavigate();
-    const { org } = useParams();
+    const { orgId } = useParams();
+    const { orgData, setOrgData } = useOrganizationData(orgId);
 
     const actions = [
         {
@@ -26,14 +27,17 @@ const BadgeForm = () => {
         }
     ]
 
-    // TODO: Hook this up to something
     const onCreateBadge = () => {
         console.log("Badge Name:", badgeName)
         console.log("Badge Image:", badgeImage)
         console.log("Badge Delegates:", badgeDelegates)
         const id = 0;
 
-        navigate(`/dashboard/badge/${org}&id=${id}`);
+        navigate(`/dashboard/badge/orgId=${orgId}&badgeId=${id}`);
+    }
+
+    const addBadgeToData = () => {
+
     }
 
     return (

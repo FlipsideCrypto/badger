@@ -1,26 +1,23 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 
 import IconButton from "@components/Button/IconButton";
-import Header from "../Header/Header";
+import Header from "@components/Dashboard/Header/Header";
+import { useOrganizationData } from "@components/Hooks/Api";
 
 import "@style/Dashboard/Org/Org.css";
 
 const Org = () => {
-    const { org } = useParams();
+    const { orgId } = useParams();
     const navigate = useNavigate();
-
-    const badges = [
-        // {
-        //     name: "Contributor",
-        // }
-    ]
+    const { orgData } = useOrganizationData(1);
+    console.log('orgData', orgData)
 
     return (
         <>
             <Header back={() => navigate(-1)} />
 
-            {badges.length > 0 ? 
-                badges.map((badge, index) => (
+            {orgData?.badges > 0 ? 
+                orgData.badges.map((badge, index) => (
                     <div key={"badge-" + index}>
                         <p>{badge.name}</p>
                     </div>
@@ -32,7 +29,7 @@ const Org = () => {
                         Congrats! You are one step closer to having the keys to your on-chain Organization. 
                         Now you can create and distribute your keys in a matter of seconds.
                     </p>
-                    <Link className="internal-link" to={`/dashboard/badge/new/${org}`}>
+                    <Link className="internal-link" to={`/dashboard/badge/new/orgId=${orgId}`}>
                         <IconButton icon={['fal', 'arrow-right']} text="CREATE" />
                     </Link>
                 </div>

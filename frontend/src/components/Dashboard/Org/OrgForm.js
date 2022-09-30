@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useNetwork } from "wagmi";
 
 import Header from "../Header/Header";
 import ActionBar from "../Form/ActionBar";
-
 import Input from "../Form/Input";
+
+import { API_URL } from "@static/constants/links";
 
 const OrgForm = () => {
     const [orgName, setOrgName] = useState("");
     const [orgSymbol, setOrgSymbol] = useState("");
+    const { chain } = useNetwork();
 
     const navigate = useNavigate();
 
@@ -32,12 +35,36 @@ const OrgForm = () => {
         }
     }
 
-    // TODO: Hook up contracts/API
     const onOrgFormSubmission = () => {
-        console.log('Org Name', orgName, "orgSymbol", orgSymbol)
-        const orgAddress = "0x1234567890";
+        console.log('orgName', orgName)
 
-        navigate(`/dashboard/organization/org=${orgAddress}`);
+        fetch(`${API_URL}/organizations/`, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            data: JSON.stringify(
+                {
+                    active: false,
+                    chain: "TEST",
+                    name: "TEST",
+                    symbol: orgSymbol,
+                    description: 'This is a super cool description.',
+                    image_hash: '',
+                    contract_uri_hash: '',
+                    contract_address: ''
+                }
+            )
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('got org response', data);
+        })
+
+        // DUMMY DATA
+        let orgId = 1;
+        navigate(`/dashboard/organization/orgId=${orgId}`);
     }
 
     return (
