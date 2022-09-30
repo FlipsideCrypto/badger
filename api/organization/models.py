@@ -1,7 +1,6 @@
 from django.db import models
 
 from badge.models import Badge 
-from user.models import User
 
 class Organization(models.Model):
     active = models.BooleanField(default=False)
@@ -16,8 +15,8 @@ class Organization(models.Model):
 
     contract_uri_hash = models.CharField(max_length=256, blank=True, null=True)
 
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='organization_owner', null=True)
-    delegates = models.ManyToManyField(User)
+    owner = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='organization_owner', null=True)
+    delegates = models.ManyToManyField('user.User', blank=True, related_name='organization_delegates')
     badges = models.ManyToManyField(Badge)
 
     created_at = models.DateTimeField(auto_now_add=True)

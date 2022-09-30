@@ -1,7 +1,5 @@
 from django.db import models
 
-from user.models import User 
-
 class Badge(models.Model):
     token_id = models.PositiveIntegerField(default=0)
 
@@ -10,8 +8,8 @@ class Badge(models.Model):
 
     description = models.TextField()
 
-    delegates = models.ManyToManyField(User, related_name='delegates', blank=True)
-    users = models.ManyToManyField(User, blank=True)
+    delegates = models.ManyToManyField('user.User', related_name='delegates', blank=True)
+    users = models.ManyToManyField('user.User', blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

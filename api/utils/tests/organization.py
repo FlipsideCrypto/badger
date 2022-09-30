@@ -9,6 +9,7 @@ def create_organization(
     description="Test Description", 
 ):
     organization = Organization.objects.create(
+        active=True,
         chain=chain,
         contract_address=contract_address,
         image_hash=image_hash,
