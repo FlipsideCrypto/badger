@@ -1,49 +1,60 @@
+import { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
+import { useAccount } from "wagmi";
 
-import OrgSidebar from "./Sidebar/OrgSidebar";
-import HelpSidebar from "./Sidebar/HelpSidebar";
+import DashboardContent from "@components/Dashboard/Content/DashboardContent";
+import OrgSidebar from "@components/Dashboard/Sidebar/OrgSidebar";
+import HelpSidebar from "@components/Dashboard/Sidebar/HelpSidebar";
 
-import DashboardContent from "./Content/DashboardContent";
-import WalletWrapper from "../Wallet/WalletWrapper";
-
-import Home from "./Home/Home";
-import OrgForm from './Org/OrgForm';
-import BadgeForm from "./Org/BadgeForm";
-import Badge from "../Dashboard/Org/Badge";
-import Org from "../Dashboard/Org/Org";
+import Home from "@components/Dashboard/Home/Home";
+import OrgForm from '@components/Dashboard/Org/OrgForm';
+import BadgeForm from "@components/Dashboard/Org/BadgeForm";
+import Badge from "@components/Dashboard/Org/Badge";
+import Org from "@components/Dashboard/Org/Org";
 
 import "@style/Dashboard/Dashboard.css";
-// import { useState } from "react";
 
 const Dashboard = () => {
-    // TODO: get orgs back as a state var. Removed for build preview
-    // const [organizations, setOrganizations] = useState([]);
-
-    const organizations = [
-        {
-            name: "Badger",
-            avatar: "https://avatars.githubusercontent.com/u/77760087?s=200&v=4",
-        }
-    ]
-
-    return (
-        <WalletWrapper>
-            <div className="dashboard">
-                <OrgSidebar organizations={organizations} />
-
-                <DashboardContent>
-                    <Routes>
-                        <Route path="/" element={ <Home /> } />
-                        <Route path="/organization/new" element={ <OrgForm /> } />
-                        <Route path="/organization/:org" element={ <Org /> } />
-                        <Route path="/badge/new/:org" element={ <BadgeForm /> } />
-                        <Route path="/badge/:org&:id" element={ <Badge /> } />
-                    </Routes>
-                </DashboardContent>
+    const [ userData, setUserData ] = useState();
+    const { address } = useAccount();
     
-                <HelpSidebar />
-            </div>
-        </WalletWrapper>
+    useEffect(() => {
+        if (!address) return;
+
+        fetch(`http://localhost:8000/users/?address=${address}`, {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('orgdata', data);
+            setUserData(data[0]);
+        })
+    }, [address])
+    
+    return (
+        <div className="dashboard">
+            <OrgSidebar
+                address={address}
+                organizations={userData?.organizations}
+                ensName={userData?.ens_name}
+            />
+
+            <DashboardContent>
+                <Routes>
+                    <Route path="/" element={ <Home /> } />
+                    <Route path="/organization/new" element={ <OrgForm /> } />
+                    <Route path="/organization/:org" element={ <Org /> } />
+                    <Route path="/badge/new/:org" element={ <BadgeForm /> } />
+                    <Route path="/badge/:org&:id" element={ <Badge /> } />
+                </Routes>
+            </DashboardContent>
+
+            <HelpSidebar />
+        </div>
     )
 }
 

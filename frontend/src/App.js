@@ -8,6 +8,7 @@ import Landing from '@components/Landing';
 
 import "./App.css";
 import Dashboard from '@components/Dashboard/Dashboard';
+import WalletWrapper from "@components/Wallet/WalletWrapper";
 
 library.add(fal)
 
@@ -26,14 +27,13 @@ function App() {
             <meta name="twitter:description" content="Badge-ify the roles that control the gates of your on-chain organization." />
           </Helmet>
 
-        
-          <Routes>
-            <Route exact path="/" element={<Landing />} />
+          <WalletWrapper>
+            <Routes>
+              <Route exact path="/" element={<Landing />} />
+              <Route exact path="/dashboard/*" element={<Dashboard />} />
+            </Routes>
+          </WalletWrapper>
 
-            {/* Dashboard pages */}
-            <Route exact path="/dashboard/*" element={<Dashboard />} />
-          </Routes>
-          {/* <Footer /> */}
         </Router>
       </HelmetProvider>
     </div>

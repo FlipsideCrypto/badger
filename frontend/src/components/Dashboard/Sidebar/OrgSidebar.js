@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Link } from 'react-router-dom';
+import { useEnsAvatar } from "wagmi";
 
 import { useConnectModal } from "@rainbow-me/rainbowkit"
-import { useAccount, useEnsName, useEnsAvatar } from "wagmi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { sliceAddress } from "@utils/helpers";
@@ -12,24 +12,18 @@ import '@rainbow-me/rainbowkit/dist/index.css';
 import "@style/Dashboard/Sidebar/Sidebar.css";
 import "@style/Dashboard/Sidebar/OrgSidebar.css";
 
-
-const OrgSidebar = ({ organizations }) => {
-    const { openConnectModal } = useConnectModal();
-
-    const { address } = useAccount();
-    const { data: ensName } = useEnsName({
-        address: address,
-    })
+const OrgSidebar = ({ organizations, address, ensName }) => {
     const { data: ensAvatar } = useEnsAvatar({
         addressOrName: address,
     })
 
+    const { openConnectModal } = useConnectModal();
     const placeholderAvatar = "https://avatars.githubusercontent.com/u/77760087?s=200&v=4";
 
     useEffect(() => {
-        if (openConnectModal) {
-            openConnectModal()
-        }
+        if (!openConnectModal) return;
+            
+        openConnectModal()
     }, [openConnectModal])
 
     return (
@@ -59,7 +53,7 @@ const OrgSidebar = ({ organizations }) => {
 
             {/* List of organizations */}
             <div className="sidebar__organizations">
-                {organizations.map((org, index) => (
+                {organizations?.map((org, index) => (
                     <div className="sidebar__organization" key={index}>
                         <img src={org.avatar} alt="avatar" />
                         <button className="button__unstyled">{org.name}</button>

@@ -1,8 +1,12 @@
 from rest_framework import serializers
 
+from user.serializers import UserSerializer 
+
 from .models import Badge
 
 class BadgeSerializer(serializers.ModelSerializer):
+    users = UserSerializer(many=True, read_only=True)
+    
     class Meta:
         model = Badge
         fields = (
@@ -12,6 +16,7 @@ class BadgeSerializer(serializers.ModelSerializer):
             'description', 
             'token_id',
             'image_hash', 
+            'users',
             'created_at', 
             'updated_at'
         )
