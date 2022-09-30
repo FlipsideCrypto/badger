@@ -6,12 +6,12 @@ from user.models import User
 class Organization(models.Model):
     active = models.BooleanField(default=False)
 
-    chain = models.CharField(max_length=50)
-    contract_address = models.CharField(max_length=50)
+    chain = models.CharField(max_length=50, blank=False, default=None)
+    contract_address = models.CharField(max_length=50, blank=False, default=None)
 
     image_hash = models.CharField(max_length=256, blank=True, null=True)
 
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, blank=False, default=None)
     description = models.TextField(max_length=4000, blank=True, null=True)
 
     contract_uri_hash = models.CharField(max_length=256, blank=True, null=True)
