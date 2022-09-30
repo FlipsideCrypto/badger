@@ -2,18 +2,23 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNetwork } from "wagmi";
 
-import Header from "../Header/Header";
-import ActionBar from "../Form/ActionBar";
-import Input from "../Form/Input";
+import Header from "@components/Dashboard/Header/Header";
+import ActionBar from "@components/Dashboard/Form/ActionBar";
+import Input from "@components/Dashboard/Form/Input";
+
+import { useOrganizationData, useUserData } from "@components/Hooks/Api";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const OrgForm = () => {
     const [orgName, setOrgName] = useState("");
     const [orgSymbol, setOrgSymbol] = useState("");
-    const { chain } = useNetwork();
 
+    const { address } = useNetwork();
+    const { chain } = useNetwork();
     const navigate = useNavigate();
+    const { orgData, setOrgData } = useOrganizationData(orgId);
+    const { userData, setUserData } = useUserData(address);
 
     const actions = [
         {

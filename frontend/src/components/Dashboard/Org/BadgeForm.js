@@ -6,6 +6,8 @@ import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 
+import { useOrganizationData } from "@components/Hooks/Api";
+
 const BadgeForm = ({name, desc, image, delegates}) => {
     const [badgeName, setBadgeName] = useState(name);
     const [badgeDescription, setBadgeDescription] = useState(desc);
@@ -15,6 +17,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     const imageInput = useRef();
     const navigate = useNavigate();
     const { orgId } = useParams();
+    const { orgData, setOrgData } = useOrganizationData(orgId);
 
     const actions = [
         {
@@ -24,17 +27,28 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         }
     ]
 
+    // TODO: Post request and return badge id
     const onCreateBadge = () => {
         console.log("Badge Name:", badgeName)
         console.log("Badge Image:", badgeImage)
         console.log("Badge Delegates:", badgeDelegates)
-        const id = 0;
 
-        navigate(`/dashboard/badge/orgId=${orgId}&badgeId=${id}`);
+        const badgeId = 0;
+        addBadgeToData(badgeId)
+
+        navigate(`/dashboard/badge/orgId=${orgId}&badgeId=${badgeId}`);
     }
 
-    const addBadgeToData = () => {
+    // TODO: Make sure this matches the data structure
+    const addBadgeToData = (badgeId) => {
+        let newOrgData = {...orgData};
+        newOrgData.badges[badgeId] = {
+            name: badgeName,
+            description: badgeDescription,
+            image: badgeImage,
+        }
 
+        setOrgData(newOrgData);
     }
 
     return (

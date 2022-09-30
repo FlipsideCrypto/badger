@@ -1,3 +1,4 @@
 from django.test import TestCase
 
-# Create your tests here.
+class UserTestCase(TestCase):
+    def test_user_creation(self):

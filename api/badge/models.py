@@ -19,10 +19,8 @@ class Badge(models.Model):
     def __str__(self):
         return self.name
 
-    def delegate(self, user):
-        if user not in self.delegates.all():
-            self.delegates.add(user)
-        raise ValueError('User is already a delegate')
+    def delegate(self, delegate):
+        print("GOT DELEGATE", delegate)
 
     def undelegate(self, user):
         if user in self.delegates.all():

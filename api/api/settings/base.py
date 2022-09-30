@@ -37,6 +37,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'api.urls'
 
+AUTH_USER_MODEL = "user.User"  
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
