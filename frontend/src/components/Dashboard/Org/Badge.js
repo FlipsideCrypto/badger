@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -8,7 +8,7 @@ import IconButton from "@components/Button/IconButton";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import Select from "@components/Dashboard/Form/Select";
 
-import { useOrgData } from "@components/Hooks/Api";
+import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 
 import "@style/Dashboard/Org/Badge.css";
 
@@ -18,10 +18,11 @@ const Badge = () => {
     const [ updateOption, setUpdateOption ] = useState("Mint");
 
     const { orgId, badgeId } = useParams();
-    const { orgData } = useOrgData(orgId);
+    const { orgData } = useContext(OrgContext);
     const navigate = useNavigate();
 
-    const badge = orgData?.[badgeId];
+    // const badge = null || orgData?.[orgId]?.badges?.[badgeId];
+    const badge = null || orgData[orgId].badges[badgeId];
 
     const actions = [{
         text: "Manage",

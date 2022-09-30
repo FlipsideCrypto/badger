@@ -8,12 +8,14 @@ import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 
 import { useOrgData } from "@components/Hooks/Api";
 
+// TODO: Check the orgData context and if the badge is in it then
+//       get the badge and set the state, and change component to "edit mode". (get rid of props)
 const BadgeForm = ({name, desc, image, delegates}) => {
-    const [badgeName, setBadgeName] = useState(name);
-    const [badgeDescription, setBadgeDescription] = useState(desc);
+    const [badgeName, setBadgeName] = useState(name || "");
+    const [badgeDescription, setBadgeDescription] = useState(desc || "");
     const [badgeImage, setBadgeImage] = useState(image || {name: ""});
     const [badgeDelegates, setBadgeDelegates] = useState(delegates || [""]);
-
+    
     const imageInput = useRef();
     const navigate = useNavigate();
     const { orgId } = useParams();
@@ -41,12 +43,18 @@ const BadgeForm = ({name, desc, image, delegates}) => {
 
     // TODO: Make sure this matches the data structure
     const addBadgeToState = (badgeId) => {
-        let newOrgData = {...orgData};
-        newOrgData.badges[badgeId] = {
+        const badgeObj = {
             name: badgeName,
             description: badgeDescription,
             image: badgeImage,
         }
+        let newOrgData = {...orgData};
+
+        // TODO: this is fucked rn
+        if (newOrgData[orgId]?.badges)
+            newOrgData[orgId].badges[badgeId] = badgeObj;
+        else
+            newOrgData[orgId].badges = [badgeObj];
 
         setOrgData(newOrgData);
     }

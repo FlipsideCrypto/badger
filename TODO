@@ -11,10 +11,18 @@ This todo is using Kanban format. Every number next to it is the priority. Just 
 
 [] In Progress
 [10] - Finish the static implementation of the Dashboard pages. @mason
+     - Determine placement of API post and get requests
+     - Determine when we're running the transactions
+     - Post request after a transaction is completed to show that the obj in database is not a ghost obj.
+[9]  - Navigation in general
+        - The Header navigation should be directly linked and not just back in the history
+        - I feel like there's probably an issue somewhere with how query params are being handled
+[9]  - Badges shown in navbar when in an org level dash page
 
 [] Review
 [3] - Wallet integration.
     - Pending completion of contract integration.
+[5] - Possibly use local cache for org and user data instead of context
 
 [] Done
 [3] - Setup redirecting of the actual deployment.

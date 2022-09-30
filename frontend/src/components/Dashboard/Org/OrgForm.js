@@ -1,24 +1,22 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { useNetwork, useAccount } from "wagmi";
+import { useNetwork } from "wagmi";
 
 import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 
-import { useOrgData, useUserData } from "@components/Hooks/Api";
+import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const OrgForm = () => {
     const [orgName, setOrgName] = useState("");
     const [orgSymbol, setOrgSymbol] = useState("");
+    const { userData, setUserData } = useContext(UserContext);
 
-    const { address } = useAccount();
     const { chain } = useNetwork();
     const navigate = useNavigate();
-    // const { orgData, setOrgData } = useOrgData(orgId);
-    const { userData, setUserData } = useUserData(address);
 
     const actions = [
         {
@@ -65,14 +63,19 @@ const OrgForm = () => {
             console.log('got org response', data);
         })
 
-        orgObj.id = 0; // DUMMY value
+        orgObj.id = 0; // TODO: replace dummy value with returned id
         addOrgToState(orgObj);
         navigate(`/dashboard/organization/orgId=${orgObj.id}`);
     }
 
     const addOrgToState = (org) => {
-        let newUserData = userData;
-        newUserData.organizations.push(org);
+        let newUserData = {...userData};
+
+        if (newUserData.organizations)
+            newUserData.organizations.push(org);
+        else
+            newUserData.organizations = [org];
+
         setUserData(newUserData);
     }
 

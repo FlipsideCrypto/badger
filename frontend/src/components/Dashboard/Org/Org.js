@@ -1,23 +1,23 @@
+import { useContext } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
 import IconButton from "@components/Button/IconButton";
 import Header from "@components/Dashboard/Header/Header";
-import { useOrgData } from "@components/Hooks/Api";
+import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 
 import "@style/Dashboard/Org/Org.css";
 
 const Org = () => {
     const { orgId } = useParams();
     const navigate = useNavigate();
-    const { orgData } = useOrgData(orgId);
-    console.log('orgData', orgData)
+    const { orgData } = useContext(OrgContext);
 
     return (
         <>
             <Header back={() => navigate(-1)} />
 
-            {orgData?.badges > 0 ? 
-                orgData.badges.map((badge, index) => (
+            {orgData?.[orgId]?.badges > 0 ? 
+                orgData[orgId].badges.map((badge, index) => (
                     <div key={"badge-" + index}>
                         <p>{badge.name}</p>
                     </div>

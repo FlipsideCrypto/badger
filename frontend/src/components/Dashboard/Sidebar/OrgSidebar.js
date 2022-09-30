@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { Link } from 'react-router-dom';
+import { useEffect, useContext } from "react";
+import { Link, useParams } from 'react-router-dom';
 import { useEnsAvatar } from "wagmi";
 
 import { useConnectModal } from "@rainbow-me/rainbowkit"
@@ -8,7 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Logout from "./Logout/Logout";
 
 import { sliceAddress } from "@utils/helpers";
-import { useOrgData, useUserData } from "@components/Hooks/Api";
+import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
+import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 
 import '@rainbow-me/rainbowkit/dist/index.css';
 import "@style/Dashboard/Sidebar/Sidebar.css";
@@ -20,10 +21,10 @@ const OrgSidebar = ({ address }) => {
     const { data: ensAvatar } = useEnsAvatar({
         addressOrName: address,
     });
-
-    const { userData } = useUserData(address);
-    // const { orgData } = useOrganizationData();
-
+    
+    const { orgId } = useParams();
+    const { userData } = useContext(UserContext);
+    const { orgData } = useContext(OrgContext);
 
     useEffect(() => {
         if (!openConnectModal) return;
@@ -60,16 +61,11 @@ const OrgSidebar = ({ address }) => {
             <div className="sidebar__organizations">
                 {userData?.organizations?.map((org, index) => (
                     <div className="sidebar__organization" key={index}>
-                        <img src={org.avatar} alt="avatar" />
+                        <img src={org.avatar || placeholderAvatar} alt="avatar" />
                         <button className="button__unstyled">{org.name}</button>
                     </div>
                 ))}
             </div>
-
-            <button onClick={() => console.log('sidebar', userData)}>
-                    TEST
-            </button>
-
             {/* Logout button */}
             <Logout />
         </div>
