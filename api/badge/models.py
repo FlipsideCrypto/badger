@@ -9,6 +9,7 @@ class Badge(models.Model):
     description = models.TextField(max_length=4000)
     image_hash = models.CharField(max_length=256)
 
+    delegates = models.ManyToManyField(User, related_name='delegates')
     users = models.ManyToManyField(User)
 
     created_at = models.DateTimeField(auto_now_add=True)

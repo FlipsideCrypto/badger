@@ -16,6 +16,7 @@ class BadgeSerializer(serializers.ModelSerializer):
             'description', 
             'token_id',
             'image_hash', 
+            'delegates',
             'users',
             'created_at', 
             'updated_at'
