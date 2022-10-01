@@ -1,24 +1,23 @@
 from django.db import models
 
 from badge.models import Badge 
-from user.models import User
 
 class Organization(models.Model):
     active = models.BooleanField(default=False)
 
-    chain = models.CharField(max_length=50)
-    contract_address = models.CharField(max_length=50)
+    chain = models.CharField(max_length=50, blank=False, default=None)
+    contract_address = models.CharField(max_length=50, blank=False, default=None)
 
     image_hash = models.CharField(max_length=256, blank=True, null=True)
 
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, blank=False, default=None)
     description = models.TextField(max_length=4000, blank=True, null=True)
 
     contract_uri_hash = models.CharField(max_length=256, blank=True, null=True)
 
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='organization_owner', null=True)
-    delegates = models.ManyToManyField(User)
-    badges = models.ManyToManyField(Badge)
+    owner = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='organization_owner', null=True)
+    delegates = models.ManyToManyField('user.User', blank=True, related_name='organization_delegates')
+    badges = models.ManyToManyField(Badge, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

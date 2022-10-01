@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from organization.models import Organization
+from organization.serializers import OrganizationSerializer
 
 from .models import User
 
@@ -25,18 +25,9 @@ from .models import User
 #             raise serializers.ValidationError('Invalid signature')
 #         return data
 
-class UserOrganizationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Organization
-        fields = (
-            'url',
-            'id', 
-            'name', 
-            'image_hash',
-        )
 
 class UserSerializer(serializers.ModelSerializer):
-    organizations = UserOrganizationSerializer(many=True)
+    organizations = OrganizationSerializer(many=True)
     tutorial_state = serializers.SerializerMethodField()
     ens_name = serializers.SerializerMethodField()
 
@@ -50,7 +41,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'url',
-            'id',
             'address',
             'organizations',
             'tutorial_state',

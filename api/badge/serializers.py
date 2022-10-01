@@ -1,11 +1,20 @@
-from rest_framework import serializers
+from django.contrib.auth import get_user_model
 
-from user.serializers import UserSerializer 
+from rest_framework import serializers
 
 from .models import Badge
 
+User = get_user_model()
+
+class BadgeUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'url',
+            'address'
+        )
 class BadgeSerializer(serializers.ModelSerializer):
-    users = UserSerializer(many=True, read_only=True)
+    users = BadgeUserSerializer(many=True, read_only=True)
     
     class Meta:
         model = Badge
