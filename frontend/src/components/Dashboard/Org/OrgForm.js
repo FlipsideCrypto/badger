@@ -62,6 +62,9 @@ const OrgForm = () => {
         .then(data => {
             console.log('got org response', data);
         })
+        .catch(error => {
+            console.error('Error creating org', error);
+        })
 
         orgObj.id = 0; // TODO: replace dummy value with returned id
         addOrgToState(orgObj);

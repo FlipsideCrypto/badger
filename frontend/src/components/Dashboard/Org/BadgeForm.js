@@ -9,7 +9,7 @@ import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import { useOrgData } from "@components/Hooks/Api";
 
 // TODO: Check the orgData context and if the badge is in it then
-//       get the badge and set the state, and change component to "edit mode". (get rid of props)
+//       get the badge and set the state, and change component to "edit mode". (also get rid of props)
 const BadgeForm = ({name, desc, image, delegates}) => {
     const [badgeName, setBadgeName] = useState(name || "");
     const [badgeDescription, setBadgeDescription] = useState(desc || "");
