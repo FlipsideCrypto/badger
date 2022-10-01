@@ -3,6 +3,8 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
+from siwe_auth.custom_groups.erc721 import ERC721OwnerManager
+
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -12,6 +14,8 @@ DEBUG = os.getenv('DEBUG', False)
 
 # Application definition
 INSTALLED_APPS = [
+    'siwe_auth.apps.SiweAuthConfig',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -22,7 +26,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'django_filters',
-    
+
     'badge',
     'user',
     'organization',
@@ -128,3 +132,16 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Web3 settings
 ALCHEMY_API_KEY = os.getenv("ALCHEMY_API_KEY")
+AUTHENTICATION_BACKENDS = ["siwe_auth.backend.SiweBackend"]
+
+LOGIN_URL = "/"
+
+SESSION_COOKIE_AGE = 3 * 60 * 60
+CREATE_GROUPS_ON_AUTHN = False  # defaults to False
+CREATE_ENS_PROFILE_ON_AUTHN = True  # defaults to True
+CUSTOM_GROUPS = [
+    ('ens_owners', ERC721OwnerManager(
+        config={'contract': '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85'})),
+]  
+PROVIDER = os.environ.get("SIWE_AUTH_PROVIDER",
+                          "https://mainnet.infura.io/v3/...")

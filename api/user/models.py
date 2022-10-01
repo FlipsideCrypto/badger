@@ -1,14 +1,15 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from utils.web3 import get_ens_name, verify_signature
+from siwe_auth.models import Wallet 
 
-from address.models import AddressField
+from utils.web3 import verify_signature
+
 from badge.models import Badge
 from organization.models import Organization
 
-class User(AbstractUser):
-    address = AddressField(unique=True, blank=False, default=None)
+class User(Wallet):
+    address = models.CharField(max_length=72, unique=True, blank=False, default=None)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -17,7 +18,6 @@ class User(AbstractUser):
     _organizations = None
     _badges = None
     _tutorial_state = None
-    _ens_name = None
 
     def _get_organizations(self):
         if self._organizations is None:
@@ -34,11 +34,6 @@ class User(AbstractUser):
             self._tutorial_state = self.get_tutorial_state()
         return self._tutorial_state
 
-    def _get_ens_name(self):
-        if self._ens_name is None:
-            self._ens_name = self.get_ens_name()
-        return self._ens_name
-
     @property
     def organizations(self): 
         return self._get_organizations()
@@ -50,10 +45,6 @@ class User(AbstractUser):
     @property
     def tutorial_state(self):
         return self._get_tutorial_state()
-
-    @property
-    def ens_name(self):
-        return self._get_ens_name()
 
     def __str__(self):
         return self.address
@@ -74,8 +65,5 @@ class User(AbstractUser):
             return 1
         return 2
     
-    def get_ens_name(self):
-        return get_ens_name(self.address)
-
     def verify_signature(self, signature):
         return verify_signature(self.address, signature)
