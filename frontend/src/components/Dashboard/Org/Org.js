@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 import IconButton from "@components/Button/IconButton";
@@ -9,11 +9,13 @@ import "@style/Dashboard/Org/Org.css";
 
 const Org = () => {
     const navigate = useNavigate();
-    const { orgData } = useContext(OrgContext);
+    const { orgData, setCurrentOrgId } = useContext(OrgContext);
     const params = new URLSearchParams(window.location.search);
     const orgId = params.get("orgId");
 
-    console.log("ORG -- orgId & orgData", orgId, orgData)
+    useEffect(() => {
+        setCurrentOrgId(orgId)
+    }, [orgId, setCurrentOrgId]);
 
     return (
         <>

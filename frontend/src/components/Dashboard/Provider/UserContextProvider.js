@@ -7,7 +7,6 @@ const UserContextProvider = ({ children, address }) => {
     const [ userData, setUserData ] = useState();
 
     useEffect(() => {
-        console.log('User context: getting user data');
         if (!address) return void {};
         
         fetch(`${API_URL}/users/by-address/${address}`, {
@@ -19,6 +18,7 @@ const UserContextProvider = ({ children, address }) => {
         })
         .then(res => res.json())
         .then(data => {
+            if (data.length < 1) throw new Error("No user data found");
             console.log('got user data', data);
             setUserData(data[0]);
         })

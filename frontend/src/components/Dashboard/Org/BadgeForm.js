@@ -20,7 +20,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     const navigate = useNavigate();
     const params = new URLSearchParams(window.location.search);
     const orgId = params.get("orgId");
-    const { addBadgeToOrg } = useContext(OrgContext);
+    const { orgData, setOrgData } = useContext(OrgContext);
 
     const actions = [
         {
@@ -32,10 +32,6 @@ const BadgeForm = ({name, desc, image, delegates}) => {
 
     // TODO: Post request and return badge id
     const onCreateBadge = () => {
-        console.log("Badge Name:", badgeName)
-        console.log("Badge Image:", badgeImage)
-        console.log("Badge Delegates:", badgeDelegates)
-
         const badgeId = 0;
 
         const badgeObj = {
@@ -43,8 +39,12 @@ const BadgeForm = ({name, desc, image, delegates}) => {
             description: badgeDescription,
             image: badgeImage,
         }
-    
-        addBadgeToOrg(badgeObj, orgId);
+
+        console.log('Creating badge', badgeObj)
+
+        let prev = {...orgData}
+        prev.badges.push(badgeObj)
+        setOrgData(prev)
 
         navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${badgeId}`);
     }

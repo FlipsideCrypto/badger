@@ -62,6 +62,7 @@ const OrgForm = () => {
             .then(res => res.json())
             .then(data => {
                 console.log('got org response', data);
+                if (!data?.id) throw new Error("Org POST request failed");
                 orgObj.id = data.id;
             })
             .catch(err => {

@@ -23,7 +23,7 @@ const Badge = () => {
     const { orgData } = useContext(OrgContext);
     const navigate = useNavigate();
 
-    const badge = null || orgData[orgId].badges[badgeId];
+    const badge = null || orgData.badges[badgeId];
 
     const actions = [{
         text: "Manage",
@@ -38,9 +38,10 @@ const Badge = () => {
         "Remove Leader": "removeLeaders",
     }
 
+    // TODO: Hook up contract hooks and API POST
     const onMemberUpdate = () => {
-        console.log(membersToUpdate)
-        console.log(updateOption)
+        console.log("Members to Update", membersToUpdate)
+        console.log("Method to call", updateOption)
     }
 
     return (
