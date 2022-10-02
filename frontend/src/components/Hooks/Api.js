@@ -13,22 +13,27 @@ export const useUserData = (address) => {
     useEffect(() => {
         if (!address) return void {};
         
-        fetch(`${API_URL}/users/by-address/${address}/`, {
-            method: "GET",
-            mode: "cors",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log('got user data', data);
-            setUserData(data[0]);
-        })
-        .catch(err => {
+        try {
+            fetch(`${API_URL}/users/by-address/${address}/`, {
+                method: "GET",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('got user data', data);
+                setUserData(data[0]);
+            })
+            .catch(err => {
+                console.log('error fetching user data', err);
+                setUserData(placeholderUserData);
+            })
+        } catch (err) {
             console.log('error fetching user data', err);
             setUserData(placeholderUserData);
-        })
+        }
     }, [address])
 
     return { userData, setUserData };
@@ -50,43 +55,28 @@ export const useOrgData = (id) => {
     useEffect(() => {
         if (!id) return void {};
 
-        fetch(`${API_URL}/organizations/${id}/`, {
-            method: "GET",
-            mode: "cors",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log('got org data', data);
-            setOrgData(data);
-        })
-        .catch(error => {
-            console.error('Error getting org data', error);
+        try {
+            fetch(`${API_URL}/organizations/${id}/`, {
+                method: "GET",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('got org data', data);
+                setOrgData(data);
+            })
+            .catch(err => {
+                console.error('Error getting org data', err);
+                setOrgData(placeholderOrgData);
+            })
+        } catch (err) {
+            console.error('Error getting org data', err);
             setOrgData(placeholderOrgData);
-        })
+        }
     }, [id])
 
     return { orgData, setOrgData };
-}
-
-export const createOrganization = (org) => {
-    fetch(`${API_URL}/organizations/}/`, {
-        method: "POST",
-        mode: "cors",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        data: {
-            name: org.orgName,
-            symbol: org.orgSymbol,
-            owner: org.address,
-            chain: org.chain,
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log('got org response', data);
-    })
 }

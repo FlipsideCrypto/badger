@@ -2,13 +2,12 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNetwork } from "wagmi";
 
+import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 
-import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
-
-const API_URL = process.env.REACT_APP_API_URL;
+import { API_URL } from "@static/constants/links";
 
 const OrgForm = () => {
     const [orgName, setOrgName] = useState("");
@@ -50,25 +49,32 @@ const OrgForm = () => {
             contract_address: ''
         }
         
-        fetch(`${API_URL}/organizations/`, {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            data: JSON.stringify(orgObj)
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log('got org response', data);
-        })
-        .catch(error => {
-            console.error('Error creating org', error);
-        })
+        // TODO: POST not allowed with current permissions
+        try {
+            fetch(`${API_URL}/organizations/}/`, {
+                method: "POST",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                data: orgObj
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('got org response', data);
+                if (!data?.id) throw new Error("Org POST request failed");
+                orgObj.id = data.id;
+            })
+            .catch(err => {
+                console.log('error creating org', err);
+            })
+        } catch (err) {
+            console.log('error creating org', err);
+        }
 
         orgObj.id = 0; // TODO: replace dummy value with returned id
         addOrgToState(orgObj);
-        navigate(`/dashboard/organization/orgId=${orgObj.id}`);
+        navigate(`/dashboard/organization?orgId=${orgObj.id}`);
     }
 
     const addOrgToState = (org) => {

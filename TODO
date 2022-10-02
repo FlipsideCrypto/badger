@@ -18,6 +18,7 @@ This todo is using Kanban format. Every number next to it is the priority. Just 
         - The Header navigation should be directly linked and not just back in the history
         - I feel like there's probably an issue somewhere with how query params are being handled
 [9]  - Badges shown in navbar when in an org level dash page
+[6]  - need to throw an error if api call resolves but returns null without error raise
 
 [] Review
 [3] - Wallet integration.
