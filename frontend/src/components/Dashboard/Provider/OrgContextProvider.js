@@ -1,17 +1,44 @@
-import { useState, createContext } from "react"
+import { useState, createContext, useEffect } from "react"
+import { API_URL } from "@static/constants/links"
 
 export const OrgContext = createContext();
 
-// TODO: I think it would work best if we had an array of org objs and pushed to it
-//       when an ID that has not been fetched before is passed in.
-//       context meets memoization meets cache.
-// TODO: would it also make sense to have the API call be present in here and guard it with
-//       a check to see if the orgData is already present in the array?
+// TODO: Would it be better to have orgContext hold all fetched orgData?
+//       And then have a separate context for the current org? 
+//       Or a method to get out just an org with index?
 const OrgContextProvider = ({ children }) => {
     const [ orgData, setOrgData ] = useState();
+    const [ currentOrgId, setCurrentOrgId ] = useState();
+
+    useEffect(() => {
+        if (orgData?.id === currentOrgId) return
+
+        try {
+            fetch(`${API_URL}/organizations/${currentOrgId}/`, {
+                method: "GET",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('got org data', data);
+                // TODO: Remove this, had to add it for testing while the API returns without an error
+                if (data.detail === 'Not found.') data = {name: "dummy", id: currentOrgId, badges: []};
+                setOrgData(data)
+            })
+            .catch(err => {
+                console.error('Error getting org data', err);
+            })
+        } catch (err) {
+            console.error('Error getting org data', err);
+        }
+
+    }, [currentOrgId, orgData, setOrgData])
 
     return (
-        <OrgContext.Provider value={{orgData, setOrgData}}>
+        <OrgContext.Provider value={{orgData, setOrgData, currentOrgId, setCurrentOrgId }}>
             {children}
         </OrgContext.Provider>
     )

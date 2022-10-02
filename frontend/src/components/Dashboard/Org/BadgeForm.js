@@ -1,12 +1,12 @@
-import { useState, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useRef, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 
-import { useOrgData } from "@components/Hooks/Api";
+import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 
 // TODO: Check the orgData context and if the badge is in it then
 //       get the badge and set the state, and change component to "edit mode". (also get rid of props)
@@ -18,8 +18,9 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     
     const imageInput = useRef();
     const navigate = useNavigate();
-    const { orgId } = useParams();
-    const { orgData, setOrgData } = useOrgData(orgId);
+    const params = new URLSearchParams(window.location.search);
+    const orgId = params.get("orgId");
+    const { orgData, setOrgData } = useContext(OrgContext);
 
     const actions = [
         {
@@ -31,32 +32,21 @@ const BadgeForm = ({name, desc, image, delegates}) => {
 
     // TODO: Post request and return badge id
     const onCreateBadge = () => {
-        console.log("Badge Name:", badgeName)
-        console.log("Badge Image:", badgeImage)
-        console.log("Badge Delegates:", badgeDelegates)
-
         const badgeId = 0;
-        addBadgeToState(badgeId)
 
-        navigate(`/dashboard/badge/orgId=${orgId}&badgeId=${badgeId}`);
-    }
-
-    // TODO: Make sure this matches the data structure
-    const addBadgeToState = (badgeId) => {
         const badgeObj = {
             name: badgeName,
             description: badgeDescription,
             image: badgeImage,
         }
-        let newOrgData = {...orgData};
 
-        // TODO: this is fucked rn
-        if (newOrgData[orgId]?.badges)
-            newOrgData[orgId].badges[badgeId] = badgeObj;
-        else
-            newOrgData[orgId].badges = [badgeObj];
+        console.log('Creating badge', badgeObj)
 
-        setOrgData(newOrgData);
+        let prev = {...orgData}
+        prev.badges.push(badgeObj)
+        setOrgData(prev)
+
+        navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${badgeId}`);
     }
 
     return (
