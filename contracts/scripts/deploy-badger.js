@@ -18,49 +18,52 @@ async function main() {
     const chainId = await hre.getChainId()
     
     /*//////////////////////////////////////////////////////////////
-                        DEPLOYING BASE CONTRACT
+                    DEPLOYING MASTER SASH CONTRACT
     //////////////////////////////////////////////////////////////*/
 
-    const BadgerSet = await ethers.getContractFactory("BadgerSet");
-    set = await BadgerSet.deploy();
-    set = await set.deployed();
-    console.log("✅ Base Set Deployed.")
+    const BadgerSash = await ethers.getContractFactory("BadgerSash");
+    sashMaster = await BadgerSash.deploy();
+    sashMaster = await sashMaster.deployed();
+    console.log("✅ Base Sash Deployed.")
 
     console.table({
         "Chain ID": chainId,
         "Deployer": deployer.address,
-        "Contract Address": set.address,
+        "Master Sash Address": sashMaster.address,
+        "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
+    })
+
+    /*//////////////////////////////////////////////////////////////
+                        DEPLOYING HOUSE CONTRACT
+    //////////////////////////////////////////////////////////////*/    
+    const BadgerHouse = await ethers.getContractFactory("BadgerHouse");
+    house = await BadgerHouse.deploy(sashMaster.address);
+    house = await house.deployed();
+
+    console.table({
+        "Chain ID": chainId,
+        "Deployer": deployer.address,
+        "Badger House Address": house.address,
         "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
     })
 
     // Verifying
-    // if (chainId != '31337') {
-    //     // Give time for etherscan to confirm the contract before verifying.
-    //     await new Promise(r => setTimeout(r, 30000));
-    //     await hre.run("verify:verify", {
-    //         address: set.address,
-    //         constructorArguments: [
-    //             ...arguments
-    //         ],
-    //     });
-    //     console.log("✅ Base set Verified.")
-    // }
+    if (chainId != '31337') {
+        // Give time for etherscan to confirm the contract before verifying.
+        await new Promise(r => setTimeout(r, 30000));
+        await hre.run("verify:verify", {
+            address: sashMaster.address,
+            constructorArguments: [],
+        });
+        console.log("✅ Master Sash Verified.")
 
-    /*//////////////////////////////////////////////////////////////
-                        DEPLOYING PROXY MANAGER
-    //////////////////////////////////////////////////////////////*/    
-    const BadgerProxy = await ethers.getContractFactory("Badger");
-    proxy = await BadgerProxy.deploy(
-        set.address
-    );
-    proxy = await proxy.deployed();
-    console.log("✅ Proxy Deployed.")
-
-    console.table({
-        "Deployer": deployer.address,
-        "Contract Address": proxy.address,
-        "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
-    })
+        await new Promise(r => setTimeout(r, 30000));
+        await hre.run("verify:verify", {
+            address: house.address,
+            constructorArguments: [sashMaster.address],
+        });
+        console.log("✅ Badger House Verified.")
+    }
 }
 
 main()
