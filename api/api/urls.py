@@ -14,5 +14,5 @@ router.registry.extend(organizations_router.registry)
 
 urlpatterns = router.urls + [
     path('admin/', admin.site.urls),
-    path("auth/", include("siwe_auth.urls")),
+    path("api/auth/", include("siwe_auth.urls")),
 ]

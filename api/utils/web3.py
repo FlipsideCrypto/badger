@@ -2,7 +2,7 @@ from django.conf import settings
 from web3 import HTTPProvider, Web3
 from ens import ENS
 
-provider = HTTPProvider(f'https://eth-mainnet.g.alchemy.com/v2/{settings.ALCHEMY_API_KEY}')
+provider = HTTPProvider(settings.PROVIDER)
 w3 = Web3(provider)
 ns = ENS.fromWeb3(w3)
 
