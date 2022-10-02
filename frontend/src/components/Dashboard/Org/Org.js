@@ -19,7 +19,7 @@ const Org = () => {
 
     return (
         <>
-            <Header back={() => navigate(-1)} />
+            <Header back={() => navigate("/dashboard/organization/new")} />
 
             {orgData?.[orgId]?.badges > 0 ? 
                 orgData[orgId].badges.map((badge, index) => (

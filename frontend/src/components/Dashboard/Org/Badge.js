@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -23,7 +23,7 @@ const Badge = () => {
     const { orgData } = useContext(OrgContext);
     const navigate = useNavigate();
 
-    const badge = null || orgData.badges[badgeId];
+    const badge = null || orgData?.badges[badgeId];
 
     const actions = [{
         text: "Manage",
@@ -44,9 +44,13 @@ const Badge = () => {
         console.log("Method to call", updateOption)
     }
 
+    useEffect(() => {
+        if (!orgData) navigate("/dashboard/");
+    }, [orgData, navigate])
+
     return (
         <>
-            <Header back={() => navigate(-1)} actions={actions} />
+            <Header back={() => navigate(`/dashboard/badge/new?orgId=${orgId}`)} actions={actions} />
 
             <div id="badge">
                 <div className="center__gutter">

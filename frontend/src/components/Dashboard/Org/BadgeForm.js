@@ -1,4 +1,4 @@
-import { useState, useRef, useContext } from "react";
+import { useState, useRef, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Header from "@components/Dashboard/Header/Header";
@@ -35,6 +35,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         const badgeId = 0;
 
         const badgeObj = {
+            id: badgeId,
             name: badgeName,
             description: badgeDescription,
             image: badgeImage,
@@ -49,9 +50,13 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${badgeId}`);
     }
 
+    useEffect(() => {
+        if (!orgData) navigate("/dashboard/");
+    }, [orgData, navigate])
+
     return (
         <div id="new-badge">
-            <Header back={() => navigate(-1)} />
+            <Header back={() => navigate("/dashboard/")} />
 
             <h2>Create Badge</h2>
             <Input

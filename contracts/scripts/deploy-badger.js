@@ -5,7 +5,6 @@
 
 const hre = require("hardhat");
 
-const { assert } = require('chai');
 const { getChainId, ethers } = require("hardhat");
 
 async function main() {
@@ -15,7 +14,7 @@ async function main() {
     const [deployer] = await ethers.getSigners();
     console.log(`✅ Connected to ${deployer.address}`);
     
-    const chainId = await hre.getChainId()
+    const chainId = await getChainId()
     
     /*//////////////////////////////////////////////////////////////
                     DEPLOYING MASTER SASH CONTRACT

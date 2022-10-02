@@ -90,7 +90,7 @@ const OrgForm = () => {
 
     return (
         <div id="new-org">
-            <Header back={() => navigate(-1)} />
+            <Header back={() => navigate("/dashboard")} />
 
             <h2>Create Organization</h2>
 

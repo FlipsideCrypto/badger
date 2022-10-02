@@ -86,10 +86,10 @@ const OrgSidebar = ({ address }) => {
                 {orgId && orgData?.name ?
                     orgData?.badges?.map((badge, index) => (
                         <div className="sidebar__organization" key={index}>
-                            <img src={badge.image || placeholderAvatar} alt="avatar" />
+                            <img src={badge.image?.file || placeholderAvatar} alt="avatar" />
                             <button 
                                 className="button__unstyled"
-                                onClick={() => navigate(`/dashboard/organization?orgId=${orgData.id}&badgeId=${badge.id}`)}
+                                onClick={() => navigate(`/dashboard/badge?orgId=${orgData.id}&badgeId=${badge.id}`)}
                             >{badge.name}</button>
                         </div>
                     ))
