@@ -27,15 +27,11 @@ from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    organizations = OrganizationSerializer(many=True)
-    tutorial_state = serializers.SerializerMethodField()
-    ens_name = serializers.SerializerMethodField()
+    organizations = OrganizationSerializer(many=True, read_only=True)
+    tutorial_state = serializers.SerializerMethodField(read_only=True)
 
     def get_tutorial_state(self, obj):
         return obj.tutorial_state
-
-    def get_ens_name(self, obj):
-        return obj.ens_name
 
     class Meta:
         model = User
@@ -44,6 +40,5 @@ class UserSerializer(serializers.ModelSerializer):
             'address',
             'organizations',
             'tutorial_state',
-            'ens_name'
         )
         depth = 1

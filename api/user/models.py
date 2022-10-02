@@ -51,8 +51,8 @@ class User(Wallet):
 
     def get_organizations(self):
         return (
-            Organization.objects.filter(owner__id=self.id) | 
-            Organization.objects.filter(delegates__id__contains=self.id)
+            Organization.objects.filter(owner__address=self.pk) | 
+            Organization.objects.filter(delegates__address__contains=self.pk)
         ).filter(active=True).distinct()
 
     def get_badges(self):
