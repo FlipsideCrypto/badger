@@ -1,5 +1,5 @@
 import { useEffect, useContext } from "react";
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEnsAvatar } from "wagmi";
 
 import { useConnectModal } from "@rainbow-me/rainbowkit"
@@ -24,16 +24,14 @@ const OrgSidebar = ({ address }) => {
     
     const navigate = useNavigate();
     const { userData } = useContext(UserContext);
-    const { orgData } = useContext(OrgContext);
+    const { orgData, getOrgData } = useContext(OrgContext);
     
-    // This is not returning because we're outside of the router...
-    // TODO: Move the currently retrieved orgData to its own context below all orgsData
-    //       like "currentOrgData" and use that instead of orgData, update it on change from the parent orgData
-    // TODO: or figure out how to get the param from outside of the router.
-    const { orgId } = useParams(); 
-    const orgObj = orgData?.organizations?.find(org => org.id === orgId);
+    const params = new URLSearchParams(window.location.search);
+    const orgId = params.has("orgId") ? params.get("orgId") : null;
+    // const orgObj = orgData?.organizations?.find(org => org.id === orgId); // TODO: are we in array or dict
+    const orgObj = getOrgData(orgId); // TODO: This causes too much of a computation strain.
 
-    console.log(userData)
+    console.log('siderbar -- user data:', userData, 'org data:', orgData);
 
     useEffect(() => {
         if (!openConnectModal) return;
@@ -51,12 +49,21 @@ const OrgSidebar = ({ address }) => {
             }
             {/* Logged in user header */}
             {address && !orgObj?.name &&
-                <div className="sidebar__header">
-                    <img src={ensAvatar || placeholderAvatar} alt="avatar" />
-                    <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
-                        {userData?.ens_name ? userData.ens_name : sliceAddress(address)}
-                    </Link>
-                </div>
+                <>
+                    <div className="sidebar__header">
+                        <img src={ensAvatar || placeholderAvatar} alt="avatar" />
+                        <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
+                            {userData?.ens_name ? userData.ens_name : sliceAddress(address)}
+                        </Link>
+                    </div>
+
+                    <div className="sidebar__category">
+                        <h5>Organizations</h5>
+                        <Link className="link-wrapper" to="/dashboard/organization/new">
+                            <FontAwesomeIcon icon={['fal', 'plus']} />
+                        </Link>
+                    </div>
+                </>
             }
 
             {/* Org level user header */}
@@ -68,25 +75,15 @@ const OrgSidebar = ({ address }) => {
                 </div>
             }
 
-
-            {/* Category header with + button */}
-            <div className="sidebar__category">
-                <h5>Organizations</h5>
-                <Link className="link-wrapper" to="/dashboard/organization/new">
-                    <FontAwesomeIcon icon={['fal', 'plus']} />
-                </Link>
-            </div>
-
             {/* List of organizations */}
             <div className="sidebar__organizations">
-                {orgObj ?
+                {orgObj.name ?
                     orgObj?.badges?.map((badge, index) => (
                         <div className="sidebar__organization" key={index}>
                             <img src={badge.image || placeholderAvatar} alt="avatar" />
                             <button 
                                 className="button__unstyled"
-                                // onClick={() => navigate(`/dashboard/organization/orgId=${orgObj.id}&badgeId=${badge.id}`)}
-                                onClick={(() => console.log('orgname', orgObj, 'orgId', orgId))} // TODO: Remove
+                                onClick={() => navigate(`/dashboard/organization?orgId=${orgObj.id}&badgeId=${badge.id}`)}
                             >{badge.name}</button>
                         </div>
                     ))
@@ -96,7 +93,7 @@ const OrgSidebar = ({ address }) => {
                             <img src={org.avatar || placeholderAvatar} alt="avatar" />
                             <button 
                                 className="button__unstyled"
-                                onClick={() => navigate(`/dashboard/organization/orgId=${org.id}`)}
+                                onClick={() => navigate(`/dashboard/organization?orgId=${org.id}`)}
                             >{org.name}</button>
                         </div>
                 ))}

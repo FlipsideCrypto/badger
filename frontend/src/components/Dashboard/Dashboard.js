@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { useAccount } from "wagmi";
 
 import UserContextProvider from "@components/Dashboard/Provider/UserContextProvider";
+import OrgContextProvider from "@components/Dashboard//Provider/OrgContextProvider";
 import DashboardContent from "@components/Dashboard/Content/DashboardContent";
 import OrgSidebar from "@components/Dashboard/Sidebar/OrgSidebar";
 import HelpSidebar from "@components/Dashboard/Sidebar/HelpSidebar";
@@ -12,14 +13,13 @@ import Badge from "@components/Dashboard/Org/Badge";
 import Org from "@components/Dashboard/Org/Org";
 
 import "@style/Dashboard/Dashboard.css";
-import OrgContextProvider from "./Provider/OrgContextProvider";
 
 const Dashboard = () => {
     const { address } = useAccount();
     
     return (
         <div className="dashboard">
-            <UserContextProvider>
+            <UserContextProvider address={address}>
                 <OrgContextProvider>
                     <OrgSidebar
                         address={address}
@@ -29,9 +29,9 @@ const Dashboard = () => {
                         <Routes>
                             <Route path="/" element={ <Home /> } />
                             <Route path="/organization/new" element={ <OrgForm /> } />
-                            <Route path="/organization/orgId=:orgId" element={ <Org /> } />
-                            <Route path="/badge/new/orgId=:orgId" element={ <BadgeForm /> } />
-                            <Route path="/badge/orgId=:orgId&badgeId=:badgeId" element={ <Badge /> } />
+                            <Route path="/organization" element={ <Org /> } />
+                            <Route path="/badge/new" element={ <BadgeForm /> } />
+                            <Route path="/badge" element={ <Badge /> } />
                         </Routes>
                     </DashboardContent>
 

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import IconButton from "@components/Button/IconButton";
 import Header from "@components/Dashboard/Header/Header";
@@ -8,9 +8,12 @@ import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import "@style/Dashboard/Org/Org.css";
 
 const Org = () => {
-    const { orgId } = useParams();
     const navigate = useNavigate();
     const { orgData } = useContext(OrgContext);
+    const params = new URLSearchParams(window.location.search);
+    const orgId = params.get("orgId");
+
+    console.log("ORG -- orgId & orgData", orgId, orgData)
 
     return (
         <>
@@ -29,7 +32,7 @@ const Org = () => {
                         Congrats! You are one step closer to having the keys to your on-chain Organization. 
                         Now you can create and distribute your keys in a matter of seconds.
                     </p>
-                    <Link className="internal-link" to={`/dashboard/badge/new/orgId=${orgId}`}>
+                    <Link className="internal-link" to={`/dashboard/badge/new?orgId=${orgId}`}>
                         <IconButton icon={['fal', 'arrow-right']} text="CREATE" />
                     </Link>
                 </div>
