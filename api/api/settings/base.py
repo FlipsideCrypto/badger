@@ -143,5 +143,4 @@ CUSTOM_GROUPS = [
     ('ens_owners', ERC721OwnerManager(
         config={'contract': '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85'})),
 ]  
-PROVIDER = os.environ.get("SIWE_AUTH_PROVIDER",
-                          "https://mainnet.infura.io/v3/...")
+PROVIDER = os.environ.get("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}")
