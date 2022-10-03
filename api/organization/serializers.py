@@ -34,7 +34,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         model = Organization
         fields = (
             'url',
-            'active',
+            'is_active',
             'chain',
             'name',
             'description',
@@ -44,7 +44,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'owner',
             'badges',
             'delegates',
-            'created_at',
-            'updated_at'
+            'created',
+            'updated'
         )
         depth = 1

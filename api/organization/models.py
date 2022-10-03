@@ -5,7 +5,7 @@ from siwe_auth.models import validate_ethereum_address
 from badge.models import Badge 
 
 class Organization(models.Model):
-    active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
 
     chain = models.CharField(max_length=50, blank=False, default=None)
     contract_address = models.CharField(max_length=50, blank=False, default=None, validators=[validate_ethereum_address])
@@ -21,11 +21,11 @@ class Organization(models.Model):
     image_hash = models.CharField(max_length=256, blank=True, null=True)
     contract_uri_hash = models.CharField(max_length=256, blank=True, null=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['-created']

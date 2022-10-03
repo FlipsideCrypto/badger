@@ -23,7 +23,7 @@ class BadgeSerializer(serializers.ModelSerializer):
         model = Badge
         fields = (
             'url',
-            'id',
+            'is_active',
             'name', 
             'description', 
             'token_id',
@@ -31,6 +31,6 @@ class BadgeSerializer(serializers.ModelSerializer):
             'token_uri',
             'delegates',
             'users',
-            'created_at', 
-            'updated_at'
+            'created', 
+            'updated'
         )
