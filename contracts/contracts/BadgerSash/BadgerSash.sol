@@ -6,6 +6,7 @@ import { BadgerSashInterface } from "./interfaces/BadgerSashInterface.sol";
 
 import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import { ERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol";
+import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
 import { BadgerScout } from "./BadgerScout.sol";
 
@@ -14,6 +15,9 @@ contract BadgerSash is
     , ERC1155Upgradeable
     , BadgerScout
 {
+    using Strings for uint256;
+    using Strings for address;
+
     /**
      * @notice Allow money to be sent to this contract just in case some organization
      *         has that use case.
@@ -32,11 +36,12 @@ contract BadgerSash is
         external
         initializer
     { 
-        /// @dev Initialize the BadgeScout contract.
-        _initialize(_owner);
-
         /// @dev Initialize the NFT side of the Sash.
         __ERC1155_init(_uri);
+        /// @dev Initialize the BadgeScout contract.
+        __Ownable_init();
+        /// @dev Set ownership of the BadgeScout contract.
+        transferOwnership(_owner);
     }
 
     /**
@@ -66,8 +71,8 @@ contract BadgerSash is
                   "https://badger.utc24.io/api/?seed="
                 , string(
                       abi.encodePacked(
-                          address(this)
-                        , _id
+                          address(this).toHexString()
+                        , _id.toString()
                       )
                  )
             )
