@@ -35,8 +35,6 @@ class BadgeViewSet(viewsets.ModelViewSet):
         # create the badge
         serializer = self.get_serializer(data=request.data)
 
-        # TODO: Upload the metadata to IPFS
-
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
