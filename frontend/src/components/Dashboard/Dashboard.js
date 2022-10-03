@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { useAccount } from "wagmi";
+import { useAccount, useSigner } from "wagmi";
 
 import UserContextProvider from "@components/Dashboard/Provider/UserContextProvider";
 import OrgContextProvider from "@components/Dashboard//Provider/OrgContextProvider";
@@ -15,11 +15,12 @@ import Org from "@components/Dashboard/Org/Org";
 import "@style/Dashboard/Dashboard.css";
 
 const Dashboard = () => {
+    const { data: signer } = useSigner();
     const { address } = useAccount();
 
     return (
         <div className="dashboard">
-            <UserContextProvider address={address}>
+            <UserContextProvider signer={signer} address={address}>
                 <OrgContextProvider>
                     <OrgSidebar address={address} />
 

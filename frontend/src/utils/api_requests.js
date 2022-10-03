@@ -4,7 +4,7 @@ export async function postBadgeRequest(badge) {
     let response;
 
     try {
-        fetch(`${API_URL}/badges/}`, {
+        await fetch(`${API_URL}/badges/}`, {
             method: "POST",
             mode: "cors",
             headers: {
@@ -20,13 +20,12 @@ export async function postBadgeRequest(badge) {
             response = data;
         })
         .catch(err => {
-            console.log('error creating org', err);
-            response.error = err;
+            throw new Error(err);
         })
     }
     catch (err) {
         console.log('error creating org', err);
-        response.error = err;
+        response = {error: err};
     }
 
     return response;
@@ -36,7 +35,7 @@ export async function postOrgRequest(org) {
     let response;
 
     try {
-        fetch(`${API_URL}/organizations/`, {
+        await fetch(`${API_URL}/organizations/`, {
             method: "POST",
             mode: "cors",
             headers: {
@@ -52,13 +51,12 @@ export async function postOrgRequest(org) {
             response = data;
         })
         .catch(err => {
-            console.log('error creating org', err);
-            response.error = err;
+            throw new Error(err);
         })
     }
     catch (err) {
         console.log('error creating org', err);
-        response.error = err;
+        response = {error: err}
     }
 
     return response;
@@ -67,7 +65,7 @@ export async function postOrgRequest(org) {
 export async function getUserRequest(address) {
     let response;
     try {
-        fetch(`${API_URL}/users/by-address/${address}`, {
+        await fetch(`${API_URL}/users/by-address/${address}`, {
             method: "GET",
             mode: "cors",
             headers: {
@@ -87,8 +85,7 @@ export async function getUserRequest(address) {
         })
     }
     catch (err) {
-        console.log('error fetching user data', err);
-        response = {error: err}
+        throw new Error(err);
     }
 
     return response;
@@ -97,7 +94,7 @@ export async function getUserRequest(address) {
 export async function getOrgRequest(orgId) {
     let response;
     try {
-        fetch(`${API_URL}/organizations/${orgId}`, {
+        await fetch(`${API_URL}/organizations/${orgId}`, {
             method: "GET",
             mode: "cors",
             headers: {
@@ -112,8 +109,7 @@ export async function getOrgRequest(orgId) {
             response = data;
         })
         .catch(err => {
-            console.log('error fetching user data', err);
-            response = {error: err}
+            throw new Error(err);
         })
     }
     catch (err) {

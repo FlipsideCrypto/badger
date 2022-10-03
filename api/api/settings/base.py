@@ -123,6 +123,7 @@ REST_FRAMEWORK = {
 
 # Cors headers settings
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 # Web3 settings
 ALCHEMY_API_KEY = os.getenv("ALCHEMY_API_KEY")

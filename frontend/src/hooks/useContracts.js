@@ -49,9 +49,9 @@ export const useBadgerHousePress = (chainName) => {
         }
     })
 
-    const transaction = useContractWrite(config);
+    const { write } = useContractWrite(config);
 
-    return { transaction, response };
+    return { write, response };
 }
 
 // Creates a badge from a cloned sash contract.
