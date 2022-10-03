@@ -1,7 +1,10 @@
 import { usePrepareContractWrite, useContractWrite } from 'wagmi';
 
+const badgerHouseAddresses = JSON.parse(process.env.REACT_APP_BADGER_HOUSE_ADDRESSES)
+
 // Gets the ABI for sash contracts.
 export const useBadgerSashAbi = () => {
+    console.log('useBadgerSashAbi');
     try {
         const abi = require('@abis/BadgerSash.json');
         return {abi: abi}
@@ -16,7 +19,7 @@ export const useBadgerSashAbi = () => {
 export const useBadgerHouseAbi = (chainName) => {
     try {
         const abi = require('@abis/BadgerHouse.json');
-        const address = process.env.REACT_APP_BADGER_HOUSE_ADDRESSES[chainName]
+        const address = badgerHouseAddresses[chainName]
         return {
             abi: abi,
             address: address
@@ -35,7 +38,7 @@ export const useBadgerHousePress = (chainName) => {
 
     const { config } = usePrepareContractWrite({
         addressOrName: badgerHouse.address,
-        abi: badgerHouse.abi,
+        contractInterface: badgerHouse.abi,
         functionName: "createSashPress",
         args: [""],
         onSettled() {
@@ -45,13 +48,13 @@ export const useBadgerHousePress = (chainName) => {
             response = {status: 'success', message: data};
         },
         onError (err) {
-            response = {status: 'error', message: err};;
+            response = {status: 'error', message: err};
         }
     })
 
-    const { write } = useContractWrite(config);
+    const { writeAsync } = useContractWrite(config);
 
-    return { write, response };
+    return { write: writeAsync, response };
 }
 
 // Creates a badge from a cloned sash contract.
@@ -61,7 +64,7 @@ export const useCreateBadge = (sashAddress, id, accountBound, signer, uri, payme
 
     const { config } = usePrepareContractWrite({
         addressOrName: sashAddress,
-        abi: badgerSash.abi,
+        contractInterface: badgerSash.abi,
         functionName: "setBadge",
         args: [
             id,
@@ -82,9 +85,9 @@ export const useCreateBadge = (sashAddress, id, accountBound, signer, uri, payme
         }
     })
 
-    const transaction = useContractWrite(config);
+    const { writeAsync } = useContractWrite(config);
 
-    return { transaction, response };
+    return { write: writeAsync, response };
 }
 
 /* 
@@ -110,7 +113,7 @@ export const useManageBadgeOwnership = (sashAddress, holders, ids, amounts, revo
 
     const { config } = usePrepareContractWrite({
         addressOrName: sashAddress,
-        abi: badgerSash.abi,
+        contractInterface: badgerSash.abi,
         functionName: method,
         args: [
             holders,
@@ -129,9 +132,9 @@ export const useManageBadgeOwnership = (sashAddress, holders, ids, amounts, revo
         }
     })
 
-    const transaction = useContractWrite(config);
+    const { writeAsync } = useContractWrite(config);
 
-    return { transaction, response };
+    return { write: writeAsync, response };
 }
 
 /*
@@ -148,7 +151,7 @@ export const useSetLeaders = (sashAddress, ids, leaders, revoke) => {
 
     const { config } = usePrepareContractWrite({
         addressOrName: sashAddress,
-        abi: badgerSash.abi,
+        contractInterface: badgerSash.abi,
         functionName: method,
         args: [
             ids,
@@ -166,7 +169,7 @@ export const useSetLeaders = (sashAddress, ids, leaders, revoke) => {
         }
     })
 
-    const transaction = useContractWrite(config);
+    const { writeAsync } = useContractWrite(config);
 
-    return { transaction, response };
+    return { write: writeAsync, response };
 }

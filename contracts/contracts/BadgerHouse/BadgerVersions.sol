@@ -45,6 +45,12 @@ contract BadgerVersions is
         VersionLicense license;
     }
 
+    event OrganizationCreated(
+        address indexed organization,
+        address indexed owner,
+        address indexed implementation
+    );
+
     /// @dev All of the versions that are actively running.
     ///      This also enables the ability to self-fork ones product.
     mapping(uint256 => Version) public versions;
@@ -136,6 +142,7 @@ contract BadgerVersions is
         , string memory _uri
     )
         internal
+        returns (address)
     {
         /// @dev Get the address of the implementation for the desired version.
         address versionImplementation = versions[_version].implementation;
@@ -151,5 +158,7 @@ contract BadgerVersions is
               _deployer
             , _uri
         );
+
+        return sashAddress;
     }
 }

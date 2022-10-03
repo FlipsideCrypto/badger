@@ -65,7 +65,7 @@ export async function postOrgRequest(org) {
 export async function getUserRequest(address) {
     let response;
     try {
-        await fetch(`${API_URL}/users/by-address/${address}`, {
+        await fetch(`${API_URL}/wallets/by-address/${address}`, {
             method: "GET",
             mode: "cors",
             headers: {

@@ -29,6 +29,9 @@ export async function SIWENonce() {
     const url = `${API_URL}/api/auth/nonce`
     let response;
 
+    console.log('cookies', document.cookie)
+    console.log('csrf', document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)')))
+
     await fetch(url, {
         credentials: 'include',
         mode: 'cors',
@@ -46,24 +49,30 @@ export async function SIWENonce() {
 };
 
 export async function SIWEAuthorize (signer, address, chainId) {
-    const nonce = await SIWENonce();
-
-    const statement = `By signing this one-time message, Badger authenticates your address for API permissions and creates a web token tied to your address.\n\nOnce authenticated, your address will always have the permissions required to view all the data related to your address, and you should never have to sign in again.\n\nDO NOT share your token in any form, as sharing it allows for anyone with it to view and change all your related organizations and badges.`;
-
-    const message = new SiweMessage({
-        domain: document.location.host,
-        address,
-        chainId: chainId,
-        uri: document.location.origin,
-        version: '1',
-        statement: statement,
-        type: SignatureType.PERSONAL_SIGNATURE,
-        nonce
-    });
-
-    const signature = await signer.signMessage(message.prepareMessage());
-
-    const res = await SIWELogin(message, signature);
-
-    return res;
+    try {
+        const nonce = await SIWENonce();
+    
+        const statement = `By signing this one-time message, Badger authenticates your address for API permissions and creates a web token tied to your address.\n\nOnce authenticated, your address will always have the permissions required to view all the data related to your address, and you should never have to sign in again.\n\nDO NOT share your token in any form, as sharing it allows for anyone with it to view and change all your related organizations and badges.`;
+    
+        const message = new SiweMessage({
+            domain: document.location.host,
+            address,
+            chainId: chainId,
+            uri: document.location.origin,
+            version: '1',
+            statement: statement,
+            type: SignatureType.PERSONAL_SIGNATURE,
+            nonce
+        });
+    
+        const signature = await signer.signMessage(message.prepareMessage());
+    
+        const res = await SIWELogin(message, signature);
+    
+        return res;
+    }
+    catch (err) {
+        console.log('Error with SIWE', err);
+        return err;
+    }
 }

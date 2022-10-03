@@ -30,6 +30,7 @@ contract BadgerHouse is
     function createSashPress(string memory _uri) 
         external
         virtual
+        returns (address)
     { 
         require(
                 versions[activeVersion].license.tokenAddress == address(0)
@@ -37,11 +38,13 @@ contract BadgerHouse is
         );
 
         /// @dev Deploy the Sash contract.
-        _createSashPress(
+        address sash = _createSashPress(
               activeVersion
             , _msgSender()
             , _uri
         );
+
+        return sash;
     }
 
     /**
