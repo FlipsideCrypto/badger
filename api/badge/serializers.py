@@ -11,8 +11,11 @@ class BadgeUserSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'url',
-            'ethereum_address'
+            'ethereum_address',
+            'ens_name',
+            'ens_avatar',
         )
+
 class BadgeSerializer(serializers.ModelSerializer):
     users = BadgeUserSerializer(many=True, read_only=True)
     

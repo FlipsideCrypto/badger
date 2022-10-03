@@ -15,6 +15,8 @@ class OrganizationUserSerializer(serializers.ModelSerializer):
         fields = (
             'url',
             'ethereum_address',
+            'ens_name',
+            'ens_avatar',
         )
 
 
