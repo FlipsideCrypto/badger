@@ -15,8 +15,8 @@ class Organization(models.Model):
 
     contract_uri_hash = models.CharField(max_length=256, blank=True, null=True)
 
-    owner = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='organization_owner', null=True)
-    delegates = models.ManyToManyField('user.User', blank=True, related_name='organization_delegates')
+    owner = models.ForeignKey('siwe_auth.Wallet', on_delete=models.CASCADE, related_name='organization_owner', null=True)
+    delegates = models.ManyToManyField('siwe_auth.Wallet', blank=True, related_name='organization_delegates')
     badges = models.ManyToManyField(Badge, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

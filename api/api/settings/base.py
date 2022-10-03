@@ -28,8 +28,8 @@ INSTALLED_APPS = [
     'django_filters',
 
     'badge',
-    'user',
     'organization',
+    'wallet',
 ]
 
 MIDDLEWARE = [
@@ -45,7 +45,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'api.urls'
 
-AUTH_USER_MODEL = "user.User"
+AUTH_USER_MODEL = "siwe_auth.Wallet"
 
 TEMPLATES = [
     {

@@ -8,8 +8,8 @@ class Badge(models.Model):
 
     description = models.TextField()
 
-    delegates = models.ManyToManyField('user.User', related_name='delegates', blank=True)
-    users = models.ManyToManyField('user.User', blank=True)
+    delegates = models.ManyToManyField('siwe_auth.Wallet', related_name='delegates', blank=True)
+    users = models.ManyToManyField('siwe_auth.Wallet', blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
