@@ -3,19 +3,20 @@ import { usePrepareContractWrite, useContractWrite } from 'wagmi';
 // Gets the ABI for sash contracts.
 export const useBadgerSashAbi = () => {
     try {
-        const abi = require('../../contracts/abi/BadgerSash.json');
+        const abi = require('@abis/BadgerSash.json');
         return {abi: abi}
     }
     catch (err) {
         console.error('Error importing BadgerSash:', err);
+        return {error: err}
     }
 }
 
 // Gets the abi and chain specific address for the BadgerHouse contract.
 export const useBadgerHouseAbi = (chainName) => {
     try {
-        const abi = require('../../contracts/abi/BadgerHouse.json');
-        const address = process.env.REACT_APP_BADGER_HOUSE_ADDRESS[chainName]
+        const abi = require('@abis/BadgerHouse.json');
+        const address = process.env.REACT_APP_BADGER_HOUSE_ADDRESSES[chainName]
         return {
             abi: abi,
             address: address
@@ -23,6 +24,7 @@ export const useBadgerHouseAbi = (chainName) => {
     }
     catch (err) {
         console.error('Error importing BadgerHouse:', err);
+        return {error: err}
     }
 }
 

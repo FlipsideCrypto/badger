@@ -1,3 +1,4 @@
+import { API_URL } from "@static/constants/links"
 
 export async function postBadgeRequest(badge) {
     let response;
@@ -7,9 +8,10 @@ export async function postBadgeRequest(badge) {
             method: "POST",
             mode: "cors",
             headers: {
+                'Accept': 'application/json',
                 "Content-Type": "application/json",
             },
-            data: badge
+            data: JSON.stringify(badge)
         })
         .then(res => res.json())
         .then(data => {
@@ -38,9 +40,10 @@ export async function postOrgRequest(org) {
             method: "POST",
             mode: "cors",
             headers: {
+                'Accept': 'application/json',
                 "Content-Type": "application/json",
             },
-            data: org
+            data: JSON.stringify(org)
         })
         .then(res => res.json())
         .then(data => {
@@ -68,6 +71,7 @@ export async function getUserRequest(address) {
             method: "GET",
             mode: "cors",
             headers: {
+                'Accept': 'application/json',
                 "Content-Type": "application/json",
             },
         })
@@ -93,10 +97,11 @@ export async function getUserRequest(address) {
 export async function getOrgRequest(orgId) {
     let response;
     try {
-        fetch(`${API_URL}/users/by-address/${address}`, {
+        fetch(`${API_URL}/organizations/${orgId}`, {
             method: "GET",
             mode: "cors",
             headers: {
+                'Accept': 'application/json',
                 "Content-Type": "application/json",
             },
         })

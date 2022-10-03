@@ -8,7 +8,7 @@ import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 
 import { postBadgeRequest } from "@utils/api_requests";
-import { useCreateBadge } from "@components/Dashboard/Hooks/useCreateBadge";
+import { useCreateBadge } from "@hooks/useContracts";
 
 // TODO: EDIT MODE: Check the orgData context and if the badge is in it then
 //       get the badge and set the state, and change component to edit mode. (also get rid of props)
@@ -28,14 +28,14 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         {
             text: "CREATE BADGE",
             icon: ["fal", "arrow-right"],
-            event: () => onCreateBadge()
+            event: () => CreateBadge()
         }
     ]
 
     // TODO: Post request and return badge id
     // POSTS badge to the database, adds badge to OrgData state 
     // and returns badge id.
-    const onCreateBadge = () => {
+    const CreateBadge = async () => {
         const badgeObj = {
             name: badgeName,
             description: badgeDescription,
@@ -57,7 +57,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         const dummySigner = "";
         const accountBound = false;
 
-        const transaction = useCreateBadge(
+        const createBadge = useCreateBadge(
             badgeObj.id,              // uint256 _id
             accountBound,             // bool _accountBound
             dummySigner,              // address _signer
@@ -65,6 +65,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
             dummyPaymentToken,        // PaymentToken memory _paymentToken
             badgeObj.delegates        // address[] memory _leaders
         )
+        createBadge.transaction.write();
 
         let prev = {...orgData}
         prev.badges.push(badgeObj)

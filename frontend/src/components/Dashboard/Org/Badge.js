@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Header from "@components/Dashboard/Header/Header";
 import HolderTable from "@components/Table/HolderTable";
@@ -57,13 +57,15 @@ const Badge = () => {
                     <h1>{badge?.name}</h1>
                     {!isManage && badge?.name &&
                         <div className="badge__actions">
+                            {/* TODO: Analytics page
                             <button 
                                 className="button__unstyled badge__action" 
                                 onClick={() => { navigate(`/dashboard/badge/analytics?orgId=${orgId}&badgeId=${badgeId}`)}}
                             >
                                 <FontAwesomeIcon icon={["fal", "fa-chart-simple"]} />
                                 <span>Analytics</span>
-                            </button>
+                            </button> 
+                            */}
                         </div>
                     }
                 </div>

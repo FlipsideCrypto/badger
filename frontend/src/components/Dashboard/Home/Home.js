@@ -6,6 +6,8 @@ import { HOME_LINKS } from "@static/constants/links";
 
 import "@style/Dashboard/Home/Home.css"
 
+// TODO: If a user has an account in our DB and an associated org, then show them a different
+//       a different card than the Create Org one.
 const Home = () => {
     const announcement = {
         color: 'cyan',

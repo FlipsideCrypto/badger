@@ -7,9 +7,8 @@ import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 
-import { useBadgerHousePress } from "@components/Hooks/useBadgerHousePress";
-import { postOrgRequest } from "@components/utils/requests";
-import { API_URL } from "@static/constants/links";
+import { useBadgerHousePress } from "@hooks/useContracts";
+import { postOrgRequest } from "@utils/api_requests";
 
 const OrgForm = () => {
     const [orgName, setOrgName] = useState("");
@@ -18,7 +17,7 @@ const OrgForm = () => {
 
     const { chain } = useNetwork();
     const navigate = useNavigate();
-    const transaction = useBadgerHousePress(chain.name);
+    const createContract = useBadgerHousePress(chain.name);
 
     const actions = [
         {
@@ -55,15 +54,15 @@ const OrgForm = () => {
         }
 
         // Deploy and initialize org contract
-        let cloneTx = await transaction.write()
+        let cloneTx = await createContract.transaction.write()
         cloneTx = await cloneTx.wait();
         const contractAddress = cloneTx.events[0].address;
         orgObj.contract_address = contractAddress;
 
-        const orgResponse = await postOrgRequest(orgObj, userData.token);
-        console.log("OrgForm: orgResponse", orgResponse)
+        const response = await postOrgRequest(orgObj, userData.token);
+        console.log("OrgForm: orgResponse", response)
 
-        if (!orgResponse?.error) {
+        if (!response?.error) {
             addOrgToState(orgObj);
             navigate(`/dashboard/organization?orgId=${orgObj.id}`);
         }
