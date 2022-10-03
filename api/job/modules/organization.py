@@ -37,7 +37,6 @@ class OrganizationModule:
                 ethereum_address=contract.ethereum_address,
                 name=metadata['name'],
                 description=metadata['description'],
-                owner=owner,
                 image_hash=metadata['imageHash'],
                 contract_uri_hash=ipfs_hash,
             )

@@ -10,20 +10,20 @@ from .modules.organization import OrganizationModule
 
 web3 = Web3(Web3.HTTPProvider(settings.PROVIDER))
 
+badge_module = BadgeModule()
+organization_module = OrganizationModule()
+
+event_modules = {
+    'OrganizationCreated': organization_module.sync_organization_created,
+    'OrganizationUpdated': organization_module.sync_organization_updated,
+    'BadgeCreated': badge_module.sync_badge_created,
+    'BadgeUpdated': badge_module.sync_badge_updated,
+    'Transfer': badge_module.sync_badge_transfer,
+}
+
 
 class ContractListenerManager:
     def __init__(self):
-        self.badge_module = BadgeModule()
-        self.organization_module = OrganizationModule()
-
-        self.event_modules = {
-            'OrganizationCreated': self.organization_module.sync_organization_created,
-            'OrganizationUpdated': self.organization_module.sync_organization_updated,
-            'BadgeCreated': self.badge_module.sync_badge_created,
-            'BadgeUpdated': self.badge_module.sync_badge_updated,
-            'Transfer': self.badge_module.sync_badge_transfer,
-        }
-
         self._connected_contracts = []
 
     def _connected_contract(self, contract):
