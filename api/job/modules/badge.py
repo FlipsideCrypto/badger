@@ -4,9 +4,6 @@ from badge.models import Badge
 from organization.models import Organization
 
 class BadgeModule:
-    def __init__(self, contract):
-        self.contract = contract
-
     def sync_badge_created(self, contract, event):
         # Use the address the contract was emitted from to get the organization
         organization = Organization.objects.get(ethereum_address=contract.ethereum_address)

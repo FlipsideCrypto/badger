@@ -7,10 +7,6 @@ from organization.models import Organization
 User = get_user_model()
 
 class OrganizationModule:
-    def __init__(self, contract, event):
-        self.contract = contract
-        self.event = event
-
     def sync_organization_created(self, contract, event):
         # Create the organization if we have not already created it
         if not Organization.objects.filter(
