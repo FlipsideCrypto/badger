@@ -9,34 +9,34 @@ from web3 import Web3, EthereumTesterProvider
 
 from utils.tests.user import PASSWORD, create_user
 
-from wallet.models import Wallet 
+from user.models import User 
 
 class UserHttpTest(APITestCase):
-    # def setUp(self):
-    #     user = create_user()
-    #     response = self.client.get(reverse('siwe_auth:nonce'))
-    #     response = response.json()
-    #     nonce = response['nonce']
+    def setUp(self):
+        user = create_user()
+        response = self.client.get(reverse('siwe_auth:nonce'))
+        response = response.json()
+        nonce = response['nonce']
 
-    #     domain = 'http://localhost:8000'
-    #     address = user.ethereum_address
-    #     statement = 'I am signing my one-time nonce'
-    #     uri = f'{domain}/api/auth/nonce?address={address}&nonce={nonce}&statement={statement}'
-    #     version = '1'
-    #     chain = '1'
+        domain = 'http://localhost:8000'
+        address = user.ethereum_address
+        statement = 'I am signing my one-time nonce'
+        uri = f'{domain}/api/auth/nonce?address={address}&nonce={nonce}&statement={statement}'
+        version = '1'
+        chain = '1'
 
-    #     # Sign the message
-    #     self.siwe = SiweMessage({
-    #         'domain': domain,
-    #         'address': address,
-    #         'nonce': nonce,
-    #         'statement': statement,
-    #         'uri': uri,
-    #         'version': version,
-    #         'chain': chain
-    #     })
+        # Sign the message
+        self.siwe = SiweMessage({
+            'domain': domain,
+            'address': address,
+            'nonce': nonce,
+            'statement': statement,
+            'uri': uri,
+            'version': version,
+            'chain': chain
+        })
 
-    #     print(self.siwe)
+        print(self.siwe)
 
         # self.w3 = Web3(EthereumTesterProvider())
         # w3_account = web3.eth.accounts.create()
@@ -58,12 +58,12 @@ class UserHttpTest(APITestCase):
 
         # self.access = response.data['access']
 
-    # def test_can_get_nonce(self):
-    #     response = self.client.get(reverse('siwe_auth:nonce'))
-    #     response = response.json()
-    #     nonce = response['nonce']
+    def test_can_get_nonce(self):
+        response = self.client.get(reverse('siwe_auth:nonce'))
+        response = response.json()
+        nonce = response['nonce']
 
-    #     return self.assertNotEqual(nonce, None)
+        return self.assertNotEqual(nonce, None)
 
 
     # def test_can_login(self):

@@ -15,6 +15,11 @@ class WalletViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAuthenticated, CanManageWallet]
 
+    def get_serializer_context(self):
+        context = super(WalletViewSet, self).get_serializer_context()
+        context.update({"request": self.request})
+        return context
+
     def get_queryset(self):
         if self.request.user.is_staff:
             return Wallet.objects.all()

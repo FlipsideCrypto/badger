@@ -37,6 +37,8 @@ const OrgForm = () => {
         }
     }
 
+    // TODO: Get proper orgObj data
+    // POSTS org to database and returns org ID, then redirects to page related to orgId.
     const onOrgFormSubmission = () => {
         const orgObj = {
             active: false,
@@ -77,6 +79,8 @@ const OrgForm = () => {
         navigate(`/dashboard/organization?orgId=${orgObj.id}`);
     }
 
+    // Determines if organizations is already in userData, before pushing or settings
+    // the new organization to userData.
     const addOrgToState = (org) => {
         let newUserData = {...userData};
 

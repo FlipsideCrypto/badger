@@ -17,6 +17,9 @@ class WalletSerializer(serializers.ModelSerializer):
     _badges = None
     _tutorial_state = None
 
+    def get_serializer_context(self):
+        return {'request': self.request}
+
     def _get_organizations(self, obj):
         if self._organizations is None:
             self._organizations = (
@@ -31,10 +34,10 @@ class WalletSerializer(serializers.ModelSerializer):
         return self._badges
 
     def get_organizations(self, obj):
-        return OrganizationSerializer(self._get_organizations(obj), many=True).data
+        return OrganizationSerializer(self._get_organizations(obj), many=True, context={'request': self.context.get('request')}).data
 
     def get_badges(self, obj):
-        return BadgeSerializer(self._get_badges(obj), many=True).data
+        return BadgeSerializer(self._get_badges(obj), many=True, context={'request': self.context.get('request')}).data
 
     def get_tutorial_state(self, obj):
         if not self._organizations:

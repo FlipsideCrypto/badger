@@ -31,6 +31,8 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     ]
 
     // TODO: Post request and return badge id
+    // POSTS badge to the database, adds badge to OrgData state 
+    // and returns badge id.
     const onCreateBadge = () => {
         const badgeId = 0;
 

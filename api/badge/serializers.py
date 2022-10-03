@@ -22,7 +22,7 @@ class BadgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Badge
         fields = (
-            'url', 
+            'url',
             'id',
             'name', 
             'description', 
