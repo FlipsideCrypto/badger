@@ -68,6 +68,10 @@ module.exports = {
             gas: "auto",
             gasPrice: "auto",
             saveDeployments: false,
+            mining: {
+                auto: false,
+                interval: 2000,
+            }
         },
         rinkeby: {
             url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
