@@ -16,14 +16,12 @@ import "@style/Dashboard/Dashboard.css";
 
 const Dashboard = () => {
     const { address } = useAccount();
-    
+
     return (
         <div className="dashboard">
             <UserContextProvider address={address}>
                 <OrgContextProvider>
-                    <OrgSidebar
-                        address={address}
-                    />
+                    <OrgSidebar address={address} />
 
                     <DashboardContent>
                         <Routes>
@@ -36,6 +34,7 @@ const Dashboard = () => {
                     </DashboardContent>
 
                     <HelpSidebar />
+
                 </OrgContextProvider>
             </UserContextProvider>
         </div>

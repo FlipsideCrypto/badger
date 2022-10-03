@@ -20,6 +20,8 @@ module.exports = {
             '@static': path.resolve(__dirname, 'src/static/'),
             '@style': path.resolve(__dirname, 'src/style/'),
             '@utils': path.resolve(__dirname, 'src/utils/'),
+            '@hooks': path.resolve(__dirname, 'src/hooks/'),
+            '@abis': path.resolve(__dirname, 'src/abis/')
         }
     }
 }
