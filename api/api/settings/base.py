@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django_filters',
 
     'badge',
+    'ipfs',
     'organization',
     'wallet',
 ]
@@ -46,6 +47,8 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'api.urls'
 
 AUTH_USER_MODEL = "siwe_auth.Wallet"
+
+LOGIN_URL = "/"
 
 TEMPLATES = [
     {
@@ -66,7 +69,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'api.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -78,25 +80,18 @@ DATABASES = {
     }
 }
 
+# Cache 
+SESSION_COOKIE_AGE = 3 * 60 * 60
+
 # Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 # Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
@@ -104,11 +99,9 @@ USE_L10N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
 STATIC_URL = '/static/'
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Rest framework settings
@@ -124,7 +117,7 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 15
+    'PAGE_SIZE': 100
 }
 
 # Cors headers settings
@@ -134,13 +127,14 @@ CORS_ORIGIN_ALLOW_ALL = True
 ALCHEMY_API_KEY = os.getenv("ALCHEMY_API_KEY")
 AUTHENTICATION_BACKENDS = ["siwe_auth.backend.SiweBackend"]
 
-LOGIN_URL = "/"
-
-SESSION_COOKIE_AGE = 3 * 60 * 60
-CREATE_GROUPS_ON_AUTHN = False  # defaults to False
-CREATE_ENS_PROFILE_ON_AUTHN = True  # defaults to True
+CREATE_GROUPS_ON_AUTHN = False
+CREATE_ENS_PROFILE_ON_AUTHN = True
 CUSTOM_GROUPS = [
     ('ens_owners', ERC721OwnerManager(
         config={'contract': '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85'})),
 ]  
-PROVIDER = os.environ.get("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}")
+PROVIDER = os.getenv("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}")
+
+# IPFS settings
+PINATA_API_KEY = os.getenv("PINATA_API_KEY")
+PINATA_API_SECRET_KEY = os.getenv("PINATA_API_SECRET_KEY")
