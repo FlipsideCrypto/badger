@@ -46,6 +46,7 @@ class WalletSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
         fields = (
+            'url',
             'ethereum_address',
             'organizations',
             'badges',

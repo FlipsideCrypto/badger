@@ -14,7 +14,7 @@ class OrganizationUserSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'url',
-            'address',
+            'ethereum_address',
         )
 
 
