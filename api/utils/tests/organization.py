@@ -3,7 +3,7 @@ from organization.models import Organization
 def create_organization(
     owner,
     chain="ethereum",
-    contract_address="0x0",
+    ethereum_address="0x0",
     image_hash="0x0",
     name="Test Organization", 
     description="Test Description", 
@@ -11,7 +11,7 @@ def create_organization(
     organization = Organization.objects.create(
         active=True,
         chain=chain,
-        contract_address=contract_address,
+        ethereum_address=ethereum_address,
         image_hash=image_hash,
         name=name, 
         description=description, 
