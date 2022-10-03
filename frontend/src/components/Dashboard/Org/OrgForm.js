@@ -54,7 +54,7 @@ const OrgForm = () => {
         }
 
         // Deploy and initialize org contract
-        let cloneTx = await createContract.transaction.write()
+        let cloneTx = await createContract.write()
         cloneTx = await cloneTx.wait();
         const contractAddress = cloneTx.events[0].address;
         orgObj.contract_address = contractAddress;
