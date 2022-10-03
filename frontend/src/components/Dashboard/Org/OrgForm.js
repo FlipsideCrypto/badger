@@ -7,6 +7,8 @@ import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 
+import { useBadgerHousePress } from "@components/Hooks/useBadgerHousePress";
+import { postOrgRequest } from "@components/utils/requests";
 import { API_URL } from "@static/constants/links";
 
 const OrgForm = () => {
@@ -16,6 +18,7 @@ const OrgForm = () => {
 
     const { chain } = useNetwork();
     const navigate = useNavigate();
+    const transaction = useBadgerHousePress(chain.name);
 
     const actions = [
         {
@@ -39,7 +42,7 @@ const OrgForm = () => {
 
     // TODO: Get proper orgObj data
     // POSTS org to database and returns org ID, then redirects to page related to orgId.
-    const onOrgFormSubmission = () => {
+    const onOrgFormSubmission = async () => {
         const orgObj = {
             active: false,
             chain: chain.name,
@@ -50,33 +53,20 @@ const OrgForm = () => {
             contract_uri_hash: '',
             contract_address: ''
         }
-        
-        // TODO: POST not allowed with current permissions
-        try {
-            fetch(`${API_URL}/organizations/}/`, {
-                method: "POST",
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                data: orgObj
-            })
-            .then(res => res.json())
-            .then(data => {
-                console.log('got org response', data);
-                if (!data?.id) throw new Error("Org POST request failed");
-                orgObj.id = data.id;
-            })
-            .catch(err => {
-                console.log('error creating org', err);
-            })
-        } catch (err) {
-            console.log('error creating org', err);
-        }
 
-        orgObj.id = 0; // TODO: replace dummy value with returned id
-        addOrgToState(orgObj);
-        navigate(`/dashboard/organization?orgId=${orgObj.id}`);
+        // Deploy and initialize org contract
+        let cloneTx = await transaction.write()
+        cloneTx = await cloneTx.wait();
+        const contractAddress = cloneTx.events[0].address;
+        orgObj.contract_address = contractAddress;
+
+        const orgResponse = await postOrgRequest(orgObj, userData.token);
+        console.log("OrgForm: orgResponse", orgResponse)
+
+        if (!orgResponse?.error) {
+            addOrgToState(orgObj);
+            navigate(`/dashboard/organization?orgId=${orgObj.id}`);
+        }
     }
 
     // Determines if organizations is already in userData, before pushing or settings

@@ -15,9 +15,10 @@ export const useBadgerSashAbi = () => {
 export const useBadgerHouseAbi = (chainName) => {
     try {
         const abi = require('../../contracts/abi/BadgerHouse.json');
+        const address = process.env.REACT_APP_BADGER_HOUSE_ADDRESS[chainName]
         return {
             abi: abi,
-            address: process.env.REACT_APP_BADGER_HOUSE_ADDRESS[chainName]
+            address: address
         }
     }
     catch (err) {

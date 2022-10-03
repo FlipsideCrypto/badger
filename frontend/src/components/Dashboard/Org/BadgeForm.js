@@ -5,11 +5,13 @@ import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
-
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 
-// TODO: Check the orgData context and if the badge is in it then
-//       get the badge and set the state, and change component to "edit mode". (also get rid of props)
+import { postBadgeRequest } from "@utils/api_requests";
+import { useCreateBadge } from "@components/Dashboard/Hooks/useCreateBadge";
+
+// TODO: EDIT MODE: Check the orgData context and if the badge is in it then
+//       get the badge and set the state, and change component to edit mode. (also get rid of props)
 const BadgeForm = ({name, desc, image, delegates}) => {
     const [badgeName, setBadgeName] = useState(name || "");
     const [badgeDescription, setBadgeDescription] = useState(desc || "");
@@ -34,22 +36,41 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     // POSTS badge to the database, adds badge to OrgData state 
     // and returns badge id.
     const onCreateBadge = () => {
-        const badgeId = 0;
-
         const badgeObj = {
-            id: badgeId,
             name: badgeName,
             description: badgeDescription,
             image: badgeImage,
+            delegates: badgeDelegates,
+            account_bound: false,
         }
 
-        console.log('Creating badge', badgeObj)
+        const response = await postBadgeRequest(badgeObj);
+        badgeObj.id = response.id
+
+        // These are unimplemented on the front end for now.
+        const dummyPaymentToken = [
+            0,      // TOKEN_TYPE tokenType;
+            "",     // address tokenAddress;
+            0,      // uint256 tokenId;
+            0       // uint256 quantity;
+        ]
+        const dummySigner = "";
+        const accountBound = false;
+
+        const transaction = useCreateBadge(
+            badgeObj.id,              // uint256 _id
+            accountBound,             // bool _accountBound
+            dummySigner,              // address _signer
+            "uri",                    // string memory _uri
+            dummyPaymentToken,        // PaymentToken memory _paymentToken
+            badgeObj.delegates        // address[] memory _leaders
+        )
 
         let prev = {...orgData}
         prev.badges.push(badgeObj)
         setOrgData(prev)
 
-        navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${badgeId}`);
+        navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${badgeObj.id}`);
     }
 
     useEffect(() => {

@@ -46,23 +46,23 @@ async function main() {
         "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
     })
 
-    // Verifying
-    if (chainId != '31337') {
-        // Give time for etherscan to confirm the contract before verifying.
-        await new Promise(r => setTimeout(r, 30000));
-        await hre.run("verify:verify", {
-            address: sashMaster.address,
-            constructorArguments: [],
-        });
-        console.log("✅ Master Sash Verified.")
+    // // Verifying
+    // if (chainId != '31337') {
+    //     // Give time for etherscan to confirm the contract before verifying.
+    //     await new Promise(r => setTimeout(r, 30000));
+    //     await hre.run("verify:verify", {
+    //         address: sashMaster.address,
+    //         constructorArguments: [],
+    //     });
+    //     console.log("✅ Master Sash Verified.")
 
-        await new Promise(r => setTimeout(r, 30000));
-        await hre.run("verify:verify", {
-            address: house.address,
-            constructorArguments: [sashMaster.address],
-        });
-        console.log("✅ Badger House Verified.")
-    }
+    //     await new Promise(r => setTimeout(r, 30000));
+    //     await hre.run("verify:verify", {
+    //         address: house.address,
+    //         constructorArguments: [sashMaster.address],
+    //     });
+    //     console.log("✅ Badger House Verified.")
+    // }
 }
 
 main()

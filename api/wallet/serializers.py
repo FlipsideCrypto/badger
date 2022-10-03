@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from siwe_auth.models import Wallet
@@ -6,6 +7,8 @@ from badge.models import Badge
 from badge.serializers import BadgeSerializer
 from organization.models import Organization
 from organization.serializers import OrganizationSerializer
+
+User = get_user_model()
 
 class WalletSerializer(serializers.ModelSerializer):
     organizations = serializers.SerializerMethodField(read_only=True)
@@ -47,7 +50,7 @@ class WalletSerializer(serializers.ModelSerializer):
         return 2
 
     class Meta:
-        model = Wallet
+        model = User
         fields = (
             'url',
             'ethereum_address',
