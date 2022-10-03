@@ -29,6 +29,7 @@ INSTALLED_APPS = [
 
     'badge',
     'ipfs',
+    'job',
     'organization',
     'wallet',
 ]
