@@ -50,8 +50,8 @@ contract BadgerScout is
         uint256 _id
     ) {
         require (
-              _msgSender() == owner() ||
-              badges[_id].addressIsDelegate[_msgSender()]
+                 _msgSender() == owner() 
+              || badges[_id].addressIsDelegate[_msgSender()]
             , "BadgerScout::onlyLeader: Only leaders can call this."
         );
         _;
@@ -242,6 +242,12 @@ contract BadgerScout is
             i < _ids.length; 
             i++
         ) {
+            /// @dev Make sure that the badge exists.
+            require(
+                  bytes(badges[_ids[i]].uri).length > 0
+                , "BadgerScout::setDelegatesBatch: Badge does not exist."
+            );
+
             badges[_ids[i]].addressIsDelegate[_delegates[i]] = _isDelegate[i];
         }
     }
@@ -304,24 +310,5 @@ contract BadgerScout is
 
         /// @dev Recover the signer from the signature.
         return message.toEthSignedMessageHash().recover(_signature) == badges[_id].signer;
-    }
-
-    /**
-     * @notice Allows the Owner to execute an Organization level transaction.
-     * @param _to The address to execute the transaction on.
-     * @param _data The data to pass to the receiver.
-     * @param _value The amount of ETH to send with the transaction.
-     */
-    function execTransaction(
-          address _to
-        , bytes calldata _data
-        , uint256 _value
-    )
-        external
-        payable
-        onlyOwner
-    {
-        (bool success, bytes memory returnData) = _to.call{value: _value}(_data);
-        require(success, string(returnData));
     }
 }
