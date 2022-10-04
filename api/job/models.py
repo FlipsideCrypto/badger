@@ -11,6 +11,9 @@ class ContractListener(models.Model):
     event = models.CharField(max_length=50, blank=False, default=None)
     event_abi = models.TextField(blank=False, default=None)
 
+    # cron expression to run every 2 seconds
+    cron_expression = models.CharField(max_length=50, default="*/2 * * * * *")
+
     # the last block the listener has processed
     last_block = models.IntegerField(default=0)
 

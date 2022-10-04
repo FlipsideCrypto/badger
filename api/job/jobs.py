@@ -7,55 +7,78 @@ from django_apscheduler import util
 from badge.models import Badge
 from organization.models import Organization
 
-from .listeners import ContractListener
+from .listeners import ContractListenerManager
+from .models import ContractListener
 
-listener = ContractListener()
+scheduler = BackgroundScheduler()
+listener_manager = ContractListenerManager()
 
-# @util.close_old_connections
-# def sync_contract_events(max_age=604_800):
-#     for contract in ContractListener.objects.all():
-#         listener.sync_contract(contract, 2)
+scheduled_jobs_map = {}
 
-# @util.close_old_connections
-# def add_badge_jobs(max_age=604_800):
-#     # Get all the badges that have not been updated in the last week
-#     badges = Badge.objects.filter(updated__lt=max_age)
-
-#     # Add the jobs for the badges
-#     for badge in badges:
-#         listener.add_badge_jobs(badge)
 
 @util.close_old_connections
-def add_organization_jobs(max_age=604_800):
-    # Get all the organizations that have not been updated in the last week
-    organizations = Organization.objects.filter(updated__lt=max_age)
-
-    # Add the jobs for the organizations
-    for organization in organizations:
-        listener.add_organization_jobs(organization)
-
-@util.close_old_connections
-def delete_old_job_executions(max_age=604_800):
+def delete_old_job_executions(max_age=60 * 60):
     DjangoJobExecution.objects.delete_old_job_executions(max_age)
+
+
+@util.close_old_connections
+def schedule_contract_listeners(max_age=604_800, *args, **kwargs):
+    contract_listeners = get_listeners_to_schedule()
+    for listener in contract_listeners:
+        add_listener_if_applicable(listener, scheduler)
+
+
+def get_listeners_to_schedule():
+    return ContractListener.objects.filter(is_active=True)
+
+
+def add_listener_if_applicable(listener, scheduler):
+    listener_id = f"listener_manager_sync_contract_{listener.pk}"
+    # If the job is not already running and is active, start it
+    if (listener_id not in scheduled_jobs_map):
+        scheduled_jobs_map[listener_id] = listener
+
+        # Add the job that will track the contract listener
+        scheduler.add_job(
+            lambda: listener_manager.sync_contract(listener),
+            CronTrigger.from_crontab(
+                listener.cron_expression,
+                timezone='UTC',
+            ),
+            id=listener_id,
+            max_instances=1,
+            replace_existing=False
+        )
+
+        print(f"Added: `{listener_id}`")
 
 
 class JobManager:
     def ready(self, *args, **options):
-        scheduler = BackgroundScheduler()
         scheduler.add_jobstore(DjangoJobStore(), "default")
 
+        # Clean up the dead jobs at the end of every hour
         scheduler.add_job(
             delete_old_job_executions,
-            trigger=CronTrigger(
-                day_of_week="mon", hour="00", minute="00"
-            ),  # Midnight on Monday, before start of the next work week.
+            trigger=CronTrigger(hour="*", minute="*/59"),
             id="delete_old_job_executions",
             max_instances=1,
             replace_existing=True,
         )
-        print(
-            "Added weekly job: 'delete_old_job_executions'."
+        print("Added: `delete_old_job_executions`")
+
+        # Schedule the contract listeners
+        # This enables the ability to setup Factory listeners in the database
+        # and then the backend will automatically take care of filling in the holes
+        # from there.
+        scheduler.add_job(
+            schedule_contract_listeners,
+            trigger=CronTrigger(minute="*/1"),
+            id="schedule_contract_listeners",
+            max_instances=1,
+            replace_existing=True,
         )
+        print("Added: `schedule_contract_listeners`")
 
         try:
             print("Starting scheduler...")
