@@ -22,8 +22,8 @@ describe("BadgerV3", function() {
     before(async() => {
         [owner, signer1, userSigner, leaderSigner, sigSigner] = await ethers.getSigners();
 
-        const BadgerSash = await ethers.getContractFactory("BadgerSash");
-        sashMaster = await BadgerSash.deploy();
+        const BadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
+        sashMaster = await BadgerOrganization.deploy();
         sashMaster = await sashMaster.deployed();
 
         const BadgerHouse = await ethers.getContractFactory("BadgerHouse");
@@ -79,23 +79,23 @@ describe("BadgerV3", function() {
         })
 
         it('Owner can designate leader', async() => {
-            await sashPress.setLeaders(0, [leaderSigner.address, signer1.address], [true, true]);
+            await sashPress.setDelegates(0, [leaderSigner.address, signer1.address], [true, true]);
 
-            assert.equal(await sashPress.isLeader(0, leaderSigner.address), true);
-            assert.equal(await sashPress.isLeader(0, signer1.address), true);
+            assert.equal(await sashPress.isDelegate(0, leaderSigner.address), true);
+            assert.equal(await sashPress.isDelegate(0, signer1.address), true);
         });
 
         it('Owner can revoke leader', async() => {
-            await sashPress.setLeaders(0, [signer1.address], [false]);
+            await sashPress.setDelegates(0, [signer1.address], [false]);
 
-            assert.equal(await sashPress.isLeader(0, signer1.address), false);
+            assert.equal(await sashPress.isDelegate(0, signer1.address), false);
         });
 
         it('Leader and user cannot designate leader', async() => {
-            await sashPress.connect(leaderSigner).setLeaders(
+            await sashPress.connect(leaderSigner).setDelegates(
                 0, [signer1.address], [true]
             ).should.be.revertedWith("Ownable: caller is not the owner");
-            await sashPress.connect(signer1).setLeaders(
+            await sashPress.connect(signer1).setDelegates(
                 0, [signer1.address], [true]
             ).should.be.revertedWith("Ownable: caller is not the owner");
         });
@@ -184,7 +184,7 @@ describe("BadgerV3", function() {
             await sashPress.connect(userSigner).setSigner(
                 0,
                 signer1.address
-            ).should.be.revertedWith("BadgeSash::onlyLeader: Only leaders can call this.")
+            ).should.be.revertedWith("BadgerOrganization::onlyLeader: Only leaders can call this.")
         });
 
         it('User can claim', async() => {
@@ -247,7 +247,7 @@ describe("BadgerV3", function() {
                 0,
                 1,
                 "0x"
-            ).should.be.revertedWith("BadgeSash::safeTransferFrom: Missing the proper transfer permissions.")
+            ).should.be.revertedWith("BadgerOrganization::safeTransferFrom: Missing the proper transfer permissions.")
         })
         // it('Leader can move soulbound', async() => {
         //     await sashPress.connect(leaderSigner).safeTransferFrom(
@@ -331,10 +331,10 @@ describe("BadgerV3", function() {
         });
 
         it('Owner can designate leader', async() => {
-            await sashPress.setLeaders(0, [leaderSigner.address, signer1.address], [true, true]);
+            await sashPress.setDelegates(0, [leaderSigner.address, signer1.address], [true, true]);
 
-            assert.equal(await sashPress.isLeader(0, leaderSigner.address), true);
-            assert.equal(await sashPress.isLeader(0, signer1.address), true);
+            assert.equal(await sashPress.isDelegate(0, leaderSigner.address), true);
+            assert.equal(await sashPress.isDelegate(0, signer1.address), true);
         });
 
         it('Leader can mint', async() => {
@@ -502,23 +502,23 @@ describe("BadgerV3", function() {
     //     })
 
     //     it('Owner can designate leader', async() => {
-    //         await sashPress.setLeaders(0, [leaderSigner.address, signer1.address], [true, true]);
+    //         await sashPress.setDelegates(0, [leaderSigner.address, signer1.address], [true, true]);
 
-    //         assert.equal(await sashPress.isLeader(0, leaderSigner.address), true);
-    //         assert.equal(await sashPress.isLeader(0, signer1.address), true);
+    //         assert.equal(await sashPress.isDelegate(0, leaderSigner.address), true);
+    //         assert.equal(await sashPress.isDelegate(0, signer1.address), true);
     //     });
 
     //     it('Owner can revoke leader', async() => {
-    //         await sashPress.setLeaders(0, [signer1.address], [false]);
+    //         await sashPress.setDelegates(0, [signer1.address], [false]);
 
-    //         assert.equal(await sashPress.isLeader(0, signer1.address), false);
+    //         assert.equal(await sashPress.isDelegate(0, signer1.address), false);
     //     });
 
     //     it('Leader and user cannot designate leader', async() => {
-    //         await sashPress.connect(leaderSigner).setLeaders(
+    //         await sashPress.connect(leaderSigner).setDelegates(
     //             0, [signer1.address], [true]
     //         ).should.be.revertedWith("Ownable: caller is not the owner");
-    //         await sashPress.connect(signer1).setLeaders(
+    //         await sashPress.connect(signer1).setDelegates(
     //             0, [signer1.address], [true]
     //         ).should.be.revertedWith("Ownable: caller is not the owner");
     //     });
@@ -607,7 +607,7 @@ describe("BadgerV3", function() {
     //         await sashPress.connect(userSigner).setSigner(
     //             0,
     //             signer1.address
-    //         ).should.be.revertedWith("BadgeSash::onlyLeader: Only leaders can call this.")
+    //         ).should.be.revertedWith("BadgerOrganization::onlyLeader: Only leaders can call this.")
     //     });
 
     //     it('User can claim', async() => {

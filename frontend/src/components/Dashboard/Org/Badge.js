@@ -34,7 +34,7 @@ const Badge = () => {
     const selectMethods = {
         "Mint": "mintBundle",
         "Revoke": "revokeBundle",
-        "Add Leader": "setLeaders",
+        "Add Leader": "setDelegates",
         "Remove Leader": "removeLeaders",
     }
 

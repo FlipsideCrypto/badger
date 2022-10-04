@@ -10,8 +10,8 @@ describe("BadgerHouse", function() {
     before(async() => {
         [owner, signer1, signer2, signer3] = await ethers.getSigners();
 
-        const BadgerSash = await ethers.getContractFactory("BadgerSash");
-        sashMaster = await BadgerSash.deploy("");
+        const BadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
+        sashMaster = await BadgerOrganization.deploy("");
         sashMaster = await sashMaster.deployed();
 
         const BadgerHouse = await ethers.getContractFactory("BadgerHouse");

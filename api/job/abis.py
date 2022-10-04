@@ -7,7 +7,7 @@ from pathlib import Path
 
 abis_to_watch = {
     'BadgerHouse': 'FACTORY',
-    'BadgerSash': 'ORGANIZATION',
+    'BadgerOrganization': 'ORGANIZATION',
 }
 
 # The final output of this dict will be a dict of with keys as the values of the abis_to_watch dict

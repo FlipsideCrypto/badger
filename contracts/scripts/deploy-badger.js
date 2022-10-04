@@ -20,8 +20,8 @@ async function main() {
                     DEPLOYING MASTER SASH CONTRACT
     //////////////////////////////////////////////////////////////*/
 
-    const BadgerSash = await ethers.getContractFactory("BadgerSash");
-    sashMaster = await BadgerSash.deploy();
+    const BadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
+    sashMaster = await BadgerOrganization.deploy();
     sashMaster = await sashMaster.deployed();
     console.log("✅ Base Sash Deployed.")
 

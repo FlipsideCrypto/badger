@@ -30,6 +30,7 @@ class BadgeSerializer(serializers.ModelSerializer):
             'image_hash', 
             'token_uri',
             'delegates',
+            'signer_ethereum_address',
             'users',
             'created', 
             'updated'

@@ -10,7 +10,7 @@ import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
 import { BadgerScout } from "./BadgerScout.sol";
 
-contract BadgerSash is 
+contract BadgerOrganization is 
       BadgerOrganizationInterface
     , ERC1155Upgradeable
     , BadgerScout
@@ -25,9 +25,9 @@ contract BadgerSash is
     receive() external payable {}
 
     /**
-     * @notice Initialize the Sash with the starting state needed.
-     * @param _owner The owner of the Sash. (Ideally a multi-sig).
-     * @param _uri The base URI for the Sash.
+     * @notice Initialize the Organization with the starting state needed.
+     * @param _owner The owner of the Organization. (Ideally a multi-sig).
+     * @param _uri The base URI for the Organization.
      */
     function initialize(
           address _owner
@@ -36,7 +36,7 @@ contract BadgerSash is
         external
         initializer
     { 
-        /// @dev Initialize the NFT side of the Sash.
+        /// @dev Initialize the NFT side of the Organization.
         __ERC1155_init(_uri);
         /// @dev Initialize the BadgeScout contract.
         __Ownable_init();
@@ -99,7 +99,7 @@ contract BadgerSash is
         external
         virtual
         onlyLeader(_id)
-        onlySewnBadge(_id)
+        onlyRealBadge(_id)
     {
         /// @dev Mint the badge to the user.
         _mint(
@@ -129,11 +129,11 @@ contract BadgerSash is
         external
         virtual
         onlyLeader(_id)
-        onlySewnBadge(_id)
+        onlyRealBadge(_id)
     {
         require(
             _tos.length == _amounts.length,
-            "BadgeSash::leaderMintBatch: _tos and _amounts must be the same length."
+            "BadgerOrganization::leaderMintBatch: _tos and _amounts must be the same length."
         );
 
         /// @dev Mint the badge to all of the recipients with their given amount.
@@ -174,7 +174,7 @@ contract BadgerSash is
         require(
                    _tos.length == _ids.length 
                 && _ids.length == _amounts.length
-            , "BadgeSash::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
+            , "BadgerOrganization::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
         );
 
         /// @dev Mint the badge to all of the recipients with their given amount.
@@ -182,14 +182,14 @@ contract BadgerSash is
             /// @dev Only allow the owner or leader to mint the badge.
             require (
                 _msgSender() == owner() ||
-                badges[_ids[i]].addressIsLeader[_msgSender()],
-                "BadgeSash::leaderMintFullBatch: Only leaders can call this."
+                badges[_ids[i]].addressIsDelegate[_msgSender()],
+                "BadgerOrganization::leaderMintFullBatch: Only leaders can call this."
             );
 
             /// @dev Make sure that this badge exists
             require(
                   bytes(badges[_ids[i]].uri).length != 0
-                , "BadgeSash::setLeadersBatch: Badge does not exist."
+                , "BadgerOrganization::setDelegatesBatch: Badge does not exist."
             );
 
             _mint(
@@ -224,7 +224,7 @@ contract BadgerSash is
         external
         payable
         virtual
-        onlySewnBadge(_id)
+        onlyRealBadge(_id)
     { 
         /// @dev Verify that the signer signed the message permitting a mint of `_id`
         ///      to `_msgSender()` for `_quantity` amount.
@@ -236,7 +236,7 @@ contract BadgerSash is
                 , _data
                 , _signature
             ),
-            "BadgerSash::claimMint: Invalid signature."
+            "BadgerOrganization::claimMint: Invalid signature."
         );
 
         /// @dev Confirm that the payment token is valid.
@@ -246,7 +246,7 @@ contract BadgerSash is
         require(
                  paymentToken.tokenType == TOKEN_TYPE.NATIVE 
               && paymentToken.quantity  * _quantity == msg.value
-            , "BadgerSash::claimMint: Incorrect amount of ETH sent."
+            , "BadgerOrganization::claimMint: Incorrect amount of ETH sent."
         );
                 
         /// @dev Mint the badge to the user.
@@ -304,7 +304,7 @@ contract BadgerSash is
     {
         require(
             _froms.length == _amounts.length,
-            "BadgeSash::revokeBatch: _from and _amounts must be the same length."
+            "BadgerOrganization::revokeBatch: _from and _amounts must be the same length."
         );
 
         for(
@@ -347,7 +347,7 @@ contract BadgerSash is
         require(
                    _froms.length == _ids.length 
                 && _ids.length == _amounts.length
-            , "BadgeSash::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
+            , "BadgerOrganization::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
         );
 
         for(
@@ -357,14 +357,14 @@ contract BadgerSash is
         ) {
             require (
                 _msgSender() == owner() ||
-                badges[_ids[i]].addressIsLeader[_msgSender()],
-                "BadgeSash::revokeFullBatch: Only leaders can call this."
+                badges[_ids[i]].addressIsDelegate[_msgSender()],
+                "BadgerOrganization::revokeFullBatch: Only leaders can call this."
             );
 
             /// @dev Make sure that this badge exists
             require(
                   bytes(badges[_ids[i]].uri).length != 0
-                , "BadgeSash::setLeadersBatch: Badge does not exist."
+                , "BadgerOrganization::setDelegatesBatch: Badge does not exist."
             );
 
             /// @dev Revoke the badge from the user.
@@ -398,7 +398,7 @@ contract BadgerSash is
 
     /**
      * @notice Allows the owner of a badge to transfer it when it is not account bound however when it is 
-     *         account bound it will not allow the transfer unless the sender is a Leader or the Sash owner.
+     *         account bound it will not allow the transfer unless the sender is a Delegate or the Organization owner.
      * @param _from The address to transfer the badge from.
      * @param _to The address to transfer the badge to.
      * @param _id The id of the badge to transfer.
@@ -436,10 +436,10 @@ contract BadgerSash is
                   /// @dev If the sender is a leader of the badge.
                   || (
                         _msgSender() == owner() 
-                        || badges[_id].addressIsLeader[_msgSender()]
+                        || badges[_id].addressIsDelegate[_msgSender()]
                      )
               )
-            , "BadgeSash::safeTransferFrom: Missing the proper transfer permissions."
+            , "BadgerOrganization::safeTransferFrom: Missing the proper transfer permissions."
         );
 
         /// @dev Transfer the badge.
@@ -469,7 +469,7 @@ contract BadgerSash is
         public
         virtual
     {
-        revert("BadgeSash::safeBatchTransferFrom: Batch transfers are not supported.");
+        revert("BadgerOrganization::safeBatchTransferFrom: Batch transfers are not supported.");
     }
 
     /**
@@ -520,7 +520,7 @@ contract BadgerSash is
                       , _data
                       , signature
                   )
-                , "BadgeSash::onERC1155Received: Invalid signature."
+                , "BadgerOrganization::onERC1155Received: Invalid signature."
             );
         }
 
@@ -533,19 +533,19 @@ contract BadgerSash is
             /// @dev Confirm that the payment token being supplied is the one expected.
             require(
                   paymentToken.tokenAddress == _msgSender()
-                , "BadgeSash::onERC1155Received: Invalid payment token."
+                , "BadgerOrganization::onERC1155Received: Invalid payment token."
             );
 
             ///  @dev Confirm that the payment token being supplied is the correct amount.
             require(
                   paymentToken.tokenId == _id
-                , "BadgeSash::onERC1155Received: Incorrect payment token."
+                , "BadgerOrganization::onERC1155Received: Incorrect payment token."
             );
 
             /// @dev Confirm that the payment token being supplied is the correct amount.
             require(
                   paymentToken.quantity <= _amount
-                , "BadgeSash::onERC1155Received: Insufficient payment token."
+                , "BadgerOrganization::onERC1155Received: Insufficient payment token."
             );
         }
 
@@ -579,7 +579,7 @@ contract BadgerSash is
     {
         require(
               _msgSender() == address(this)
-            , "BadgeSash::onERC1155BatchReceived: Only BadgeSash can receive tokens."
+            , "BadgerOrganization::onERC1155BatchReceived: Only BadgerOrganization can receive tokens."
         );
 
         return this.onERC1155BatchReceived.selector;

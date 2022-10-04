@@ -3,14 +3,14 @@ import { usePrepareContractWrite, useContractWrite } from 'wagmi';
 const badgerHouseAddresses = JSON.parse(process.env.REACT_APP_BADGER_HOUSE_ADDRESSES)
 
 // Gets the ABI for sash contracts.
-export const useBadgerSashAbi = () => {
-    console.log('useBadgerSashAbi');
+export const useBadgerOrganizationAbi = () => {
+    console.log('useBadgerOrganizationAbi');
     try {
-        const abi = require('@abis/BadgerSash.json');
+        const abi = require('@abis/BadgerOrganization.json');
         return {abi: abi}
     }
     catch (err) {
-        console.error('Error importing BadgerSash:', err);
+        console.error('Error importing BadgerOrganization:', err);
         return {error: err}
     }
 }
@@ -59,12 +59,12 @@ export const useBadgerHousePress = (chainName) => {
 
 // Creates a badge from a cloned sash contract.
 export const useCreateBadge = (sashAddress, id, accountBound, signer, uri, paymentToken, delegates) => {
-    const badgerSash = useBadgerSashAbi();
+    const BadgerOrganization = useBadgerOrganizationAbi();
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
 
     const { config } = usePrepareContractWrite({
         addressOrName: sashAddress,
-        contractInterface: badgerSash.abi,
+        contractInterface: BadgerOrganization.abi,
         functionName: "setBadge",
         args: [
             id,
@@ -95,7 +95,7 @@ export const useCreateBadge = (sashAddress, id, accountBound, signer, uri, payme
     if there are multiple badge ids, and if there are multiple holders.
 */
 export const useManageBadgeOwnership = (sashAddress, holders, ids, amounts, revoke) => {
-    const badgerSash = useBadgerSashAbi();
+    const BadgerOrganization = useBadgerOrganizationAbi();
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
 
     // Might look a little funky but cleaner than a switch IMO.
@@ -113,7 +113,7 @@ export const useManageBadgeOwnership = (sashAddress, holders, ids, amounts, revo
 
     const { config } = usePrepareContractWrite({
         addressOrName: sashAddress,
-        contractInterface: badgerSash.abi,
+        contractInterface: BadgerOrganization.abi,
         functionName: method,
         args: [
             holders,
@@ -141,22 +141,22 @@ export const useManageBadgeOwnership = (sashAddress, holders, ids, amounts, revo
     Changes delegates of badge(s) with id(s) from sashAddress. 
     If revoke is true then delegate/leaders are removed.
 */
-export const useSetLeaders = (sashAddress, ids, leaders, revoke) => {
-    const badgerSash = useBadgerSashAbi();
+export const usesetDelegates = (sashAddress, ids, leaders, revoke) => {
+    const BadgerOrganization = useBadgerOrganizationAbi();
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
 
-    const isLeaderArray = Array(leaders.length).fill(!revoke);
-    const method = ids.length > 1 ? "setLeadersBatch" : "setLeaders";
+    const isDelegateArray = Array(leaders.length).fill(!revoke);
+    const method = ids.length > 1 ? "setDelegatesBatch" : "setDelegates";
     
 
     const { config } = usePrepareContractWrite({
         addressOrName: sashAddress,
-        contractInterface: badgerSash.abi,
+        contractInterface: BadgerOrganization.abi,
         functionName: method,
         args: [
             ids,
             leaders,
-            isLeaderArray,
+            isDelegateArray,
         ],
         onSettled() {
             response = {status: 'prepared', message: 'Transaction prepared.'};

@@ -36,7 +36,7 @@ contract BadgerScout is
         address signer;
         string uri;
         PaymentToken paymentToken;
-        mapping(address => bool) addressIsLeader;
+        mapping(address => bool) addressIsDelegate;
     }
 
     /// @dev Mapping from token ID to badge
@@ -50,9 +50,9 @@ contract BadgerScout is
         uint256 _id
     ) {
         require (
-            _msgSender() == owner() ||
-            badges[_id].addressIsLeader[_msgSender()],
-            "BadgeSash::onlyLeader: Only leaders can call this."
+              _msgSender() == owner() ||
+              badges[_id].addressIsDelegate[_msgSender()]
+            , "BadgerScout::onlyLeader: Only leaders can call this."
         );
         _;
     }
@@ -60,27 +60,24 @@ contract BadgerScout is
     /**
      * @notice Make sure that actions can only be performed on badges that exist.
      */    
-    modifier onlySewnBadge(
+    modifier onlyRealBadge(
         uint256 _id
     ) { 
         require (
-            badges[_id].signer != address(0),
-            "BadgeSash::onlySewnSash: Only sewn sashes can call this."
+              bytes(badges[_id].uri).length > 0
+            , "BadgerScout::onlyRealBadge: Can only call this for setup badges."
         );
         _;
     }
 
     /**
-     * @notice Create a badge in the sash.
+     * @notice Create a badge in the Organization.
      * @param _id The id of the badge being created.
      * @param _accountBound Whether or not the badge is account bound.
      * @param _signer The address of the signer.
      * @param _uri The URI for the badge.
      * @param _paymentToken The payment token for the badge.
-     * @param _leaders The addresses of the leaders.
-     * 
-     * Requirements:
-     * - `_id` must not already exist.
+     * @param _delegates The addresses of the delegates.
      */
     function setBadge(
           uint256 _id
@@ -88,18 +85,13 @@ contract BadgerScout is
         , address _signer
         , string memory _uri
         , PaymentToken memory _paymentToken
-        , address[] memory _leaders
+        , address[] memory _delegates 
     )
         external
         virtual
-        onlyOwner()
+        onlyOwner
     {
         Badge storage badge = badges[_id];
-
-        require(
-              bytes(badge.uri).length == 0
-            , "BadgeSash::setBadge: Badge already exists."
-        );
 
         /// @dev Set the state variables of the Badge.
         badge.accountBound = _accountBound;
@@ -107,12 +99,13 @@ contract BadgerScout is
         badge.uri = _uri;
         badge.paymentToken = _paymentToken;
 
+        /// @dev Update the state of all the delegates.
         for (
             uint256 i; 
-            i < _leaders.length; 
+            i < _delegates.length; 
             i++
         ) {
-            badge.addressIsLeader[_leaders[i]] = true;
+            badge.addressIsDelegate[_delegates[i]] = true;
         }
     }
 
@@ -131,7 +124,7 @@ contract BadgerScout is
         external
         virtual
         onlyLeader(_id)
-        onlySewnBadge(_id)
+        onlyRealBadge(_id)
     {
         badges[_id].signer = _signer;
     }
@@ -152,13 +145,8 @@ contract BadgerScout is
         external
         virtual
         onlyLeader(_id)
-        onlySewnBadge(_id)
+        onlyRealBadge(_id)
     {
-        require(
-              bytes(_uri).length > 0
-            , "BadgeSash::setUri: URI cannot be null."
-        );
-        
         badges[_id].uri = _uri;
     }
 
@@ -178,7 +166,7 @@ contract BadgerScout is
         external
         virtual
         onlyLeader(_id)
-        onlySewnBadge(_id)
+        onlyRealBadge(_id)
     {
         badges[_id].paymentToken = _paymentToken;
     }
@@ -186,105 +174,99 @@ contract BadgerScout is
     /**
      * @notice Allow the owner of the organization to control the leaders of the Badge.
      * @param _id The id of the badge.
-     * @param _leaders The address of the leader that we are updating the status of.
-     * @param _isLeader The status of the leaders being updated.
+     * @param _delegates The address of the delegates that we are updating the status of.
+     * @param _isDelegate The status of the delegates being updated.
      * 
      * Requirements:
      * - Only the owner of the contract can call this function.
      * - `_id` must corresponding to an existing Badge config.
      */
-    function setLeaders(
+    function setDelegates(
           uint256 _id
-        , address[] calldata _leaders
-        , bool[] calldata _isLeader
+        , address[] calldata _delegates
+        , bool[] calldata _isDelegate
     )
         external
         virtual
-        onlyOwner()
-        onlySewnBadge(_id)
+        onlyOwner
+        onlyRealBadge(_id)
     {
         require(
-              _leaders.length == _isLeader.length
-            , "BadgeSash::setLeaders: Leaders and isLeader arrays must be the same length."
+              _delegates.length == _isDelegate.length
+            , "BadgerScout::setDelegates: _delegates and _isDelegate arrays must be the same length."
         );
 
-        /// @dev Loop through the leaders and update their status.        
+        /// @dev Loop through the delegates and update their status.        
         for (
             uint256 i; 
-            i < _leaders.length; 
+            i < _delegates.length; 
             i++
         ) {
-            badges[_id].addressIsLeader[_leaders[i]] = _isLeader[i];
+            badges[_id].addressIsDelegate[_delegates[i]] = _isDelegate[i];
         }
     }
 
     /**
-     * @notice Allow the owner of the organization to control the leaders of multiple badges in one transaction.
+     * @notice Allow the owner of the organization to control the delegates of multiple badges in one transaction.
      * @dev This functionality is not exposed through the Dashboard UI however you can call this function directly.
      * @param _ids The ids of the badges.
-     * @param _leaders The address of the leader that we are updating the status of.
-     * @param _isLeader The status of the leaders being updated.
+     * @param _delegates The address of the delegates that we are updating the status of.
+     * @param _isDelegate The status of the delegates being updated.
      * 
      * Requirements:
      * - Only the owner of the contract can call this function.
-     * - `_id` must corresponding to an existing Badge config.
      */
-    function setLeadersBatch(
+    function setDelegatesBatch(
           uint256[] calldata _ids
-        , address[] calldata _leaders
-        , bool[] calldata _isLeader
+        , address[] calldata _delegates
+        , bool[] calldata _isDelegate
     )
         external
         virtual
         onlyOwner()
     {
         require(
-                   _ids.length == _leaders.length 
-                && _leaders.length == _isLeader.length
-            , "BadgeSash::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
+                   _ids.length == _delegates.length 
+                && _delegates.length == _isDelegate.length
+            , "BadgerScout::setDelegatesBatch: _ids, _delegates, and _isDelegate must be the same length."
         );
 
-        /// @dev Loop through the leaders and update their status.        
+        /// @dev Loop through the badges and update the delegates statuses.        
         for (
             uint256 i; 
             i < _ids.length; 
             i++
         ) {
-            /// @dev Make sure that this badge exists
-            require(
-                  bytes(badges[_ids[i]].uri).length != 0
-                , "BadgeSash::setLeadersBatch: Badge does not exist."
-            );
-
-            badges[_ids[i]].addressIsLeader[_leaders[i]] = _isLeader[i];
+            badges[_ids[i]].addressIsDelegate[_delegates[i]] = _isDelegate[i];
         }
     }
 
     /**
-     * @notice Allow anyone to see the leaders of the Badge.
+     * @notice Allow anyone to see the delegates of a Badge.
      * @param _id The id of the badge.
-     * @return The leaders of the badge.
+     * @param _delegate The address of the delegate.
+     * @return Boolean of whether or not the provided address is a delegate.
      * 
      * Requirements:
      * - `_id` must corresponding to an existing Badge config.
      */
-    function isLeader(
+    function isDelegate(
           uint256 _id
-        , address _leader
+        , address _delegate
     )
         external
         view
         virtual
-        onlySewnBadge(_id)
+        onlyRealBadge(_id)
         returns (
             bool
         )
     {
-        return badges[_id].addressIsLeader[_leader];
+        return badges[_id].addressIsDelegate[_delegate];
     }
 
     /**
-     * @notice Allows a sash to define a signer that will enable the claiming of a badge.
+     * @notice Allows an Organization to define a signer that will enable the claiming of a badge.
      * @param _to The address to mint the badge to.
      * @param _id The id of the badge to mint.
      * @param _amount The amount of the badge to mint.
@@ -332,7 +314,7 @@ contract BadgerScout is
     )
         external
         payable
-        onlyOwner()
+        onlyOwner
     {
         (bool success, bytes memory returnData) = _to.call{value: _value}(_data);
         require(success, string(returnData));
