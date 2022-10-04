@@ -223,7 +223,7 @@ contract BadgerOrganization is
         /// @dev Determine that the claimer is providing sufficient funds.
         require(
                  paymentToken.tokenType == TOKEN_TYPE.NATIVE 
-              && paymentToken.quantity  * _amount == msg.value
+              && paymentToken.amount  * _amount == msg.value
             , "BadgerOrganization::claimMint: Incorrect amount of ETH sent."
         );
                 
@@ -265,6 +265,7 @@ contract BadgerOrganization is
         , uint256 _id
         , uint256[] memory _amounts
     )
+        override
         external
         virtual
         onlyLeader(_id)
@@ -350,6 +351,7 @@ contract BadgerOrganization is
           uint256 _id
         , uint256 _amount
     )
+        override
         external
         virtual
     {
@@ -421,7 +423,7 @@ contract BadgerOrganization is
      * @notice Prohibits anyone from making a batch transfer of tokens. This is in place because
      *         doing so would be extremely inefficient gas wise and introduces many significant
      *         holes in the opening and closing of permissions.
-     * @dev This prohibition does not prevent batch minting.
+     * @dev This prohibition does not prevent batch minting. This may be enabled in the future.
      */
     function safeBatchTransferFrom(
           address
@@ -445,7 +447,8 @@ contract BadgerOrganization is
      * @param _data The minting data.
      *
      * Requirements:
-     * - `badgeId
+     * - `signature` must be a valid signature from the owner of the badge.
+     * - token id `badgeId` takes payment in an ERC1155 token.
      */
     function onERC1155Received(
           address
@@ -475,7 +478,7 @@ contract BadgerOrganization is
 
         Badge storage badge = badges[badgeId];
 
-        /// @dev If the Badge has a signer, verify that the signature is valid.
+        /// @dev If the Badge has a signer serving as a gate, verify that the signature is valid.
         if (badge.signer != address(0)) {
             require(
                   _verify(
@@ -489,37 +492,32 @@ contract BadgerOrganization is
             );
         }
 
-        /// @dev If the badge is account bound, add the user to the list of leaders.
         PaymentToken storage paymentToken = badge.paymentToken;
 
-        /// @dev Handle the Payment Token if there is one. Native token would be handled
-        ///      through `claimMint`.
-        if (paymentToken.quantity != 0) { 
-            /// @dev Confirm that the payment token being supplied is the one expected.
-            require(
-                  paymentToken.tokenAddress == _msgSender()
-                , "BadgerOrganization::onERC1155Received: Invalid payment token."
-            );
+        /// @dev Confirm that the payment token being supplied is the one expected.
+        require(
+              _msgSender() == paymentToken.tokenAddress 
+            , "BadgerOrganization::onERC1155Received: Invalid payment token."
+        );
 
-            ///  @dev Confirm that the payment token being supplied is the correct amount.
-            require(
-                  paymentToken.tokenId == _id
-                , "BadgerOrganization::onERC1155Received: Incorrect payment token."
-            );
+        ///  @dev Confirm that the payment token being supplied is the correct id.
+        require(
+                paymentToken.id == _id
+            , "BadgerOrganization::onERC1155Received: Incorrect payment token."
+        );
 
-            /// @dev Confirm that the payment token being supplied is the correct amount.
-            require(
-                  paymentToken.quantity <= _amount
-                , "BadgerOrganization::onERC1155Received: Insufficient payment token."
-            );
-        }
+        /// @dev Confirm that the payment token being supplied is the correct amount.
+        require(
+                paymentToken.amount == _amount
+            , "BadgerOrganization::onERC1155Received: Insufficient payment token."
+        );
 
         /// @dev Mint the badge to the user.
         _mint(
               _from
             , badgeId
             , _amount
-            , ""
+            , _data
         );
 
         return this.onERC1155Received.selector;

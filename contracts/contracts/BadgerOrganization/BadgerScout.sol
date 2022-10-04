@@ -26,8 +26,8 @@ contract BadgerScout is
     struct PaymentToken { 
         TOKEN_TYPE tokenType;
         address tokenAddress;
-        uint256 tokenId;
-        uint256 quantity;
+        uint256 id;
+        uint256 amount;
     }
 
     /// @dev The processing information for this token.
