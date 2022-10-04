@@ -11,31 +11,25 @@ const UserContextProvider = ({ children, signer, address }) => {
     const { chain } = useNetwork();
 
     useEffect(() => {
-        if (!signer) return void {};
+        if (!signer || !address) return void {};
         
         async function getData() {
-            const response = await getUserRequest(address);
-            console.log('userDataResponse', response);
+            let response = await getUserRequest(address);
 
-            if (
-                response.error || 
-                response.detail === "Authentication credentials were not provided."
-            ) {
+            if (response.detail === "Authentication credentials were not provided.") {
                 const siweResponse = await SIWEAuthorize(signer, address, chain?.id);
-                console.log('SIWE Response', {...siweResponse})
 
-                const userDataResponse = await getUserRequest(address);
-                console.log('trying userData again after login', userDataResponse)
-                setUserData(userDataResponse);
-            } else {
-                setUserData(response);
+                if (siweResponse.success) {
+                    getData();
+                }
+                else {
+                    console.log('Authentication Error', siweResponse)
+                    return
+                }
             }
-            // if (!userDataResponse?.error) {
-            //     setUserData(userDataResponse);
-            // }
-            // else {
-            //     setUserData({address: address});
-            // }
+
+            if (response?.address === address) 
+                setUserData(response);
         }
 
         getData();

@@ -70,7 +70,8 @@ module.exports = {
             saveDeployments: false,
             mining: {
                 auto: false,
-                interval: 2000,
+                order: 'fifo',
+                interval: 3000,
             }
         },
         rinkeby: {

@@ -15,8 +15,8 @@ export async function postBadgeRequest(badge) {
         })
         .then(res => res.json())
         .then(data => {
-            console.log('got org response', data);
             if (!data?.id) throw new Error("Org POST request failed, id not found");
+            console.log('badge post response', data);
             response = data;
         })
         .catch(err => {
@@ -47,8 +47,8 @@ export async function postOrgRequest(org) {
         })
         .then(res => res.json())
         .then(data => {
-            console.log('got org response', data);
             if (!data?.id) throw new Error("Org POST request failed, id not found");
+            console.log('got org response', data);
             response = data;
         })
         .catch(err => {
@@ -69,7 +69,6 @@ export async function getUserRequest(address) {
         await fetch(`${API_URL}/wallets/${address}/`, {
             method: "GET",
             mode: "cors",
-            // cache: "no-cache",
             credentials: 'include',
         })
         .then(res => res.json())
@@ -79,12 +78,12 @@ export async function getUserRequest(address) {
             response = data;
         })
         .catch(err => {
-            console.log('error fetching user data', err);
-            response = {error: err}
+            throw new Error(err)
         })
     }
     catch (err) {
-        throw new Error(err);
+        console.log('error fetching user data', err);
+        response = {error: err};
     }
 
     return response;
@@ -104,7 +103,7 @@ export async function getOrgRequest(orgId) {
         .then(res => res.json())
         .then(data => {
             if (data.length < 1) throw new Error("No org data found");
-            console.log('got user data', data);
+            console.log('got org data', data);
             response = data;
         })
         .catch(err => {

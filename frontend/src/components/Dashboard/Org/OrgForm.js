@@ -58,6 +58,7 @@ const OrgForm = () => {
         cloneTx = await cloneTx.wait();
         const contractAddress = cloneTx.logs[0].address;
         orgObj.ethereum_address = contractAddress;
+        if (contractAddress) orgObj.is_active = true;
 
         console.log('OrgObj', orgObj);
         const response = await postOrgRequest(orgObj, userData.token);
