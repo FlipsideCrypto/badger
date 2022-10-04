@@ -91,6 +91,11 @@ contract BadgerScout is
         virtual
         onlyOwner
     {
+        require(
+              bytes(_uri).length > 0
+            , "BadgerScout::setBadge: URI must be set."
+        );
+
         Badge storage badge = badges[_id];
 
         /// @dev Set the state variables of the Badge.

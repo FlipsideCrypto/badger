@@ -47,6 +47,9 @@ contract BadgerOrganization is
      * @notice Returns the metadata URI for a given badge.
      * @param _id The id of the badge to get the metadata URI for.
      * @return The metadata URI for the badge.
+     *
+     * Requirements:
+     * - Badge of `_id` must exist.
      */    
     function uri(
         uint256 _id
@@ -55,28 +58,12 @@ contract BadgerOrganization is
         public
         view
         virtual
+        onlyRealBadge(_id)
         returns (
             string memory
         )
     {
-        // TODO: FIGURE OUT WHAT WE WANT TO DO WITH THIS
-        /// @dev If the badge has a custom URI, return that.
-        if (bytes(badges[_id].uri).length > 0) {
-            return badges[_id].uri;
-        } 
-
-        /// @dev Otherwise, return the default URI.
-        return string(
-            abi.encodePacked(
-                  "https://badger.utc24.io/api/?seed="
-                , string(
-                      abi.encodePacked(
-                          address(this).toHexString()
-                        , _id.toString()
-                      )
-                 )
-            )
-        );
+        return badges[_id].uri;
     }
 
     /**
@@ -159,25 +146,24 @@ contract BadgerOrganization is
         virtual
     {
         require(
-                   _tos.length == _ids.length 
-                && _ids.length == _amounts.length
+                 _tos.length == _ids.length 
+              && _ids.length == _amounts.length
             , "BadgerOrganization::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
         );
 
         /// @dev Mint the badge to all of the recipients with their given amount.
         for (uint256 i = 0; i < _tos.length; i++) {
-            /// @dev Only allow the owner or leader to mint the badge.
-            require (
-                _msgSender() == owner() ||
-                badges[_ids[i]].addressIsDelegate[_msgSender()],
-                "BadgerOrganization::leaderMintFullBatch: Only leaders can call this."
-            );
-
             /// @dev Make sure that this badge exists
-            // TODO: WHAT DO WE DO ABOUT THIS ????
             require(
                   bytes(badges[_ids[i]].uri).length != 0
                 , "BadgerOrganization::setDelegatesBatch: Badge does not exist."
+            );
+            
+            /// @dev Only allow the owner or leader to mint the badge.
+            require (
+                     _msgSender() == owner() 
+                  || badges[_ids[i]].addressIsDelegate[_msgSender()]
+                , "BadgerOrganization::leaderMintFullBatch: Only leaders can call this."
             );
 
             _mint(
@@ -248,6 +234,7 @@ contract BadgerOrganization is
         external
         virtual
         onlyLeader(_id)
+        onlyRealBadge(_id)
     {
         /// @dev Revoke the badge from the user.
         _burn(
@@ -269,6 +256,7 @@ contract BadgerOrganization is
         external
         virtual
         onlyLeader(_id)
+        onlyRealBadge(_id)
     {
         require(
             _froms.length == _amounts.length,
@@ -323,16 +311,17 @@ contract BadgerOrganization is
             i < _froms.length;
             i++
         ) {
-            require (
-                _msgSender() == owner() ||
-                badges[_ids[i]].addressIsDelegate[_msgSender()],
-                "BadgerOrganization::revokeFullBatch: Only leaders can call this."
-            );
-
             /// @dev Make sure that this badge exists
             require(
                   bytes(badges[_ids[i]].uri).length != 0
                 , "BadgerOrganization::setDelegatesBatch: Badge does not exist."
+            );
+
+            /// @dev Only allow the owner or leader to revoke the badge.
+            require (
+                _msgSender() == owner() ||
+                badges[_ids[i]].addressIsDelegate[_msgSender()],
+                "BadgerOrganization::revokeFullBatch: Only leaders can call this."
             );
 
             /// @dev Revoke the badge from the user.
@@ -354,6 +343,7 @@ contract BadgerOrganization is
         override
         external
         virtual
+        onlyRealBadge(_id)
     {
         /// @dev Revoke the badge from the user.
         _burn(
@@ -387,6 +377,7 @@ contract BadgerOrganization is
         override
         public
         virtual
+        onlyRealBadge(_id)
     {
         /// @dev Confirm that the transfer can proceed if the account is not token bound
         ///      or the message sender is a leader of the badge.
@@ -500,15 +491,18 @@ contract BadgerOrganization is
             , "BadgerOrganization::onERC1155Received: Invalid payment token."
         );
 
-        ///  @dev Confirm that the payment token being supplied is the correct id.
+        /// @dev Confirm that the payment token being supplied is the correct id.
         require(
                 paymentToken.id == _id
             , "BadgerOrganization::onERC1155Received: Incorrect payment token."
         );
 
+        /// @dev Use the amount of tokens provided in the receipt to determine how many badges can be minted. 
+        uint256 amount = _amount / paymentToken.amount;
+
         /// @dev Confirm that the payment token being supplied is the correct amount.
         require(
-                paymentToken.amount == _amount
+              amount > 0
             , "BadgerOrganization::onERC1155Received: Insufficient payment token."
         );
 
@@ -524,7 +518,7 @@ contract BadgerOrganization is
     }    
 
     /**
-     * @notice Prohibits anyone from making a batch transfer of tokens. This is in place because
+     * @notice Prohibits anyone from making a batch transfer of tokens as a payment. This is in place because
      *         doing so would be extremely inefficient gas wise and introduces many significant
      *         holes in the opening and closing of permissions.
      */
@@ -540,12 +534,7 @@ contract BadgerOrganization is
         virtual
         returns (bytes4)
     {
-        require(
-              _msgSender() == address(this)
-            , "BadgerOrganization::onERC1155BatchReceived: Only BadgerOrganization can receive tokens."
-        );
-
-        return this.onERC1155BatchReceived.selector;
+        revert("BadgerOrganization::onERC1155BatchReceived: Batch receivables are not supported.");
     }
 
     /**
