@@ -6,7 +6,7 @@ var chai = require('chai')
 
 const { ethers } = require("hardhat");
 
-describe("BadgerHouse", function() {
+describe("Badger", function() {
     before(async() => {
         [owner, signer1, signer2, signer3] = await ethers.getSigners();
 
@@ -14,8 +14,8 @@ describe("BadgerHouse", function() {
         sashMaster = await BadgerOrganization.deploy("");
         sashMaster = await sashMaster.deployed();
 
-        const BadgerHouse = await ethers.getContractFactory("BadgerHouse");
-        house = await BadgerHouse.deploy(sashMaster.address);
+        const Badger = await ethers.getContractFactory("Badger");
+        house = await Badger.deploy(sashMaster.address);
         house = await house.deployed();
 
         // const Subscription = await ethers.getContractFactory("ERC1155Badger");

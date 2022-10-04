@@ -107,7 +107,7 @@ contract BadgerVersions is
     }
 
     /**
-     * See {BadgerHouse._setVersion}
+     * See {Badger._setVersion}
      * 
      * Requirements:
      * - The caller must be the owner.

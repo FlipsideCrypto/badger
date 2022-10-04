@@ -35,8 +35,8 @@ async function main() {
     /*//////////////////////////////////////////////////////////////
                         DEPLOYING HOUSE CONTRACT
     //////////////////////////////////////////////////////////////*/    
-    const BadgerHouse = await ethers.getContractFactory("BadgerHouse");
-    house = await BadgerHouse.deploy(sashMaster.address);
+    const Badger = await ethers.getContractFactory("Badger");
+    house = await Badger.deploy(sashMaster.address);
     house = await house.deployed();
 
     console.table({

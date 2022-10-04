@@ -1,6 +1,6 @@
 import { usePrepareContractWrite, useContractWrite } from 'wagmi';
 
-const badgerHouseAddresses = JSON.parse(process.env.REACT_APP_BADGER_HOUSE_ADDRESSES)
+const BadgerAddresses = JSON.parse(process.env.REACT_APP_BADGER_HOUSE_ADDRESSES)
 
 // Gets the ABI for sash contracts.
 export const useBadgerOrganizationAbi = () => {
@@ -15,30 +15,30 @@ export const useBadgerOrganizationAbi = () => {
     }
 }
 
-// Gets the abi and chain specific address for the BadgerHouse contract.
-export const useBadgerHouseAbi = (chainName) => {
+// Gets the abi and chain specific address for the Badger contract.
+export const useBadgerAbi = (chainName) => {
     try {
-        const abi = require('@abis/BadgerHouse.json');
-        const address = badgerHouseAddresses[chainName]
+        const abi = require('@abis/Badger.json');
+        const address = BadgerAddresses[chainName]
         return {
             abi: abi,
             address: address
         }
     }
     catch (err) {
-        console.error('Error importing BadgerHouse:', err);
+        console.error('Error importing Badger:', err);
         return {error: err}
     }
 }
 
 // Creates a new sash contract for an organization.
-export const useBadgerHousePress = (chainName) => {
-    const badgerHouse = useBadgerHouseAbi(chainName);
+export const useBadgerPress = (chainName) => {
+    const Badger = useBadgerAbi(chainName);
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
 
     const { config } = usePrepareContractWrite({
-        addressOrName: badgerHouse.address,
-        contractInterface: badgerHouse.abi,
+        addressOrName: Badger.address,
+        contractInterface: Badger.abi,
         functionName: "createOrganization",
         args: [""],
         onSettled() {

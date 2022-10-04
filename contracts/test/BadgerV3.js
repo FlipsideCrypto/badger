@@ -26,8 +26,8 @@ describe("BadgerV3", function() {
         sashMaster = await BadgerOrganization.deploy();
         sashMaster = await sashMaster.deployed();
 
-        const BadgerHouse = await ethers.getContractFactory("BadgerHouse");
-        house = await BadgerHouse.deploy(sashMaster.address);
+        const Badger = await ethers.getContractFactory("Badger");
+        house = await Badger.deploy(sashMaster.address);
         house = await house.deployed();
 
         // why tf is this failing.... Might just use one instance of sashPress for this.

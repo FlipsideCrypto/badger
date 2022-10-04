@@ -7,7 +7,7 @@ import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 
-import { useBadgerHousePress } from "@hooks/useContracts";
+import { useBadgerPress } from "@hooks/useContracts";
 import { postOrgRequest } from "@utils/api_requests";
 
 const OrgForm = () => {
@@ -17,7 +17,7 @@ const OrgForm = () => {
 
     const { chain } = useNetwork();
     const navigate = useNavigate();
-    const createContract = useBadgerHousePress(chain.name);
+    const createContract = useBadgerPress(chain.name);
 
     const actions = [
         {

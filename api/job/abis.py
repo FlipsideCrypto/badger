@@ -6,7 +6,7 @@ from django.conf import settings
 from pathlib import Path
 
 abis_to_watch = {
-    'BadgerHouse': 'FACTORY',
+    'Badger': 'FACTORY',
     'BadgerOrganization': 'ORGANIZATION',
 }
 

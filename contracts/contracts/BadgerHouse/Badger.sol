@@ -12,7 +12,7 @@ import { BadgerVersions } from "./BadgerVersions.sol";
  *         operates through the purchasing of an ERC1155 token that is then sent to this contract
  *         to as a form of payment. 
  */
-contract BadgerHouse is 
+contract Badger is 
     BadgerVersions
 { 
     constructor(
@@ -38,7 +38,7 @@ contract BadgerHouse is
     { 
         require(
                 versions[activeVersion].license.tokenAddress == address(0)
-              , "BadgerHouse::createOrganization: Subscription mode is enabled." 
+              , "Badger::createOrganization: Subscription mode is enabled." 
         );
 
         /// @dev Deploy the Organization contract.
@@ -77,7 +77,7 @@ contract BadgerHouse is
         /// @dev Confirm the token received is the payment token for the license id being deployed.
         require(
               _msgSender() == versions[version].license.tokenAddress
-            , "BadgerHouse::onERC1155Received: Only the subscription implementation can call this function."
+            , "Badger::onERC1155Received: Only the subscription implementation can call this function."
         );
 
         /// @dev Deploy the Organization contract to the account covering the cost of the payment.
