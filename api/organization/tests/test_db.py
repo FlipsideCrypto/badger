@@ -18,7 +18,7 @@ class OrganizationTestCase(TestCase):
 
     def test_cannot_create_org_with_no_contract_address(self):
         with self.assertRaises(IntegrityError):
-            create_organization(self.user, contract_address=None)
+            create_organization(self.user, ethereum_address=None)
 
     def test_cannot_create_org_with_no_name(self):
         with self.assertRaises(IntegrityError):

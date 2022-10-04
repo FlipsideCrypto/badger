@@ -40,7 +40,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'description',
             'image_hash',
             'contract_uri_hash',
-            'contract_address',
+            'ethereum_address',
             'owner',
             'badges',
             'delegates',
