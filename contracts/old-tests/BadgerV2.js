@@ -28,7 +28,7 @@ describe("BadgerHouse", function() {
 
     describe("New Sash", function() {
         it('Initialized New Sash', async() => {
-            cloneTx = await house.connect(owner).createSashPress();
+            cloneTx = await house.connect(owner).createOrganization();
             cloneTx = await cloneTx.wait();
             
             sashPressAddress = cloneTx.events[0].address;

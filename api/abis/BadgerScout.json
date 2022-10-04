@@ -1,0 +1,19 @@
+[
+  "event Initialized(uint8)",
+  "event OwnershipTransferred(address indexed,address indexed)",
+  "function badges(uint256) view returns (bool, address, string, tuple(uint8,address,uint256,uint256))",
+  "function execTransaction(address,bytes,uint256) payable",
+  "function isLeader(uint256,address) view returns (bool)",
+  "function onERC1155BatchReceived(address,address,uint256[],uint256[],bytes) returns (bytes4)",
+  "function onERC1155Received(address,address,uint256,uint256,bytes) returns (bytes4)",
+  "function owner() view returns (address)",
+  "function renounceOwnership()",
+  "function setBadge(uint256,bool,address,string,tuple(uint8,address,uint256,uint256),address[])",
+  "function setLeaders(uint256,address[],bool[])",
+  "function setLeadersBatch(uint256[],address[],bool[])",
+  "function setPaymentToken(uint256,tuple(uint8,address,uint256,uint256))",
+  "function setSigner(uint256,address)",
+  "function setURI(uint256,string)",
+  "function supportsInterface(bytes4) view returns (bool)",
+  "function transferOwnership(address)"
+]

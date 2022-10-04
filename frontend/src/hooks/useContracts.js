@@ -39,7 +39,7 @@ export const useBadgerHousePress = (chainName) => {
     const { config } = usePrepareContractWrite({
         addressOrName: badgerHouse.address,
         contractInterface: badgerHouse.abi,
-        functionName: "createSashPress",
+        functionName: "createOrganization",
         args: [""],
         onSettled() {
             response = {status: 'prepared', message: 'Transaction prepared.'};

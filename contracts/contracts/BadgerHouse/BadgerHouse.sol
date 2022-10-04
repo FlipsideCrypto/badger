@@ -7,10 +7,10 @@ import { BadgerVersions } from "./BadgerVersions.sol";
 /**
  * @title  Badger House
  * @author masonchain & nftchance
- * @notice A contract that allows users to mint Badger Sash NFTs with a permissionless system
+ * @notice A contract that allows users to mint Badger Organizations with a permissionless system
  *         that has two operating states. Free to use, and subscription based. The subscription
  *         operates through the purchasing of an ERC1155 token that is then sent to this contract
- *         to as a form of permanent staking. 
+ *         to as a form of payment. 
  */
 contract BadgerHouse is 
     BadgerVersions
@@ -22,23 +22,27 @@ contract BadgerHouse is
     {}
 
     /**
-     * @notice Creates a new Sash act whie while the subscription model is NOT enabled.
+     * @notice Creates a new Organization while the subscription model is NOT enabled.
      * 
      * Requirements:
      * - The subscription model must not be active.
      */
-    function createSashPress(string memory _uri) 
+    function createOrganization(
+        string memory _uri
+    ) 
         external
         virtual
-        returns (address)
+        returns (
+            address
+        )
     { 
         require(
                 versions[activeVersion].license.tokenAddress == address(0)
-              , "BadgerHouse::createSashPress: Subscription mode is enabled." 
+              , "BadgerHouse::createOrganization: Subscription mode is enabled." 
         );
 
         /// @dev Deploy the Sash contract.
-        address sash = _createSashPress(
+        address sash = _createOrganization(
               activeVersion
             , _msgSender()
             , _uri
@@ -49,8 +53,8 @@ contract BadgerHouse is
 
     /**
      * @notice Creates a new Sash when the subscription model is enabled and the user has
-     *         transfer their subscription token to this contract. The subscription, is a lifetime
-     *         subscription.
+     *         transfer their subscription token to this contract. The subscription, is a 
+     *         lifetime subscription.
      * @param _from The address of the account who owns the created Organization.
      * @return Selector response of the subscription token successful transfer.
      */
@@ -63,7 +67,9 @@ contract BadgerHouse is
     ) 
         override 
         public 
-        returns (bytes4) 
+        returns (
+            bytes4
+        ) 
     {
         /// @dev Get the version of the Sash contract to be deployed.
         uint256 version = abi.decode(_data, (uint256));
@@ -75,7 +81,7 @@ contract BadgerHouse is
         );
 
         /// @dev Deploy the Sash contract.
-        _createSashPress(
+        _createOrganization(
               version
             , _from
             , ""

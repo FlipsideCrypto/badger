@@ -5,7 +5,7 @@ pragma solidity ^0.8.16;
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { ERC1155Holder } from "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
-import { BadgerSashInterface } from "../BadgerSash/interfaces/BadgerSashInterface.sol";
+import { BadgerOrganizationInterface } from "../BadgerSash/interfaces/BadgerOrganizationInterface.sol";
 import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 
 import { Clones } from "@openzeppelin/contracts/proxy/Clones.sol";
@@ -45,6 +45,8 @@ contract BadgerVersions is
         VersionLicense license;
     }
 
+    /// @dev Announces when a new Organization is created through the protocol Factory.
+    /// @dev This enables magic-appearance on the app-layer.
     event OrganizationCreated(
         address indexed organization,
         address indexed owner,
@@ -132,33 +134,43 @@ contract BadgerVersions is
     }
 
     /**
-     * @notice Creates a new Sash contract to be led by the deploying address.
-     * @param _deployer The address that will be the deployer of the Sash contract.
-     * @dev The Sash contract is created using the Sash implementation contract.
+     * @notice Creates a new Organization to be led by the deploying address.
+     * @param _deployer The address that will be the deployer of the Organizatoin contract.
+     * @dev The Organization contract is created using the Organization implementation contract.
      */
-    function _createSashPress(
+    function _createOrganization(
           uint256 _version
         , address _deployer
         , string memory _uri
     )
         internal
-        returns (address)
+        returns (
+            address
+        )
     {
         /// @dev Get the address of the implementation for the desired version.
         address versionImplementation = versions[_version].implementation;
 
         /// @dev Get the address of the target.
-        address sashAddress = versionImplementation.clone();
+        address organizationAddress = versionImplementation.clone();
 
         /// @dev Interface with the newly created contract to initialize it. 
-        BadgerSashInterface sash = BadgerSashInterface(sashAddress);
+        BadgerOrganizationInterface organization = BadgerOrganizationInterface(
+            organizationAddress
+        );
 
-        /// @dev Deploy the clone contract to serve as the Press for the Sash and it's badges.
-        sash.initialize(
+        /// @dev Deploy the clone contract to serve as the Organization.
+        organization.initialize(
               _deployer
             , _uri
         );
 
-        return sashAddress;
+        emit OrganizationCreated(
+              organizationAddress
+            , _deployer
+            , versionImplementation
+        );
+
+        return organizationAddress;
     }
 }

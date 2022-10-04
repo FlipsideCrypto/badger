@@ -38,7 +38,7 @@ describe("BadgerV3", function() {
 
     describe("No Payment Sash", function() {
         it('Initialized New Sash', async() => {
-            cloneTx = await house.connect(owner).createSashPress("0x");
+            cloneTx = await house.connect(owner).createOrganization("0x");
             cloneTx = await cloneTx.wait();
             
             sashPressAddress = cloneTx.events[0].address;
@@ -294,7 +294,7 @@ describe("BadgerV3", function() {
 
     describe("Native Payment Sash", function() {
         it('Initialized New Sash', async() => {
-            cloneTx = await house.connect(owner).createSashPress("0x");
+            cloneTx = await house.connect(owner).createOrganization("0x");
             cloneTx = await cloneTx.wait();
             
             sashPressAddress = cloneTx.events[0].address;
@@ -456,7 +456,7 @@ describe("BadgerV3", function() {
     // WTF why is 1155 deploy failing
     // describe("1155 Payment Sash", function() {
     //     it('Initialized New Sash', async() => {
-    //         cloneTx = await house.connect(owner).createSashPress("0x");
+    //         cloneTx = await house.connect(owner).createOrganization("0x");
     //         cloneTx = await cloneTx.wait();
             
     //         sashPressAddress = cloneTx.events[0].address;

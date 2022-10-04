@@ -3,12 +3,13 @@ from django.db import models
 from siwe_auth.models import validate_ethereum_address
 
 from badge.models import Badge
+from utils.web3 import CHAINS, ETHEREUM
 
 
 class Organization(models.Model):
     is_active = models.BooleanField(default=False)
 
-    chain = models.CharField(max_length=50, blank=False, default=None)
+    chain = models.CharField(max_length=50, choices=CHAINS, default=ETHEREUM)
     ethereum_address = models.CharField(
         max_length=50, blank=False, default=None, validators=[validate_ethereum_address])
 

@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.16;
 
-import { BadgerSashInterface } from "./interfaces/BadgerSashInterface.sol";
+import { BadgerOrganizationInterface } from "./interfaces/BadgerOrganizationInterface.sol";
 
 import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import { ERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol";
@@ -11,7 +11,7 @@ import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 import { BadgerScout } from "./BadgerScout.sol";
 
 contract BadgerSash is 
-      BadgerSashInterface
+      BadgerOrganizationInterface
     , ERC1155Upgradeable
     , BadgerScout
 {

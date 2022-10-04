@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.16;
 
-interface BadgerSashInterface { 
+interface BadgerOrganizationInterface { 
     function initialize(
           address owner
         , string memory uri

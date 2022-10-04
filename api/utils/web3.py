@@ -6,6 +6,15 @@ provider = HTTPProvider(settings.PROVIDER)
 w3 = Web3(provider)
 ns = ENS.fromWeb3(w3)
 
+ETHEREUM = "ethereum"
+POLYGON = "polygon"
+OPTIMISM = "optimism"
+CHAINS = (
+    (ETHEREUM, "Ethereum"),
+    (POLYGON, "Polygon"),
+    (OPTIMISM, "Optimism"),
+)
+
 def get_ens_name(address):
     if w3.isAddress(address):
         return ns.name(address=address)
