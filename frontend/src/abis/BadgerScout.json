@@ -2,7 +2,6 @@
   "event Initialized(uint8)",
   "event OwnershipTransferred(address indexed,address indexed)",
   "function badges(uint256) view returns (bool, address, string, tuple(uint8,address,uint256,uint256))",
-  "function execTransaction(address,bytes,uint256) payable",
   "function isDelegate(uint256,address) view returns (bool)",
   "function onERC1155BatchReceived(address,address,uint256[],uint256[],bytes) returns (bytes4)",
   "function onERC1155Received(address,address,uint256,uint256,bytes) returns (bytes4)",

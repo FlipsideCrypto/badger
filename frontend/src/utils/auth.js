@@ -3,7 +3,6 @@ import { API_URL } from "@static/constants/links"
 
 export async function SIWELogin(message, signature) {
     let response;
-    console.log('message', message, 'signature', signature);
 
     await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
@@ -29,18 +28,17 @@ export async function SIWENonce() {
     const url = `${API_URL}/api/auth/nonce`
     let response;
 
-    console.log('cookies', document.cookie)
-    console.log('csrf', document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)')))
-
     await fetch(url, {
-        credentials: 'include',
-        mode: 'cors',
+        method: "GET",
         headers: {
-          'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
         },
+        credentials: 'same-origin',
+        mode: 'cors',
     })
     .then(res => res.json())
-    .then(data => response = data.nonce)
+    .then(res => response = res.nonce)
     .catch(err => {
         console.log('Error getting nonce', err);
     })

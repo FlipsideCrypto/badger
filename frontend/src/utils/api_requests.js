@@ -8,9 +8,9 @@ export async function postBadgeRequest(badge) {
             method: "POST",
             mode: "cors",
             headers: {
-                'Accept': 'application/json',
                 "Content-Type": "application/json",
             },
+            credentials: 'include',
             data: JSON.stringify(badge)
         })
         .then(res => res.json())
@@ -39,9 +39,10 @@ export async function postOrgRequest(org) {
             method: "POST",
             mode: "cors",
             headers: {
-                'Accept': 'application/json',
                 "Content-Type": "application/json",
+                // 'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
             },
+            credentials: 'include',
             data: JSON.stringify(org)
         })
         .then(res => res.json())
@@ -65,13 +66,16 @@ export async function postOrgRequest(org) {
 export async function getUserRequest(address) {
     let response;
     try {
-        await fetch(`${API_URL}/wallets/by-address/${address}`, {
+        await fetch(`${API_URL}/wallets/${address}`, {
             method: "GET",
             mode: "cors",
             headers: {
                 'Accept': 'application/json',
-                "Content-Type": "application/json",
+                // 'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
+                // 'WWW-Authenticate': 'Token',
+                // 'Authorization': `Token ${token}`,
             },
+            credentials: 'include'
         })
         .then(res => res.json())
         .then(data => {
@@ -99,8 +103,8 @@ export async function getOrgRequest(orgId) {
             mode: "cors",
             headers: {
                 'Accept': 'application/json',
-                "Content-Type": "application/json",
             },
+            credentials: 'include'
         })
         .then(res => res.json())
         .then(data => {

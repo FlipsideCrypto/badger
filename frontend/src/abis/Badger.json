@@ -1,7 +1,9 @@
 [
   "constructor(address)",
+  "event OrganizationCreated(address indexed,address indexed,address indexed)",
   "event OwnershipTransferred(address indexed,address indexed)",
-  "function createOrganization(string)",
+  "function createOrganization(string) returns (address)",
+  "function execTransaction(address,bytes,uint256) payable",
   "function onERC1155BatchReceived(address,address,uint256[],uint256[],bytes) returns (bytes4)",
   "function onERC1155Received(address,address,uint256,uint256,bytes) returns (bytes4)",
   "function owner() view returns (address)",

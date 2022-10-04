@@ -50,7 +50,7 @@ module.exports = {
         }
     },
     abiExporter: {
-        path: '../../frontend/src/abis',
+        path: 'abis/',
         runOnCompile: true,
         clear: true,
         flat: true,

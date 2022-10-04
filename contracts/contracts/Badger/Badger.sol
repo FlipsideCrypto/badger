@@ -106,6 +106,8 @@ contract Badger is
         , uint256 _value
     )
         external
+        virtual
+        override
         payable
         onlyOwner
     {

@@ -185,6 +185,7 @@ contract BadgerVersions is
         , uint256 _value
     )
         external
+        virtual
         payable
         onlyOwner
     {

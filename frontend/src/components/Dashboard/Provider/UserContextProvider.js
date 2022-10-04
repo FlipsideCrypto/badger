@@ -1,5 +1,6 @@
 import { useState, createContext, useEffect } from "react"
 import { useNetwork } from "wagmi";
+
 import { getUserRequest } from "@utils/api_requests";
 import { SIWEAuthorize } from "@utils/auth";
 
@@ -13,17 +14,21 @@ const UserContextProvider = ({ children, signer, address }) => {
         if (!signer) return void {};
         
         async function getData() {
-            const userDataResponse = await getUserRequest(address);
-            console.log('userDataResponse', userDataResponse);
+            const response = await getUserRequest(address);
+            console.log('userDataResponse', response);
 
-            if (userDataResponse.error) {
-                const siweResponse = await SIWEAuthorize(signer, address, chain.id);
-                console.log('SIWE Response', siweResponse)
+            if (
+                response.error || 
+                response.detail === "Authentication credentials were not provided."
+            ) {
+                const siweResponse = await SIWEAuthorize(signer, address, chain?.id);
+                console.log('SIWE Response', {...siweResponse})
+
                 const userDataResponse = await getUserRequest(address);
-                console.log('trying userData again')
+                console.log('trying userData again after login', userDataResponse)
                 setUserData(userDataResponse);
             } else {
-                setUserData(userDataResponse);
+                setUserData(response);
             }
             // if (!userDataResponse?.error) {
             //     setUserData(userDataResponse);
@@ -34,7 +39,7 @@ const UserContextProvider = ({ children, signer, address }) => {
         }
 
         getData();
-    }, [signer, address])
+    }, [signer, address, chain])
 
     return (
         <UserContext.Provider value={{userData, setUserData}}>

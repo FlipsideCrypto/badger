@@ -141,7 +141,7 @@ export const useManageBadgeOwnership = (sashAddress, holders, ids, amounts, revo
     Changes delegates of badge(s) with id(s) from sashAddress. 
     If revoke is true then delegate/leaders are removed.
 */
-export const usesetDelegates = (sashAddress, ids, leaders, revoke) => {
+export const useSetDelegates = (sashAddress, ids, leaders, revoke) => {
     const BadgerOrganization = useBadgerOrganizationAbi();
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
 
