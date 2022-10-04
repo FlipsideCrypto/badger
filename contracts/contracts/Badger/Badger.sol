@@ -93,4 +93,23 @@ contract Badger is
 
         return this.onERC1155Received.selector;
     }
+
+    /**
+     * @notice Allows the Owner to execute an Organization level transaction.
+     * @param _to The address to execute the transaction on.
+     * @param _data The data to pass to the receiver.
+     * @param _value The amount of ETH to send with the transaction.
+     */
+    function execTransaction(
+          address _to
+        , bytes calldata _data
+        , uint256 _value
+    )
+        external
+        payable
+        onlyOwner
+    {
+        (bool success, bytes memory returnData) = _to.call{value: _value}(_data);
+        require(success, string(returnData));
+    }
 }
