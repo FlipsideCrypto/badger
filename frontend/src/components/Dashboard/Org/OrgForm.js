@@ -50,15 +50,16 @@ const OrgForm = () => {
             description: 'This is a super cool description.',
             image_hash: '',
             contract_uri_hash: '',
-            contract_address: ''
+            ethereum_address: ''
         }
 
         // Deploy and initialize org contract
         let cloneTx = await createContract.write?.();
         cloneTx = await cloneTx.wait();
         const contractAddress = cloneTx.logs[0].address;
-        orgObj.contract_address = contractAddress;
+        orgObj.ethereum_address = contractAddress;
 
+        console.log('OrgObj', orgObj);
         const response = await postOrgRequest(orgObj, userData.token);
         console.log("OrgForm: orgResponse", response)
 

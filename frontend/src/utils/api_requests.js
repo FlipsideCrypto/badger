@@ -40,7 +40,7 @@ export async function postOrgRequest(org) {
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
-                // 'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
+                'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
             },
             credentials: 'include',
             data: JSON.stringify(org)
@@ -66,16 +66,11 @@ export async function postOrgRequest(org) {
 export async function getUserRequest(address) {
     let response;
     try {
-        await fetch(`${API_URL}/wallets/${address}`, {
+        await fetch(`${API_URL}/wallets/${address}/`, {
             method: "GET",
             mode: "cors",
-            headers: {
-                'Accept': 'application/json',
-                // 'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
-                // 'WWW-Authenticate': 'Token',
-                // 'Authorization': `Token ${token}`,
-            },
-            credentials: 'include'
+            // cache: "no-cache",
+            credentials: 'include',
         })
         .then(res => res.json())
         .then(data => {

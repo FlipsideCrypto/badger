@@ -28,7 +28,7 @@ class WalletSerializer(serializers.ModelSerializer):
             self._organizations = (
                 Organization.objects.filter(owner__ethereum_address=obj.ethereum_address) | 
                 Organization.objects.filter(delegates__ethereum_address__contains=obj.ethereum_address)
-            ).filter(active=True).distinct()
+            ).filter(is_active=True).distinct()
         return self._organizations
 
     def _get_badges(self, obj):

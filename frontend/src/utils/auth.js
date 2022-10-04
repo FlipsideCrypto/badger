@@ -20,6 +20,7 @@ export async function SIWELogin(message, signature) {
     .catch(err => {
         response = err;
     })
+    console.log('login response', response);
 
     return response;
 };
@@ -30,10 +31,7 @@ export async function SIWENonce() {
 
     await fetch(url, {
         method: "GET",
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
+        headers: {},
         credentials: 'same-origin',
         mode: 'cors',
     })
@@ -43,6 +41,7 @@ export async function SIWENonce() {
         console.log('Error getting nonce', err);
     })
 
+    console.log('got nonce', response);
     return response;
 };
 
