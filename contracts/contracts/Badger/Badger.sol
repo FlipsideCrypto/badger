@@ -5,7 +5,7 @@ pragma solidity ^0.8.16;
 import { BadgerVersions } from "./BadgerVersions.sol";
 
 /**
- * @title  Badger House
+ * @title  Badger 
  * @author masonchain & nftchance
  * @notice A contract that allows users to mint Badger Organizations with a permissionless system
  *         that has two operating states. Free to use, and license based. The license

@@ -63,15 +63,14 @@ contract BadgerVersions is
     constructor(
         address _implementation
     ) {
-        versions[0] = Version({
-              implementation: _implementation
-            , license: VersionLicense({
-                  tokenType: VersionPaymentType.NATIVE
-                , tokenAddress: address(0) 
-                , tokenId: 0 
-                , amount: 0 
-            })
-        });
+        _setVersion(
+              0
+            , _implementation
+            , VersionPaymentType.NATIVE
+            , address(0)
+            , 0
+            , 0
+        );
     }
 
     /**
