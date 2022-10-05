@@ -8,6 +8,7 @@ from ipfs.urls import router as ipfs_router
 from job.urls import router as jobs_router
 from organization.urls import router as organizations_router
 from wallet.urls import router as wallets_router
+from .views import get_nonce
 
 router = routers.DefaultRouter()
 router.registry.extend(badges_router.registry)
@@ -19,4 +20,5 @@ router.registry.extend(wallets_router.registry)
 urlpatterns = router.urls + [
     path('admin/', admin.site.urls),
     path("api/auth/", include("siwe_auth.urls")),
+    path('api/auth/get-nonce', get_nonce, name="get-nonce")
 ]

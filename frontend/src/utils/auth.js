@@ -26,13 +26,13 @@ export async function SIWELogin(message, signature) {
 };
 
 export async function SIWENonce() {
-    const url = `${API_URL}/api/auth/nonce`
+    const url = `${API_URL}/api/auth/get-nonce`
     let response;
 
     await fetch(url, {
         method: "GET",
         headers: {},
-        credentials: 'same-origin',
+        credentials: 'include',
         mode: 'cors',
     })
     .then(res => res.json())

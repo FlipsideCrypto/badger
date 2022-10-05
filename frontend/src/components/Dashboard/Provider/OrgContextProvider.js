@@ -1,5 +1,6 @@
 import { useState, createContext, useEffect } from "react"
-import { API_URL } from "@static/constants/links"
+import { getOrgRequest } from "@utils/api_requests";
+import { getUserRequest } from "../../../utils/api_requests";
 
 export const OrgContext = createContext();
 
@@ -11,34 +12,21 @@ const OrgContextProvider = ({ children }) => {
     const [ currentOrgId, setCurrentOrgId ] = useState();
 
     useEffect(() => {
-        if (orgData?.id === currentOrgId) return
+        if (orgData?.id === currentOrgId) return void {}
 
-        try {
-            fetch(`${API_URL}/organizations/${currentOrgId}/`, {
-                method: "GET",
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-            .then(res => res.json())
-            .then(data => {
-                console.log('got org data', data);
-                // TODO: Remove this, had to add it for testing while the API returns without an error
-                if (data.detail === 'Not found.') data = {name: "dummy", id: currentOrgId, badges: []};
-                setOrgData(data)
-            })
-            .catch(err => {
-                console.error('Error getting org data', err);
-            })
-        } catch (err) {
-            console.error('Error getting org data', err);
+        async function getData() {
+            let response = await getOrgRequest(currentOrgId);
+
+            if (response?.id === currentOrgId) {
+                setOrgData(response);
+            }
         }
 
-    }, [currentOrgId, orgData, setOrgData])
+        getData();
+    }, [currentOrgId, orgData])
 
     return (
-        <OrgContext.Provider value={{orgData, setOrgData, currentOrgId, setCurrentOrgId }}>
+        <OrgContext.Provider value={{ orgData, setOrgData, currentOrgId, setCurrentOrgId }}>
             {children}
         </OrgContext.Provider>
     )

@@ -13,16 +13,17 @@ import { useCreateBadge } from "@hooks/useContracts";
 // TODO: EDIT MODE: Check the orgData context and if the badge is in it then
 //       get the badge and set the state, and change component to edit mode. (also get rid of props)
 const BadgeForm = ({name, desc, image, delegates}) => {
-    const [badgeName, setBadgeName] = useState(name || "");
-    const [badgeDescription, setBadgeDescription] = useState(desc || "");
-    const [badgeImage, setBadgeImage] = useState(image || {name: ""});
-    const [badgeDelegates, setBadgeDelegates] = useState(delegates || [""]);
+    const [ badgeName, setBadgeName ] = useState(name || "");
+    const [ badgeDescription, setBadgeDescription ] = useState(desc || "");
+    const [ badgeImage, setBadgeImage ] = useState(image || {name: ""});
+    const [ badgeDelegates, setBadgeDelegates ] = useState(delegates || [""]);
     
+    const { orgData, setOrgData } = useContext(OrgContext);
     const imageInput = useRef();
     const navigate = useNavigate();
+
     const params = new URLSearchParams(window.location.search);
     const orgId = params.get("orgId");
-    const { orgData, setOrgData } = useContext(OrgContext);
 
     const actions = [
         {
