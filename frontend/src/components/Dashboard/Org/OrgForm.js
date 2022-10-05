@@ -60,11 +60,10 @@ const OrgForm = () => {
         if (contractAddress) orgObj.is_active = true;
 
         const response = await postOrgRequest(orgObj);
-        console.log("OrgForm: orgResponse", response)
 
-        if (!response?.error) {
+        if (!response?.error && response?.id) {
             addOrgToState(response);
-            // navigate(`/dashboard/organization?orgId=${response.id}`);
+            navigate(`/dashboard/organization?orgId=${response.id}`);
         }
     }
 

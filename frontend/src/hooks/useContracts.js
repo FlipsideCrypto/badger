@@ -58,21 +58,21 @@ export const useBadgerPress = (chainName) => {
 }
 
 // Creates a badge from a cloned sash contract.
-export const useCreateBadge = (sashAddress, id, accountBound, signer, uri, paymentToken, delegates) => {
+export const useCreateBadge = (args) => {
     const BadgerOrganization = useBadgerOrganizationAbi();
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
 
     const { config } = usePrepareContractWrite({
-        addressOrName: sashAddress,
+        addressOrName: args.contract_address,
         contractInterface: BadgerOrganization.abi,
         functionName: "setBadge",
         args: [
-            id,
-            accountBound,
-            signer || "",
-            uri,
-            paymentToken || [],
-            delegates || []
+            args.id,
+            args.account_bound,
+            args.signer || "",
+            args.uri,
+            args.payment_token || [0, "", 0, 0],
+            args.delegates || []
         ],
         onSettled() {
             response = {status: 'prepared', message: 'Transaction prepared.'};

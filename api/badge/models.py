@@ -15,6 +15,8 @@ class Badge(models.Model):
     delegates = models.ManyToManyField('siwe_auth.Wallet', related_name='delegates', blank=True)
     users = models.ManyToManyField('siwe_auth.Wallet', blank=True)
 
+    account_bound = models.BooleanField(blank=False, default=False)
+
     signer_ethereum_address = models.CharField(max_length=50, blank=False, default=None, validators=[validate_ethereum_address])
 
     created = models.DateTimeField(auto_now_add=True)

@@ -21,7 +21,18 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     const { orgData, setOrgData } = useContext(OrgContext);
     const imageInput = useRef();
     const navigate = useNavigate();
-
+    
+    let badgeArgs = {
+        contract_address: orgData?.ethereum_address,
+        id: null,
+        account_bound: false,
+        signer: "",
+        uri: "",
+        payment_token: [0, "", 0, 0],
+        delegates: badgeDelegates
+    }
+    const createBadge = useCreateBadge(badgeArgs)
+    
     const params = new URLSearchParams(window.location.search);
     const orgId = params.get("orgId");
 
@@ -29,14 +40,14 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         {
             text: "CREATE BADGE",
             icon: ["fal", "arrow-right"],
-            event: () => CreateBadge()
+            event: () => onBadgeFormSubmission()
         }
     ]
 
     // TODO: Post request and return badge id
     // POSTS badge to the database, adds badge to OrgData state 
     // and returns badge id.
-    const CreateBadge = async () => {
+    const onBadgeFormSubmission = async () => {
         const badgeObj = {
             name: badgeName,
             description: badgeDescription,
@@ -46,33 +57,23 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         }
 
         const response = await postBadgeRequest(badgeObj);
-        badgeObj.id = response.id
-
-        // These are unimplemented on the front end for now.
-        const dummyPaymentToken = [
-            0,      // TOKEN_TYPE tokenType;
-            "",     // address tokenAddress;
-            0,      // uint256 tokenId;
-            0       // uint256 quantity;
-        ]
-        const dummySigner = "";
-        const accountBound = false;
-
-        const createBadge = useCreateBadge(
-            badgeObj.id,              // uint256 _id
-            accountBound,             // bool _accountBound
-            dummySigner,              // address _signer
-            "uri",                    // string memory _uri
-            dummyPaymentToken,        // PaymentToken memory _paymentToken
-            badgeObj.delegates        // address[] memory _leaders
-        )
-        createBadge.transaction.write();
-
-        let prev = {...orgData}
-        prev.badges.push(badgeObj)
-        setOrgData(prev)
-
-        navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${badgeObj.id}`);
+        if (response?.id) {
+            badgeArgs.id = response.id
+    
+            // TODO: Wait for confirmation
+            let tx = createBadge.transaction.write();
+            tx = await tx.wait();
+            console.log('Transaction receipt', tx)
+    
+            // TODO: PATCH request for is_active?
+            let prev = {...orgData}
+            prev.badges.push(badgeObj)
+            setOrgData(prev)
+            navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${badgeObj.id}`);
+        }
+        else {
+            console.log('Error creating badge.')
+        }
     }
 
     useEffect(() => {

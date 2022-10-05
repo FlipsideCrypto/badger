@@ -12,12 +12,12 @@ const OrgContextProvider = ({ children }) => {
     const [ currentOrgId, setCurrentOrgId ] = useState();
 
     useEffect(() => {
-        if (orgData?.id === currentOrgId) return void {}
+        if (orgData?.id.toString() === currentOrgId) return void {}
 
         async function getData() {
             let response = await getOrgRequest(currentOrgId);
 
-            if (response?.id === currentOrgId) {
+            if (response?.id) {
                 setOrgData(response);
             }
         }
