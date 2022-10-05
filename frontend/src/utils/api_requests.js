@@ -11,7 +11,7 @@ export async function postBadgeRequest(badge) {
                 "Content-Type": "application/json",
             },
             credentials: 'include',
-            data: JSON.stringify(badge)
+            body: JSON.stringify(badge)
         })
         .then(res => res.json())
         .then(data => {
@@ -33,6 +33,7 @@ export async function postBadgeRequest(badge) {
 
 export async function postOrgRequest(org) {
     let response;
+    console.log('orgObj', org)
 
     try {
         await fetch(`${API_URL}/organizations/`, {
@@ -43,7 +44,7 @@ export async function postOrgRequest(org) {
                 'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
             },
             credentials: 'include',
-            data: JSON.stringify(org)
+            body: JSON.stringify(org)
         })
         .then(res => res.json())
         .then(data => {

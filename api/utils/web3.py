@@ -6,13 +6,17 @@ provider = HTTPProvider(settings.PROVIDER)
 w3 = Web3(provider)
 ns = ENS.fromWeb3(w3)
 
-ETHEREUM = "ethereum"
-POLYGON = "polygon"
-OPTIMISM = "optimism"
+ETHEREUM = "Ethereum"
+POLYGON = "Polygon"
+OPTIMISM = "Optimism"
+HARDHAT = "Hardhat"
+GNOSIS = "Gnosis"
 CHAINS = (
     (ETHEREUM, "Ethereum"),
     (POLYGON, "Polygon"),
     (OPTIMISM, "Optimism"),
+    (HARDHAT, "Hardhat"),
+    (GNOSIS, "Gnosis"),
 )
 
 def get_ens_name(address):

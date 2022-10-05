@@ -11,7 +11,11 @@ const UserContextProvider = ({ children, signer, address }) => {
     const { chain } = useNetwork();
 
     useEffect(() => {
-        if (!signer || !address) return void {};
+        if (
+            !signer || 
+            !address ||
+            userData?.ethereum_address === address
+        ) return void {};
         
         async function getData() {
             let response = await getUserRequest(address);
@@ -28,12 +32,12 @@ const UserContextProvider = ({ children, signer, address }) => {
                 }
             }
 
-            if (response?.address === address) 
+            if (response?.ethereum_address === address)
                 setUserData(response);
         }
 
         getData();
-    }, [signer, address, chain])
+    }, [userData, signer, address, chain])
 
     return (
         <UserContext.Provider value={{userData, setUserData}}>

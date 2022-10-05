@@ -39,18 +39,17 @@ const OrgForm = () => {
         }
     }
 
-    // TODO: Get proper orgObj data
-    // POSTS org to database and returns org ID, then redirects to page related to orgId.
+    // Create the Org object, deploy the contract clone, and post the Org to the API.
     const onOrgFormSubmission = async () => {
         const orgObj = {
-            active: false,
+            is_active: false,
             chain: chain.name,
+            ethereum_address: '',
             name: orgName,
             symbol: orgSymbol,
             description: 'This is a super cool description.',
-            image_hash: '',
-            contract_uri_hash: '',
-            ethereum_address: ''
+            image_hash: '0x',
+            contract_uri_hash: '0x',
         }
 
         // Deploy and initialize org contract
@@ -60,13 +59,12 @@ const OrgForm = () => {
         orgObj.ethereum_address = contractAddress;
         if (contractAddress) orgObj.is_active = true;
 
-        console.log('OrgObj', orgObj);
-        const response = await postOrgRequest(orgObj, userData.token);
+        const response = await postOrgRequest(orgObj);
         console.log("OrgForm: orgResponse", response)
 
         if (!response?.error) {
-            addOrgToState(orgObj);
-            navigate(`/dashboard/organization?orgId=${orgObj.id}`);
+            addOrgToState(response);
+            // navigate(`/dashboard/organization?orgId=${response.id}`);
         }
     }
 
