@@ -33,9 +33,9 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         organization: orgData?.id,
         account_bound: false,
         is_active: false,
-        signer: "",
+        signer: orgData?.owner?.ethereum_address,
         token_uri: "",
-        payment_token: [0, "", 0, 0],
+        payment_token: [0, "0x0000000000000000000000000000000000000000", 0, 0],
     })
     
     const imageInput = useRef();
@@ -44,7 +44,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     const params = new URLSearchParams(window.location.search);
     const orgId = params.get("orgId");
 
-    const createBadge = useCreateBadge(badgeObj)
+    const createBadge = useCreateBadge(badgeObj);
     const disabled = !badgeName || !badgeDescription || !ipfsImageHash
     
     const actions = [
@@ -86,37 +86,37 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     // After the transaction is successful, POST badge to is_active,
     // set the new badge in orgData, and navigate to the badge page.
     useEffect(() => {
-        console.log('createBadge', createBadge.response)
         async function createBadgeTx() {
-            if (createBadge.response.status === "success") {
-                // Write to contract
-                console.log('is write prepared', createBadge)
-                let tx = createBadge.write?.();
-                tx = await tx?.wait();
-                console.log('Transaction receipt', tx)
+            // Write to contract
+            let tx = await createBadge.write?.();
+            tx = await tx?.wait();
 
-                // if transaction successful,
-                // badgeObj.is_active = true;
+            // if transaction is successful
+            if (tx.status === 1)
+                badgeObj.is_active = true;
 
-                // Post to database
-                const response = await postBadgeRequest(badgeObj);
-                badgeObj.url = response.url
+            // Post to database
+            const response = await postBadgeRequest(badgeObj);
+            badgeObj.url = response.url
 
-                if (response?.url) {
-                    // Set in orgData context
-                    let prev = {...orgData}
-                    prev.badges.push(badgeObj)
-                    setOrgData(prev)
-                    navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${badgeObj.token_id}`);
-                }
-                else {
-                    console.log('Error creating badge.')
-                }
+            // if POST is successful
+            if (response?.url) {
+                // Set in orgData context
+                let prev = {...orgData}
+                prev.badges.push(badgeObj)
+                setOrgData(prev)
+                navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${badgeObj.token_id}`);
+            }
+            else {
+                console.log('Error creating badge.')
             }
         }
 
-        createBadgeTx();
-    }, [createBadge.response]) // Consider ignoring eslint here to just put createBadge in.
+        if (createBadge.isSuccess) {
+            createBadgeTx();
+        }
+        // eslint-disable-next-line
+    }, [createBadge.isSuccess])
 
     useEffect(() => {
         if (!orgData) navigate("/dashboard/");

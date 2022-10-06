@@ -23,103 +23,70 @@ async function main() {
     const chainId = await hre.getChainId()
     
     /*//////////////////////////////////////////////////////////////
-                        DEPLOYING BASE CONTRACT
+                    DEPLOYING MASTER SASH CONTRACT
     //////////////////////////////////////////////////////////////*/
 
-    // const BadgerSet = await ethers.getContractFactory("BadgerSet");
-    // set = await BadgerSet.deploy();
-    // set = await set.deployed();
-    // console.log("✅ Base Set Deployed.")
+    const BadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
+    sashMaster = await BadgerOrganization.deploy();
+    sashMaster = await sashMaster.deployed();
+    console.log("✅ Base Sash Deployed.")
 
-    // console.table({
-    //     "Chain ID": chainId,
-    //     "Deployer": deployer.address,
-    //     "Contract Address": set.address,
-    //     "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
-    // })
+    console.table({
+        "Chain ID": chainId,
+        "Deployer": deployer.address,
+        "Master Address": sashMaster.address,
+        "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
+    })
 
-    // // Verifying
-    // // if (chainId != '31337') {
-    // //     // Give time for etherscan to confirm the contract before verifying.
-    // //     await new Promise(r => setTimeout(r, 30000));
-    // //     await hre.run("verify:verify", {
-    // //         address: set.address,
-    // //         constructorArguments: [
-    // //             ...arguments
-    // //         ],
-    // //     });
-    // //     console.log("✅ Base set Verified.")
-    // // }
+    /*//////////////////////////////////////////////////////////////
+                        DEPLOYING HOUSE CONTRACT
+    //////////////////////////////////////////////////////////////*/    
+    const Badger = await ethers.getContractFactory("Badger");
+    house = await Badger.deploy(sashMaster.address);
+    house = await house.deployed();
 
-    // /*//////////////////////////////////////////////////////////////
-    //                     DEPLOYING PROXY MANAGER
-    // ////////////////////////////////////////////////////////////*/    
-    // const BadgerProxy = await ethers.getContractFactory("Badger");
-    // proxy = await BadgerProxy.deploy(
-    //     set.address
-    // );
-    // proxy = await proxy.deployed();
-    // console.log("✅ Proxy Deployed.")
+    console.table({
+        "Chain ID": chainId,
+        "Deployer": deployer.address,
+        "Badger House Address": house.address,
+        "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
+    })
 
-    // console.table({
-    //     "Deployer": deployer.address,
-    //     "Contract Address": proxy.address,
-    //     "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
-    // })
-
-    // // const proxy = new ethers.Contract(
-    // //     '',
-    // //     proxyAbi,
-    // //     deployer
-    // // )
-
-    // console.log('get here')
-
-    // res = await proxy.deploySet()
-    
-    // console.log('prxy deployset', res)
-
+    clone = await house.createOrganization("0x")
+    clone = await clone.wait();
 
     // let newSet = proxy.deploySet();
     // newSet = await newSet.wait();
 
-    // const setContractAddress = newSet.events[0].args[1]
-    // const clonedContract = set.attach(setContractAddress)
-    setContractAddress = "0xc796b25ccEA52a3cCc5affAF8E0359EcbB46AD15"
+    const setContractAddress = clone.events[3].args[0]
+    const clonedContract = sashMaster.attach(setContractAddress)
 
-    const clonedContract = new ethers.Contract(
-        setContractAddress,
-        cloneAbi,
-        deployer
-    );
+    sashPressAddress = clone.events[3].args['organization']
+    sashPress = await sashMaster.attach(sashPressAddress);
 
-    await clonedContract.initialize(
-        '',
-        'QmU6EXjyxLQ5bUg4EsXgzL2WyWf53kSUHThZwoWfCxGnY2',
-        'This is the Collection level metadata.',
-        {gasLimit: 150000}
-    )
+    const tokenId = 2
 
-    await new Promise(r => setTimeout(r, 15000));
-
-    let tokenId = 100
-
-    res = await clonedContract.createBadgeType(
+    res = await sashPress.setBadge(
         tokenId,
-        'Badger V3 Test',
-        'This is a test token description.',
-        'QmZQuJDXnfDNZR2mPSJRLE9BCmNZLXm2RfUDz5ZFzTk1z1',
-        {gasLimit: 200000}
+        false,
+        "0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199",
+        "https://ipfs.io/ipfs//QmcQ8tzotwPv5qZa1ZkjbZHFZ9iSCKfrabcndYMchhSnA9",
+        [0, '0x0000000000000000000000000000000000000000', 0, 0],
+        []
+        // {gasLimit: 200000}
     )
+    res = await res.wait();
     console.log('Badge Type created', res)
-    await new Promise(r => setTimeout(r, 15000));
 
+    res = await sashPress.badges(tokenId)
+    console.log('Badge Type', res)
 
     res = await clonedContract.mintBadge(
         deployer.address,
         tokenId,
         {gasLimit: 100000}
     )
+    res = res.wait()
     console.log('Badge Type minted', res)
     await new Promise(r => setTimeout(r, 15000));
 

@@ -38,7 +38,7 @@ const Badge = () => {
         "Remove Leader": "removeLeaders",
     }
 
-    // TODO: Hook up contract hooks and API POST
+    // TODO: Hook up contract hooks and API PATCH
     const onMemberUpdate = () => {
         console.log("Members to Update", membersToUpdate)
         console.log("Method to call", updateOption)

@@ -36,8 +36,6 @@ export const useBadgerPress = (chainName) => {
     const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
 
-    console.log('badger address', Badger.address);
-
     const { config } = usePrepareContractWrite({
         addressOrName: Badger.address,
         contractInterface: Badger.abi,
@@ -65,18 +63,15 @@ export const useCreateBadge = (badge) => {
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
 
     let args = [
-        badge.contract_address,
         badge.token_id,
         badge.account_bound,
         badge.signer || "",
         badge.token_uri,
-        badge.payment_token || [0, "", 0, 0],
+        badge.payment_token || [0, "0x0000000000000000000000000000000000000000", 0, 0],
         badge.delegates || []
     ]
 
-    console.log('args', args)
-
-    const { config } = usePrepareContractWrite({
+    const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: badge.contract_address,
         contractInterface: BadgerOrganization.abi,
         functionName: "setBadge",
@@ -84,57 +79,18 @@ export const useCreateBadge = (badge) => {
         enabled: Boolean(badge.token_uri),
         onSettled() {
             response = {status: 'prepared', message: 'Transaction prepared.'};
-            console.log('response', response)
         },
         onSuccess(data) {
             response = {status: 'success', message: data};
-            console.log('response', response)
         },
         onError (err) {
             response = {status: 'error', message: err};
-            console.log('response', response)
         }
     })
 
     const { writeAsync } = useContractWrite(config);
 
-    return { write: writeAsync, response };
-}
-
-// Creates a badge from a cloned sash contract.
-// The recklessly unprepared version of wagmi contract interaction
-// is probably not the best UX, however, we only receive the uri after the final
-// json pin request and managing this on the front end is more work and complexity than it's worth IMO.
-export const useCreateBadgeUnprepared = (badge) => {
-    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    let response;
-
-    const { sendTransaction } = useContractWrite({
-        mode: 'recklesslyUnprepared',
-        addressOrName: badge.contract_address,
-        contractInterface: BadgerOrganization.abi,
-        functionName: "setBadge",
-        args: [
-            badge.token_id,
-            badge.account_bound,
-            badge.signer || "",
-            badge.token_uri,
-            badge.payment_token || [0, "", 0, 0],
-            badge.delegates || []
-        ],
-        enabled: Boolean(badge.token_uri),
-        onSettled() {
-            response = {status: 'prepared', message: 'Transaction prepared.'};
-        },
-        onSuccess(data) {
-            response = {status: 'success', message: data};
-        },
-        onError (err) {
-            response = {status: 'error', message: err};;
-        }
-    })
-
-    return { write: sendTransaction, response };
+    return { write: writeAsync, response, isSuccess };
 }
 
 /* 

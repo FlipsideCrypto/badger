@@ -9,7 +9,7 @@ export async function postBadgeRequest(badge) {
         image_hash: badge.image_hash,
         token_uri: badge.token_uri,
         account_bound: badge.account_bound,
-        organization: badge.organization
+        organization: parseInt(badge.organization)
     }
 
     try {
@@ -41,7 +41,6 @@ export async function postBadgeRequest(badge) {
 
 export async function postOrgRequest(org) {
     let response;
-    console.log('orgObj', org)
 
     try {
         await fetch(`${API_URL}/organizations/`, {

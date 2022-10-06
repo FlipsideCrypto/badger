@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { useNetwork } from "wagmi";
+import { useNetwork, useContractEvent } from "wagmi";
 
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import Header from "@components/Dashboard/Header/Header";
@@ -9,6 +9,7 @@ import Input from "@components/Dashboard/Form/Input";
 
 import { useBadgerPress } from "@hooks/useContracts";
 import { postOrgRequest } from "@utils/api_requests";
+import { getBadgerAbi } from "@hooks/useContracts";
 
 const OrgForm = () => {
     const [orgName, setOrgName] = useState("");
@@ -19,28 +20,31 @@ const OrgForm = () => {
     const navigate = useNavigate();
     const createContract = useBadgerPress(chain.name);
 
+    // Listener for the confirmed transaction in order to
+    // pull the new contract address from events.
+    const badger = getBadgerAbi(chain.name)
+    useContractEvent({
+        addressOrName: badger.address,
+        contractInterface: badger.abi,
+        eventName: "OrganizationCreated",
+        once: true,
+        listener: (event) => {
+            console.log("Event: ", event);
+            onEventReceived(event);
+        }
+    })
+
     const actions = [
         {
             text: "CREATE",
             icon: ["fal", "arrow-right"],
-            event: () => onOrgFormSubmission()
+            event: () => createContract.write?.()
         }
     ]
-
-    const nameToSymbol = (name) => {
-        return name.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().substring(0, 5);
-    }
-
-    const onOrgNameChange = (e) => {
-        setOrgName(e.target.value)
-
-        if (orgSymbol === nameToSymbol(orgName)) {
-            setOrgSymbol(nameToSymbol(e.target.value));
-        }
-    }
-
-    // Create the Org object, deploy the contract clone, and post the Org to the API.
-    const onOrgFormSubmission = async () => {
+    
+    // Upon receiving the event from clone transaction,
+    // POST the org to backend and redirect to org page.
+    const onEventReceived = async (event) => {
         const orgObj = {
             is_active: false,
             chain: chain.name,
@@ -51,23 +55,31 @@ const OrgForm = () => {
             image_hash: '0x',
             contract_uri_hash: '0x',
         }
-
-        // Deploy and initialize org contract
-        let cloneTx = await createContract.write?.();
-        console.log('preconfirmation tx', cloneTx);
-        let nonce = cloneTx?.nonce;
-        cloneTx = await cloneTx.wait();
-        console.log('nonce', nonce);
-        console.log('clonetx', cloneTx)
-        const contractAddress = cloneTx.logs[0].address;
+        const contractAddress = event[0];
         orgObj.ethereum_address = contractAddress;
-        if (contractAddress) orgObj.is_active = true;
+        // If transaction was confirmed, add is_active to orgObj.
+        if (contractAddress) {
+            orgObj.is_active = true;
 
-        const response = await postOrgRequest(orgObj);
+            // POST org to backend and if successful, add to state and navigate to org page.
+            const response = await postOrgRequest(orgObj);
+            if (!response?.error && response?.id) {
+                addOrgToState(response);
+                navigate(`/dashboard/organization?orgId=${response.id}`);
+            }
+        }
 
-        if (!response?.error && response?.id) {
-            addOrgToState(response);
-            navigate(`/dashboard/organization?orgId=${response.id}`);
+    }    
+
+    const nameToSymbol = (name) => {
+        return name.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().substring(0, 5);
+    }
+
+    const onOrgNameChange = (e) => {
+        setOrgName(e.target.value)
+
+        if (orgSymbol === nameToSymbol(orgName)) {
+            setOrgSymbol(nameToSymbol(e.target.value));
         }
     }
 

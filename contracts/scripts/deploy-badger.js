@@ -28,7 +28,7 @@ async function main() {
     console.table({
         "Chain ID": chainId,
         "Deployer": deployer.address,
-        "Master Sash Address": sashMaster.address,
+        "Master Address": sashMaster.address,
         "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
     })
 
