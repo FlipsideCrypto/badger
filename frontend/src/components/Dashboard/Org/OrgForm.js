@@ -9,7 +9,6 @@ import Input from "@components/Dashboard/Form/Input";
 
 import { useBadgerPress } from "@hooks/useContracts";
 import { postOrgRequest } from "@utils/api_requests";
-import { getContractAddress } from "ethers/lib/utils";
 
 const OrgForm = () => {
     const [orgName, setOrgName] = useState("");
