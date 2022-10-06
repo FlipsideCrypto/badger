@@ -1,4 +1,4 @@
-import { useState, createContext, useEffect } from "react"
+import { useState, createContext, useEffect } from "react";
 import { useNetwork } from "wagmi";
 
 import { getUserRequest } from "@utils/api_requests";

@@ -89,7 +89,7 @@ const OrgSidebar = ({ address }) => {
                             <img src={badge.image?.file || placeholderAvatar} alt="avatar" />
                             <button 
                                 className="button__unstyled"
-                                onClick={() => navigate(`/dashboard/badge?orgId=${orgData.id}&badgeId=${badge.id}`)}
+                                onClick={() => navigate(`/dashboard/badge?orgId=${orgData.id}&badgeId=${badge.token_id}`)}
                             >{badge.name}</button>
                         </div>
                     ))

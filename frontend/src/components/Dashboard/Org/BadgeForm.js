@@ -87,6 +87,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     // set the new badge in orgData, and navigate to the badge page.
     useEffect(() => {
         async function createBadgeTx() {
+            console.log('new badge obj', badgeObj)
             // Write to contract
             let tx = await createBadge.write?.();
             tx = await tx?.wait();
@@ -124,7 +125,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
 
     return (
         <div id="new-badge">
-            <Header back={() => navigate(`/dashboard/organization?orgId=${orgId}`)} />
+            <Header back={() => navigate(`/dashboard/organization/new`)} />
 
             <h2>Create Badge</h2>
             <Input

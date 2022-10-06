@@ -97,7 +97,7 @@ export const useCreateBadge = (badge) => {
     Determines which function to call based on if it is a revoke or a mint,
     if there are multiple badge ids, and if there are multiple holders.
 */
-export const useManageBadgeOwnership = (sashAddress, holders, ids, amounts, revoke) => {
+export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, holders, action, amounts) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
 
@@ -106,24 +106,31 @@ export const useManageBadgeOwnership = (sashAddress, holders, ids, amounts, revo
     // If ids is a single id, then we call the revoke function with multiple holders.
     // If ids is an array, then we call revoke with multiple different badges.
     // If revoke is false, same checks but for minting instead of revoke
+    const revoke = action === "Revoke" ? true : false
     const method = revoke ? 
         holders.length === 1 ? "revoke" : 
-            ids.length === 1 ? "revokeBatch" : "revokeFullBatch" 
+        typeof(ids) === "number" ? "revokeBatch" : "revokeFullBatch" 
         :
         holders.length === 1 ? "leaderMint" :
-            ids.length === 1 ? "leaderMintBatch" : "leaderMintFullBatch"
-    
+        typeof(ids) === "number" ? "leaderMintBatch" : "leaderMintFullBatch"
 
-    const { config } = usePrepareContractWrite({
-        addressOrName: sashAddress,
+    const args = [
+        holders,
+        ids,
+        amounts,
+    ]
+
+    console.log('args', args)
+    // Contracts currently have bytes data if it's a mint only, not revoke.
+    if (!revoke) 
+        args.push("0x")
+
+    const { config, isSuccess } = usePrepareContractWrite({
+        addressOrName: orgAddress,
         contractInterface: BadgerOrganization.abi,
         functionName: method,
-        args: [
-            holders,
-            ids,
-            amounts,
-            ""
-        ],
+        args: args,
+        enabled: isTxReady,
         onSettled() {
             response = {status: 'prepared', message: 'Transaction prepared.'};
         },
@@ -137,30 +144,35 @@ export const useManageBadgeOwnership = (sashAddress, holders, ids, amounts, revo
 
     const { writeAsync } = useContractWrite(config);
 
-    return { write: writeAsync, response };
+    return { write: writeAsync, response, isSuccess };
 }
 
 /*
-    Changes delegates of badge(s) with id(s) from sashAddress. 
+    Changes delegates of badge(s) with id(s) from orgAddress. 
     If revoke is true then delegate/leaders are removed.
 */
-export const useSetDelegates = (sashAddress, ids, leaders, revoke) => {
+export const useSetDelegates = (isTxReady, orgAddress, ids, leaders, action) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
 
+    const revoke = action === "Remove Leader" ? true : false
     const isDelegateArray = Array(leaders.length).fill(!revoke);
-    const method = ids.length > 1 ? "setDelegatesBatch" : "setDelegates";
-    
+    const method = typeof(ids) === "number" ?  "setDelegates" : "setDelegatesBatch";
 
-    const { config } = usePrepareContractWrite({
-        addressOrName: sashAddress,
+    const args = [
+        ids,
+        leaders,
+        isDelegateArray,
+    ]
+
+    console.log('args', args)
+
+    const { config, isSuccess } = usePrepareContractWrite({
+        addressOrName: orgAddress,
         contractInterface: BadgerOrganization.abi,
         functionName: method,
-        args: [
-            ids,
-            leaders,
-            isDelegateArray,
-        ],
+        args: args,
+        enabled: isTxReady,
         onSettled() {
             response = {status: 'prepared', message: 'Transaction prepared.'};
         },
@@ -174,5 +186,5 @@ export const useSetDelegates = (sashAddress, ids, leaders, revoke) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    return { write: writeAsync, response };
+    return { write: writeAsync, response, isSuccess };
 }

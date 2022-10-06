@@ -9,21 +9,41 @@ import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import Select from "@components/Dashboard/Form/Select";
 
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
+import { useManageBadgeOwnership, useSetDelegates } from "@hooks/useContracts";
 
 import "@style/Dashboard/Org/Badge.css";
 
 const Badge = () => {
     const [ isManage, setIsManage ] = useState(false);
     const [ membersToUpdate, setMembersToUpdate ] = useState([]);
-    const [ updateOption, setUpdateOption ] = useState("Mint");
+    const [ selectedAction, setSelectedAction ] = useState("Mint");
+    const [ isTxReady, setIsTxReady ] = useState(false);
 
+    const navigate = useNavigate();
     const params = new URLSearchParams(window.location.search);
     const orgId = params.get("orgId");
     const badgeId = params.get("badgeId");
-    const { orgData } = useContext(OrgContext);
-    const navigate = useNavigate();
 
-    const badge = null || orgData?.badges.find(badge => badge.token_id === parseInt(badgeId));
+    const { orgData, setOrgData } = useContext(OrgContext);
+    const badgeIndex = orgData?.badges.findIndex(badge => badge.token_id === parseInt(badgeId));
+    let badge = orgData?.badges[badgeIndex];
+    console.log('badge', badge)
+
+    const setDelegates = useSetDelegates(
+        isTxReady,
+        orgData?.ethereum_address,  // orgAddress
+        badge?.token_id,          // tokenId array
+        membersToUpdate,            // address array
+        selectedAction,             // mint, revoke, add or remove leaders
+    );
+    const manageOwnership = useManageBadgeOwnership(
+        isTxReady,
+        orgData?.ethereum_address,  // orgAddress
+        badge?.token_id,          // tokenId array
+        membersToUpdate,            // address array
+        selectedAction,             // mint, revoke, add or remove leaders
+        1                           // amount of each token
+    );
 
     const actions = [{
         text: "Manage",
@@ -31,17 +51,61 @@ const Badge = () => {
         event: () => setIsManage(!isManage)
     }]
 
-    const selectMethods = {
-        "Mint": "mintBundle",
-        "Revoke": "revokeBundle",
-        "Add Leader": "setDelegates",
-        "Remove Leader": "removeLeaders",
-    }
+    const selectActions = [
+        "Mint",
+        "Revoke",
+        "Add Leader",
+        "Remove Leader"
+    ]
 
     // TODO: Hook up contract hooks and API PATCH
-    const onMemberUpdate = () => {
+    const onBadgeUpdate = async () => {
         console.log("Members to Update", membersToUpdate)
-        console.log("Method to call", updateOption)
+        const method = selectedAction === "Mint" || selectedAction === "Revoke" ? 
+            "manageOwnership" : "setDelegates";
+
+        setIsTxReady(true);
+        // const tx = selectedAction === "Mint" || selectedAction === "Revoke" ? 
+        //     await manageOwnership.write?.() : await setDelegates.write?.();
+        // const txReceipt = await tx?.wait();
+
+        // if (txReceipt.status === 1) {
+        //     console.log('Transaction successful!');
+
+        // }
+
+        method === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
+    }
+
+    const onMembersUpdate = () => {
+        // Sometimes the users array is empty, so we need to check for that
+        if (!badge.users) badge.users = [];
+
+        membersToUpdate.forEach(member => {
+            if (selectedAction === "Revoke") {
+                const index = badge.users.findIndex(user => user.ethereum_address === member);
+                badge.users.splice(index, 1);
+            }
+            else if (selectedAction === "Mint") {
+                badge.users.push({ethereum_address: member});
+            }
+            setOrgData(orgData => {orgData.badges[badgeIndex] = badge; return {...orgData}});
+        })
+        // TODO: Post to API
+    }
+
+    const onDelegatesUpdate = () => {
+        membersToUpdate.forEach(member => {
+            if (selectedAction === "Remove Leader") {
+                const index = badge.delegates.findIndex(delegate => delegate.ethereum_address === member);
+                badge.delegates.splice(index, 1);
+            }
+            else if (selectedAction === "Add Leader") {
+                badge.delegates.push({ethereum_address: member});
+            }
+            setOrgData(orgData => {orgData.badges[badgeIndex] = badge; return {...orgData}});
+        })
+        // TODO: Post to API
     }
 
     useEffect(() => {
@@ -74,9 +138,9 @@ const Badge = () => {
                     <>
                         <Select 
                             label="Update Type"
-                            options={Object.keys(selectMethods)} 
-                            value={updateOption}
-                            setValue={(e) => setUpdateOption(e.target.value)}
+                            options={selectActions} 
+                            value={selectedAction}
+                            setValue={(e) => setSelectedAction(e.target.value)}
                         />
                         <InputListCSV
                             label="Members to update"
@@ -86,7 +150,7 @@ const Badge = () => {
                         <IconButton
                             icon={['fal', 'arrow-right']} 
                             text="UPDATE MEMBERS" 
-                            onClick={onMemberUpdate}
+                            onClick={onBadgeUpdate}
                             style={{margin: "20px 0px 20px auto"}}
                         />
                     </>

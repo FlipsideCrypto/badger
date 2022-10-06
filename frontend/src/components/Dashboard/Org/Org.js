@@ -7,16 +7,22 @@ import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 
 import "@style/Dashboard/Org/Org.css";
 
-// TODO: If there is badges in the org, show the badge page.
 const Org = () => {
     const navigate = useNavigate();
     const { orgData, setCurrentOrgId } = useContext(OrgContext);
     const params = new URLSearchParams(window.location.search);
     const orgId = params.get("orgId");
 
+    // If orgId param changes then fetch or get the org data from context
     useEffect(() => {
         setCurrentOrgId(orgId)
     }, [orgId, setCurrentOrgId]);
+
+    // If org has badges already, go to first badge in index.
+    useEffect(() => {
+        if (orgData?.badges?.length > 0) 
+            navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${orgData.badges[0].token_id}`)
+    }, [orgData, navigate, orgId])
 
     return (
         <>

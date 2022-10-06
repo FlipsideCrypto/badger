@@ -1,15 +1,53 @@
 import { API_URL, IPFS_GATEWAY_URL } from "@static/constants/links"
 
+export async function postOrgRequest(org) {
+    let response;
+
+    try {
+        await fetch(`${API_URL}/organizations/`, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
+            },
+            credentials: 'include',
+            body: JSON.stringify(org)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data?.id) throw new Error("Org POST request failed, id not found");
+            console.log('got org response', data);
+            response = data;
+        })
+        .catch(err => {
+            throw new Error(err);
+        })
+    }
+    catch (err) {
+        console.log('error creating org', err);
+        response = {error: err}
+    }
+
+    return response;
+}
+
 export async function postBadgeRequest(badge) {
     let response;
+    const delegates = badge.delegates.forEach(delegate => {
+        return {ethereum_address: delegate.address}
+    })
+
     const badgeObj = {
+        is_active: badge.is_active,
+        token_id: badge.token_id,
         name: badge.name,
         description: badge.description,
-        delegates: badge.delegates,
         image_hash: badge.image_hash,
         token_uri: badge.token_uri,
         account_bound: badge.account_bound,
-        organization: parseInt(badge.organization)
+        delegates: delegates,
+        organization: parseInt(badge.organization),
     }
 
     try {
@@ -39,11 +77,45 @@ export async function postBadgeRequest(badge) {
     return response;
 }
 
-export async function postOrgRequest(org) {
+export async function postIPFSImage(image) {
+    const formData = new FormData();
+    formData.append('image', image)
     let response;
 
     try {
-        await fetch(`${API_URL}/organizations/`, {
+        await fetch(`${API_URL}/ipfs/pin-image/`, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
+            },
+            credentials: 'include',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            response = data
+        })
+    }
+    catch (err) {
+        console.log('error uploading to ipfs', err)
+        response = {error: err}
+    }
+
+    return response;
+}
+
+export async function postIPFSMetadata(badge) {
+    let response;
+
+    const metadata = {
+        name: badge.name,
+        description: badge.description,
+        image: `${IPFS_GATEWAY_URL}/${badge.image_hash}`
+    }
+
+    try {
+        await fetch(`${API_URL}/ipfs/pin-json/`, {
             method: "POST",
             mode: "cors",
             headers: {
@@ -51,20 +123,15 @@ export async function postOrgRequest(org) {
                 'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
             },
             credentials: 'include',
-            body: JSON.stringify(org)
+            body: JSON.stringify({data: metadata})
         })
         .then(res => res.json())
         .then(data => {
-            if (!data?.id) throw new Error("Org POST request failed, id not found");
-            console.log('got org response', data);
-            response = data;
-        })
-        .catch(err => {
-            throw new Error(err);
+            response = data
         })
     }
     catch (err) {
-        console.log('error creating org', err);
+        console.log('error uploading metadata to ipfs', err)
         response = {error: err}
     }
 
@@ -130,69 +197,23 @@ export async function getOrgRequest(orgId) {
     return response
 }
 
-export async function postIPFSImage(image) {
-    const formData = new FormData();
-    formData.append('image', image)
+export async function patchBadgeRequest(url, badge) {
     let response;
+    const users = badge.users.forEach(delegate => {
+        return {ethereum_address: delegate.address}
+    })
+    const delegates = badge.delegates.forEach(delegate => {
+        return {ethereum_address: delegate.address}
+    })
 
-    try {
-        await fetch(`${API_URL}/ipfs/pin-image/`, {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
-            },
-            credentials: 'include',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            response = data
-        })
+    const body = {
+        is_active: true,
+        token_uri: badge.token_uri,
+        image_hash: badge.image_hash,
+        delegates: delegates,
+        users: users,
+        organization: parseInt(badge.organization),
     }
-    catch (err) {
-        console.log('error uploading to ipfs', err)
-        response = {error: err}
-    }
-
-    return response;
-}
-
-export async function postIPFSMetadata(badge) {
-    let response;
-
-    const metadata = {
-        name: badge.name,
-        description: badge.description,
-        image: `${IPFS_GATEWAY_URL}/${badge.image_hash}`
-    }
-
-    try {
-        await fetch(`${API_URL}/ipfs/pin-json/`, {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                "Content-Type": "application/json",
-                'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
-            },
-            credentials: 'include',
-            body: JSON.stringify({data: metadata})
-        })
-        .then(res => res.json())
-        .then(data => {
-            response = data
-        })
-    }
-    catch (err) {
-        console.log('error uploading metadata to ipfs', err)
-        response = {error: err}
-    }
-
-    return response;
-}
-
-export async function patchBadgeStatus(url) {
-    let response;
 
     try {
         await fetch(`${url}`, {
@@ -203,7 +224,7 @@ export async function patchBadgeStatus(url) {
                 'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
             },
             credentials: 'include',
-            body: JSON.stringify({is_active: true})
+            body: JSON.stringify({body})
         })
         .then(res => res.json())
         .then(data => {

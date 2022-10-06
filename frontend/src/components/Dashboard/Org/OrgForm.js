@@ -12,8 +12,8 @@ import { postOrgRequest } from "@utils/api_requests";
 import { getBadgerAbi } from "@hooks/useContracts";
 
 const OrgForm = () => {
-    const [orgName, setOrgName] = useState("");
-    const [orgSymbol, setOrgSymbol] = useState("");
+    const [ orgName, setOrgName ] = useState("");
+    const [ orgSymbol, setOrgSymbol ] = useState("");
     const { userData, setUserData } = useContext(UserContext);
 
     const { chain } = useNetwork();
