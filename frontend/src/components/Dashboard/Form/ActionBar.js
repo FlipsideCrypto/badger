@@ -28,6 +28,7 @@ const ActionBar = ({ help, actions }) => {
                                 icon={action.icon}
                                 text={action.text}
                                 onClick={action.event}
+                                disabled={action.disabled}
                             />
                         }
                     </div>

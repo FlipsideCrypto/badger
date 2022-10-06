@@ -14,7 +14,7 @@ import "@style/Dashboard/Org/Badge.css";
 
 const Badge = () => {
     const [ isManage, setIsManage ] = useState(false);
-    const [ membersToUpdate, setMembersToUpdate ] = useState([""]);
+    const [ membersToUpdate, setMembersToUpdate ] = useState([]);
     const [ updateOption, setUpdateOption ] = useState("Mint");
 
     const params = new URLSearchParams(window.location.search);
@@ -23,7 +23,7 @@ const Badge = () => {
     const { orgData } = useContext(OrgContext);
     const navigate = useNavigate();
 
-    const badge = null || orgData?.badges[badgeId];
+    const badge = null || orgData?.badges.find(badge => badge.token_id === parseInt(badgeId));
 
     const actions = [{
         text: "Manage",

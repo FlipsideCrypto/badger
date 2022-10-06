@@ -7,6 +7,7 @@ import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 
 import "@style/Dashboard/Org/Org.css";
 
+// TODO: If there is badges in the org, show the badge page.
 const Org = () => {
     const navigate = useNavigate();
     const { orgData, setCurrentOrgId } = useContext(OrgContext);

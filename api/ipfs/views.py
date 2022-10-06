@@ -32,13 +32,13 @@ class IPFSViewSet(viewsets.ViewSet):
     def upload_json(self, request):
         # Get the data from the request
         data = request.data.get('data', None)
-
+        
         # If the data is not in the request, return an error
         if not data:
             return Response({'error': 'No data provided'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Pin the data to IPFS
-        pin_response = pin_json(data)
+        pin_response = pin_json(data, f"{data['name']}-uri")
 
         # If the pinning was successful, return the hash
         if pin_response['status'] == 'success':

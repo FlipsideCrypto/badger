@@ -1,10 +1,10 @@
+import { useMemo } from "react";
 import { usePrepareContractWrite, useContractWrite } from 'wagmi';
 
 const BadgerAddresses = JSON.parse(process.env.REACT_APP_BADGER_HOUSE_ADDRESSES)
 
 // Gets the ABI for sash contracts.
-export const useBadgerOrganizationAbi = () => {
-    console.log('useBadgerOrganizationAbi');
+export function getBadgerOrganizationAbi() {
     try {
         const abi = require('@abis/BadgerOrganization.json');
         return {abi: abi}
@@ -16,7 +16,7 @@ export const useBadgerOrganizationAbi = () => {
 }
 
 // Gets the abi and chain specific address for the Badger contract.
-export const useBadgerAbi = (chainName) => {
+export function getBadgerAbi(chainName) {
     try {
         const abi = require('@abis/Badger.json');
         const address = BadgerAddresses[chainName]
@@ -33,8 +33,10 @@ export const useBadgerAbi = (chainName) => {
 
 // Creates a new sash contract for an organization.
 export const useBadgerPress = (chainName) => {
-    const Badger = useBadgerAbi(chainName);
+    const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
+
+    console.log('badger address', Badger.address);
 
     const { config } = usePrepareContractWrite({
         addressOrName: Badger.address,
@@ -58,22 +60,69 @@ export const useBadgerPress = (chainName) => {
 }
 
 // Creates a badge from a cloned sash contract.
-export const useCreateBadge = (args) => {
-    const BadgerOrganization = useBadgerOrganizationAbi();
+export const useCreateBadge = (badge) => {
+    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
 
+    let args = [
+        badge.contract_address,
+        badge.token_id,
+        badge.account_bound,
+        badge.signer || "",
+        badge.token_uri,
+        badge.payment_token || [0, "", 0, 0],
+        badge.delegates || []
+    ]
+
+    console.log('args', args)
+
     const { config } = usePrepareContractWrite({
-        addressOrName: args.contract_address,
+        addressOrName: badge.contract_address,
+        contractInterface: BadgerOrganization.abi,
+        functionName: "setBadge",
+        args: args,
+        enabled: Boolean(badge.token_uri),
+        onSettled() {
+            response = {status: 'prepared', message: 'Transaction prepared.'};
+            console.log('response', response)
+        },
+        onSuccess(data) {
+            response = {status: 'success', message: data};
+            console.log('response', response)
+        },
+        onError (err) {
+            response = {status: 'error', message: err};
+            console.log('response', response)
+        }
+    })
+
+    const { writeAsync } = useContractWrite(config);
+
+    return { write: writeAsync, response };
+}
+
+// Creates a badge from a cloned sash contract.
+// The recklessly unprepared version of wagmi contract interaction
+// is probably not the best UX, however, we only receive the uri after the final
+// json pin request and managing this on the front end is more work and complexity than it's worth IMO.
+export const useCreateBadgeUnprepared = (badge) => {
+    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
+    let response;
+
+    const { sendTransaction } = useContractWrite({
+        mode: 'recklesslyUnprepared',
+        addressOrName: badge.contract_address,
         contractInterface: BadgerOrganization.abi,
         functionName: "setBadge",
         args: [
-            args.id,
-            args.account_bound,
-            args.signer || "",
-            args.uri,
-            args.payment_token || [0, "", 0, 0],
-            args.delegates || []
+            badge.token_id,
+            badge.account_bound,
+            badge.signer || "",
+            badge.token_uri,
+            badge.payment_token || [0, "", 0, 0],
+            badge.delegates || []
         ],
+        enabled: Boolean(badge.token_uri),
         onSettled() {
             response = {status: 'prepared', message: 'Transaction prepared.'};
         },
@@ -85,9 +134,7 @@ export const useCreateBadge = (args) => {
         }
     })
 
-    const { writeAsync } = useContractWrite(config);
-
-    return { write: writeAsync, response };
+    return { write: sendTransaction, response };
 }
 
 /* 
@@ -95,7 +142,7 @@ export const useCreateBadge = (args) => {
     if there are multiple badge ids, and if there are multiple holders.
 */
 export const useManageBadgeOwnership = (sashAddress, holders, ids, amounts, revoke) => {
-    const BadgerOrganization = useBadgerOrganizationAbi();
+    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
 
     // Might look a little funky but cleaner than a switch IMO.
@@ -142,7 +189,7 @@ export const useManageBadgeOwnership = (sashAddress, holders, ids, amounts, revo
     If revoke is true then delegate/leaders are removed.
 */
 export const useSetDelegates = (sashAddress, ids, leaders, revoke) => {
-    const BadgerOrganization = useBadgerOrganizationAbi();
+    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
     let response = {status: 'unprepared', message: 'Transaction not prepared.'};
 
     const isDelegateArray = Array(leaders.length).fill(!revoke);

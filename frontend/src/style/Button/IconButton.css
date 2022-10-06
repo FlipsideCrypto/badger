@@ -30,6 +30,20 @@
     color: #fff;
 }
 
+.button:disabled:hover .button__text,
+.button:disabled:active .button__text,
+.button:disabled:focus .button__text {
+    background: inherit;
+    color: inherit;
+    cursor: default;
+}
+.button:disabled .button__icon {
+    cursor: default;
+}
+.button:disabled:hover .button__icon svg {
+    transform: translateX(0px);
+}
+
 /* When the button is hovered do a little bump to the icon */
 .button:hover .button__icon svg {
     transform: translateX(2px);

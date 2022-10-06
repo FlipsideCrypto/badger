@@ -1,6 +1,5 @@
 import { useState, createContext, useEffect } from "react"
 import { getOrgRequest } from "@utils/api_requests";
-import { getUserRequest } from "../../../utils/api_requests";
 
 export const OrgContext = createContext();
 
@@ -12,7 +11,10 @@ const OrgContextProvider = ({ children }) => {
     const [ currentOrgId, setCurrentOrgId ] = useState();
 
     useEffect(() => {
-        if (orgData?.id.toString() === currentOrgId) return void {}
+        if (
+            !currentOrgId ||
+            orgData?.id === parseInt(currentOrgId)
+        ) return void {}
 
         async function getData() {
             let response = await getOrgRequest(currentOrgId);

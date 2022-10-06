@@ -9,6 +9,7 @@ import Input from "@components/Dashboard/Form/Input";
 
 import { useBadgerPress } from "@hooks/useContracts";
 import { postOrgRequest } from "@utils/api_requests";
+import { getContractAddress } from "ethers/lib/utils";
 
 const OrgForm = () => {
     const [orgName, setOrgName] = useState("");
@@ -54,7 +55,11 @@ const OrgForm = () => {
 
         // Deploy and initialize org contract
         let cloneTx = await createContract.write?.();
+        console.log('preconfirmation tx', cloneTx);
+        let nonce = cloneTx?.nonce;
         cloneTx = await cloneTx.wait();
+        console.log('nonce', nonce);
+        console.log('clonetx', cloneTx)
         const contractAddress = cloneTx.logs[0].address;
         orgObj.ethereum_address = contractAddress;
         if (contractAddress) orgObj.is_active = true;

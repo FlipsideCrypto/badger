@@ -17,7 +17,7 @@ class Badge(models.Model):
 
     account_bound = models.BooleanField(blank=False, default=False)
 
-    signer_ethereum_address = models.CharField(max_length=50, blank=False, default=None, validators=[validate_ethereum_address])
+    signer_ethereum_address = models.CharField(max_length=50, blank=True, validators=[validate_ethereum_address])
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

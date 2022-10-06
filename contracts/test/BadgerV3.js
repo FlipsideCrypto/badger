@@ -30,7 +30,6 @@ describe("BadgerV3", function() {
         house = await Badger.deploy(sashMaster.address);
         house = await house.deployed();
 
-        // why tf is this failing.... Might just use one instance of sashPress for this.
         // const Mock1155 = ethers.getContractFactory("MockERC1155")
         // mock1155 = await Mock1155.deploy("testuri");
         // mock1155 = await mock1155.deployed();
@@ -40,14 +39,27 @@ describe("BadgerV3", function() {
         it('Initialized New Sash', async() => {
             cloneTx = await house.connect(owner).createOrganization("0x");
             cloneTx = await cloneTx.wait();
-            
-            sashPressAddress = cloneTx.events[0].address;
+            // console.log('clone tx', cloneTx);
+            // console.log('topics', cloneTx.logs[3].topics);
+            // console.log('args', cloneTx.logs[3].args);
+            // console.log('decode', cloneTx.logs[3].decode);
+            console.log('signer1', signer1.address);
+            console.log('events', cloneTx.events);
+            const [OrganizationCreated] = cloneTx.events[3].args[0];
+            console.log('clone tx args', cloneTx.events[3].args['organization'])
+            // const sashPressAddress = OrganizationCreated.topics[0];
+            console.log('orgCreated', OrganizationCreated);
+            // console.log('')
+            // console.log('args', cloneTx.logs[3])
+            console.log(owner.address, house.address, sashMaster.address)            
+            // sashPressAddress = cloneTx.events[3].address;
+            sashPressAddress = cloneTx.events[3].args['organization']
             sashPress = await sashMaster.attach(sashPressAddress);
 
             assert.equal(await sashPress.owner(), owner.address);
         });
 
-        it('Can create Sash', async() => {
+        it('Can create Badge', async() => {
             const _badgeId = 0;
             const _paymentToken = [
                 0,                          // enum TOKEN_TYPE
@@ -66,6 +78,7 @@ describe("BadgerV3", function() {
             )
 
             const { signer } = await sashPress.badges(0);
+            console.log(await sashPress.badges(0))
 
             assert.equal(signer.toString(), signer1.address);
         });
