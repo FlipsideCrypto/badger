@@ -13,10 +13,15 @@ import Badge from "@components/Dashboard/Org/Badge";
 import Org from "@components/Dashboard/Org/Org";
 
 import "@style/Dashboard/Dashboard.css";
+import { useEffect } from "react";
 
 const Dashboard = () => {
     const { data: signer } = useSigner();
     const { address } = useAccount();
+
+    useEffect(() => {
+        
+    }, [signer, address])
 
     return (
         <div className="dashboard">

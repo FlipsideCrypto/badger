@@ -30,6 +30,8 @@ const HolderTable = ({ holders }) => {
         setSortedList(newSortedList);
     }
 
+    console.log('Holder data in table', holders)
+
     return (
         <div id="holder__table">
             <TableContainer>
@@ -56,11 +58,11 @@ const HolderTable = ({ holders }) => {
                             key={holder.address}
                         >
                             <TableCell component="th" scope="row">
-                                {sliceAddress(holder.address)}
+                                {sliceAddress(holder.ethereum_address)}
                             </TableCell>
-                            <TableCell>{holder.receivedAt}</TableCell>
-                            <TableCell>{holder.nickname}</TableCell>
-                            <TableCell>{holder.pod}</TableCell>
+                            <TableCell>{holder.received_at}</TableCell>
+                            <TableCell>{holder?.nickname}</TableCell>
+                            <TableCell>{holder?.pod}</TableCell>
                             <TableCell>
                                 <div className={`delegate__status__${holder.delegate}`}>
                                     <span>{holder.delegate ? "Yes" : "No"}</span>

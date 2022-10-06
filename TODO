@@ -4,77 +4,28 @@ This todo is using Kanban format. Every number next to it is the priority. Just 
 [1] - (v3) Wallet based JWT tokens
 [2] - API Endpoint that returns which "tutorial state" should be shown on a users profile page.
 [1] - Enable SSL on Netlify
-[2] - Contract integration
 
-[] Stating
-[6] - Standing API to process base requests of v2. @chance
+[] Starting
+[9] - There is some issue with changing address and losing session authentication
+    - Do we clear the csrf and session id on address change?
 
 [] In Progress
-[10] - Finish the static implementation of the Dashboard pages. @mason
-     - Determine placement of API post and get requests
-     - Determine when we're running the transactions
-     - Post request after a transaction is completed to show that the obj in database is not a ghost obj.
+[9] - Improve UX and contracct interaction BS nuances.
+[10]- fucking patch a badge with its users
 
 [] Review
-[3] - Wallet integration.
-    - Pending completion of contract integration.
+
 [2] - Possibly use local cache for org and user data instead of context
 
 [] Done
+[2] - Contract integration
+[6] - Standing API to process base requests of v2. @chance
+[10]- Finish the static implementation of the Dashboard pages. @mason
+    - Determine placement of API post and get requests
+    - Determine when we're running the transactions
+    - Post request after a transaction is completed to show that the obj in database is not a ghost obj.
+[3] - Wallet integration.
+    - Pending completion of contract integration.
 [3] - Setup redirecting of the actual deployment.
     - This will take just a few seconds. It would be nice to go ahead and get namespace. Should just do this next time someone hits a wall.
     - Reminder that FontAwesome is going to be bad when deploying due to it's key management process.
-
-=========================================
-                OLD TODO
-=========================================
-
-This needs to be cleaned out with the new v2 functionality in mind
-
-SUMMARY:
-    ☐ Entering app needs some page to determine if they currently have a set or if they're new
-    ☐ API GET for a wallet's sets and badges
-    ☐ Fix sizing and styling of landing page images.
-    ☐ Need link to a usable Flipside query.
-    ☐ Make sure the post minting API post works properly.
-    ☐ Mobile resizing
-        ☐ Navbar needs mobile hamburger
-
-CRITICAL:
-    ☐ Mint Page
-        ☐ Check for if minting amount > 100? 80? 
-    ☐ Manage Set Page
-        ☐ Small switch that changes from mint to revoke
-        ☐ API get for all badges of contract address
-        ☐ API get ownership records
-    ☐ Overhaul API endpoints
-        ☐ Getter endpoint for both
-        ☐ Updater? (maybe v1.01)
-        ☐ Getter for ownership records of a contract address
-    ☐ Stepper needs green font when completed
-    ☐ Mobile redesign
-    ☐ ENSURE THAT ONLY THE FRONT END CAN MAKE POST REQUESTS TO THE BACKEND.
-    ☐ Preview bar needs better sizing and distribution of children
-    ☐ Check out runner tests
-        Need to implement these and dev around them to be sure the security of org data is correct.
-        As of now everything is open and there's probably a plethora of security bugs.
-
-CONTRACT: 
-    ☐ Contract deployed on Polygon and tested
-    ☐ Find way to parse RPC errors
-    
-ACTIVE:
-    ☐ Home Dashboard
-        Displays all sets, can click into a set to see all badges and revoke or mint from here.
-    ☐ Manage Badges
-        ☐ Rename, new image for badges
-    ☐ Do test walk throughs and polish UX
-    
-V1.01:
-    ☐ Signature to get into dashboard
-    ☐ Rate limit IPFS upload
-    ☐ Add webm conversion for preview and IPFS upload
-    ☐ Blocknative events for tx not done through our front end
-    ☐ FAQ Page
-    ☐ Add gnosis as a chain
-    ☐ SVGs not rendering from ipfs

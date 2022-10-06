@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { usePrepareContractWrite, useContractWrite } from 'wagmi';
+import { ethers } from "ethers";
 
 const BadgerAddresses = JSON.parse(process.env.REACT_APP_BADGER_HOUSE_ADDRESSES)
 
@@ -34,22 +35,13 @@ export function getBadgerAbi(chainName) {
 // Creates a new sash contract for an organization.
 export const useBadgerPress = (chainName) => {
     const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
-    let response = {status: 'unprepared', message: 'Transaction not prepared.'};
+    let response = {status: 'ok', message: 'Transaction is ready to call.'};
 
     const { config } = usePrepareContractWrite({
         addressOrName: Badger.address,
         contractInterface: Badger.abi,
         functionName: "createOrganization",
         args: [""],
-        onSettled() {
-            response = {status: 'prepared', message: 'Transaction prepared.'};
-        },
-        onSuccess(data) {
-            response = {status: 'success', message: data};
-        },
-        onError (err) {
-            response = {status: 'error', message: err};
-        }
     })
 
     const { writeAsync } = useContractWrite(config);
@@ -60,7 +52,7 @@ export const useBadgerPress = (chainName) => {
 // Creates a badge from a cloned sash contract.
 export const useCreateBadge = (badge) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    let response = {status: 'unprepared', message: 'Transaction not prepared.'};
+    let response = {status: 'ok', message: 'Transaction is ready to call.'};
 
     let args = [
         badge.token_id,
@@ -77,15 +69,6 @@ export const useCreateBadge = (badge) => {
         functionName: "setBadge",
         args: args,
         enabled: Boolean(badge.token_uri),
-        onSettled() {
-            response = {status: 'prepared', message: 'Transaction prepared.'};
-        },
-        onSuccess(data) {
-            response = {status: 'success', message: data};
-        },
-        onError (err) {
-            response = {status: 'error', message: err};
-        }
     })
 
     const { writeAsync } = useContractWrite(config);
@@ -99,8 +82,8 @@ export const useCreateBadge = (badge) => {
 */
 export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, holders, action, amounts) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    let response = {status: 'unprepared', message: 'Transaction not prepared.'};
-
+    let response = {status: 'unprepared', message: 'Transaction is not ready to call.'};
+    
     // Might look a little funky but cleaner than a switch IMO.
     // If revoke is true, then we check if there is just one holder for a single revoke.
     // If ids is a single id, then we call the revoke function with multiple holders.
@@ -109,10 +92,17 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, holders, act
     const revoke = action === "Revoke" ? true : false
     const method = revoke ? 
         holders.length === 1 ? "revoke" : 
-        typeof(ids) === "number" ? "revokeBatch" : "revokeFullBatch" 
+        typeof(ids) === "number" ? "revokeBatch" : "revokeFullBatch"
         :
         holders.length === 1 ? "leaderMint" :
         typeof(ids) === "number" ? "leaderMintBatch" : "leaderMintFullBatch"
+
+    // TODO: Amounts will need to be changed to be an array of arrays for each badge.
+    //       For now it's standard for just one.
+    amounts = Array(holders.length).fill(amounts)
+
+    if (holders.length === 1) 
+        holders = holders[0]
 
     const args = [
         holders,
@@ -120,7 +110,6 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, holders, act
         amounts,
     ]
 
-    console.log('args', args)
     // Contracts currently have bytes data if it's a mint only, not revoke.
     if (!revoke) 
         args.push("0x")
@@ -131,41 +120,33 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, holders, act
         functionName: method,
         args: args,
         enabled: isTxReady,
-        onSettled() {
-            response = {status: 'prepared', message: 'Transaction prepared.'};
-        },
-        onSuccess(data) {
-            response = {status: 'success', message: data};
-        },
-        onError (err) {
-            response = {status: 'error', message: err};;
-        }
     })
 
     const { writeAsync } = useContractWrite(config);
+
+    if (isSuccess) 
+        response = {status: 'ok', message: 'Transaction is ready to call.'};
 
     return { write: writeAsync, response, isSuccess };
 }
 
 /*
     Changes delegates of badge(s) with id(s) from orgAddress. 
-    If revoke is true then delegate/leaders are removed.
+    If revoke is true then delegates are removed.
 */
-export const useSetDelegates = (isTxReady, orgAddress, ids, leaders, action) => {
+export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    let response = {status: 'unprepared', message: 'Transaction not prepared.'};
+    let response = {status: 'unprepared', message: 'Transaction is not ready to call.'}
 
     const revoke = action === "Remove Leader" ? true : false
-    const isDelegateArray = Array(leaders.length).fill(!revoke);
+    const isDelegateArray = Array(delegates.length).fill(!revoke);
     const method = typeof(ids) === "number" ?  "setDelegates" : "setDelegatesBatch";
 
     const args = [
         ids,
-        leaders,
+        delegates,
         isDelegateArray,
     ]
-
-    console.log('args', args)
 
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: orgAddress,
@@ -173,15 +154,6 @@ export const useSetDelegates = (isTxReady, orgAddress, ids, leaders, action) => 
         functionName: method,
         args: args,
         enabled: isTxReady,
-        onSettled() {
-            response = {status: 'prepared', message: 'Transaction prepared.'};
-        },
-        onSuccess(data) {
-            response = {status: 'success', message: data};
-        },
-        onError (err) {
-            response = {status: 'error', message: err};;
-        }
     })
 
     const { writeAsync } = useContractWrite(config);

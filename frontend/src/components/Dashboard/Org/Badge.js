@@ -10,6 +10,7 @@ import Select from "@components/Dashboard/Form/Select";
 
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { useManageBadgeOwnership, useSetDelegates } from "@hooks/useContracts";
+import { patchBadgeRolesRequest } from "@utils/api_requests";
 
 import "@style/Dashboard/Org/Badge.css";
 
@@ -17,7 +18,7 @@ const Badge = () => {
     const [ isManage, setIsManage ] = useState(false);
     const [ membersToUpdate, setMembersToUpdate ] = useState([]);
     const [ selectedAction, setSelectedAction ] = useState("Mint");
-    const [ isTxReady, setIsTxReady ] = useState(false);
+    const [ callTransaction, setCallTransaction ] = useState("");
 
     const navigate = useNavigate();
     const params = new URLSearchParams(window.location.search);
@@ -30,19 +31,19 @@ const Badge = () => {
     console.log('badge', badge)
 
     const setDelegates = useSetDelegates(
-        isTxReady,
-        orgData?.ethereum_address,  // orgAddress
-        badge?.token_id,          // tokenId array
-        membersToUpdate,            // address array
-        selectedAction,             // mint, revoke, add or remove leaders
+        callTransaction === "setDelegates",
+        orgData?.ethereum_address,          // orgAddress
+        badge?.token_id,                    // tokenId array
+        membersToUpdate,                    // address array
+        selectedAction,                     // mint, revoke, add or remove leaders
     );
     const manageOwnership = useManageBadgeOwnership(
-        isTxReady,
-        orgData?.ethereum_address,  // orgAddress
-        badge?.token_id,          // tokenId array
-        membersToUpdate,            // address array
-        selectedAction,             // mint, revoke, add or remove leaders
-        1                           // amount of each token
+        callTransaction === "manageOwnership",
+        orgData?.ethereum_address,          // orgAddress
+        badge?.token_id,                    // tokenId array
+        membersToUpdate,                    // address array
+        selectedAction,                     // mint, revoke, add or remove leaders
+        1                                   // amount of each token
     );
 
     const actions = [{
@@ -59,28 +60,19 @@ const Badge = () => {
     ]
 
     // TODO: Hook up contract hooks and API PATCH
-    const onBadgeUpdate = async () => {
+    const onButtonClick = async () => {
         console.log("Members to Update", membersToUpdate)
         const method = selectedAction === "Mint" || selectedAction === "Revoke" ? 
             "manageOwnership" : "setDelegates";
 
-        setIsTxReady(true);
-        // const tx = selectedAction === "Mint" || selectedAction === "Revoke" ? 
-        //     await manageOwnership.write?.() : await setDelegates.write?.();
-        // const txReceipt = await tx?.wait();
-
-        // if (txReceipt.status === 1) {
-        //     console.log('Transaction successful!');
-
-        // }
-
-        method === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
+        setCallTransaction(method);
     }
 
-    const onMembersUpdate = () => {
-        // Sometimes the users array is empty, so we need to check for that
+    // Update the badge array after the transaction is completed, POST 
+    // out to the API, update our orgData context, and reset call transaction flag.
+    const onMembersUpdate = async () => {
+        // API is currently returning no key with empty array, so we need to check for that
         if (!badge.users) badge.users = [];
-
         membersToUpdate.forEach(member => {
             if (selectedAction === "Revoke") {
                 const index = badge.users.findIndex(user => user.ethereum_address === member);
@@ -89,12 +81,20 @@ const Badge = () => {
             else if (selectedAction === "Mint") {
                 badge.users.push({ethereum_address: member});
             }
-            setOrgData(orgData => {orgData.badges[badgeIndex] = badge; return {...orgData}});
         })
-        // TODO: Post to API
+
+        const response = await patchBadgeRolesRequest(badge, orgId, false)
+        console.log('response', response)
+
+        if (response.token_id)
+            setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
+
+        // setCallTransaction("")
     }
 
-    const onDelegatesUpdate = () => {
+    // Update the badge array after the transaction is completed, POST 
+    // out to the API, update our orgData context, and reset call transaction flag.
+    const onDelegatesUpdate = async () => {
         membersToUpdate.forEach(member => {
             if (selectedAction === "Remove Leader") {
                 const index = badge.delegates.findIndex(delegate => delegate.ethereum_address === member);
@@ -103,10 +103,44 @@ const Badge = () => {
             else if (selectedAction === "Add Leader") {
                 badge.delegates.push({ethereum_address: member});
             }
-            setOrgData(orgData => {orgData.badges[badgeIndex] = badge; return {...orgData}});
         })
-        // TODO: Post to API
+
+        const response = await patchBadgeRolesRequest(badge, orgId, true)
+        
+        if (response.token_id)
+            setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
+
+        // setCallTransaction("")
     }
+
+    // Run the transaction hook once it has been prepped. If successful, update the badge data.
+    useEffect(() => {
+        async function runTransaction() {
+            let tx;
+            try {
+                if (setDelegates.isSuccess)
+                    tx = await setDelegates.write?.()
+                else if (manageOwnership.isSuccess)
+                    tx = await manageOwnership.write?.()
+    
+                if (tx) {
+                    const txReceipt = await tx?.wait();
+            
+                    if (txReceipt.status === 1) {
+                        console.log('Transaction successful!');
+                        callTransaction === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
+                    }
+                }
+            } catch (error) {
+                console.log('Transaction failed:', error);
+                setCallTransaction("")
+            }
+        }
+        
+        if (callTransaction) 
+            runTransaction();
+    // eslint-disable-next-line
+    }, [setDelegates.isSuccess, manageOwnership.isSuccess, callTransaction])
 
     useEffect(() => {
         if (!orgData) navigate("/dashboard/");
@@ -150,14 +184,15 @@ const Badge = () => {
                         <IconButton
                             icon={['fal', 'arrow-right']} 
                             text="UPDATE MEMBERS" 
-                            onClick={onBadgeUpdate}
+                            onClick={onButtonClick}
                             style={{margin: "20px 0px 20px auto"}}
                         />
                     </>
                 }
 
-                {badge?.holders && badge?.holders.length > 0 ?
-                    <HolderTable holders={badge.holders} />
+                {badge?.users && badge?.users.length > 0 ?
+                    <></>
+                    // <HolderTable holders={badge.users} />
                     :
                     <div className="org__container empty">
                         <h1>Your Organization is almost alive, it just needs members!</h1>

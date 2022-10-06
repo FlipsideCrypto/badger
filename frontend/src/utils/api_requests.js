@@ -1,5 +1,7 @@
 import { API_URL, IPFS_GATEWAY_URL } from "@static/constants/links"
 
+const CSRFToken = document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))?.[2] || null;
+
 export async function postOrgRequest(org) {
     let response;
 
@@ -9,7 +11,7 @@ export async function postOrgRequest(org) {
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
-                'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
+                'X-CSRFToken': CSRFToken,
             },
             credentials: 'include',
             body: JSON.stringify(org)
@@ -34,9 +36,13 @@ export async function postOrgRequest(org) {
 
 export async function postBadgeRequest(badge) {
     let response;
-    const delegates = badge.delegates.forEach(delegate => {
-        return {ethereum_address: delegate.address}
+    // Have to clean input addresses to match the API
+    const delegates = badge.delegates.map(delegate => {
+        if (delegate.ethereum_address) 
+            return delegate
+        return {ethereum_address: delegate}
     })
+    const organization = typeof(badge.organization) === "number" ? parseInt(badge.organization) : badge.organization;
 
     const badgeObj = {
         is_active: badge.is_active,
@@ -47,16 +53,16 @@ export async function postBadgeRequest(badge) {
         token_uri: badge.token_uri,
         account_bound: badge.account_bound,
         delegates: delegates,
-        organization: parseInt(badge.organization),
+        organization: organization,
     }
 
     try {
         await fetch(`${API_URL}/badges/`, {
-            method: "POST",
+            method: "PATCH",
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
-                'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
+                'X-CSRFToken': CSRFToken,
             },
             credentials: 'include',
             body: JSON.stringify(badgeObj)
@@ -87,7 +93,7 @@ export async function postIPFSImage(image) {
             method: "POST",
             mode: "cors",
             headers: {
-                'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
+                'X-CSRFToken': CSRFToken,
             },
             credentials: 'include',
             body: formData
@@ -120,7 +126,7 @@ export async function postIPFSMetadata(badge) {
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
-                'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
+                'X-CSRFToken': CSRFToken,
             },
             credentials: 'include',
             body: JSON.stringify({data: metadata})
@@ -146,7 +152,7 @@ export async function getUserRequest(address) {
             mode: "cors",
             credentials: 'include',
             headers: {
-                'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
+                'X-CSRFToken': CSRFToken,
             }
         })
         .then(res => res.json())
@@ -175,7 +181,7 @@ export async function getOrgRequest(orgId) {
             mode: "cors",
             headers: {
                 'Accept': 'application/json',
-                'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
+                'X-CSRFToken': CSRFToken,
             },
             credentials: 'include'
         })
@@ -197,31 +203,35 @@ export async function getOrgRequest(orgId) {
     return response
 }
 
-export async function patchBadgeRequest(url, badge) {
+export async function patchBadgeRolesRequest(badge, orgId, delegateUpdate) {
     let response;
-    const users = badge.users.forEach(delegate => {
-        return {ethereum_address: delegate.address}
+    // Have to clean input addresses to match the API
+    const users = badge.users.map(user => {
+        if (user.ethereum_address)
+            return user
+        return {ethereum_address: user}
     })
-    const delegates = badge.delegates.forEach(delegate => {
-        return {ethereum_address: delegate.address}
+    const delegates = badge.delegates.map(delegate => {
+        if (delegate.ethereum_address) 
+            return delegate
+        return {ethereum_address: delegate}
     })
+    const organization = typeof(orgId) === "number" ? parseInt(orgId) : orgId;
 
-    const body = {
-        is_active: true,
-        token_uri: badge.token_uri,
-        image_hash: badge.image_hash,
-        delegates: delegates,
-        users: users,
-        organization: parseInt(badge.organization),
+    let body = {
+        token_id: badge.token_id,
+        organization: organization
     }
+    delegateUpdate ? body.delegates = delegates : body.users = users
 
+    console.log('body', body)
     try {
-        await fetch(`${url}`, {
+        await fetch(`${badge.url}`, {
             method: "PATCH",
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
-                'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
+                'X-CSRFToken': CSRFToken,
             },
             credentials: 'include',
             body: JSON.stringify({body})

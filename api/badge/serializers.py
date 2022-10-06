@@ -17,11 +17,13 @@ class BadgeUserSerializer(serializers.ModelSerializer):
         )
 
 class BadgeSerializer(serializers.ModelSerializer):
-    users = BadgeUserSerializer(many=True, read_only=True)
+    # TODO: Make read only once the indexer is in use.
+    users = BadgeUserSerializer(many=True)
     
     class Meta:
         model = Badge
         fields = (
+            'id',
             'url',
             'is_active',
             'name', 
