@@ -56,7 +56,6 @@ class BadgeViewSet(viewsets.ModelViewSet):
         # create the badge
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
 
         # add the badge to the organization
         organization.badges.add(serializer.instance)
@@ -70,8 +69,7 @@ class BadgeViewSet(viewsets.ModelViewSet):
             for user in users:
                 serializer.instance.users.add(user)
 
-            # save the badge
-            serializer.instance.save()
+        self.perform_create(serializer)
 
         return Response(serializer.data)
 
@@ -87,16 +85,13 @@ class BadgeViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(
             instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
 
         if users:
             # update the users
             users = self._handle_users(users)
             for user in users:
-                print(user)
                 serializer.instance.users.add(user)
 
-            # save the badge
-            serializer.instance.save()
+        self.perform_update(serializer)
 
         return Response(serializer.data)
