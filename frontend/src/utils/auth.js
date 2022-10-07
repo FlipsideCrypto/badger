@@ -20,7 +20,6 @@ export async function SIWELogin(message, signature) {
     .catch(err => {
         response = err;
     })
-    console.log('login response', response);
 
     return response;
 };
@@ -41,7 +40,6 @@ export async function SIWENonce() {
         console.log('Error getting nonce', err);
     })
 
-    console.log('got nonce', response);
     return response;
 };
 
