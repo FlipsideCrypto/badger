@@ -1,3 +1,6 @@
+export const BADGER_ADDRESSES = {"Hardhat":"0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"}
+export const PRIMARY_PRODUCTION_CHAIN = "Hardhat"
+
 export const holderHeadRows = {
     address: {
         label: "Address",

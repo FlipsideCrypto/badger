@@ -48,6 +48,7 @@ const OrgForm = () => {
     // Upon receiving the event from clone transaction,
     // POST the org to backend and redirect to org page.
     const onEventReceived = async (event) => {
+        console.log('event', event)
         const orgObj = {
             is_active: false,
             chain: chain.name,

@@ -7,7 +7,7 @@ const WalletWrapper = ({ children }) => {
     const { chains, provider } = configureChains(
         [...defaultChains, chain.hardhat, chain.localhost],
         [
-          alchemyProvider({ apiKey: process.env.ALCHEMY_API_KEY }),
+          alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_API_KEY }),
           publicProvider()
         ]
       );
