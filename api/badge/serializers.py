@@ -20,7 +20,7 @@ class BadgeUserSerializer(serializers.ModelSerializer):
 
 class BadgeSerializer(serializers.ModelSerializer):
     # TODO: Make read only once the indexer is in use.
-    users = BadgeUserSerializer(many=True)
+    # users = BadgeUserSerializer(many=True)
 
     def update(self, instance, validated_data):
         users_data = validated_data.pop('users')
@@ -28,12 +28,12 @@ class BadgeSerializer(serializers.ModelSerializer):
             instance, validated_data)
 
         for user_data in users_data:
-            if not User.objects.filter(ethereum_address=user_data['ethereum_address']).exists():
+            if not User.objects.filter(ethereum_address=user_data.ethereum_address).exists():
                 user = User.objects.create_user(
-                    ethereum_address=user_data['ethereum_address'])
+                    ethereum_address=user_data.ethereum_address)
             else:
                 user = User.objects.get(
-                    ethereum_address=user_data['ethereum_address'])
+                    ethereum_address=user_data.ethereum_address)
 
             instance.users.add(user)
         return instance
