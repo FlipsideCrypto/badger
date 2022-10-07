@@ -94,9 +94,9 @@ class BadgeViewSet(viewsets.ModelViewSet):
             users = self._handle_users(users)
             for user in users:
                 print(user)
-                instance.users.add(user)
+                serializer.instance.users.add(user)
 
             # save the badge
-            instance.save()
+            serializer.instance.save()
 
         return Response(serializer.data)
