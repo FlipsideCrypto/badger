@@ -7,7 +7,7 @@ import "@style/Button/IconButton.css"
 
 const IconButton = ({ icon, text, style, onClick, disabled, loading}) => {
     return (
-        <button className="button" style={style} onClick={onClick} disabled={disabled || false}>
+        <button className="button" style={style} onClick={onClick} disabled={disabled}>
             <span className="button__text">
                 {text}
             </span>

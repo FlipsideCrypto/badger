@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { usePrepareContractWrite, useContractWrite } from 'wagmi';
 
-const BadgerAddresses = JSON.parse(process.env.REACT_APP_BADGER_HOUSE_ADDRESSES)
+const BadgerAddresses = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES)
+const primaryProdChain = process.env.REACT_APP_PRODUCTION_CHAIN
 
 // Gets the ABI for sash contracts.
 export function getBadgerOrganizationAbi() {
@@ -19,7 +20,7 @@ export function getBadgerOrganizationAbi() {
 export function getBadgerAbi(chainName) {
     try {
         const abi = require('@abis/Badger.json');
-        const address = BadgerAddresses[chainName]
+        const address = BadgerAddresses[chainName] ? BadgerAddresses[chainName] : BadgerAddresses[primaryProdChain]
         return {
             abi: abi,
             address: address
@@ -32,7 +33,7 @@ export function getBadgerAbi(chainName) {
 }
 
 // Creates a new sash contract for an organization.
-export const useBadgerPress = (chainName) => {
+export const useBadgerPress = (chainName, enabled) => {
     const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
     let response = {status: 'ok', message: 'Transaction is ready to call.'};
 
@@ -41,6 +42,7 @@ export const useBadgerPress = (chainName) => {
         contractInterface: Badger.abi,
         functionName: "createOrganization",
         args: [""],
+        enabled: enabled,
     })
 
     const { writeAsync } = useContractWrite(config);

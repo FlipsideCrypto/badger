@@ -18,7 +18,7 @@ export async function SIWELogin(message, signature) {
         response = data;
     })
     .catch(err => {
-        response = err;
+        response = {error: err};
     })
 
     return response;
@@ -47,7 +47,7 @@ export async function SIWEAuthorize (signer, address, chainId) {
     try {
         const nonce = await SIWENonce();
     
-        const statement = `By signing this one-time message, Badger authenticates your address for API permissions and creates a web token tied to your address.\n\nOnce authenticated, your address will always have the permissions required to view all the data related to your address, and you should never have to sign in again.\n\nDO NOT share your token in any form, as sharing it allows for anyone with it to view and change all your related organizations and badges.`;
+        const statement = `By signing this one-time message, Badger authenticates your address for API permissions and creates a web token tied to your address.\n\nOnce authenticated, your address will always have the permissions required to view all the data related to your address.\n\nDO NOT share your token in any form, as sharing it allows for anyone with it to view and change all your related organizations and badges.`;
     
         const message = new SiweMessage({
             domain: document.location.host,
@@ -68,6 +68,6 @@ export async function SIWEAuthorize (signer, address, chainId) {
     }
     catch (err) {
         console.log('Error with SIWE', err);
-        return err;
+        return {error: err};
     }
 }

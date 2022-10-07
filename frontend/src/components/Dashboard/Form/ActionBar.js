@@ -21,6 +21,7 @@ const ActionBar = ({ help, actions }) => {
                                 <IconButton 
                                     icon={action.icon} 
                                     text={action.text} 
+                                    disabled={action.disabled}
                                 />
                             </Link>
                             : 

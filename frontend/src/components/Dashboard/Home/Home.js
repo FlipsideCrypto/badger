@@ -1,14 +1,19 @@
-import { Link } from "react-router-dom";
+import { useContext } from "react"
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Card from "@components/Card/Card"
 import { HOME_LINKS } from "@static/constants/links";
+import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 
 import "@style/Dashboard/Home/Home.css"
 
 // TODO: If a user has an account in our DB and an associated org, then show them a different
 //       a different card than the Create Org one.
 const Home = () => {
+    const { authenticationError, setIsAuthenticating } = useContext(UserContext);
+    const navigate = useNavigate();
+
     const announcement = {
         color: 'cyan',
         message: <>
@@ -16,6 +21,12 @@ const Home = () => {
                 Badger is building in the open and did not have a beta phase. If you have any struggles or feedback, please reach out to us on <a className="link-text" href="https://discord.gg/8qZ7Y4Z" target="_blank" rel="noreferrer">Discord</a>.
             </p>
         </>,
+    }
+
+    const onEnter = () => {
+        authenticationError ?
+              setIsAuthenticating(true)
+            : navigate("/dashboard/organization/new")
     }
 
     return (
@@ -70,7 +81,7 @@ const Home = () => {
 
                 <div className="home__cards__column">
                     <Card>
-                        <Link className="link-wrapper home-link" to="/dashboard/organization/new">
+                        {/* <Link className="link-wrapper home-link" to="/dashboard/organization/new">
                             <div className="home__card__content">
                                 <FontAwesomeIcon icon={['fal', 'sitemap']} />
                                 <div>
@@ -78,7 +89,16 @@ const Home = () => {
                                     <p>It only takes a few seconds to create your first Organization and be on your way. Badger isn't like your normal tool that takes hours to setup.</p>
                                 </div>
                             </div>
-                        </Link>
+                        </Link> */}
+                        <button className="button__unstyled link-wrapper home-link" onClick={() => onEnter()} style={{fontWeight: "400"}}>
+                            <div className="home__card__content">
+                                <FontAwesomeIcon icon={['fal', 'sitemap']} />
+                                <div>
+                                    <h2>Create your first Organization</h2>
+                                    <p>It only takes a few seconds to create your first Organization and be on your way. Badger isn't like your normal tool that takes hours to setup.</p>
+                                </div>
+                            </div>
+                        </button>
                     </Card>
 
                     <Card>

@@ -1,6 +1,6 @@
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState, useCallback } from "react";
 import { Link, useNavigate } from 'react-router-dom';
-import { useEnsAvatar } from "wagmi";
+import { useEnsAvatar, useNetwork, useSwitchNetwork } from "wagmi";
 
 import { useConnectModal } from "@rainbow-me/rainbowkit"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,20 +16,52 @@ import '@rainbow-me/rainbowkit/dist/index.css';
 import "@style/Dashboard/Sidebar/Sidebar.css";
 import "@style/Dashboard/Sidebar/OrgSidebar.css";
 
+const BADGER_ADDRESSES = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES)
+const PRIMARY_PRODUCTION_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
+
 const OrgSidebar = ({ address }) => {
     const { openConnectModal } = useConnectModal();
     const placeholderAvatar = "https://avatars.githubusercontent.com/u/77760087?s=200&v=4";
-    const { data: ensAvatar } = useEnsAvatar({
-        addressOrName: address,
-    });
-    
+    const { data: ensAvatar } = useEnsAvatar({addressOrName: address});
+    const { chain } = useNetwork();
+    const { chains, switchNetwork } = useSwitchNetwork();
+    const [ cannotSwitchNetwork, setCannotSwitchNetwork ] = useState(false);
+
     const navigate = useNavigate();
-    const { userData } = useContext(UserContext);
+    const { userData, authenticationError, setIsAuthenticating } = useContext(UserContext);
     const { orgData } = useContext(OrgContext);
     
     const params = new URLSearchParams(window.location.search);
     const orgId = params.has("orgId") ? params.get("orgId") : null;
 
+    const onConnect = () => {
+        if (address)
+            setIsAuthenticating(true);
+        else
+            openConnectModal();
+    }
+
+    // If chain is not in the keys of current badger addresses,
+    // then switch network to the current primary chain.
+    // If programmatic network switching does not work,
+    // then change the connect button to switch network.    
+    const onSwitchNetworkRequest = useCallback(() => {
+        if (!(chain.name in BADGER_ADDRESSES)) {
+            const primaryChain = chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)
+            switchNetwork?.(primaryChain.id)
+            setCannotSwitchNetwork(true);
+        } 
+        else {
+            setCannotSwitchNetwork(false);
+        }}, 
+        [chain, chains, switchNetwork]
+    )
+    useEffect(() => {
+        onSwitchNetworkRequest();
+    }, [chain, chains, onSwitchNetworkRequest]);
+
+    // Opens the connect modal on landing if connection has not already been
+    // established in prior session.
     useEffect(() => {
         if (!openConnectModal) return;
             
@@ -39,14 +71,21 @@ const OrgSidebar = ({ address }) => {
     return (
         <div className="sidebar left">
             {/* Logged out user header */}
-            {!address && !orgId &&
-                <button onClick={() => openConnectModal()} style={{ marginBottom: '20px' }}>
+            {!orgId && authenticationError && !cannotSwitchNetwork &&
+                <button onClick={() => onConnect()} style={{ marginBottom: '20px' }}>
                     Connect Wallet
                 </button>
             }
 
+            {/* Wrong network header */}
+            {cannotSwitchNetwork &&
+                <button onClick={() => onSwitchNetworkRequest()} style={{ marginBottom: '20px' }}>
+                    {`Switch to ${PRIMARY_PRODUCTION_CHAIN}`}
+                </button>
+            }
+
             {/* Logged in user header */}
-            {address && !orgId &&
+            {address && !orgId && !authenticationError && !cannotSwitchNetwork &&
                 <>
                     <div className="sidebar__header">
                         <img src={ensAvatar || placeholderAvatar} alt="avatar" />
@@ -65,7 +104,7 @@ const OrgSidebar = ({ address }) => {
             }
 
             {/* Org level user header */}
-            {orgId && orgData?.name &&
+            {orgId && orgData?.name && !cannotSwitchNetwork &&
                 <>
                     <div className="sidebar__header single">
                         <div className="link-text" style={{marginTop: "2px", color: "#000000"}}>
@@ -82,7 +121,7 @@ const OrgSidebar = ({ address }) => {
                 </>
             }
 
-            {/* List of organizations */}
+            {/* List of organizations or badges */}
             <div className="sidebar__organizations">
                 {orgId && orgData?.name ?
                     orgData?.badges?.map((badge, index) => (
