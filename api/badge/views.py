@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import status, viewsets
 from rest_framework.permissions import (
-    AllowAny,
     IsAuthenticated,
 )
 from rest_framework.response import Response
@@ -24,7 +23,6 @@ class BadgeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
-        return [AllowAny()]
         if self.action in ['update', 'partial_update', 'destroy']:
             self.permission_classes += [CanManageBadge]
 
@@ -42,6 +40,12 @@ class BadgeViewSet(viewsets.ModelViewSet):
             users.append(user)
         return users
 
+    def _handle_user_creation(self, users, queryset):
+        if users:
+            users = self._handle_users(users)
+            for user in users:
+                queryset.add(user)
+
     # on create handle the badge creation and add it to .badges of the organization it is being added to
     def create(self, request, *args, **kwargs):
         # get the organization
@@ -49,11 +53,12 @@ class BadgeViewSet(viewsets.ModelViewSet):
             pk=request.data['organization'])
 
         # confirm the requesting user is the owner or delegate of the organization
-        # if not (request.user.is_staff or request.user == organization.owner or request.user in organization.delegates.all()):
-        #     return Response(status=status.HTTP_403_FORBIDDEN)
+        if not (request.user.is_staff or request.user == organization.owner or request.user in organization.delegates.all()):
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
         # remove the users from the request data
         users = request.data.pop('users', None)
+        delegates = request.data.pop('delegates', None)
 
         # create the badge
         serializer = self.get_serializer(data=request.data)
@@ -67,19 +72,15 @@ class BadgeViewSet(viewsets.ModelViewSet):
         # save the organization
         organization.save()
 
-        if users:
-            # update the users
-            users = self._handle_users(users)
-            for user in users:
-                serializer.instance.users.add(user)
-
-        serializer.instance.save()
+        self._handle_user_creation(users, serializer.instance.users)
+        self._handle_user_creation(delegates, serializer.instance.delegates)
 
         return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
         # remove the users from the request data
         users = request.data.pop('users', None)
+        delegates = request.data.pop('delegates', None)
 
         # update the badge
         partial = kwargs.pop('partial', False)
@@ -92,10 +93,7 @@ class BadgeViewSet(viewsets.ModelViewSet):
 
         self.perform_update(serializer)
 
-        if users:
-            # update the users
-            users = self._handle_users(users)
-            for user in users:
-                serializer.instance.users.add(user)
+        self._handle_user_creation(users, serializer.instance.users)
+        self._handle_user_creation(delegates, serializer.instance.delegates)
 
         return Response(serializer.data)

@@ -23,6 +23,7 @@ class BadgeUserSerializer(serializers.ModelSerializer):
 
 class BadgeSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
+    delegates = BadgeUserSerializer(many=True, read_only=True)
     users = BadgeUserSerializer(many=True, read_only=True)
 
     class Meta:
