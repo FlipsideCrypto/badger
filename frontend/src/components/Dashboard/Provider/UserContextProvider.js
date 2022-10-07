@@ -8,6 +8,7 @@ export const UserContext = createContext();
 
 const UserContextProvider = ({ children, signer, address }) => {
     const [ userData, setUserData ] = useState();
+    const [ authenticationError, setAuthenticationError ] = useState();
     const { chain } = useNetwork();
 
     useEffect(() => {
@@ -20,17 +21,8 @@ const UserContextProvider = ({ children, signer, address }) => {
         async function getData() {
             let response = await getUserRequest(address);
 
-            if (response.detail === "Authentication credentials were not provided.") {
-                const siweResponse = await SIWEAuthorize(signer, address, chain?.id);
-
-                if (siweResponse.success) {
-                    getData();
-                }
-                else {
-                    console.log('Authentication Error', siweResponse)
-                    return
-                }
-            }
+            if (response.detail === "Authentication credentials were not provided.")
+                setAuthenticationError(true);
 
             if (response?.ethereum_address === address)
                 setUserData(response);
@@ -39,8 +31,29 @@ const UserContextProvider = ({ children, signer, address }) => {
         getData();
     }, [userData, signer, address, chain])
 
+    useEffect(() => {
+        async function getAuthorized() {
+            const siweResponse = await SIWEAuthorize(signer, address, chain?.id);
+
+            siweResponse.success ? 
+                  setUserData({})
+                : console.log('Authentication Error', siweResponse)
+            setAuthenticationError(null);
+        }
+        
+        if (!userData && authenticationError) {
+            getAuthorized();
+        }
+
+    }, [authenticationError, setAuthenticationError])
+
     return (
-        <UserContext.Provider value={{userData, setUserData}}>
+        <UserContext.Provider value={{
+            userData, 
+            setUserData, 
+            authenticationError, 
+            setAuthenticationError
+        }}>
             {children}
         </UserContext.Provider>
     )

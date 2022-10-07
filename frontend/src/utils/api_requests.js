@@ -5,6 +5,11 @@ const CSRFToken = document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))?.[
 export async function postOrgRequest(org) {
     let response;
 
+    // TODO: REMOVE THIS WHEN DELEGATES
+    delete org.delegates
+    console.log('POST body', org)
+    // TODO: REMOVE THIS WHEN DELEGATES WORKS
+
     try {
         await fetch(`${API_URL}/organizations/`, {
             method: "POST",
@@ -57,12 +62,28 @@ export async function postBadgeRequest(badge) {
           parseInt(badge?.organization) 
         : badge?.organization;
 
+    const badgeData = {
+        organization: badge.organization,
+        is_active: true,
+        name: badge.name,
+        description: badge.description,
+        token_id: badge.token_id,
+        image_hash: badge.image_hash,
+        token_uri: badge.token_uri,
+        account_bound: badge.account_bound,
+        signer_ethereum_address: "",
+        users: badge.users,
+    }
     badge.users = users
     badge.delegates = delegates
     badge.organization = organization
     delete badge.created
     delete badge.updated
-    console.log('PUT badge', badge)
+
+    // TODO: REMOVE THIS WHEN DELEGATES
+    delete badge.delegates          //
+    console.log('POST body', badge) //
+    // TODO: REMOVE THIS WHEN DELEGATES WORKS
 
     try {
         await fetch(`${API_URL}/badges/`, {
@@ -73,7 +94,7 @@ export async function postBadgeRequest(badge) {
                 'X-CSRFToken': CSRFToken,
             },
             credentials: 'include',
-            body: JSON.stringify(badge)
+            body: JSON.stringify(badgeData)
         })
         .then(res => res.json())
         .then(data => {

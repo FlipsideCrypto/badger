@@ -1,4 +1,5 @@
-import { useState, createContext, useEffect } from "react"
+import { useState, createContext, useContext, useEffect } from "react"
+import { UserContext } from "./UserContextProvider";
 import { getOrgRequest } from "@utils/api_requests";
 
 export const OrgContext = createContext();
@@ -11,25 +12,38 @@ export const OrgContext = createContext();
 const OrgContextProvider = ({ children }) => {
     const [ orgData, setOrgData ] = useState();
     const [ currentOrgId, setCurrentOrgId ] = useState();
+    const { authenticationError, setAuthenticationError } = useContext(UserContext);
 
     // If we have a currentOrgId and the orgData is not that org's,
     // fetch it and set orgData.
     useEffect(() => {
-        if (
-            !currentOrgId ||
-            orgData?.id === parseInt(currentOrgId)
-        ) return void {}
-
         async function getData() {
             let response = await getOrgRequest(currentOrgId);
+
+            if (response.detail === "Authentication credentials were not provided.") {
+                setAuthenticationError(true);
+                setOrgData({});
+            }
 
             if (response?.id) {
                 setOrgData(response);
             }
         }
 
-        getData();
-    }, [currentOrgId, orgData])
+        if (
+            currentOrgId &&
+            !authenticationError &&
+            orgData?.id !== parseInt(currentOrgId)
+        ) {
+            getData();
+        }
+    }, [currentOrgId, orgData, authenticationError, setAuthenticationError])
+
+    useEffect(() => {
+        if (authenticationError) {
+            setAuthenticationError(true);
+        }
+    }, [authenticationError, setAuthenticationError])
 
     return (
         <OrgContext.Provider value={{ orgData, setOrgData, currentOrgId, setCurrentOrgId }}>

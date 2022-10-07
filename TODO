@@ -14,10 +14,10 @@ This todo is using Kanban format. Every number next to it is the priority. Just 
 [9] - Improve UX and contracct interaction BS nuances.
 [9] - Loading indicator
 [9] - Data validation for contract writing
+[9] - Add delegates back to post requests when functional in serializer
 
 
 [] Review
-
 [2] - Possibly use local cache for org and user data instead of context
 
 [] Done
