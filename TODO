@@ -6,21 +6,20 @@ This todo is using Kanban format. Every number next to it is the priority. Just 
 [1] - Enable SSL on Netlify
 
 [] Starting
-[9] - There is some issue with changing address and losing session authentication
-    - Do we clear the csrf and session id on address change?
 [5] - You can sometimes get to the distribute badge page even though an org has no badges.
+[9] - ENS name not being put into user/wallet obj on creation
 
 [] In Progress
-[9] - Improve UX and contracct interaction BS nuances.
 [9] - Loading indicator
 [9] - Data validation for contract writing
-[9] - Add delegates back to post requests when functional in serializer
 
 
 [] Review
 [2] - Possibly use local cache for org and user data instead of context
 
 [] Done
+[9] - Improve UX and contracct interaction BS nuances.
+[9] - Add delegates back to post requests when functional in serializer
 [2] - Contract integration
 [6] - Standing API to process base requests of v2. @chance
 [10]- Finish the static implementation of the Dashboard pages. @mason

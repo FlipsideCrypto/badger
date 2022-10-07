@@ -10,7 +10,7 @@ import { holderHeadRows } from "@static/constants/constants";
 
 import "@style/Table/HolderTable.css";
 
-const HolderTable = ({ holders }) => {
+const HolderTable = ({ holders, isDelegate }) => {
     const [ headRows, setHeadRows ] = useState(holderHeadRows);
     const [ sortedList, setSortedList ] = useState(holders);
 
@@ -64,8 +64,8 @@ const HolderTable = ({ holders }) => {
                             <TableCell>{holder?.nickname}</TableCell>
                             <TableCell>{holder?.pod}</TableCell>
                             <TableCell>
-                                <div className={`delegate__status__${holder.delegate}`}>
-                                    <span>{holder.delegate ? "Yes" : "No"}</span>
+                                <div className={`delegate__status__${isDelegate(holder)}`}>
+                                    <span>{isDelegate(holder) ? "Yes" : "No"}</span>
                                 </div>
                             </TableCell>
                         </TableRow>

@@ -32,7 +32,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         contract_address: orgData?.ethereum_address,
         token_id: orgData?.badges?.length,
         organization: orgData?.id,
-        account_bound: false,
+        account_bound: true,
         is_active: false,
         signer: orgData?.owner?.ethereum_address,
         token_uri: "",

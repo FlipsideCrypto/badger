@@ -48,3 +48,24 @@
 .button:hover .button__icon svg {
     transform: translateX(2px);
 }
+
+.button.button__loading {
+    background: #00FF9D;
+    background-image: linear-gradient(to right, white 0%, #72fec9 30%, #00FF9D 40%, #72fec9 50%, white);
+    background-repeat: no-repeat;
+    background-size: 800px 104px; 
+    animation: loading__shimmer 2s linear infinite;
+}
+
+@keyframes loading__shimmer {
+    0% {
+      background-position: -468px 0;
+    }
+    100% {
+      background-position: 468px 0; 
+    }
+  }
+
+.button.button__error {
+    background: #FF0000;
+}

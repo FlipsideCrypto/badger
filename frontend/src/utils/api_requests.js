@@ -242,26 +242,26 @@ export async function patchBadgeRolesRequest(badge, orgId) {
             return {ethereum_address: user}
         })
         : [];
-    // const delegates = badge.delegates?.length > 0 ? 
-    //     badge.delegates.map(delegate => {
-    //         if (delegate.ethereum_address) 
-    //             return delegate
-    //         return {ethereum_address: delegate}
-    //     })
-    //     : [];
+    const delegates = badge.delegates?.length > 0 ? 
+        badge.delegates.map(delegate => {
+            if (delegate.ethereum_address) 
+                return delegate
+            return {ethereum_address: delegate}
+        })
+        : [];
     const organization = typeof(orgId) === "string" ? parseInt(orgId) : orgId;
-    // badge.users = users
-    // badge.delegates = delegates
-    // badge.organization = organization
-    // delete badge.created
-    // delete badge.updated
+    badge.users = users
+    badge.delegates = delegates
+    badge.organization = organization
+    delete badge.created
+    delete badge.updated
 
-    const body = {
-        organization: organization,
-        users: users
-    }
+    // const body = {
+    //     organization: organization,
+    //     users: users 
+    // }
 
-    console.log('PUT body', body)
+    console.log('PUT body', badge)
     console.log('url', badge.url)
 
     try {
@@ -273,7 +273,7 @@ export async function patchBadgeRolesRequest(badge, orgId) {
                 'X-CSRFToken': CSRFToken,
             },
             credentials: 'include',
-            body: JSON.stringify(body),
+            body: JSON.stringify(badge),
             redirect: 'follow'
         })
         .then(res => res.json())

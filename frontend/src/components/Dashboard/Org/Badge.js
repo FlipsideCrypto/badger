@@ -15,20 +15,19 @@ import { patchBadgeRolesRequest } from "@utils/api_requests";
 import "@style/Dashboard/Org/Badge.css";
 
 const Badge = () => {
-    const [ isManage, setIsManage ] = useState(false);
-    const [ membersToUpdate, setMembersToUpdate ] = useState([]);
-    const [ selectedAction, setSelectedAction ] = useState("Mint");
-    const [ callTransaction, setCallTransaction ] = useState("");
-    const [ txPending, setTxPending ] = useState(false);
-
     const navigate = useNavigate();
     const params = new URLSearchParams(window.location.search);
     const orgId = params.get("orgId");
     const badgeId = params.get("badgeId");
 
+    const [ isManage, setIsManage ] = useState(false);
+    const [ membersToUpdate, setMembersToUpdate ] = useState([]);
+    const [ selectedAction, setSelectedAction ] = useState("Mint");
+    const [ callTransaction, setCallTransaction ] = useState("");
+    const [ txPending, setTxPending ] = useState(false);
     const { orgData, setOrgData } = useContext(OrgContext);
     const badgeIndex = orgData?.badges.findIndex(badge => badge.token_id === parseInt(badgeId));
-    let badge = orgData?.badges[badgeIndex];
+    const [ badge, setBadge ] = useState(orgData?.badges[badgeIndex]);
 
     const setDelegates = useSetDelegates(
         callTransaction === "setDelegates",
@@ -65,7 +64,6 @@ const Badge = () => {
             "manageOwnership" : "setDelegates";
 
         setCallTransaction(method);
-        setTxPending(true);
     }
 
     // Update the badge array after the transaction is completed, POST 
@@ -86,7 +84,7 @@ const Badge = () => {
         const response = await patchBadgeRolesRequest(badge, orgId)
         console.log('response', response)
 
-        if (response.token_id)
+        if (response?.users?.length > 0)
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
 
         setCallTransaction("");
@@ -96,6 +94,7 @@ const Badge = () => {
     // Update the badge array after the transaction is completed, POST 
     // out to the API, update our orgData context, and reset call transaction flag.
     const onDelegatesUpdate = async () => {
+        if (!badge.delegates) badge.delegates = [];
         membersToUpdate.forEach(member => {
             if (selectedAction === "Remove Leader") {
                 const index = badge.delegates.findIndex(delegate => delegate.ethereum_address === member);
@@ -107,17 +106,28 @@ const Badge = () => {
         })
 
         const response = await patchBadgeRolesRequest(badge, orgId)
+        console.log('response', response)
         
-        if (response.token_id)
+        if (response?.delegates?.length > 0)
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
 
         setCallTransaction("");
         setTxPending(false);
     }
 
+    // Function to pass to the table without changing the org data context and causing API issues.
+    // Possibly should put this either into the API or put it in the state and ensure that no
+    // API calls have the isDelegate injected into the data.
+    const isDelegate = (holder) => {
+        return Boolean(badge?.delegates?.find(delegate => 
+            delegate.ethereum_address === holder.ethereum_address
+        ));
+    }
+
     // Run the transaction hook once it has been prepped. If successful, update the badge data.
     useEffect(() => {
         async function runTransaction() {
+            setTxPending(true);
             let tx;
             try {
                 if (setDelegates.isSuccess)
@@ -135,14 +145,20 @@ const Badge = () => {
             } catch (error) {
                 console.log('Transaction failed:', error);
                 setCallTransaction("")
-                setTxPending(false);
             }
+            setTxPending(false);
         }
         
-        if (callTransaction) 
+        if (callTransaction && !txPending) 
             runTransaction();
     // eslint-disable-next-line
     }, [setDelegates.isSuccess, manageOwnership.isSuccess, callTransaction])
+
+    useEffect(() => {
+        if (orgData?.badges[badgeIndex]) {
+            setBadge(orgData?.badges[badgeIndex]);
+        }
+    }, [orgData, badgeIndex])
 
     useEffect(() => {
         if (!orgData) navigate("/dashboard/");
@@ -193,9 +209,11 @@ const Badge = () => {
                     </>
                 }
 
-                {badge?.users && badge?.users.length > 0 ?
-                    <HolderTable holders={badge.users} />
-                    :
+                {badge?.users && badge?.users.length > 0 &&
+                    <HolderTable holders={badge.users} isDelegate={isDelegate}/>
+                }
+
+                {badge?.users?.length < 1 && !isManage && 
                     <div className="org__container empty">
                         <h1>Your Organization is almost alive, it just needs members!</h1>
                         <p>
