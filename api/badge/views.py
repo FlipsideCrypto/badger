@@ -76,14 +76,6 @@ class BadgeViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
-        # get the organization
-        organization = Organization.objects.get(
-            pk=request.data['organization'])
-
-        # confirm the requesting user is the owner or delegate of the organization
-        if not (request.user.is_staff or request.user == organization.owner or request.user in organization.delegates.all()):
-            return Response(status=status.HTTP_403_FORBIDDEN)
-
         # remove the users from the request data
         users = request.data.pop('users', None)
 
