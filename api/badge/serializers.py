@@ -2,8 +2,6 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
 
-from organization.models import Organization
-
 from .models import Badge
 
 User = get_user_model()
