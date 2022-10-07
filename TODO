@@ -8,10 +8,13 @@ This todo is using Kanban format. Every number next to it is the priority. Just 
 [] Starting
 [9] - There is some issue with changing address and losing session authentication
     - Do we clear the csrf and session id on address change?
+[5] - You can sometimes get to the distribute badge page even though an org has no badges.
 
 [] In Progress
 [9] - Improve UX and contracct interaction BS nuances.
-[10]- fucking patch a badge with its users
+[9] - Loading indicator
+[9] - Data validation for contract writing
+
 
 [] Review
 

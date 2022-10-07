@@ -18,6 +18,13 @@
     margin-bottom: 30px;
 }
 
+.sidebar .sidebar__header.single { 
+    display: grid;
+    align-items: center;
+    grid-template-columns: auto;
+    margin-bottom: 30px;
+}
+
 .sidebar.left .sidebar__header img { 
     border-radius: 50%;
     height: 24px;

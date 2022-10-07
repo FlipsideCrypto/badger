@@ -21,6 +21,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     const [ badgeImage, setBadgeImage ] = useState(image || {name: ""});
     const [ badgeDelegates, setBadgeDelegates ] = useState(delegates || []);
     const [ ipfsImageHash, setIpfsImageHash ] = useState();
+    const [ txPending, setTxPending ] = useState(false);
     const { orgData, setOrgData } = useContext(OrgContext);
     
     const [ badgeObj, setBadgeObj ] = useState({
@@ -51,8 +52,9 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         {
             text: "CREATE BADGE",
             icon: ["fal", "arrow-right"],
-            event: () => onBadgeFormSubmission(),
-            disabled: disabled
+            disabled: disabled,
+            loading: txPending,
+            event: () => onBadgeFormSubmission()
         }
     ]
     
@@ -73,6 +75,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         })
     }
 
+    // Post the badge to the backend for IPFS upload.
     const onImageUpload = async (event) => {
         const image = event.target.files[0]
         setBadgeImage(image)
@@ -87,7 +90,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     // set the new badge in orgData, and navigate to the badge page.
     useEffect(() => {
         async function createBadgeTx() {
-            console.log('new badge obj', badgeObj)
+            setTxPending(true);
             // Write to contract
             let tx = await createBadge.write?.();
             tx = await tx?.wait();
@@ -111,6 +114,8 @@ const BadgeForm = ({name, desc, image, delegates}) => {
             else {
                 console.log('Error creating badge.')
             }
+
+            setTxPending(false);
         }
 
         if (createBadge.isSuccess) {
@@ -119,6 +124,8 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         // eslint-disable-next-line
     }, [createBadge.isSuccess])
 
+    // If no org data is found then navigate home.
+    // This probably could be removed and handled better.
     useEffect(() => {
         if (!orgData) navigate("/dashboard/");
     }, [orgData, navigate])

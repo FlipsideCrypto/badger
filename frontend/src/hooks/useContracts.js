@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { usePrepareContractWrite, useContractWrite } from 'wagmi';
-import { ethers } from "ethers";
 
 const BadgerAddresses = JSON.parse(process.env.REACT_APP_BADGER_HOUSE_ADDRESSES)
 
@@ -54,6 +53,13 @@ export const useCreateBadge = (badge) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
     let response = {status: 'ok', message: 'Transaction is ready to call.'};
 
+    // This should also clean/check the addresses as well.
+    badge?.delegates?.forEach((delegate, index) => {
+        if (delegate === "") {
+            badge.delegates.pop(index)
+        }
+    })
+
     let args = [
         badge.token_id,
         badge.account_bound,
@@ -97,8 +103,15 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, holders, act
         holders.length === 1 ? "leaderMint" :
         typeof(ids) === "number" ? "leaderMintBatch" : "leaderMintFullBatch"
 
-    // TODO: Amounts will need to be changed to be an array of arrays for each badge.
-    //       For now it's standard for just one.
+    // This should also clean/check the addresses as well.
+    holders.forEach((holder, index) => {
+        if (holder === "") {
+            holders.pop(index)
+        }
+    })
+
+    // Amounts will need to be changed to be an array of arrays for each badge.
+    // For now it's standard for just one.
     amounts = Array(holders.length).fill(amounts)
 
     if (holders.length === 1) 
@@ -141,6 +154,13 @@ export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) =
     const revoke = action === "Remove Leader" ? true : false
     const isDelegateArray = Array(delegates.length).fill(!revoke);
     const method = typeof(ids) === "number" ?  "setDelegates" : "setDelegatesBatch";
+
+    // This should also clean/check the addresses as well.
+    delegates.forEach((delegate, index) => {
+        if (delegate === "") {
+            delegates.pop(index)
+        }
+    })
 
     const args = [
         ids,

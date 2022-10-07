@@ -29,6 +29,7 @@ const ActionBar = ({ help, actions }) => {
                                 text={action.text}
                                 onClick={action.event}
                                 disabled={action.disabled}
+                                loading={action.loading}
                             />
                         }
                     </div>

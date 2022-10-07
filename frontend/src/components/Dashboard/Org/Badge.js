@@ -19,6 +19,7 @@ const Badge = () => {
     const [ membersToUpdate, setMembersToUpdate ] = useState([]);
     const [ selectedAction, setSelectedAction ] = useState("Mint");
     const [ callTransaction, setCallTransaction ] = useState("");
+    const [ txPending, setTxPending ] = useState(false);
 
     const navigate = useNavigate();
     const params = new URLSearchParams(window.location.search);
@@ -28,7 +29,6 @@ const Badge = () => {
     const { orgData, setOrgData } = useContext(OrgContext);
     const badgeIndex = orgData?.badges.findIndex(badge => badge.token_id === parseInt(badgeId));
     let badge = orgData?.badges[badgeIndex];
-    console.log('badge', badge)
 
     const setDelegates = useSetDelegates(
         callTransaction === "setDelegates",
@@ -61,11 +61,11 @@ const Badge = () => {
 
     // TODO: Hook up contract hooks and API PATCH
     const onButtonClick = async () => {
-        console.log("Members to Update", membersToUpdate)
         const method = selectedAction === "Mint" || selectedAction === "Revoke" ? 
             "manageOwnership" : "setDelegates";
 
         setCallTransaction(method);
+        setTxPending(true);
     }
 
     // Update the badge array after the transaction is completed, POST 
@@ -83,13 +83,14 @@ const Badge = () => {
             }
         })
 
-        const response = await patchBadgeRolesRequest(badge, orgId, false)
+        const response = await patchBadgeRolesRequest(badge, orgId)
         console.log('response', response)
 
         if (response.token_id)
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
 
-        // setCallTransaction("")
+        setCallTransaction("");
+        setTxPending(false);
     }
 
     // Update the badge array after the transaction is completed, POST 
@@ -105,12 +106,13 @@ const Badge = () => {
             }
         })
 
-        const response = await patchBadgeRolesRequest(badge, orgId, true)
+        const response = await patchBadgeRolesRequest(badge, orgId)
         
         if (response.token_id)
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
 
-        // setCallTransaction("")
+        setCallTransaction("");
+        setTxPending(false);
     }
 
     // Run the transaction hook once it has been prepped. If successful, update the badge data.
@@ -127,13 +129,13 @@ const Badge = () => {
                     const txReceipt = await tx?.wait();
             
                     if (txReceipt.status === 1) {
-                        console.log('Transaction successful!');
                         callTransaction === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
                     }
                 }
             } catch (error) {
                 console.log('Transaction failed:', error);
                 setCallTransaction("")
+                setTxPending(false);
             }
         }
         
@@ -186,13 +188,13 @@ const Badge = () => {
                             text="UPDATE MEMBERS" 
                             onClick={onButtonClick}
                             style={{margin: "20px 0px 20px auto"}}
+                            loading={txPending}
                         />
                     </>
                 }
 
                 {badge?.users && badge?.users.length > 0 ?
-                    <></>
-                    // <HolderTable holders={badge.users} />
+                    <HolderTable holders={badge.users} />
                     :
                     <div className="org__container empty">
                         <h1>Your Organization is almost alive, it just needs members!</h1>
@@ -200,9 +202,12 @@ const Badge = () => {
                             You've set up your Organization and your Badge. 
                             Now for the final step of sending the first set of keys to your team members.
                         </p>
-                        <button onClick={() => setIsManage(true)}>
-                            DISTRIBUTE KEYS
-                        </button>
+                        <IconButton 
+                            icon={['fal', 'arrow-right']} 
+                            text="DISTRIBUTE KEYS" 
+                            onClick={() => setIsManage(true)}
+                            style={{textAlign: "center"}}
+                        />
                     </div>
                 }
             </div>

@@ -14,6 +14,7 @@ import { getBadgerAbi } from "@hooks/useContracts";
 const OrgForm = () => {
     const [ orgName, setOrgName ] = useState("");
     const [ orgSymbol, setOrgSymbol ] = useState("");
+    const [ txPending, setTxPending ] = useState(false);
     const { userData, setUserData } = useContext(UserContext);
 
     const { chain } = useNetwork();
@@ -28,19 +29,21 @@ const OrgForm = () => {
         contractInterface: badger.abi,
         eventName: "OrganizationCreated",
         once: true,
-        listener: (event) => {
-            console.log("Event: ", event);
-            onEventReceived(event);
-        }
+        listener: (event) => onEventReceived(event)
     })
-
+    
     const actions = [
         {
             text: "CREATE",
             icon: ["fal", "arrow-right"],
-            event: () => createContract.write?.()
+            loading: txPending,
+            event: () => { 
+                setTxPending(true);
+                createContract.write?.()
+            }
         }
     ]
+
     
     // Upon receiving the event from clone transaction,
     // POST the org to backend and redirect to org page.
@@ -68,8 +71,8 @@ const OrgForm = () => {
                 navigate(`/dashboard/organization?orgId=${response.id}`);
             }
         }
-
-    }    
+        setTxPending(false);
+    }
 
     const nameToSymbol = (name) => {
         return name.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().substring(0, 5);

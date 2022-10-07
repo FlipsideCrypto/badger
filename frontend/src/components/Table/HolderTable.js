@@ -53,14 +53,14 @@ const HolderTable = ({ holders }) => {
                     </TableHead>
 
                     <TableBody>
-                    {sortedList.map((holder) => (
+                    {sortedList.map((holder, index) => (
                         <TableRow
-                            key={holder.address}
+                            key={holder.address +'-'+ index}
                         >
                             <TableCell component="th" scope="row">
                                 {sliceAddress(holder.ethereum_address)}
                             </TableCell>
-                            <TableCell>{holder.received_at}</TableCell>
+                            <TableCell>{holder?.received}</TableCell>
                             <TableCell>{holder?.nickname}</TableCell>
                             <TableCell>{holder?.pod}</TableCell>
                             <TableCell>

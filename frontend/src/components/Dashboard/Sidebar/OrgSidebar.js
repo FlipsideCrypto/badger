@@ -10,6 +10,7 @@ import Logout from "./Logout/Logout";
 import { sliceAddress } from "@utils/helpers";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
+import { IPFS_GATEWAY_URL } from "@static/constants/links";
 
 import '@rainbow-me/rainbowkit/dist/index.css';
 import "@style/Dashboard/Sidebar/Sidebar.css";
@@ -66,8 +67,8 @@ const OrgSidebar = ({ address }) => {
             {/* Org level user header */}
             {orgId && orgData?.name &&
                 <>
-                    <div className="sidebar__header">
-                        <div className="link-text" style={{marginTop: "2px"}}>
+                    <div className="sidebar__header single">
+                        <div className="link-text" style={{marginTop: "2px", color: "#000000"}}>
                             {orgData?.name}
                         </div>
                     </div>
@@ -86,7 +87,7 @@ const OrgSidebar = ({ address }) => {
                 {orgId && orgData?.name ?
                     orgData?.badges?.map((badge, index) => (
                         <div className="sidebar__organization" key={index}>
-                            <img src={badge.image?.file || placeholderAvatar} alt="avatar" />
+                            <img src={`${IPFS_GATEWAY_URL}/${badge.image_hash}` || placeholderAvatar} alt="avatar" />
                             <button 
                                 className="button__unstyled"
                                 onClick={() => navigate(`/dashboard/badge?orgId=${orgData.id}&badgeId=${badge.token_id}`)}

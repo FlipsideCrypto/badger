@@ -37,35 +37,43 @@ export async function postOrgRequest(org) {
 export async function postBadgeRequest(badge) {
     let response;
     // Have to clean input addresses to match the API
-    const delegates = badge.delegates.map(delegate => {
-        if (delegate.ethereum_address) 
-            return delegate
-        return {ethereum_address: delegate}
-    })
-    const organization = typeof(badge.organization) === "number" ? parseInt(badge.organization) : badge.organization;
+    const users = badge.users?.length > 0 ? 
+        badge.users.map(user => {
+            if (user.ethereum_address)
+                return user
+            return {ethereum_address: user}
+        })
+        : [];
 
-    const badgeObj = {
-        is_active: badge.is_active,
-        token_id: badge.token_id,
-        name: badge.name,
-        description: badge.description,
-        image_hash: badge.image_hash,
-        token_uri: badge.token_uri,
-        account_bound: badge.account_bound,
-        delegates: delegates,
-        organization: organization,
-    }
+    const delegates = badge.delegates?.length > 0 ? 
+        badge.delegates.map(delegate => {
+            if (delegate.ethereum_address) 
+                return delegate
+            return {ethereum_address: delegate}
+        })
+        : [];
+
+    const organization = typeof(badge?.organization) === "string" ? 
+          parseInt(badge?.organization) 
+        : badge?.organization;
+
+    badge.users = users
+    badge.delegates = delegates
+    badge.organization = organization
+    delete badge.created
+    delete badge.updated
+    console.log('PUT badge', badge)
 
     try {
         await fetch(`${API_URL}/badges/`, {
-            method: "PATCH",
+            method: "POST",
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
                 'X-CSRFToken': CSRFToken,
             },
             credentials: 'include',
-            body: JSON.stringify(badgeObj)
+            body: JSON.stringify(badge)
         })
         .then(res => res.json())
         .then(data => {
@@ -203,38 +211,49 @@ export async function getOrgRequest(orgId) {
     return response
 }
 
-export async function patchBadgeRolesRequest(badge, orgId, delegateUpdate) {
+export async function patchBadgeRolesRequest(badge, orgId) {
     let response;
     // Have to clean input addresses to match the API
-    const users = badge.users.map(user => {
-        if (user.ethereum_address)
-            return user
-        return {ethereum_address: user}
-    })
-    const delegates = badge.delegates.map(delegate => {
-        if (delegate.ethereum_address) 
-            return delegate
-        return {ethereum_address: delegate}
-    })
-    const organization = typeof(orgId) === "number" ? parseInt(orgId) : orgId;
+    const users = badge.users?.length > 0 ? 
+        badge.users.map(user => {
+            if (user.ethereum_address)
+                return user
+            return {ethereum_address: user}
+        })
+        : [];
+    // const delegates = badge.delegates?.length > 0 ? 
+    //     badge.delegates.map(delegate => {
+    //         if (delegate.ethereum_address) 
+    //             return delegate
+    //         return {ethereum_address: delegate}
+    //     })
+    //     : [];
+    const organization = typeof(orgId) === "string" ? parseInt(orgId) : orgId;
+    // badge.users = users
+    // badge.delegates = delegates
+    // badge.organization = organization
+    // delete badge.created
+    // delete badge.updated
 
-    let body = {
-        token_id: badge.token_id,
-        organization: organization
+    const body = {
+        organization: organization,
+        users: users
     }
-    delegateUpdate ? body.delegates = delegates : body.users = users
 
-    console.log('body', body)
+    console.log('PUT body', body)
+    console.log('url', badge.url)
+
     try {
         await fetch(`${badge.url}`, {
-            method: "PATCH",
+            method: "PUT",
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
                 'X-CSRFToken': CSRFToken,
             },
             credentials: 'include',
-            body: JSON.stringify({body})
+            body: JSON.stringify(body),
+            redirect: 'follow'
         })
         .then(res => res.json())
         .then(data => {

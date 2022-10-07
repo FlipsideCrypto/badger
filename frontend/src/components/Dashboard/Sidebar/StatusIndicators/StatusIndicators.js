@@ -1,22 +1,30 @@
+import { useContext } from "react"
+import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
+// import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
+
 import "@style/Dashboard/Sidebar/StatusIndicators/StatusIndicators.css";
 
-const StatusIndicators = () => { 
+// TODO: Get the proper states for these indicators
+const StatusIndicators = () => {
+    const { userData } = useContext(UserContext);
+    // const { orgData, currentOrgId } = useContext(OrgContext);
+
     const statuses = [ 
         {
             name: 'Can manage Organization',
-            status: 'can'
+            status: userData?.organizations?.length > 0 ? 'can' : 'cannot',
         }, 
         {
             name: 'Can manage Badges',
-            status: 'can'
+            status: userData?.organizations?.length > 0 ? 'can' : 'cannot'
         },
         { 
             name: 'Can manage Delegates',
-            status: 'pending'
+            status: userData?.organizations?.[0]?.badges?.length > 0 ? 'can' : 'pending'
         },
         { 
             name: 'Can manage Badge Members',
-            status: 'cannot'
+            status: userData?.organizations?.[0]?.badges?.length > 0 ? 'can' : 'pending'
         }
     ]
 
