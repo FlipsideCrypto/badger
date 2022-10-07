@@ -6,7 +6,7 @@ class Badge(models.Model):
     is_active = models.BooleanField(default=False)
 
     name = models.CharField(max_length=128, blank=False, default=None)
-    description = models.TextField()
+    description = models.TextField(blank=False, default=None)
 
     token_id = models.PositiveIntegerField(default=0)
     image_hash = models.CharField(max_length=256, blank=False, default=None)
