@@ -57,8 +57,8 @@ contract BadgerVersions is
     ///      This also enables the ability to self-fork ones product.
     mapping(uint256 => Version) public versions;
 
-    /// @dev The free-to-use version that is permissionless and available for anyone to use.
-    uint256 activeVersion;
+    /// @dev Tracking the organizations that one has funded the cost for.
+    mapping(uint256 => mapping(address => uint256)) public versionToFundedAmount;
 
     constructor(
         address _implementation
@@ -155,6 +155,11 @@ contract BadgerVersions is
             address
         )
     {
+        /// @dev If this version is paid deduct from the funded amount of the sender.
+        if (versions[_version].license.amount > 0) {
+            versionToFundedAmount[_version][msg.sender] -= versions[_version].license.amount;
+        }
+
         /// @dev Get the address of the implementation for the desired version.
         address versionImplementation = versions[_version].implementation;
 

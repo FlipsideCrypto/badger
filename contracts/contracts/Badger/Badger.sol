@@ -26,9 +26,13 @@ contract Badger is
      * 
      * Requirements:
      * - The license model must not be active on the `activeVersion` license defintion.
-     */
+     */  
     function createOrganization(
-        string memory _uri
+          uint256 _version
+        , string memory _uri
+        , string memory _organizationURI
+        , string memory _name
+        , string memory _symbol
     ) 
         external
         virtual
@@ -37,15 +41,19 @@ contract Badger is
         )
     { 
         require(
-                versions[activeVersion].license.tokenAddress == address(0)
+                   versions[_version].license.tokenAddress == address(0)
+                || versionToFundedAmount[_version][msg.sender] >= versions[_version].license.amount
               , "Badger::createOrganization: Subscription mode is enabled." 
         );
 
         /// @dev Deploy the Organization contract.
         address organization = _createOrganization(
-              activeVersion
+              _version
             , _msgSender()
             , _uri
+            , _organizationURI
+            , _name
+            , _symbol
         );
 
         return organization;
@@ -61,9 +69,9 @@ contract Badger is
     function onERC1155Received(
           address 
         , address _from
-        , uint256 
-        , uint256 
-        , bytes memory _data 
+        , uint256 _id
+        , uint256 _amount
+        , bytes memory _data
     ) 
         override 
         public 
@@ -74,22 +82,26 @@ contract Badger is
         /// @dev Get the version of the Organization contract to be deployed.
         uint256 version = abi.decode(_data, (uint256));
 
+        VersionLicense memory license = versions[version].license;
+
         /// @dev Confirm the token received is the payment token for the license id being deployed.
         require(
-              _msgSender() == versions[version].license.tokenAddress
-            , "Badger::onERC1155Received: Only the subscription implementation can call this function."
+              _msgSender() == license.tokenAddress
+            , "Badger::onERC1155Received: Only the license implementation can call this function."
         );
 
-        /// @dev Deploy the Organization contract to the account covering the cost of the payment.
+        /// @dev Confirm the token id received is the payment token id for the license id being deployed.
+        require(
+              _id == license.tokenId
+            , "Badger::onERC1155Received: Only the license implementation can call this function."
+        );
+
+        /// @dev Fund the deployment of the Organization contract to the account covering the cost of the payment.
         /// @dev This means that if an Organization wants to deploy through a Gnosis Safe, the
         ///      Safe must hold the token and send it to the contract. Alternatively, the Safe
         ///      can permission a delegate at the token level and the allowed sender can process this 
         ///      transaction to send it to. The organization ownership will always go to the account that pays.
-        _createOrganization(
-              version
-            , _from
-            , ""
-        );
+        versionToFundedAmount[version][_from] += _amount;
 
         return this.onERC1155Received.selector;
     }
@@ -107,7 +119,6 @@ contract Badger is
     )
         external
         virtual
-        override
         payable
         onlyOwner
     {
