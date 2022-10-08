@@ -52,8 +52,17 @@ contract BadgerScout is
     /// @dev The URI for the Organization / contract. 
     string public organizationURI;
 
+    /// @dev The base metadata URI for all tokens.
+    string public baseURI;
+
     /// @dev Mapping from token ID to badge
     mapping(uint256 => Badge) public badges;
+
+    /// @dev The name of the contract. Optional for ERC-1155. (Good EIP authors :))
+    string public name;
+
+    /// @dev The symbol of the contract. Optional for ERC-1155.
+    string public symbol;
 
     /**
      * @notice Make sure that only owner or the leader of a badge passes.
@@ -109,6 +118,25 @@ contract BadgerScout is
         onlyOwner
     {
         _setOrganizationURI(_uri);
+    }
+
+    function _setBaseURI(
+        string memory _uri
+    )
+        internal
+        virtual
+    {
+        baseURI = _uri;
+    }
+
+    function setBaseURI(
+        string memory _baseURI
+    )
+        external
+        virtual
+        onlyOwner
+    {
+        _setBaseURI(_baseURI);
     }
 
     /**
@@ -205,7 +233,7 @@ contract BadgerScout is
      * - `_id` must corresponding to an existing Badge config.
      * - `_uri` must not be null.
      */
-    function setURI(
+    function setBadgeURI(
           uint256 _id
         , string memory _uri
     )
@@ -213,6 +241,11 @@ contract BadgerScout is
         virtual
         onlyLeader(_id)
     {
+        require(
+              bytes(_uri).length > 0
+            , "BadgerScout::setBadgeURI: URI must be set."
+        );
+
         badges[_id].uri = _uri;
 
         emit BadgeUpdated(_id);

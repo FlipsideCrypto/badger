@@ -19,14 +19,6 @@ contract BadgerOrganization is
     , ERC1155Upgradeable
     , BadgerScout
 {
-    using Strings for uint256;
-    using Strings for address;
-
-    /// @dev The name of the contract. Optional for ERC-1155. (Good EIP authors :))
-    string public name;
-    /// @dev The symbol of the contract. Optional for ERC-1155.
-    string public symbol;
-
     /**
      * @notice Allow money to be sent to this contract just in case some organization
      *         has that use case.
@@ -59,6 +51,9 @@ contract BadgerOrganization is
         __Ownable_init();
         /// @dev Set ownership of the BadgeScout contract.
         transferOwnership(_owner);
+
+        /// @dev Set the base URI.
+        _setBaseURI(_uri);
     }
 
     /**
@@ -81,10 +76,15 @@ contract BadgerOrganization is
         )
     {
         if (bytes(badges[_id].uri).length > 0) {
-            return badges[_id].uri;
+            return string(
+                abi.encodePacked(
+                    baseURI
+                  , badges[_id].uri
+                )
+            );
         }
         
-        return super.uri(_id);
+        return baseURI; 
     }
 
     /**
