@@ -114,6 +114,7 @@ contract BadgerOrganization is
         external
         virtual
         onlyLeader(_id)
+        onlyRealBadge(_id)
     {
         /// @dev Mint the badge to the user.
         _mint(
@@ -137,6 +138,7 @@ contract BadgerOrganization is
         external
         virtual
         onlyLeader(_id)
+        onlyRealBadge(_id)
     {
         require(
             _tos.length == _amounts.length,
@@ -252,10 +254,17 @@ contract BadgerOrganization is
         /// @dev Confirm that the payment token is valid.
         PaymentToken memory paymentToken = badges[_id].paymentToken;
 
+        require(
+              paymentToken.tokenType == TOKEN_TYPE.NATIVE
+            , "BadgerOrganization::claimMint: Only native tokens are supported."
+        );
+
+        uint256 amount = _amount / paymentToken.amount;
+
         /// @dev Determine that the claimer is providing sufficient funds.
         require(
                  paymentToken.tokenType == TOKEN_TYPE.NATIVE 
-              && paymentToken.amount  * _amount == msg.value
+              && amount > 0 
             , "BadgerOrganization::claimMint: Incorrect amount of ETH sent."
         );
                 
@@ -578,7 +587,7 @@ contract BadgerOrganization is
 
         /// @dev Confirm that the payment token being supplied is the correct id.
         require(
-                paymentToken.id == _id
+              _id == paymentToken.id
             , "BadgerOrganization::onERC1155Received: Incorrect payment token."
         );
 

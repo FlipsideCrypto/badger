@@ -19,6 +19,13 @@ CHAINS = (
     (GNOSIS, "Gnosis"),
 )
 
+EVENTS = [
+    "TransferSingle(address,address,address,uint256,uint256)",
+    "OrganizationCreated(address,address,address)",
+    "OrganizationUpdated()",
+    "BadgeUpdated(uint256)"
+]
+
 def get_ens_name(address):
     if w3.isAddress(address):
         return ns.name(address=address)
@@ -28,3 +35,6 @@ def verify_signature(signature, message, address):
     if w3.isAddress(address):
         return w3.eth.account.recoverHash(message, signature=signature) == address
     return False
+
+def hex_signature(string):
+    return Web3.keccak(text=string).hex()

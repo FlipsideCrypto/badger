@@ -25,28 +25,20 @@ contract BadgerVersions is
 { 
     using Clones for address;
 
-    /// @dev Denote the method of payment for a specific version.
-    enum VersionPaymentType { 
-          NATIVE
-        , ERC1155
-    }
-
-    /// @dev Defines the operating license for a specific version.
+    /// @dev The schema of the license control for a version.
     struct VersionLicense { 
-        VersionPaymentType tokenType; 
         address tokenAddress;         
         uint256 tokenId;              
         uint256 amount;               
     }
 
-    /// @dev Defines the general management schema for version control.
+    /// @dev The schema of a version.
     struct Version { 
         address implementation;
         VersionLicense license;
     }
 
     /// @dev Announces when a new Organization is created through the protocol Factory.
-    /// @dev This enables magic-appearance on the app-layer.
     event OrganizationCreated(
         address indexed organization,
         address indexed owner,
@@ -58,7 +50,7 @@ contract BadgerVersions is
     mapping(uint256 => Version) public versions;
 
     /// @dev Tracking the organizations that one has funded the cost for.
-    mapping(uint256 => mapping(address => uint256)) public versionToFundedAmount;
+    mapping(string => uint256) public versionKeyToFunded;
 
     constructor(
         address _implementation
@@ -66,7 +58,6 @@ contract BadgerVersions is
         _setVersion(
               0
             , _implementation
-            , VersionPaymentType.NATIVE
             , address(0)
             , 0
             , 0
@@ -74,12 +65,40 @@ contract BadgerVersions is
     }
 
     /**
+     * @notice Build the version key for a version and a sender.
+     * @dev If the license for a version is updated, then the previous fundings 
+     *      will be lost and no longer active unless the version is reverted back
+     *      to the previous configuration. 
+     * @param _version The version of the Organization that is being created.
+     * @param _owner The address that will be the owner of the Organization.
+     * @param _license The license schema for the version.
+     * @return The key that tracks the vresion, license and funding.
+     */
+    function getVersionKey(
+          uint256 _version
+        , address _owner
+        , VersionLicense memory _license
+    ) 
+        public 
+        pure 
+        returns (string memory) 
+    {
+        return string(
+            abi.encodePacked(
+                  _version
+                , _owner
+                , _license.tokenAddress
+                , _license.tokenId
+            )
+        );
+    }
+
+    /**
      * @notice Allows Badger to control the level of access to specific versions.
      * @dev This enables the ability to have Enterprise versions as well as public versions. None of this
-     *      state is immutable as a subscription model may change in the future. 
+     *      state is immutable as a license model may change in the future. 
      * @param _version The version to update.
      * @param _implementation The implementation address.
-     * @param _tokenType The payment type.
      * @param _tokenAddress The token address.
      * @param _tokenId The token ID.
      * @param _amount The amount that this user will have to pay.
@@ -87,7 +106,6 @@ contract BadgerVersions is
     function _setVersion(
         uint256 _version
       , address _implementation
-      , VersionPaymentType _tokenType
       , address _tokenAddress
       , uint256 _tokenId
       , uint256 _amount
@@ -97,8 +115,7 @@ contract BadgerVersions is
         versions[_version] = Version({
               implementation: _implementation
             , license: VersionLicense({
-                  tokenType: _tokenType
-                , tokenAddress: _tokenAddress
+                  tokenAddress: _tokenAddress
                 , tokenId: _tokenId
                 , amount: _amount
             })
@@ -114,7 +131,6 @@ contract BadgerVersions is
     function setVersion(
         uint256 _version
       , address _implementation
-      , VersionPaymentType _tokenType
       , address _tokenAddress
       , uint256 _tokenId
       , uint256 _amount
@@ -125,7 +141,6 @@ contract BadgerVersions is
         _setVersion(
               _version
             , _implementation
-            , _tokenType
             , _tokenAddress
             , _tokenId
             , _amount
@@ -134,7 +149,8 @@ contract BadgerVersions is
 
     /**
      * @notice Creates a new Organization to be led by the deploying address.
-     * @param _version The version to use for this Organization.
+     * @param _version The version to use for this version and sender.
+     * @param _versionKey The version key to use for this Organization.
      * @param _deployer The address that will be the deployer of the Organizatoin contract.
      * @param _uri The base URI used for the metadata of tokens.
      * @param _organizationURI The metadata of the Organization.
@@ -144,6 +160,8 @@ contract BadgerVersions is
      */
     function _createOrganization(
           uint256 _version
+        , VersionLicense memory _license
+        , string memory _versionKey
         , address _deployer
         , string memory _uri
         , string memory _organizationURI
@@ -156,8 +174,8 @@ contract BadgerVersions is
         )
     {
         /// @dev If this version is paid deduct from the funded amount of the sender.
-        if (versions[_version].license.amount > 0) {
-            versionToFundedAmount[_version][msg.sender] -= versions[_version].license.amount;
+        if (_license.amount > 0) {
+            versionKeyToFunded[_versionKey] -= _license.amount;
         }
 
         /// @dev Get the address of the implementation for the desired version.
