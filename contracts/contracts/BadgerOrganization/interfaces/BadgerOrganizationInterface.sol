@@ -7,10 +7,16 @@ interface BadgerOrganizationInterface {
      * @notice Initialize the Organization with the starting state needed.
      * @param _owner The owner of the Organization. (Ideally a multi-sig).
      * @param _uri The base URI for the Organization.
+     * @param _contractURI The URI for the contract metadata.
+     * @param _name The name of the Organization.
+     * @param _symbol The symbol of the Organization.
      */
     function initialize(
           address _owner
         , string memory _uri
+        , string memory _contractURI
+        , string memory _name
+        , string memory _symbol
     )
         external;
 

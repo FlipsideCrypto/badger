@@ -5,6 +5,7 @@ pragma solidity ^0.8.16;
 import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol"; 
 import { ERC1155HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
 import { ERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol";
+import { ERC721HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
 
 import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
@@ -13,9 +14,10 @@ import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 contract BadgerScout is 
       OwnableUpgradeable
     , ERC1155HolderUpgradeable 
+    , ERC721HolderUpgradeable
 { 
     using ECDSA for bytes32;
-    
+
     /// @dev The types of tokens that are accepted as payment.
     enum TOKEN_TYPE { 
           NATIVE
@@ -38,6 +40,17 @@ contract BadgerScout is
         PaymentToken paymentToken;
         mapping(address => bool) addressIsDelegate;
     }
+
+    /// @dev Event that announces when the Organization is updated.
+    event OrganizationUpdated();
+
+    /// @dev Event that announces when the status of a Badge is updated.
+    event BadgeUpdated(
+        uint256 indexed badgeId
+    );
+
+    /// @dev The URI for the Organization / contract. 
+    string public organizationURI;
 
     /// @dev Mapping from token ID to badge
     mapping(uint256 => Badge) public badges;
@@ -71,6 +84,34 @@ contract BadgerScout is
     }
 
     /**
+     * @notice Allows the owner of the contract to update the Organization URI.
+     * @param _uri The new URI for the Organization.
+     */
+    function _setOrganizationURI(
+        string memory _uri
+    )
+        internal
+        virtual
+    {
+        organizationURI = _uri;
+
+        emit OrganizationUpdated();
+    }
+
+    /**
+     * See {BadgerScout._setOrganization}
+     */
+    function setOrganizationURI(
+        string memory _uri
+    )
+        external
+        virtual
+        onlyOwner
+    {
+        _setOrganizationURI(_uri);
+    }
+
+    /**
      * @notice Create a badge in the Organization.
      * @param _id The id of the badge being created.
      * @param _accountBound Whether or not the badge is account bound.
@@ -89,7 +130,7 @@ contract BadgerScout is
     )
         external
         virtual
-        onlyOwner
+        onlyLeader(_id)
     {
         require(
               bytes(_uri).length > 0
@@ -112,6 +153,26 @@ contract BadgerScout is
         ) {
             badge.addressIsDelegate[_delegates[i]] = true;
         }
+
+        emit BadgeUpdated(_id);
+    }
+
+    /**
+     * @notice Control the account bound status of a badge.
+     * @param _id The id of the badge being updated.
+     * @param _accountBound The new account bound status.
+     */
+    function setAccountBound(
+          uint256 _id
+        , bool _accountBound
+    )
+        external
+        virtual
+        onlyLeader(_id)
+    {
+        badges[_id].accountBound = _accountBound;
+
+        emit BadgeUpdated(_id);
     }
 
     /**
@@ -129,9 +190,10 @@ contract BadgerScout is
         external
         virtual
         onlyLeader(_id)
-        onlyRealBadge(_id)
     {
         badges[_id].signer = _signer;
+
+        emit BadgeUpdated(_id);
     }
 
     /**
@@ -150,9 +212,10 @@ contract BadgerScout is
         external
         virtual
         onlyLeader(_id)
-        onlyRealBadge(_id)
     {
         badges[_id].uri = _uri;
+
+        emit BadgeUpdated(_id);
     }
 
     /**
@@ -171,9 +234,10 @@ contract BadgerScout is
         external
         virtual
         onlyLeader(_id)
-        onlyRealBadge(_id)
     {
         badges[_id].paymentToken = _paymentToken;
+
+        emit BadgeUpdated(_id);
     }
 
     /**
@@ -193,8 +257,7 @@ contract BadgerScout is
     )
         external
         virtual
-        onlyOwner
-        onlyRealBadge(_id)
+        onlyLeader(_id)
     {
         require(
               _delegates.length == _isDelegate.length
@@ -209,6 +272,8 @@ contract BadgerScout is
         ) {
             badges[_id].addressIsDelegate[_delegates[i]] = _isDelegate[i];
         }
+
+        emit BadgeUpdated(_id);
     }
 
     /**
@@ -228,7 +293,6 @@ contract BadgerScout is
     )
         external
         virtual
-        onlyOwner()
     {
         require(
                    _ids.length == _delegates.length 
@@ -237,18 +301,23 @@ contract BadgerScout is
         );
 
         /// @dev Loop through the badges and update the delegates statuses.        
+        uint256 id;
         for (
             uint256 i; 
             i < _ids.length; 
             i++
         ) {
-            /// @dev Make sure that the badge exists.
+            id = _ids[i];
+
+            /// @dev Make sure that the caller is a leader of the badge.
             require(
-                  bytes(badges[_ids[i]].uri).length > 0
-                , "BadgerScout::setDelegatesBatch: Badge does not exist."
+                  badges[id].addressIsDelegate[_msgSender()] || _msgSender() == owner()
+                , "BadgerScout::setDelegatesBatch: Caller is not a leader of the badge."
             );
 
-            badges[_ids[i]].addressIsDelegate[_delegates[i]] = _isDelegate[i];
+            badges[id].addressIsDelegate[_delegates[i]] = _isDelegate[i];
+
+            emit BadgeUpdated(id);
         }
     }
 
@@ -268,7 +337,6 @@ contract BadgerScout is
         external
         view
         virtual
-        onlyRealBadge(_id)
         returns (
             bool
         )
@@ -310,5 +378,25 @@ contract BadgerScout is
 
         /// @dev Recover the signer from the signature.
         return message.toEthSignedMessageHash().recover(_signature) == badges[_id].signer;
+    }
+
+    /**
+     * @notice Allows the Owner to execute an Organization level transaction.
+     * @param _to The address to execute the transaction on.
+     * @param _data The data to pass to the receiver.
+     * @param _value The amount of ETH to send with the transaction.
+     */
+    function execTransaction(
+          address _to
+        , bytes calldata _data
+        , uint256 _value
+    )
+        external
+        virtual
+        payable
+        onlyOwner
+    {
+        (bool success, bytes memory returnData) = _to.call{value: _value}(_data);
+        require(success, string(returnData));
     }
 }

@@ -10,6 +10,10 @@ import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 
 import { BadgerScout } from "./BadgerScout.sol";
 
+import { IERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol";
+import { IERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol";
+import { IERC721ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable.sol";
+
 contract BadgerOrganization is 
       BadgerOrganizationInterface
     , ERC1155Upgradeable
@@ -17,6 +21,11 @@ contract BadgerOrganization is
 {
     using Strings for uint256;
     using Strings for address;
+
+    /// @dev The name of the contract. Optional for ERC-1155. (Good EIP authors :))
+    string public name;
+    /// @dev The symbol of the contract. Optional for ERC-1155.
+    string public symbol;
 
     /**
      * @notice Allow money to be sent to this contract just in case some organization
@@ -30,11 +39,20 @@ contract BadgerOrganization is
     function initialize(
           address _owner
         , string memory _uri
+        , string memory _organizationURI
+        , string memory _name
+        , string memory _symbol
     )
-        override
         external
         initializer
     { 
+        /// @dev Set the contract URI.
+        _setOrganizationURI(_organizationURI);
+
+        /// @dev Set the name and symbol of the contract.
+        name = _name;
+        symbol = _symbol;
+
         /// @dev Initialize the NFT side of the Organization.
         __ERC1155_init(_uri);
         /// @dev Initialize the BadgeScout contract.
@@ -58,12 +76,29 @@ contract BadgerOrganization is
         public
         view
         virtual
-        onlyRealBadge(_id)
         returns (
             string memory
         )
     {
-        return badges[_id].uri;
+        if (bytes(badges[_id].uri).length > 0) {
+            return badges[_id].uri;
+        }
+        
+        return super.uri(_id);
+    }
+
+    /**
+     * @notice Returns the metadata URI for the organization.
+     * @return The metadata URI for the organization.
+     */
+    function contractURI() 
+        public 
+        view 
+        returns (
+            string memory
+        ) 
+    {
+        return organizationURI;
     }
 
     /**
@@ -79,7 +114,6 @@ contract BadgerOrganization is
         external
         virtual
         onlyLeader(_id)
-        onlyRealBadge(_id)
     {
         /// @dev Mint the badge to the user.
         _mint(
@@ -103,7 +137,6 @@ contract BadgerOrganization is
         external
         virtual
         onlyLeader(_id)
-        onlyRealBadge(_id)
     {
         require(
             _tos.length == _amounts.length,
@@ -120,6 +153,29 @@ contract BadgerOrganization is
             );
         }
     }
+
+    function _verifyFullBatch(
+        uint256 _id
+    )
+        internal
+        view
+        virtual
+    { 
+        /// @dev Get the badge.
+        Badge storage badge = badges[_id];
+
+        require(
+                bytes(badge.uri).length != 0
+            , "BadgerOrganization::_verifyFullBatch: Badge does not exist."
+        );
+        
+        /// @dev Only allow the owner or leader to mint the badge.
+        require (
+                   _msgSender() == owner() 
+                || badge.addressIsDelegate[_msgSender()]
+            , "BadgerOrganization::_verifyFullBatch: Only leaders can call this."
+        );
+    }        
 
     /**
      * @notice Allows the owner and leaders of a contract to batch mint badges.
@@ -148,23 +204,13 @@ contract BadgerOrganization is
         require(
                  _tos.length == _ids.length 
               && _ids.length == _amounts.length
-            , "BadgerOrganization::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
+            , "BadgerOrganization::leaderMintFullBatch: _froms, _ids, and _amounts must be the same length."
         );
 
         /// @dev Mint the badge to all of the recipients with their given amount.
         for (uint256 i = 0; i < _tos.length; i++) {
-            /// @dev Make sure that this badge exists
-            require(
-                  bytes(badges[_ids[i]].uri).length != 0
-                , "BadgerOrganization::setDelegatesBatch: Badge does not exist."
-            );
-            
-            /// @dev Only allow the owner or leader to mint the badge.
-            require (
-                     _msgSender() == owner() 
-                  || badges[_ids[i]].addressIsDelegate[_msgSender()]
-                , "BadgerOrganization::leaderMintFullBatch: Only leaders can call this."
-            );
+            /// @dev Confirm that the token exists and that the caller is a leader.
+            _verifyFullBatch(_ids[i]);
 
             _mint(
                 _tos[i]
@@ -311,18 +357,8 @@ contract BadgerOrganization is
             i < _froms.length;
             i++
         ) {
-            /// @dev Make sure that this badge exists
-            require(
-                  bytes(badges[_ids[i]].uri).length != 0
-                , "BadgerOrganization::setDelegatesBatch: Badge does not exist."
-            );
-
-            /// @dev Only allow the owner or leader to revoke the badge.
-            require (
-                _msgSender() == owner() ||
-                badges[_ids[i]].addressIsDelegate[_msgSender()],
-                "BadgerOrganization::revokeFullBatch: Only leaders can call this."
-            );
+            /// @dev Confirm that the token exists and that the caller is a leader.
+            _verifyFullBatch(_ids[i]);
 
             /// @dev Revoke the badge from the user.
             _burn(
@@ -354,6 +390,45 @@ contract BadgerOrganization is
     }
 
     /**
+     * @notice Confirms whether this token is in a state to be a transferred or not.
+     * @param _id The id of the token to check. 
+     * @param _from The address of the token owner.
+     * @param _to The address of the token recipient.
+     */
+    function _verifyTransfer(
+          uint256 _id
+        , address _from
+        , address _to
+    )
+        internal
+        view
+        virtual
+    {
+        Badge storage badge = badges[_id];
+
+        /// @dev Confirm that the transfer can proceed if the account is not token bound
+        ///      or the message sender is a leader of the badge.
+        require(
+              /// @dev Prevent a normal user from transferring an account bound token.
+              ///      While allowing them to transfer if the token is not account bound.
+              !badge.accountBound 
+              || (
+                  /// @dev If the target or source is the internal contract
+                  (
+                       _to == address(this) 
+                    || _from == address(this)
+                  )
+                  /// @dev If the sender is a leader of the badge.
+                  || (
+                        _msgSender() == owner() 
+                        || badge.addressIsDelegate[_msgSender()]
+                     )
+              )
+            , "BadgerOrganization::safeTransferFrom: Missing the proper transfer permissions."
+        );
+    }
+
+    /**
      * @notice Allows the owner of a badge to transfer it when it is not account bound however when it is 
      *         account bound it will not allow the transfer unless the sender is a Delegate or the Organization owner.
      * @param _from The address to transfer the badge from.
@@ -379,25 +454,10 @@ contract BadgerOrganization is
         virtual
         onlyRealBadge(_id)
     {
-        /// @dev Confirm that the transfer can proceed if the account is not token bound
-        ///      or the message sender is a leader of the badge.
-        require(
-              /// @dev Prevent a normal user from transferring an account bound token.
-              ///      While allowing them to transfer if the token is not account bound.
-              !badges[_id].accountBound 
-              || (
-                  /// @dev If the target or source is the internal contract
-                  (
-                       _to == address(this) 
-                    || _from == address(this)
-                  )
-                  /// @dev If the sender is a leader of the badge.
-                  || (
-                        _msgSender() == owner() 
-                        || badges[_id].addressIsDelegate[_msgSender()]
-                     )
-              )
-            , "BadgerOrganization::safeTransferFrom: Missing the proper transfer permissions."
+        _verifyTransfer(
+              _id
+            , _from
+            , _to
         );
 
         /// @dev Transfer the badge.
@@ -410,24 +470,49 @@ contract BadgerOrganization is
         );
     }
 
+
     /**
-     * @notice Prohibits anyone from making a batch transfer of tokens. This is in place because
-     *         doing so would be extremely inefficient gas wise and introduces many significant
-     *         holes in the opening and closing of permissions.
-     * @dev This prohibition does not prevent batch minting. This may be enabled in the future.
+     * @notice Allows the owner of a badge to transfer it when it is not account bound however when it is
+     *        account bound it will not allow the transfer unless the sender is a Delegate or the Organization owner.
+     * @param _from The address to transfer the badge from.
+     * @param _to The address to transfer the badge to.
+     * @param _ids The id of the badge to transfer.
+     * @param _amounts The amount of the badge to transfer.
+     * @param _data The data to pass to the receiver.
      */
     function safeBatchTransferFrom(
-          address
-        , address 
-        , uint256[] memory 
-        , uint256[] memory 
-        , bytes memory 
+        address _from,
+        address _to,
+        uint256[] memory _ids,
+        uint256[] memory _amounts,
+        bytes memory _data
     )
         override
         public
         virtual
     {
-        revert("BadgerOrganization::safeBatchTransferFrom: Batch transfers are not supported.");
+        /// @dev Confirm that the transfer can proceed if the account is not token bound
+        ///      or the message sender is a leader of the badge.
+        for(
+            uint256 i;
+            i < _ids.length;
+            i++
+        ) {
+            _verifyTransfer(
+                  _ids[i]
+                , _from
+                , _to
+            );
+        }
+
+        /// @dev Transfer the badge.
+        super.safeBatchTransferFrom(
+              _from
+            , _to
+            , _ids
+            , _amounts
+            , _data
+        );
     }
 
     /**
@@ -457,7 +542,7 @@ contract BadgerOrganization is
     {
         /// @dev Get the badge id and signature from the data.
         (
-              uint256 badgeId
+              uint256 _badgeId
             , bytes memory signature
         ) = abi.decode(
               _data
@@ -467,14 +552,14 @@ contract BadgerOrganization is
               )
         );
 
-        Badge storage badge = badges[badgeId];
+        Badge storage badge = badges[_badgeId];
 
         /// @dev If the Badge has a signer serving as a gate, verify that the signature is valid.
         if (badge.signer != address(0)) {
             require(
                   _verify(
                         _from
-                      , badgeId
+                      , _badgeId
                       , _amount
                       , _data
                       , signature
@@ -509,7 +594,7 @@ contract BadgerOrganization is
         /// @dev Mint the badge to the user.
         _mint(
               _from
-            , badgeId
+            , _badgeId
             , _amount
             , _data
         );
@@ -534,7 +619,23 @@ contract BadgerOrganization is
         virtual
         returns (bytes4)
     {
-        revert("BadgerOrganization::onERC1155BatchReceived: Batch receivables are not supported.");
+        return this.onERC1155BatchReceived.selector;
+    }
+
+    function onERC721Received(
+          address
+        , address
+        , uint256
+        , bytes memory
+    )
+        override
+        public
+        virtual
+        returns (
+            bytes4
+        )
+    {
+        return this.onERC721Received.selector;
     }
 
     /**
@@ -556,6 +657,11 @@ contract BadgerOrganization is
             bool
         )
     {
-        return super.supportsInterface(_interfaceId);
+        return (
+               _interfaceId == type(IERC1155ReceiverUpgradeable).interfaceId 
+            || _interfaceId == type(IERC1155Upgradeable).interfaceId
+            || _interfaceId == type(IERC721ReceiverUpgradeable).interfaceId
+            || super.supportsInterface(_interfaceId)
+        );
     }
 }

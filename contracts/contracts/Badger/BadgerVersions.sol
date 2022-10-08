@@ -134,13 +134,21 @@ contract BadgerVersions is
 
     /**
      * @notice Creates a new Organization to be led by the deploying address.
+     * @param _version The version to use for this Organization.
      * @param _deployer The address that will be the deployer of the Organizatoin contract.
+     * @param _uri The base URI used for the metadata of tokens.
+     * @param _organizationURI The metadata of the Organization.
+     * @param _name The name of the Organization.
+     * @param _symbol The symbol of the Organization.
      * @dev The Organization contract is created using the Organization implementation contract.
      */
     function _createOrganization(
           uint256 _version
         , address _deployer
         , string memory _uri
+        , string memory _organizationURI
+        , string memory _name
+        , string memory _symbol
     )
         internal
         returns (
@@ -162,6 +170,9 @@ contract BadgerVersions is
         organization.initialize(
               _deployer
             , _uri
+            , _organizationURI
+            , _name
+            , _symbol
         );
 
         emit OrganizationCreated(
@@ -171,25 +182,5 @@ contract BadgerVersions is
         );
 
         return organizationAddress;
-    }
-
-    /**
-     * @notice Allows the Owner to execute an Organization level transaction.
-     * @param _to The address to execute the transaction on.
-     * @param _data The data to pass to the receiver.
-     * @param _value The amount of ETH to send with the transaction.
-     */
-    function execTransaction(
-          address _to
-        , bytes calldata _data
-        , uint256 _value
-    )
-        external
-        virtual
-        payable
-        onlyOwner
-    {
-        (bool success, bytes memory returnData) = _to.call{value: _value}(_data);
-        require(success, string(returnData));
     }
 }

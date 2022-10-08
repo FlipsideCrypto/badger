@@ -47,22 +47,22 @@ async function main() {
     })
 
     // // Verifying
-    // if (chainId != '31337') {
-    //     // Give time for etherscan to confirm the contract before verifying.
-    //     await new Promise(r => setTimeout(r, 30000));
-    //     await hre.run("verify:verify", {
-    //         address: sashMaster.address,
-    //         constructorArguments: [],
-    //     });
-    //     console.log("✅ Master Sash Verified.")
+    if (chainId != '31337') {
+        // Give time for etherscan to confirm the contract before verifying.
+        await new Promise(r => setTimeout(r, 30000));
+        await hre.run("verify:verify", {
+            address: sashMaster.address,
+            constructorArguments: [],
+        });
+        console.log("✅ Master Sash Verified.")
 
-    //     await new Promise(r => setTimeout(r, 30000));
-    //     await hre.run("verify:verify", {
-    //         address: house.address,
-    //         constructorArguments: [sashMaster.address],
-    //     });
-    //     console.log("✅ Badger House Verified.")
-    // }
+        await new Promise(r => setTimeout(r, 30000));
+        await hre.run("verify:verify", {
+            address: house.address,
+            constructorArguments: [sashMaster.address],
+        });
+        console.log("✅ Badger House Verified.")
+    }
 }
 
 main()

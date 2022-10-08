@@ -58,8 +58,8 @@ module.exports = {
         format: "minimal"
     },
     etherscan: {
-        // apiKey: ETHERSCAN_API_KEY
-        apiKey: process.env.POLYGON_API_KEY
+        apiKey: process.env.ETHERSCAN_API_KEY
+        // apiKey: process.env.POLYGON_API_KEY
     },
     defaultNetwork: "hardhat",
     networks: {
@@ -72,11 +72,12 @@ module.exports = {
                 auto: false,
                 order: 'fifo',
                 interval: 1500,
-            },
-            forking: { 
-                url: "https://eth-mainnet.alchemyapi.io/v2/7hOvTTdNWW7ngDBuxt0RI4h91giaqhxP",
-                blockNumber: 14390000
             }
         },
-    },
+        goerli: {
+            url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+            accounts: [`0x${process.env.PRIVATE_KEY}`],
+            gasPrice: 5000000000, // 5 gwei
+        },
+    }
 };
