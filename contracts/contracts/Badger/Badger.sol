@@ -61,7 +61,7 @@ contract Badger is
         ///     has funded the version an amount larger than the required amount.
         require(
                    license.tokenAddress == address(0)
-                || versionToFundedAmount[versionKey] / license.amount >= 1
+                || versionKeyToFunded[versionKey] / license.amount >= 1
               , "Badger::createOrganization: License requirements not met." 
         );
 
