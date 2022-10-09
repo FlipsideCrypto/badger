@@ -152,22 +152,10 @@ contract BadgerScout is
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * @notice Allows the owner of the contract to update the Organization URI.
-     * @param _uri The new URI for the Organization.
-     */
-    function _setOrganizationURI(
-        string memory _uri
-    )
-        internal
-        virtual
-    {
-        organizationURI = _uri;
-
-        emit OrganizationUpdated();
-    }
-
-    /**
      * See {BadgerScout._setOrganization}
+     * 
+     * Requirements:
+     * - The caller must be the owner.
      */
     function setOrganizationURI(
         string memory _uri
@@ -540,6 +528,21 @@ contract BadgerScout is
     /*//////////////////////////////////////////////////////////////
                             INTERNAL SETTERS
     //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Allows the owner of the contract to update the Organization URI.
+     * @param _uri The new URI for the Organization.
+     */
+    function _setOrganizationURI(
+        string memory _uri
+    )
+        internal
+        virtual
+    {
+        organizationURI = _uri;
+
+        emit OrganizationUpdated();
+    }
 
     /**
      * @notice Handle the token-agnostic depositing of funds needed

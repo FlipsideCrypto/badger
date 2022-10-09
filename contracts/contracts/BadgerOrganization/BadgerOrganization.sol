@@ -26,12 +26,9 @@ contract BadgerOrganization is
     using StringsUpgradeable for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    /**
-     * @notice Allow money to be sent to this contract.
-     */
-    receive() 
-        external 
-        payable {}
+    /*//////////////////////////////////////////////////////////////
+                            INITIALIZATION
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * See {BadgerOrganizationInterface.initialize}
@@ -61,45 +58,9 @@ contract BadgerOrganization is
         transferOwnership(_owner);
     }
 
-    /**
-     * See {ERC1155Upgradeable.uri}
-     */    
-    function uri(
-        uint256 _id
-    )
-        override
-        public
-        view
-        virtual
-        returns (
-            string memory
-        )
-    {
-        /// @dev Get the URI for the badge.
-        string memory _uri = badges[_id].uri;
-
-        /// @dev If a custom URI has been set for this badge, return it.
-        if (bytes(_uri).length > 0) {
-            return _uri;
-        }
-        
-        /// @dev Use the default base URI with the token id added.
-        return super.uri(_id);
-    }
-
-    /**
-     * @notice Returns the metadata URI for the organization.
-     * @return The metadata URI for the organization.
-     */
-    function contractURI() 
-        public 
-        view 
-        returns (
-            string memory
-        ) 
-    {
-        return organizationURI;
-    }
+    /*//////////////////////////////////////////////////////////////
+                          ORGANIZATION LOGIC
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * See {BadgerOrganizationInterface.leaderMint}
@@ -419,6 +380,36 @@ contract BadgerOrganization is
         );
     }
 
+    /*//////////////////////////////////////////////////////////////
+                            TOKEN LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * See {ERC1155Upgradeable.uri}
+     */    
+    function uri(
+        uint256 _id
+    )
+        override
+        public
+        view
+        virtual
+        returns (
+            string memory
+        )
+    {
+        /// @dev Get the URI for the badge.
+        string memory _uri = badges[_id].uri;
+
+        /// @dev If a custom URI has been set for this badge, return it.
+        if (bytes(_uri).length > 0) {
+            return _uri;
+        }
+        
+        /// @dev Use the default base URI with the token id added.
+        return super.uri(_id);
+    }
+
     /**
      * See {ERC1155Upgradeable.safeTransferFrom}
      */    
@@ -488,6 +479,17 @@ contract BadgerOrganization is
             , _data
         );
     }
+
+    /*//////////////////////////////////////////////////////////////
+                            CLAIMABLE LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Allow money to be sent to this contract.
+     */
+    receive() 
+        external 
+        payable {}
 
     /**
      * See {BadgerOrganizationInterface.depositETH}
@@ -656,6 +658,24 @@ contract BadgerOrganization is
         );
 
         return this.onERC721Received.selector;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                      EXTERNAL ORGANIZATION LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Returns the metadata URI for the organization.
+     * @return The metadata URI for the organization.
+     */
+    function contractURI() 
+        public 
+        view 
+        returns (
+            string memory
+        ) 
+    {
+        return organizationURI;
     }
 
     /**
