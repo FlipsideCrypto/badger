@@ -3,33 +3,38 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
+import { BadgerInterface } from "./interfaces/BadgerInterface.sol";
 import { BadgerVersions } from "./BadgerVersions.sol";
 
 /**
  * @title  Badger 
- * @author masonchain & nftchance
- * @notice A contract that allows users to mint Badger Organizations with a permissionless system
- *         that has two operating states. Free to use, and license based. The license
- *         operates through the purchasing of an ERC1155 token that is then sent to this contract
- *         to as a form of payment. 
+ * @author nftchance & masonchain
+ * @notice Today in the vast majority of Web3 there is a vast amount of "locks" that 
+ *         determine if someone has access to perform an action however there are very 
+ *         few ways to acquire the "keys" to the locks. Badger solves this by digitalizing 
+ *         centralized organization management while maintaing the full capacity to cover 
+ *         the more generalized and decentralized use-cases through time.
  */
 contract Badger is 
-    BadgerVersions
+      BadgerInterface
+    , BadgerVersions
 { 
+    /*//////////////////////////////////////////////////////////////
+                               CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(
         address _implementation
     ) 
         BadgerVersions(_implementation) 
     {}
 
+    /*//////////////////////////////////////////////////////////////
+                            PROTOCOL LOGIC
+    //////////////////////////////////////////////////////////////*/
+
     /**
-     * @notice Creates a new Organization while confirming that the proper funding has been provided.
-     * @param _version The version of the Organization that is being created.
-     * @param _deployer The address that will be the deployer of the Organization.
-     * @param _uri The base URI for the token metadata.
-     * @param _organizationURI The metadata of the Organization. (contractURI)
-     * @param _name The name of the Organization.
-     * @param _symbol The symbol of the Organization.
+     * See {BadgerInterface.createOrganization}.
      * 
      * Requirements:
      * - The license requirements must be met.
@@ -42,7 +47,8 @@ contract Badger is
         , string memory _name
         , string memory _symbol
     ) 
-        external
+        override
+        public
         virtual
         returns (
             address
@@ -86,6 +92,10 @@ contract Badger is
 
         return organization;
     }
+
+    /*//////////////////////////////////////////////////////////////
+                            RECEIVABLE LOGIC
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Funds a new Organization when the license model is enabled and 
@@ -147,6 +157,10 @@ contract Badger is
         /// @dev Return the ERC1155 success response.
         return this.onERC1155Received.selector;
     }
+
+    /*//////////////////////////////////////////////////////////////
+                         EXTERNAL PROTOCOL LOGIC
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Allows protocol Governors to execute protocol level transaction.

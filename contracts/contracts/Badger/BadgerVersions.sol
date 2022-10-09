@@ -19,6 +19,10 @@ contract BadgerVersions is
 { 
     using Clones for address;
 
+    /*//////////////////////////////////////////////////////////////
+                                SCHEMAS
+    //////////////////////////////////////////////////////////////*/
+
     /// @dev The schema of the license control for a version.
     struct VersionLicense { 
         address tokenAddress;         
@@ -39,12 +43,20 @@ contract BadgerVersions is
         address indexed implementation
     );
 
+    /*//////////////////////////////////////////////////////////////
+                           PROTOCOL STATE
+    //////////////////////////////////////////////////////////////*/
+
     /// @dev All of the versions that are actively running.
     ///      This also enables the ability to self-fork ones product.
     mapping(uint256 => Version) public versions;
 
     /// @dev Tracking the organizations that one has funded the cost for.
     mapping(string => uint256) public versionKeyToFunded;
+
+    /*//////////////////////////////////////////////////////////////
+                               CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
 
     constructor(
         address _implementation
@@ -57,6 +69,39 @@ contract BadgerVersions is
             , 0
         );
     }
+
+    /*//////////////////////////////////////////////////////////////
+                                SETTERS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * See {Badger._setVersion}
+     * 
+     * Requirements:
+     * - The caller must be the owner.
+     */    
+    function setVersion(
+        uint256 _version
+      , address _implementation
+      , address _tokenAddress
+      , uint256 _tokenId
+      , uint256 _amount
+    ) 
+        external
+        onlyOwner
+    {
+        _setVersion(
+              _version
+            , _implementation
+            , _tokenAddress
+            , _tokenId
+            , _amount
+        );
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                                GETTERS
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Build the version key for a version and a sender.
@@ -87,6 +132,10 @@ contract BadgerVersions is
         );
     }
 
+    /*//////////////////////////////////////////////////////////////
+                            INTERNAL SETTERS
+    //////////////////////////////////////////////////////////////*/
+
     /**
      * @notice Allows Badger to control the level of access to specific versions.
      * @dev This enables the ability to have Enterprise versions as well as public versions. None of this
@@ -114,31 +163,6 @@ contract BadgerVersions is
                 , amount: _amount
             })
         });
-    }
-
-    /**
-     * See {Badger._setVersion}
-     * 
-     * Requirements:
-     * - The caller must be the owner.
-     */    
-    function setVersion(
-        uint256 _version
-      , address _implementation
-      , address _tokenAddress
-      , uint256 _tokenId
-      , uint256 _amount
-    ) 
-        external
-        onlyOwner
-    {
-        _setVersion(
-              _version
-            , _implementation
-            , _tokenAddress
-            , _tokenId
-            , _amount
-        );
     }
 
     /**
