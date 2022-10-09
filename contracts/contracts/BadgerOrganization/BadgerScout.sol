@@ -37,20 +37,7 @@ contract BadgerScout is
         mapping(address => bool) addressIsDelegate;
     }
 
-    /// @dev Event that announces when the Organization is updated.
-    event OrganizationUpdated();
-
-    /// @dev Event that announces when the status of a Badge is updated.
-    event BadgeUpdated(
-        uint256 indexed badgeId
-    );
-
-    /// @dev Event that announces when a payment token is deposited for a Badge.
-    event PaymentTokenDeposited(
-          uint256 indexed badgeId
-        , address indexed payer
-        , uint256 amount
-    );
+    address public constant DOLPHIN_ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
     /// @dev The URI for the Organization / contract. 
     string public organizationURI;
@@ -66,6 +53,21 @@ contract BadgerScout is
 
     /// @dev Tracking the badges that one has funded the cost for.
     mapping(bytes32 => uint256) badgePaymentKeyToFunded;
+
+    /// @dev Event that announces when the Organization is updated.
+    event OrganizationUpdated();
+
+    /// @dev Event that announces when the status of a Badge is updated.
+    event BadgeUpdated(
+        uint256 indexed badgeId
+    );
+
+    /// @dev Event that announces when a payment token is deposited for a Badge.
+    event PaymentTokenDeposited(
+          uint256 indexed badgeId
+        , address indexed payer
+        , uint256 amount
+    );
 
     /**
      * @notice Make sure that only owner or the leader of a badge passes.

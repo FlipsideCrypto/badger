@@ -502,7 +502,7 @@ contract BadgerOrganization is
     {
         _verifyDeposit(
               _id
-            , address(0)
+            , DOLPHIN_ETH
             , 0
             , _msgSender() 
             , msg.value
