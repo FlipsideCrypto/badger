@@ -120,4 +120,27 @@ interface BadgerOrganizationInterface {
         , uint256 _amount
     )
         external;
+
+    /**
+     * @notice Allows the owner of a badge to deposit ETH to fund the claiming of a badge.
+     * @param _id The id of the badge to deposit ETH for.
+     */
+    function depositETH(
+        uint256 _id
+    )
+        external
+        payable;
+
+    /**
+     * @notice Allows the owner of a badge to deposit an ERC20 into the contract.
+     * @param _id The id of the badge to deposit for.
+     * @param _token The address of the token to deposit.
+     * @param _amount The amount of the token to deposit.
+     */
+    function depositERC20(
+          uint256 _id
+        , address _token
+        , uint256 _amount
+    )
+        external;
 }

@@ -2,16 +2,20 @@
 
 pragma solidity ^0.8.16;
 
+/// @dev Core dependencies.
 import { BadgerOrganizationInterface } from "./interfaces/BadgerOrganizationInterface.sol";
-
 import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
-import { ERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol";
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
-
 import { BadgerScout } from "./BadgerScout.sol";
 
-import { IERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol";
+/// @dev Helpers.
+import { StringsUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
+import { ERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import { SafeERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+
+/// @dev Supported interfaces.
 import { IERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol";
+import { IERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol";
 import { IERC721ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable.sol";
 
 contract BadgerOrganization is 
@@ -19,14 +23,18 @@ contract BadgerOrganization is
     , ERC1155Upgradeable
     , BadgerScout
 {
-    /**
-     * @notice Allow money to be sent to this contract just in case some organization
-     *         has that use case.
-     */
-    receive() external payable {}
+    using StringsUpgradeable for uint256;
+    using SafeERC20Upgradeable for IERC20Upgradeable;
 
     /**
-     * See {BadgerOrganizationInterface-initialize}
+     * @notice Allow money to be sent to this contract.
+     */
+    receive() 
+        external 
+        payable {}
+
+    /**
+     * See {BadgerOrganizationInterface.initialize}
      */
     function initialize(
           address _owner
@@ -51,18 +59,10 @@ contract BadgerOrganization is
         __Ownable_init();
         /// @dev Set ownership of the BadgeScout contract.
         transferOwnership(_owner);
-
-        /// @dev Set the base URI.
-        _setBaseURI(_uri);
     }
 
     /**
-     * @notice Returns the metadata URI for a given badge.
-     * @param _id The id of the badge to get the metadata URI for.
-     * @return The metadata URI for the badge.
-     *
-     * Requirements:
-     * - Badge of `_id` must exist.
+     * See {ERC1155Upgradeable.uri}
      */    
     function uri(
         uint256 _id
@@ -75,16 +75,16 @@ contract BadgerOrganization is
             string memory
         )
     {
-        if (bytes(badges[_id].uri).length > 0) {
-            return string(
-                abi.encodePacked(
-                    baseURI
-                  , badges[_id].uri
-                )
-            );
+        /// @dev Get the URI for the badge.
+        string memory _uri = badges[_id].uri;
+
+        /// @dev If a custom URI has been set for this badge, return it.
+        if (bytes(_uri).length > 0) {
+            return _uri;
         }
         
-        return baseURI; 
+        /// @dev Use the default base URI with the token id added.
+        return super.uri(_id);
     }
 
     /**
@@ -102,7 +102,11 @@ contract BadgerOrganization is
     }
 
     /**
-     * See {BadgerOrganizationInterface-leaderMint}
+     * See {BadgerOrganizationInterface.leaderMint}
+     * 
+     * Requirements:
+     * - The caller must be a leader of the Organization.
+     * - The Badge must exist.
      */    
     function leaderMint(
           address _to
@@ -126,7 +130,12 @@ contract BadgerOrganization is
     }
 
     /**
-     * See {BadgerOrganizationInterface-leaderMintBatch}
+     * See {BadgerOrganizationInterface.leaderMintBatch}
+     * 
+     * Requirements:
+     * - The caller must be a leader of the Organization.
+     * - The Badge must exist.
+     * - The arrays must be the same length.
      */
     function leaderMintBatch(
           address[] memory _tos
@@ -140,44 +149,28 @@ contract BadgerOrganization is
         onlyLeader(_id)
         onlyRealBadge(_id)
     {
+        /// @dev Make sure that the supplied arrays are equal in length.
         require(
             _tos.length == _amounts.length,
             "BadgerOrganization::leaderMintBatch: _tos and _amounts must be the same length."
         );
 
         /// @dev Mint the badge to all of the recipients with their given amount.
-        for (uint256 i = 0; i < _tos.length; i++) {
+        uint256 i;
+        for (
+            i; 
+            i < _tos.length; 
+            i++
+        ) {
+            /// @dev Mint the badges to the users.
             _mint(
-                _tos[i]
+                  _tos[i]
                 , _id
                 , _amounts[i]
                 , _data
             );
         }
     }
-
-    function _verifyFullBatch(
-        uint256 _id
-    )
-        internal
-        view
-        virtual
-    { 
-        /// @dev Get the badge.
-        Badge storage badge = badges[_id];
-
-        require(
-                bytes(badge.uri).length != 0
-            , "BadgerOrganization::_verifyFullBatch: Badge does not exist."
-        );
-        
-        /// @dev Only allow the owner or leader to mint the badge.
-        require (
-                   _msgSender() == owner() 
-                || badge.addressIsDelegate[_msgSender()]
-            , "BadgerOrganization::_verifyFullBatch: Only leaders can call this."
-        );
-    }        
 
     /**
      * @notice Allows the owner and leaders of a contract to batch mint badges.
@@ -191,8 +184,7 @@ contract BadgerOrganization is
      * @param _amounts The amount of the badge to revoke.
      *
      * Requirements:
-     * - `_froms`, `_ids`, and `_amounts` must be the same length.
-     * - `_msgSender` must be the owner or leader of the badge.
+     * - The arrays must be the same length.
      */      
     function leaderMintFullBatch(
           address[] memory _tos
@@ -210,13 +202,22 @@ contract BadgerOrganization is
         );
 
         /// @dev Mint the badge to all of the recipients with their given amount.
-        for (uint256 i = 0; i < _tos.length; i++) {
-            /// @dev Confirm that the token exists and that the caller is a leader.
-            _verifyFullBatch(_ids[i]);
+        uint256 i;
+        uint256 id;
+        for (
+            i; 
+            i < _tos.length; 
+            i++
+        ) {
+            id = _ids[i];
 
+            /// @dev Confirm that the token exists and that the caller is a leader.
+            _verifyFullBatch(id);
+
+            /// @dev Mint the badges to the users.
             _mint(
-                _tos[i]
-                , _ids[i]
+                  _tos[i]
+                , id
                 , _amounts[i]
                 , _data
             );
@@ -225,11 +226,15 @@ contract BadgerOrganization is
 
     /**
      * See {BadgerOrganizationInterface-claimMint}
+     * 
+     * Requirements:
+     * - The Badge must exist.
+     * - The caller must have a valid signature or the token be claimable.
      */
     function claimMint(
           bytes calldata _signature
         , uint256 _id
-        , uint256 _amount
+        , uint256 _amount       /// @dev Amount of tokens to mint (not spend).
         , bytes memory _data
     ) 
         override
@@ -238,36 +243,33 @@ contract BadgerOrganization is
         virtual
         onlyRealBadge(_id)
     { 
-        /// @dev Verify that the signer signed the message permitting a mint of `_id`
-        ///      to `_msgSender()` for `_quantity` amount.
-        require(
-            _verify(
-                  _msgSender()
+        Badge storage badge = badges[_id];
+
+        if(badge.signer != address(0)) {
+            /// @dev Verify that the signer signed the message permitting a mint of `_id`
+            ///      to `_msgSender()` for `_quantity` amount.
+            _verifySignature(
+                _msgSender()
                 , _id
                 , _amount
                 , _data
                 , _signature
-            ),
-            "BadgerOrganization::claimMint: Invalid signature."
+            );
+        } else { 
+            /// @dev If the badge does not have a signer, then it is a free mint
+            ///      but need to make sure it has been marked as claimable.
+            require(
+                  badge.claimable
+                , "BadgerOragnization::claimMint: This badge is not claimable."
+            );
+        }
+
+        /// @dev Confirm the user has already funded the correct amount.
+        _verifyFunding(
+               badge.paymentToken.paymentKey
+             , badge.paymentToken.amount * _amount      /// @dev The cost of minting the lot.
         );
 
-        /// @dev Confirm that the payment token is valid.
-        PaymentToken memory paymentToken = badges[_id].paymentToken;
-
-        require(
-              paymentToken.tokenType == TOKEN_TYPE.NATIVE
-            , "BadgerOrganization::claimMint: Only native tokens are supported."
-        );
-
-        uint256 amount = _amount / paymentToken.amount;
-
-        /// @dev Determine that the claimer is providing sufficient funds.
-        require(
-                 paymentToken.tokenType == TOKEN_TYPE.NATIVE 
-              && amount > 0 
-            , "BadgerOrganization::claimMint: Incorrect amount of ETH sent."
-        );
-                
         /// @dev Mint the badge to the user.
         _mint(
               _msgSender()
@@ -278,7 +280,11 @@ contract BadgerOrganization is
     }
 
     /**
-     * See {BadgerOrganizationInterface-revoke}
+     * See {BadgerOrganizationInterface.revoke}
+     * 
+     * Requirements:
+     * - The caller must be a leader of the Organization.
+     * - The Badge must exist.
      */    
     function revoke(
           address _from
@@ -300,7 +306,12 @@ contract BadgerOrganization is
     }
 
     /**
-     * See {BadgerOrganizationInterface-revokeBatch}
+     * See {BadgerOrganizationInterface.revokeBatch}
+     * 
+     * Requirements:
+     * - The caller must be a leader of the Organization.
+     * - The Badge must exist.
+     * - The arrays must be the same length.
      */    
     function revokeBatch(
           address[] memory _froms
@@ -318,8 +329,9 @@ contract BadgerOrganization is
             "BadgerOrganization::revokeBatch: _from and _amounts must be the same length."
         );
 
+        uint256 i;
         for(
-            uint256 i;
+            i;
             i < _froms.length;
             i++
         ) { 
@@ -344,8 +356,7 @@ contract BadgerOrganization is
      * @param _amounts The amount of the badge to revoke.
      *
      * Requirements:
-     * - `_froms`, `_ids`, and `_amounts` must be the same length.
-     * - `_msgSender` must be the owner or leader of the badge.
+     * - The arrays must be the same length.
      */
     function revokeFullBatch(
           address[] memory _froms
@@ -361,25 +372,32 @@ contract BadgerOrganization is
             , "BadgerOrganization::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
         );
 
+        uint256 i;
+        uint256 id;
         for(
-            uint256 i;
+            i;
             i < _froms.length;
             i++
         ) {
+            id = _ids[i];
+
             /// @dev Confirm that the token exists and that the caller is a leader.
-            _verifyFullBatch(_ids[i]);
+            _verifyFullBatch(id);
 
             /// @dev Revoke the badge from the user.
             _burn(
                   _froms[i]
-                , _ids[i]
+                , id
                 , _amounts[i]
             );
         }
     }
 
     /**
-     * See {BadgerOrganizationInterface-setDelegates}
+     * See {BadgerOrganizationInterface.forfeit}
+     *
+     * Requirements:
+     * - The Badge must exist.
      */
     function forfeit(
           uint256 _id
@@ -399,57 +417,7 @@ contract BadgerOrganization is
     }
 
     /**
-     * @notice Confirms whether this token is in a state to be a transferred or not.
-     * @param _id The id of the token to check. 
-     * @param _from The address of the token owner.
-     * @param _to The address of the token recipient.
-     */
-    function _verifyTransfer(
-          uint256 _id
-        , address _from
-        , address _to
-    )
-        internal
-        view
-        virtual
-    {
-        Badge storage badge = badges[_id];
-
-        /// @dev Confirm that the transfer can proceed if the account is not token bound
-        ///      or the message sender is a leader of the badge.
-        require(
-              /// @dev Prevent a normal user from transferring an account bound token.
-              ///      While allowing them to transfer if the token is not account bound.
-              !badge.accountBound 
-              || (
-                  /// @dev If the target or source is the internal contract
-                  (
-                       _to == address(this) 
-                    || _from == address(this)
-                  )
-                  /// @dev If the sender is a leader of the badge.
-                  || (
-                        _msgSender() == owner() 
-                        || badge.addressIsDelegate[_msgSender()]
-                     )
-              )
-            , "BadgerOrganization::safeTransferFrom: Missing the proper transfer permissions."
-        );
-    }
-
-    /**
-     * @notice Allows the owner of a badge to transfer it when it is not account bound however when it is 
-     *         account bound it will not allow the transfer unless the sender is a Delegate or the Organization owner.
-     * @param _from The address to transfer the badge from.
-     * @param _to The address to transfer the badge to.
-     * @param _id The id of the badge to transfer.
-     * @param _amount The amount of the badge to transfer.
-     * @param _data The data to pass to the receiver.
-     * 
-     * Requirements:
-     * - Badge must not be account bound.
-     *  OR the target of this token is this contract.
-     *  OR the sender is a leader of the badge being transferred.
+     * See {ERC1155Upgradeable.safeTransferFrom}
      */    
     function safeTransferFrom(
         address _from,
@@ -461,8 +429,8 @@ contract BadgerOrganization is
         override
         public
         virtual
-        onlyRealBadge(_id)
     {
+        /// @dev Confirm that the sender has permission to transfer this token.
         _verifyTransfer(
               _id
             , _from
@@ -479,15 +447,8 @@ contract BadgerOrganization is
         );
     }
 
-
     /**
-     * @notice Allows the owner of a badge to transfer it when it is not account bound however when it is
-     *        account bound it will not allow the transfer unless the sender is a Delegate or the Organization owner.
-     * @param _from The address to transfer the badge from.
-     * @param _to The address to transfer the badge to.
-     * @param _ids The id of the badge to transfer.
-     * @param _amounts The amount of the badge to transfer.
-     * @param _data The data to pass to the receiver.
+     * See {ERC1155Upgradeable.safeBatchTransferFrom}
      */
     function safeBatchTransferFrom(
         address _from,
@@ -507,6 +468,7 @@ contract BadgerOrganization is
             i < _ids.length;
             i++
         ) {
+            /// @dev Confirm that the sender has permission to transfer this token.
             _verifyTransfer(
                   _ids[i]
                 , _from
@@ -525,15 +487,61 @@ contract BadgerOrganization is
     }
 
     /**
-     * @notice Allows seamless payment & minting of a Badge when the full criteria has been met. 
-     * @param _from The source of the payment token.
-     * @param _id The id of payment token.
-     * @param _amount The amount of payment token.
-     * @param _data The minting data.
-     *
+     * See {BadgerOrganizationInterface.depositETH}
+     * 
      * Requirements:
-     * - `signature` must be a valid signature from the owner of the badge.
-     * - token id `badgeId` takes payment in an ERC1155 token.
+     * - The Badge must exist.
+     */
+    function depositETH(
+        uint256 _id
+    )
+        override 
+        external
+        payable
+        onlyRealBadge(_id)
+    {
+        _verifyDeposit(
+              _id
+            , address(0)
+            , 0
+            , _msgSender() 
+            , msg.value
+        );
+    }
+
+    /**
+     * See {BadgerOrganizationInterface.depositERC20}
+     */
+    function depositERC20(
+          uint256 _id
+        , address _token
+        , uint256 _amount
+    )
+        override
+        external
+    {
+        /// @dev Transfer the ERC20 into this contract.
+        IERC20Upgradeable token = IERC20Upgradeable(_token);
+
+        /// @dev Transfer the token into this contract.
+        token.transferFrom(
+              _msgSender()
+            , address(this)
+            , _amount
+        );
+
+        /// @dev Verify that the tokens being deposited are the token expected.
+        _verifyDeposit(
+              _id
+            , _token
+            , 0
+            , _msgSender()
+            , _amount
+        );
+    }
+
+    /*
+     * See {IERC1155ReceiverUpgradeable.onERC1155Received}
      */
     function onERC1155Received(
           address
@@ -549,72 +557,30 @@ contract BadgerOrganization is
             bytes4
         )
     {
-        /// @dev Get the badge id and signature from the data.
-        (
-              uint256 _badgeId
-            , bytes memory signature
-        ) = abi.decode(
-              _data
-            , (
-                  uint256
-                , bytes
-              )
-        );
-
-        Badge storage badge = badges[_badgeId];
-
-        /// @dev If the Badge has a signer serving as a gate, verify that the signature is valid.
-        if (badge.signer != address(0)) {
-            require(
-                  _verify(
-                        _from
-                      , _badgeId
-                      , _amount
-                      , _data
-                      , signature
-                  )
-                , "BadgerOrganization::onERC1155Received: Invalid signature."
-            );
+        /// @dev Return the typical ERC-1155 response if transfer is not intended to be a payment.
+        if(bytes(_data).length == 0) {
+            return this.onERC1155Received.selector;
         }
 
-        PaymentToken storage paymentToken = badge.paymentToken;
-
-        /// @dev Confirm that the payment token being supplied is the one expected.
-        require(
-              _msgSender() == paymentToken.tokenAddress 
-            , "BadgerOrganization::onERC1155Received: Invalid payment token."
+        /// @dev Recover the uint256 for badgeId.
+        (uint256 badgeId) = abi.decode(
+              _data
+            , (uint256)
         );
 
-        /// @dev Confirm that the payment token being supplied is the correct id.
-        require(
-              _id == paymentToken.id
-            , "BadgerOrganization::onERC1155Received: Incorrect payment token."
-        );
-
-        /// @dev Use the amount of tokens provided in the receipt to determine how many badges can be minted. 
-        uint256 amount = _amount / paymentToken.amount;
-
-        /// @dev Confirm that the payment token being supplied is the correct amount.
-        require(
-              amount > 0
-            , "BadgerOrganization::onERC1155Received: Insufficient payment token."
-        );
-
-        /// @dev Mint the badge to the user.
-        _mint(
-              _from
-            , _badgeId
+        _verifyDeposit(
+              badgeId
+            , _msgSender()
+            , _id
+            , _from
             , _amount
-            , _data
         );
 
         return this.onERC1155Received.selector;
     }    
 
     /**
-     * @notice Prohibits anyone from making a batch transfer of tokens as a payment. This is in place because
-     *         doing so would be extremely inefficient gas wise and introduces many significant
-     *         holes in the opening and closing of permissions.
+     * See {IERC1155ReceiverUpgradeable.onERC1155BatchReceived}
      */
     function onERC1155BatchReceived(
           address
@@ -631,11 +597,14 @@ contract BadgerOrganization is
         return this.onERC1155BatchReceived.selector;
     }
 
+    /**
+     * See {IERC721ReceiverUpgradeable.onERC721Received}
+     */
     function onERC721Received(
-          address
-        , address
-        , uint256
-        , bytes memory
+          address 
+        , address _from
+        , uint256 
+        , bytes memory _data
     )
         override
         public
@@ -644,13 +613,30 @@ contract BadgerOrganization is
             bytes4
         )
     {
+        /// @dev Return the typical ERC-1155 response if transfer is not intended to be a payment.
+        if(bytes(_data).length == 0) {
+            return this.onERC1155Received.selector;
+        }
+
+        /// @dev Recover the uint256 for badgeId.
+        (uint256 badgeId) = abi.decode(
+              _data
+            , (uint256)
+        );
+
+        _verifyDeposit(
+              badgeId 
+            , _msgSender()
+            , 0
+            , _from
+            , 1
+        );
+
         return this.onERC721Received.selector;
     }
 
     /**
-     * @notice Handles the interface detection for ERC-1155 and the Receiver of ERC-1155s.
-     * @param _interfaceId The interface to check.  
-     * @return True if the interface is supported.
+     * See {IERC165Upgradeable.supportsInterface}
      */
     function supportsInterface(
         bytes4 _interfaceId
@@ -667,8 +653,8 @@ contract BadgerOrganization is
         )
     {
         return (
-               _interfaceId == type(IERC1155ReceiverUpgradeable).interfaceId 
-            || _interfaceId == type(IERC1155Upgradeable).interfaceId
+               _interfaceId == type(IERC1155Upgradeable).interfaceId 
+            || _interfaceId == type(IERC1155ReceiverUpgradeable).interfaceId
             || _interfaceId == type(IERC721ReceiverUpgradeable).interfaceId
             || super.supportsInterface(_interfaceId)
         );

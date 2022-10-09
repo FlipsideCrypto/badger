@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.16;
 
+/// @dev Core dependencies.
 import { BadgerVersions } from "./BadgerVersions.sol";
 
 /**
@@ -106,42 +107,42 @@ contract Badger is
             bytes4
         ) 
     {
-        /// @dev Recover the boolean of whether or not this deposit is being used for payment
-        ///      as well as the uint256 of the version being used.
-        (
-              bool isPayment
-            , uint256 version
-        ) = abi.decode(_data, (bool, uint256));
-
-        /// @dev Allow the normal depositing of the token while enabling the ability 
-        ///      to have a payment system.
-        if(isPayment) { 
-            /// @dev Get the license schema associated with the version being funded.
-            VersionLicense memory license = versions[version].license;
-
-            /// @dev Confirm the token received is the payment token for the version being funded.
-            require(
-                _msgSender() == license.tokenAddress
-                , "Badger::onERC1155Received: Invalid license token."
-            );
-
-            /// @dev Confirm the token id received is the payment token id for the license id being deployed.
-            require(
-                _id == license.tokenId
-                , "Badger::onERC1155Received: Invalid license token."
-            );
-
-            /// @dev Get the hashed version key to track the funding of the funder.
-            string memory versionKey = getVersionKey(
-                  version
-                , _from
-                , license
-            );
-
-            /// @dev Fund the deployment of the Organization contract to 
-            ///      the account covering the cost of the payment (not the transaction sender).
-            versionKeyToFunded[versionKey] += _amount;
+        /// @dev Return the typical ERC-1155 response if transfer is not intended to be a payment.
+        if(bytes(_data).length == 0) {
+            return this.onERC1155Received.selector;
         }
+        
+        /// @dev Recover the uint256 of the version being used.
+        uint256 version = abi.decode(
+              _data
+            , (uint256)
+        );
+
+        /// @dev Get the license schema associated with the version being funded.
+        VersionLicense memory license = versions[version].license;
+
+        /// @dev Confirm the token received is the payment token for the version being funded.
+        require(
+              _msgSender() == license.tokenAddress
+            , "Badger::onERC1155Received: Invalid license token."
+        );
+
+        /// @dev Confirm the token id received is the payment token id for the license id being deployed.
+        require(
+              _id == license.tokenId
+            , "Badger::onERC1155Received: Invalid license token."
+        );
+
+        /// @dev Get the hashed version key to track the funding of the funder.
+        string memory versionKey = getVersionKey(
+              version
+            , _from
+            , license
+        );
+
+        /// @dev Fund the deployment of the Organization contract to 
+        ///      the account covering the cost of the payment (not the transaction sender).
+        versionKeyToFunded[versionKey] += _amount;
 
         /// @dev Return the ERC1155 success response.
         return this.onERC1155Received.selector;

@@ -10,6 +10,8 @@ import { ERC721HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/tok
 import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import { IERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol";
+import { IERC721ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable.sol";
 
 contract BadgerScout is 
       OwnableUpgradeable
@@ -18,26 +20,20 @@ contract BadgerScout is
 { 
     using ECDSA for bytes32;
 
-    /// @dev The types of tokens that are accepted as payment.
-    enum TOKEN_TYPE { 
-          NATIVE
-        , ERC1155
-    }
-
     /// @dev The structure of a Payment Token.
     struct PaymentToken { 
-        TOKEN_TYPE tokenType;
-        address tokenAddress;
-        uint256 id;
-        uint256 amount;
+        uint8 tokenType;        /// @dev 0 = ETH, 1 = ERC20, 2 = ERC721, 3 = ERC1155
+        uint256 amount;         /// @dev Amount per badge.
+        bytes32 paymentKey;     /// @dev keccak256(abi.encodePacked(tokenAddress,tokenId));
     }
 
     /// @dev The processing information for this token.
     struct Badge { 
-        bool accountBound;
-        address signer;
-        string uri;
-        PaymentToken paymentToken;
+        bool claimable;                 /// @dev If the badge is claimable.
+        bool accountBound;              /// @dev Whether or not owners of Badges can transfer them.
+        address signer;                 /// @dev The signer that blocks minting.
+        string uri;                     /// @dev The URI for the badge.
+        PaymentToken paymentToken;      /// @dev The payment token required to mint a badge.
         mapping(address => bool) addressIsDelegate;
     }
 
@@ -49,11 +45,15 @@ contract BadgerScout is
         uint256 indexed badgeId
     );
 
+    /// @dev Event that announces when a payment token is deposited for a Badge.
+    event PaymentTokenDeposited(
+          uint256 indexed badgeId
+        , address indexed payer
+        , uint256 amount
+    );
+
     /// @dev The URI for the Organization / contract. 
     string public organizationURI;
-
-    /// @dev The base metadata URI for all tokens.
-    string public baseURI;
 
     /// @dev Mapping from token ID to badge
     mapping(uint256 => Badge) public badges;
@@ -63,6 +63,9 @@ contract BadgerScout is
 
     /// @dev The symbol of the contract. Optional for ERC-1155.
     string public symbol;
+
+    /// @dev Tracking the badges that one has funded the cost for.
+    mapping(bytes32 => uint256) badgePaymentKeyToFunded;
 
     /**
      * @notice Make sure that only owner or the leader of a badge passes.
@@ -90,6 +93,241 @@ contract BadgerScout is
             , "BadgerScout::onlyRealBadge: Can only call this for setup badges."
         );
         _;
+    }
+
+    modifier onlyClaimableBadge(
+        uint256 _id
+    ) {
+        require (
+                 badges[_id].signer != address(0)
+              || badges[_id].claimable
+            , "BadgerScout::onlyClaimableBadge: Can only call this for claimable badges."
+        );
+        _;
+    }
+
+    /**
+     * @notice Allow anyone to see the delegates of a Badge.
+     * @param _id The id of the badge.
+     * @param _delegate The address of the delegate.
+     * @return Boolean of whether or not the provided address is a delegate.
+     * 
+     * Requirements:
+     * - `_id` must corresponding to an existing Badge config.
+     */
+    function isDelegate(
+          uint256 _id
+        , address _delegate
+    )
+        external
+        view
+        virtual
+        returns (
+            bool
+        )
+    {
+        return badges[_id].addressIsDelegate[_delegate];
+    }
+
+    /**
+     * @notice Confirms that a message sender is calling a Badge that exists 
+     *         as well as is a leader of that badge.
+     * @param _id The id of the badge to check.
+     * 
+     * Requirements:
+     * - The Badger must exist.
+     * - The `_msgSender()` must be a leader of the badge.
+     */
+    function _verifyFullBatch(
+        uint256 _id
+    )
+        internal
+        view
+        virtual
+    { 
+        /// @dev Get the badge.
+        Badge storage badge = badges[_id];
+
+        /// @dev Confirm the Badge exists.
+        require(
+                bytes(badge.uri).length != 0
+            , "BadgerOrganization::_verifyFullBatch: Badge does not exist."
+        );
+        
+        /// @dev Only allow the owner or leader to mint the badge.
+        require (
+                 _msgSender() == owner() 
+              || badge.addressIsDelegate[_msgSender()]
+            , "BadgerOrganization::_verifyFullBatch: Only leaders can call this."
+        );
+    }        
+
+    /**
+     * @notice Allows an Organization to define a signer that will enable the claiming of a badge.
+     * @param _to The address to mint the badge to.
+     * @param _id The id of the badge to mint.
+     * @param _amount The amount of the badge to mint.
+     * @param _data The data to pass to the receiver.
+     * @param _signature The signature of the signer.
+     */
+    function _verifySignature(
+        address _to,
+        uint256 _id,
+        uint256 _amount,
+        bytes memory _data,
+        bytes memory _signature
+    )
+        internal
+        view
+    {
+        /// @dev Compile the message that would have been signed.
+        bytes32 message = keccak256(
+            abi.encodePacked(
+                  _to
+                , _id
+                , _amount
+                , _data
+            )
+        );
+
+        require(
+              message.toEthSignedMessageHash().recover(_signature) == badges[_id].signer
+            , "BadgerScout::_verifySignature: Invalid signature."
+        );
+    }
+
+    function _verifyPayment(
+            uint256 _badgeId 
+          , address _address
+          , uint256 _id
+    )
+        internal
+        view
+        returns (
+            bytes32 paymentTokenKey
+        )
+    { 
+        /// @dev Get the Badge object.
+        Badge storage badge = badges[_badgeId];
+
+        paymentTokenKey = keccak256(
+            abi.encodePacked(
+                  _address 
+                , _id              
+            )
+        );
+
+        require(
+              paymentTokenKey == badge.paymentToken.paymentKey
+            , "BadgerScout::_verifyPayment: Invalid payment token."
+        );
+    }
+
+    function _verifyDeposit(
+          uint256 _badgeId 
+        , address _address
+        , uint256 _id
+        , address _from
+        , uint256 _amount
+    )
+        internal
+    {
+        /// @dev Confirm that the token is a valid payment token.
+        bytes32 paymentTokenKey = _verifyPayment(
+              _badgeId
+            , _address
+            , _id         
+        );
+
+        /// @dev Build the key that is used to track what an individual has funded.
+        bytes32 paymentKey = (
+            keccak256(
+                abi.encodePacked(
+                      paymentTokenKey
+                    , _from
+                )
+            )
+        );
+
+        /// @dev Increase the funding the user has associated for this badge.
+        badgePaymentKeyToFunded[paymentKey] += _amount;
+
+        emit PaymentTokenDeposited(
+              _badgeId
+            , _from
+            , _amount
+        );
+    }
+
+    function _verifyFunding(
+          bytes32 _paymentTokenKey
+        , uint256 _amount
+    )
+        internal
+    {
+        /// @dev Confirm that the user is trying to mint at least one.
+        require(
+              _amount > 0
+            , "BadgerScout::_verifyFunding: Amount must be greater than 0."
+        );
+
+        /// @dev Build the key that is used to track what an individual has funded.
+        bytes32 paymentKey = (
+            keccak256(
+                abi.encodePacked(
+                      _paymentTokenKey 
+                    , _msgSender()
+                )
+            )
+        );
+
+        /// @dev Confirm that the user has funded the badge or that the Badge is free.
+        require(
+              badgePaymentKeyToFunded[paymentKey] >= _amount
+            , "BadgerScout::_verifyFunding: User has not funded the badge."
+        );
+
+        /// @dev Lower the amount funded.
+        badgePaymentKeyToFunded[paymentKey] -= _amount;
+    }
+
+    /**
+     * @notice Confirms whether this token is in a state to be a transferred or not.
+     * @param _id The id of the token to check. 
+     * @param _from The address of the token owner.
+     * @param _to The address of the token recipient.
+     */
+    function _verifyTransfer(
+          uint256 _id
+        , address _from
+        , address _to
+    )
+        internal
+        view
+        virtual
+    {
+        Badge storage badge = badges[_id];
+
+        /// @dev Confirm that the transfer can proceed if the account is not token bound
+        ///      or the message sender is a leader of the badge.
+        require(
+              /// @dev Prevent a normal user from transferring an account bound token.
+              ///      While allowing them to transfer if the token is not account bound.
+              !badge.accountBound 
+              || (
+                  /// @dev If the target or source is the internal contract
+                  (
+                       _to == address(this) 
+                    || _from == address(this)
+                  )
+                  /// @dev If the sender is a leader of the badge.
+                  || (
+                        _msgSender() == owner() 
+                        || badge.addressIsDelegate[_msgSender()]
+                     )
+              )
+            , "BadgerOrganization::safeTransferFrom: Missing the proper transfer permissions."
+        );
     }
 
     /**
@@ -120,28 +358,10 @@ contract BadgerScout is
         _setOrganizationURI(_uri);
     }
 
-    function _setBaseURI(
-        string memory _uri
-    )
-        internal
-        virtual
-    {
-        baseURI = _uri;
-    }
-
-    function setBaseURI(
-        string memory _baseURI
-    )
-        external
-        virtual
-        onlyOwner
-    {
-        _setBaseURI(_baseURI);
-    }
-
     /**
      * @notice Create a badge in the Organization.
      * @param _id The id of the badge being created.
+     * @param _claimable Whether the badge is claimable or not.
      * @param _accountBound Whether or not the badge is account bound.
      * @param _signer The address of the signer.
      * @param _uri The URI for the badge.
@@ -150,6 +370,7 @@ contract BadgerScout is
      */
     function setBadge(
           uint256 _id
+        , bool _claimable
         , bool _accountBound
         , address _signer
         , string memory _uri
@@ -168,6 +389,7 @@ contract BadgerScout is
         Badge storage badge = badges[_id];
 
         /// @dev Set the state variables of the Badge.
+        badge.claimable = _claimable;
         badge.accountBound = _accountBound;
         badge.signer = _signer;
         badge.uri = _uri;
@@ -185,6 +407,26 @@ contract BadgerScout is
         emit BadgeUpdated(_id);
     }
 
+
+    /**
+     * @notice Allows the owner of the contract to set a Badge as claimable or not.
+     * @param _id The id of the badge being updated.
+     * @param _claimable Whether the badge is claimable or not.
+     */
+    function setClaimable(
+          uint256 _id
+        , bool _claimable
+    )
+        external
+        virtual
+        onlyLeader(_id)
+        onlyRealBadge(_id)
+    {
+        badges[_id].claimable = _claimable;
+
+        emit BadgeUpdated(_id);
+    }
+
     /**
      * @notice Control the account bound status of a badge.
      * @param _id The id of the badge being updated.
@@ -197,6 +439,7 @@ contract BadgerScout is
         external
         virtual
         onlyLeader(_id)
+        onlyRealBadge(_id)
     {
         badges[_id].accountBound = _accountBound;
 
@@ -218,6 +461,7 @@ contract BadgerScout is
         external
         virtual
         onlyLeader(_id)
+        onlyRealBadge(_id)
     {
         badges[_id].signer = _signer;
 
@@ -240,6 +484,7 @@ contract BadgerScout is
         external
         virtual
         onlyLeader(_id)
+        onlyRealBadge(_id)
     {
         require(
               bytes(_uri).length > 0
@@ -267,6 +512,7 @@ contract BadgerScout is
         external
         virtual
         onlyLeader(_id)
+        onlyRealBadge(_id)
     {
         badges[_id].paymentToken = _paymentToken;
 
@@ -291,6 +537,7 @@ contract BadgerScout is
         external
         virtual
         onlyLeader(_id)
+        onlyRealBadge(_id)
     {
         require(
               _delegates.length == _isDelegate.length
@@ -334,83 +581,22 @@ contract BadgerScout is
         );
 
         /// @dev Loop through the badges and update the delegates statuses.        
+        uint256 i;
         uint256 id;
         for (
-            uint256 i; 
+            i; 
             i < _ids.length; 
             i++
         ) {
             id = _ids[i];
 
-            /// @dev Make sure that the caller is a leader of the badge.
-            require(
-                  badges[id].addressIsDelegate[_msgSender()] || _msgSender() == owner()
-                , "BadgerScout::setDelegatesBatch: Caller is not a leader of the badge."
-            );
+            /// @dev Confirm that the token exists and that the caller is a leader.
+            _verifyFullBatch(id);
 
             badges[id].addressIsDelegate[_delegates[i]] = _isDelegate[i];
 
             emit BadgeUpdated(id);
         }
-    }
-
-    /**
-     * @notice Allow anyone to see the delegates of a Badge.
-     * @param _id The id of the badge.
-     * @param _delegate The address of the delegate.
-     * @return Boolean of whether or not the provided address is a delegate.
-     * 
-     * Requirements:
-     * - `_id` must corresponding to an existing Badge config.
-     */
-    function isDelegate(
-          uint256 _id
-        , address _delegate
-    )
-        external
-        view
-        virtual
-        returns (
-            bool
-        )
-    {
-        return badges[_id].addressIsDelegate[_delegate];
-    }
-
-    /**
-     * @notice Allows an Organization to define a signer that will enable the claiming of a badge.
-     * @param _to The address to mint the badge to.
-     * @param _id The id of the badge to mint.
-     * @param _amount The amount of the badge to mint.
-     * @param _data The data to pass to the receiver.
-     * @param _signature The signature of the signer.
-     * @return true if signer of the signature was the signer that gives permission to mint.
-     */
-    function _verify(
-        address _to,
-        uint256 _id,
-        uint256 _amount,
-        bytes memory _data,
-        bytes memory _signature
-    )
-        internal
-        view
-        returns (
-            bool
-        )
-    {
-        /// @dev Compile the message that would have been signed.
-        bytes32 message = keccak256(
-            abi.encodePacked(
-                  _to
-                , _id
-                , _amount
-                , _data
-            )
-        );
-
-        /// @dev Recover the signer from the signature.
-        return message.toEthSignedMessageHash().recover(_signature) == badges[_id].signer;
     }
 
     /**
