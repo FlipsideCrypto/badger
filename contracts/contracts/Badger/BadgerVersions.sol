@@ -13,17 +13,6 @@ import { BadgerOrganizationInterface } from "../BadgerOrganization/interfaces/Ba
 /// @dev Supported interfaces.
 import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 
-/// @dev Supported interfaces.
-
-/**
- * @title Badger Versions
- * @author nftchance
- * @notice This contract enables a business with an on-chain product to monetize their product
- *         at the protocol layer. Meaning a business can generate genuine revenue at the app,
- *         protocol, service, and token layer! 
- * @dev This version of Version Control is only scoped to ETH and 1155s as the broader implementation
- *      of subscription licenses has already been defined.
- */
 contract BadgerVersions is 
       Ownable
     , ERC1155Holder 

@@ -243,9 +243,7 @@ contract BadgerOrganization is
         virtual
         onlyRealBadge(_id)
     { 
-        Badge storage badge = badges[_id];
-
-        if(badge.signer != address(0)) {
+        if(getSigner(_id) != address(0)) {
             /// @dev Verify that the signer signed the message permitting a mint of `_id`
             ///      to `_msgSender()` for `_quantity` amount.
             _verifySignature(
@@ -259,15 +257,18 @@ contract BadgerOrganization is
             /// @dev If the badge does not have a signer, then it is a free mint
             ///      but need to make sure it has been marked as claimable.
             require(
-                  badge.claimable
+                  getClaimable(_id)
                 , "BadgerOragnization::claimMint: This badge is not claimable."
             );
         }
 
+        /// @dev Get the payment object.
+        PaymentToken storage paymentToken = badges[_id].paymentToken;
+
         /// @dev Confirm the user has already funded the correct amount.
         _verifyFunding(
-               badge.paymentToken.paymentKey
-             , badge.paymentToken.amount * _amount      /// @dev The cost of minting the lot.
+               paymentToken.paymentKey
+             , paymentToken.amount * _amount      /// @dev The cost of minting the lot.
         );
 
         /// @dev Mint the badge to the user.
@@ -383,7 +384,10 @@ contract BadgerOrganization is
              /// @dev Only allow the owner or leader to mint the badge.
             require (
                     _msgSender() == owner() 
-                || badge.addressIsDelegate[_msgSender()]
+                || isDelegate(
+                         _ids[i]
+                       , _msgSender()
+                  )
                 , "BadgerOrganization::_verifyFullBatch: Only leaders can call this."
             );
 

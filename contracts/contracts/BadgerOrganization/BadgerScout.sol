@@ -2,13 +2,15 @@
 
 pragma solidity ^0.8.16;
 
+/// @dev Core dependencies.
 import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol"; 
 import { ERC1155HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
-import { ERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol";
 import { ERC721HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
 
+/// @dev Helpers.
 import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
+/// @dev Supported interfaces.
 import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import { IERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol";
 import { IERC721ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable.sol";
@@ -20,32 +22,37 @@ contract BadgerScout is
 { 
     using ECDSA for bytes32;
 
+    /*//////////////////////////////////////////////////////////////
+                                SCHEMAS
+    //////////////////////////////////////////////////////////////*/
+
     /// @dev The structure of a Payment Token.
     struct PaymentToken { 
         bytes32 paymentKey;     /// @dev keccak256(abi.encodePacked(tokenAddress,tokenId));
-        uint256 amount;         /// @dev Amount per badge.
+        uint256 amount;         /// @dev Amount needed per badge to claim.
     }
 
-    /// @dev The processing information for this token.
+    /// @dev The processing information for this Badger.
     struct Badge { 
-        bool claimable;                 /// @dev If the badge is claimable.
-        bool accountBound;              /// @dev Whether or not owners of Badges can transfer them.
-        address signer;                 /// @dev The signer that blocks minting.
+        uint256 config;                 /// @dev Bitpacked claimable, accountBound and signer.
         string uri;                     /// @dev The URI for the badge.
         PaymentToken paymentToken;      /// @dev The payment token required to mint a badge.
-        mapping(address => bool) addressIsDelegate;
     }
 
     /// @dev The address used to denote the ETH token.
     address public constant DOLPHIN_ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-    /// @dev The URI for the Organization / contract. 
+    /*//////////////////////////////////////////////////////////////
+                           ORGANIZATION STATE
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev The URI for the Organization/contract. 
     string public organizationURI;
 
-    /// @dev The name of the contract. Optional for ERC-1155. (Good EIP authors :))
+    /// @dev The name of the contract.
     string public name;
 
-    /// @dev The symbol of the contract. Optional for ERC-1155.
+    /// @dev The symbol of the contract.
     string public symbol;
 
     /// @dev Mapping from token ID to badge
@@ -53,6 +60,13 @@ contract BadgerScout is
 
     /// @dev Tracking the badges that one has funded the cost for.
     mapping(bytes32 => uint256) badgePaymentKeyToFunded;
+
+    /// @dev Tracking the delegates of a Badge.
+    mapping(bytes32 => bool) public badgeDelegateKeyToIsDelegate;
+
+    /*//////////////////////////////////////////////////////////////
+                                EVENTS
+    //////////////////////////////////////////////////////////////*/
 
     /// @dev Event that announces when the Organization is updated.
     event OrganizationUpdated();
@@ -69,16 +83,30 @@ contract BadgerScout is
         , uint256 indexed amount
     );
 
+    /*//////////////////////////////////////////////////////////////
+                             MODIFIERS
+    //////////////////////////////////////////////////////////////*/
+
     /**
      * @notice Make sure that only owner or the leader of a badge passes.
      * @param _id The id of the badge being accessed.
+     * 
+     * Requirements:
+     * - The caller must be the owner or the leader of the badge.
      */
     modifier onlyLeader(
         uint256 _id
     ) {
         require (
                  _msgSender() == owner() 
-              || badges[_id].addressIsDelegate[_msgSender()]
+              || badgeDelegateKeyToIsDelegate[
+                    keccak256(
+                        abi.encodePacked(
+                              _id
+                            , _msgSender()
+                        )
+                    )
+                ]
             , "BadgerScout::onlyLeader: Only leaders can call this."
         );
         _;
@@ -86,6 +114,10 @@ contract BadgerScout is
 
     /**
      * @notice Make sure that actions can only be performed on badges that exist.
+     * @param _id The id of the badge being accessed.
+     * 
+     * Requirements:
+     * - The badge must exist.
      */    
     modifier onlyRealBadge(
         uint256 _id
@@ -97,15 +129,355 @@ contract BadgerScout is
         _;
     }
 
+    /**
+     * @notice Make sure that only badges with a signer or that are claimable pass.
+     * @param _id The id of the badge being accessed.
+     * 
+     * Requirements:
+     * - The badge must have a signer or be claimable.
+     */
     modifier onlyClaimableBadge(
         uint256 _id
     ) {
         require (
-                 badges[_id].signer != address(0)
-              || badges[_id].claimable
+                 getSigner(_id) != address(0)
+              || getClaimable(_id)
             , "BadgerScout::onlyClaimableBadge: Can only call this for claimable badges."
         );
         _;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                                SETTERS
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Allows the owner of the contract to update the Organization URI.
+     * @param _uri The new URI for the Organization.
+     */
+    function _setOrganizationURI(
+        string memory _uri
+    )
+        internal
+        virtual
+    {
+        organizationURI = _uri;
+
+        emit OrganizationUpdated();
+    }
+
+    /**
+     * See {BadgerScout._setOrganization}
+     */
+    function setOrganizationURI(
+        string memory _uri
+    )
+        public
+        virtual
+        onlyOwner
+    {
+        _setOrganizationURI(_uri);
+    }
+
+    /**
+     * @notice Create a badge in the Organization.
+     * @param _id The id of the badge being created.
+     * @param _claimable Whether the badge is claimable or not.
+     * @param _accountBound Whether or not the badge is account bound.
+     * @param _signer The address of the signer.
+     * @param _uri The URI for the badge.
+     * @param _paymentToken The payment token for the badge.
+     * @param _delegates The addresses of the delegates.
+     * 
+     * Requirements:
+     * - The URI must not be blank.
+     */
+    function setBadge(
+          uint256 _id
+        , bool _claimable
+        , bool _accountBound
+        , address _signer
+        , string memory _uri
+        , PaymentToken memory _paymentToken
+        , address[] memory _delegates 
+    )
+        public
+        virtual
+        onlyLeader(_id)
+    {
+        require(
+              bytes(_uri).length > 0
+            , "BadgerScout::setBadge: URI must be set."
+        );
+
+        Badge storage badge = badges[_id];
+
+        /// @dev Set the config of the Badge.
+        badge.config = 0;
+        badge.config |= uint256(_claimable ? 1 : 0) << 0;
+        badge.config |= uint256(_accountBound ? 1 : 0) << 1;
+        badge.config |= uint256(uint160(_signer)) << 2;
+        
+        badge.uri = _uri;
+        badge.paymentToken = _paymentToken;
+
+        /// @dev Update the state of all the delegates.
+        for (
+            uint256 i; 
+            i < _delegates.length; 
+            i++
+        ) {
+            badgeDelegateKeyToIsDelegate[keccak256(
+                abi.encodePacked(
+                      _id
+                    , _delegates[i]
+                )
+            )] = true;
+        }
+
+        emit BadgeUpdated(_id);
+    }
+
+    /**
+     * @notice Allows the owner of the contract to set a Badge as claimable or not.
+     * @param _id The id of the badge being updated.
+     * @param _claimable Whether the badge is claimable or not.
+     */
+    function setClaimable(
+          uint256 _id
+        , bool _claimable
+    )
+        external
+        virtual
+        onlyLeader(_id)
+        onlyRealBadge(_id)
+    {
+        badges[_id].config |= uint256(_claimable ? 1 : 0) << 0;
+
+        emit BadgeUpdated(_id);
+    }
+
+    /**
+     * @notice Control the account bound status of a badge.
+     * @param _id The id of the badge being updated.
+     * @param _accountBound The new account bound status.
+     */
+    function setAccountBound(
+          uint256 _id
+        , bool _accountBound
+    )
+        external
+        virtual
+        onlyLeader(_id)
+        onlyRealBadge(_id)
+    {
+        badges[_id].config |= uint256(_accountBound ? 1 : 0) << 1;
+
+        emit BadgeUpdated(_id);
+    }
+
+    /**
+     * @notice Set the signer for the Badge.
+     * @param _signer The address of the signer.
+     * 
+     * Requirements:
+     * - `_msgSender()` must be a leader of the Badge.
+     * - `_id` must corresponding to an existing Badge config.
+     */
+    function setSigner(
+          uint256 _id
+        , address _signer
+    )
+        external
+        virtual
+        onlyLeader(_id)
+        onlyRealBadge(_id)
+    {
+        badges[_id].config |= uint256(uint160(_signer)) << 2;
+
+        emit BadgeUpdated(_id);
+    }
+
+    /**
+     * @notice Set the uri for a Badge.
+     * @param _uri The address of the signer.
+     * 
+     * Requirements:
+     * - `_msgSender()` must be a leader of the Badge.
+     * - `_id` must corresponding to an existing Badge config.
+     * - `_uri` must not be null.
+     */
+    function setBadgeURI(
+          uint256 _id
+        , string memory _uri
+    )
+        external
+        virtual
+        onlyLeader(_id)
+        onlyRealBadge(_id)
+    {
+        require(
+              bytes(_uri).length > 0
+            , "BadgerScout::setBadgeURI: URI must be set."
+        );
+
+        badges[_id].uri = _uri;
+
+        emit BadgeUpdated(_id);
+    }
+
+    /**
+     * @notice Set the payment for a specific badge id.
+     * @param _id The id of the badge being accessed.
+     * @param _paymentToken The payment token for the badge.
+     * 
+     * Requirements:
+     * - `_msgSender()` must be a leader of the Badge.
+     * - `_id` must corresponding to an existing Badge config.
+     */
+    function setPaymentToken(
+          uint256 _id
+        , PaymentToken memory _paymentToken
+    )
+        external
+        virtual
+        onlyLeader(_id)
+        onlyRealBadge(_id)
+    {
+        badges[_id].paymentToken = _paymentToken;
+
+        emit BadgeUpdated(_id);
+    }
+
+    /**
+     * @notice Allow the owner of the organization to control the leaders of the Badge.
+     * @param _id The id of the badge.
+     * @param _delegates The address of the delegates that we are updating the status of.
+     * @param _isDelegate The status of the delegates being updated.
+     * 
+     * Requirements:
+     * - Only the owner of the contract can call this function.
+     * - `_id` must corresponding to an existing Badge config.
+     */
+    function setDelegates(
+          uint256 _id
+        , address[] calldata _delegates
+        , bool[] calldata _isDelegate
+    )
+        external
+        virtual
+        onlyLeader(_id)
+        onlyRealBadge(_id)
+    {
+        require(
+              _delegates.length == _isDelegate.length
+            , "BadgerScout::setDelegates: _delegates and _isDelegate arrays must be the same length."
+        );
+
+        /// @dev Loop through the delegates and update their status.        
+        for (
+            uint256 i; 
+            i < _delegates.length; 
+            i++
+        ) {
+            badgeDelegateKeyToIsDelegate[keccak256(
+                abi.encodePacked(
+                      _id
+                    , _delegates[i]
+                )
+            )] = _isDelegate[i];
+        }
+
+        emit BadgeUpdated(_id);
+    }
+
+    /**
+     * @notice Allow the owner of the organization to control the delegates of multiple badges in one transaction.
+     * @dev This functionality is not exposed through the Dashboard UI however you can call this function directly.
+     * @param _ids The ids of the badges.
+     * @param _delegates The address of the delegates that we are updating the status of.
+     * @param _isDelegate The status of the delegates being updated.
+     * 
+     * Requirements:
+     * - Only the owner of the contract can call this function.
+     */
+    function setDelegatesBatch(
+          uint256[] calldata _ids
+        , address[] calldata _delegates
+        , bool[] calldata _isDelegate
+    )
+        external
+        virtual
+    {
+        require(
+                   _ids.length == _delegates.length 
+                && _delegates.length == _isDelegate.length
+            , "BadgerScout::setDelegatesBatch: _ids, _delegates, and _isDelegate must be the same length."
+        );
+
+        /// @dev Loop through the badges and update the delegates statuses.        
+        uint256 i;
+        uint256 id;
+        for (
+            i; 
+            i < _ids.length; 
+            i++
+        ) {
+            id = _ids[i];
+
+            /// @dev Confirm that the token exists and that the caller is a leader.
+            _verifyFullBatch(id);
+
+            badgeDelegateKeyToIsDelegate[keccak256(
+                abi.encodePacked(
+                      id
+                    , _delegates[i]
+                )
+            )] = _isDelegate[i];
+
+            emit BadgeUpdated(id);
+        }
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                                GETTERS
+    //////////////////////////////////////////////////////////////*/
+
+    function getClaimable(
+        uint256 _id
+    )
+        public
+        view
+        virtual
+        returns (bool)
+    {
+        return (badges[_id].config & (1 << 0)) != 0;
+    }
+
+    function getAccountBound(
+        uint256 _id
+    )  
+        public
+        view
+        virtual
+        returns (
+            bool
+        )
+    { 
+        return (badges[_id].config & (1 << 1)) != 0;
+    }
+
+    function getSigner(
+        uint256 _id
+    )
+        public
+        view
+        virtual
+        returns (
+            address
+        )
+    {
+        return address(uint160(badges[_id].config >> 2));
     }
 
     /**
@@ -121,15 +493,26 @@ contract BadgerScout is
           uint256 _id
         , address _delegate
     )
-        external
+        public
         view
         virtual
         returns (
             bool
         )
     {
-        return badges[_id].addressIsDelegate[_delegate];
+        return badgeDelegateKeyToIsDelegate[
+            keccak256(
+                abi.encodePacked(
+                      _id
+                    , _delegate
+                )
+            )
+        ];
     }
+
+    /*//////////////////////////////////////////////////////////////
+                        INTERNAL ORGANIZATION LOGIC
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Confirms that a message sender is calling a Badge that exists 
@@ -159,7 +542,10 @@ contract BadgerScout is
         /// @dev Only allow the owner or leader to mint the badge.
         require (
                  _msgSender() == owner() 
-              || badge.addressIsDelegate[_msgSender()]
+              || isDelegate(
+                       _id
+                     , _msgSender()
+                 )
             , "BadgerOrganization::_verifyFullBatch: Only leaders can call this."
         );
     }        
@@ -188,8 +574,8 @@ contract BadgerScout is
         );
 
         require (
-                 badge.signer != address(0)
-              || badge.claimable
+                 getSigner(_id) != address(0)
+              || getClaimable(_id)
             , "BadgerScout::onlyClaimableBadge: Can only call this for claimable badges."
         );
     }
@@ -223,7 +609,7 @@ contract BadgerScout is
         );
 
         require(
-              message.toEthSignedMessageHash().recover(_signature) == badges[_id].signer
+              message.toEthSignedMessageHash().recover(_signature) == getSigner(_id)
             , "BadgerScout::_verifySignature: Invalid signature."
         );
     }
@@ -345,7 +731,7 @@ contract BadgerScout is
         require(
               /// @dev Prevent a normal user from transferring an account bound token.
               ///      While allowing them to transfer if the token is not account bound.
-              !badge.accountBound 
+              !getAccountBound(_id)
               || (
                   /// @dev If the target or source is the internal contract
                   (
@@ -354,282 +740,20 @@ contract BadgerScout is
                   )
                   /// @dev If the sender is a leader of the badge.
                   || (
-                        _msgSender() == owner() 
-                        || badge.addressIsDelegate[_msgSender()]
+                           _msgSender() == owner() 
+                        || isDelegate(
+                                  _id
+                                , _msgSender()
+                           )
                      )
               )
             , "BadgerOrganization::safeTransferFrom: Missing the proper transfer permissions."
         );
     }
 
-    /**
-     * @notice Allows the owner of the contract to update the Organization URI.
-     * @param _uri The new URI for the Organization.
-     */
-    function _setOrganizationURI(
-        string memory _uri
-    )
-        internal
-        virtual
-    {
-        organizationURI = _uri;
-
-        emit OrganizationUpdated();
-    }
-
-    /**
-     * See {BadgerScout._setOrganization}
-     */
-    function setOrganizationURI(
-        string memory _uri
-    )
-        external
-        virtual
-        onlyOwner
-    {
-        _setOrganizationURI(_uri);
-    }
-
-    /**
-     * @notice Create a badge in the Organization.
-     * @param _id The id of the badge being created.
-     * @param _claimable Whether the badge is claimable or not.
-     * @param _accountBound Whether or not the badge is account bound.
-     * @param _signer The address of the signer.
-     * @param _uri The URI for the badge.
-     * @param _paymentToken The payment token for the badge.
-     * @param _delegates The addresses of the delegates.
-     */
-    function setBadge(
-          uint256 _id
-        , bool _claimable
-        , bool _accountBound
-        , address _signer
-        , string memory _uri
-        , PaymentToken memory _paymentToken
-        , address[] memory _delegates 
-    )
-        external
-        virtual
-        onlyLeader(_id)
-    {
-        require(
-              bytes(_uri).length > 0
-            , "BadgerScout::setBadge: URI must be set."
-        );
-
-        Badge storage badge = badges[_id];
-
-        /// @dev Set the state variables of the Badge.
-        badge.claimable = _claimable;
-        badge.accountBound = _accountBound;
-        badge.signer = _signer;
-        badge.uri = _uri;
-        badge.paymentToken = _paymentToken;
-
-        /// @dev Update the state of all the delegates.
-        for (
-            uint256 i; 
-            i < _delegates.length; 
-            i++
-        ) {
-            badge.addressIsDelegate[_delegates[i]] = true;
-        }
-
-        emit BadgeUpdated(_id);
-    }
-
-
-    /**
-     * @notice Allows the owner of the contract to set a Badge as claimable or not.
-     * @param _id The id of the badge being updated.
-     * @param _claimable Whether the badge is claimable or not.
-     */
-    function setClaimable(
-          uint256 _id
-        , bool _claimable
-    )
-        external
-        virtual
-        onlyLeader(_id)
-        onlyRealBadge(_id)
-    {
-        badges[_id].claimable = _claimable;
-
-        emit BadgeUpdated(_id);
-    }
-
-    /**
-     * @notice Control the account bound status of a badge.
-     * @param _id The id of the badge being updated.
-     * @param _accountBound The new account bound status.
-     */
-    function setAccountBound(
-          uint256 _id
-        , bool _accountBound
-    )
-        external
-        virtual
-        onlyLeader(_id)
-        onlyRealBadge(_id)
-    {
-        badges[_id].accountBound = _accountBound;
-
-        emit BadgeUpdated(_id);
-    }
-
-    /**
-     * @notice Set the signer for the Badge.
-     * @param _signer The address of the signer.
-     * 
-     * Requirements:
-     * - `_msgSender()` must be a leader of the Badge.
-     * - `_id` must corresponding to an existing Badge config.
-     */
-    function setSigner(
-          uint256 _id
-        , address _signer
-    )
-        external
-        virtual
-        onlyLeader(_id)
-        onlyRealBadge(_id)
-    {
-        badges[_id].signer = _signer;
-
-        emit BadgeUpdated(_id);
-    }
-
-    /**
-     * @notice Set the uri for a Badge.
-     * @param _uri The address of the signer.
-     * 
-     * Requirements:
-     * - `_msgSender()` must be a leader of the Badge.
-     * - `_id` must corresponding to an existing Badge config.
-     * - `_uri` must not be null.
-     */
-    function setBadgeURI(
-          uint256 _id
-        , string memory _uri
-    )
-        external
-        virtual
-        onlyLeader(_id)
-        onlyRealBadge(_id)
-    {
-        require(
-              bytes(_uri).length > 0
-            , "BadgerScout::setBadgeURI: URI must be set."
-        );
-
-        badges[_id].uri = _uri;
-
-        emit BadgeUpdated(_id);
-    }
-
-    /**
-     * @notice Set the payment for a specific badge id.
-     * @param _id The id of the badge being accessed.
-     * @param _paymentToken The payment token for the badge.
-     * 
-     * Requirements:
-     * - `_msgSender()` must be a leader of the Badge.
-     * - `_id` must corresponding to an existing Badge config.
-     */
-    function setPaymentToken(
-          uint256 _id
-        , PaymentToken memory _paymentToken
-    )
-        external
-        virtual
-        onlyLeader(_id)
-        onlyRealBadge(_id)
-    {
-        badges[_id].paymentToken = _paymentToken;
-
-        emit BadgeUpdated(_id);
-    }
-
-    /**
-     * @notice Allow the owner of the organization to control the leaders of the Badge.
-     * @param _id The id of the badge.
-     * @param _delegates The address of the delegates that we are updating the status of.
-     * @param _isDelegate The status of the delegates being updated.
-     * 
-     * Requirements:
-     * - Only the owner of the contract can call this function.
-     * - `_id` must corresponding to an existing Badge config.
-     */
-    function setDelegates(
-          uint256 _id
-        , address[] calldata _delegates
-        , bool[] calldata _isDelegate
-    )
-        external
-        virtual
-        onlyLeader(_id)
-        onlyRealBadge(_id)
-    {
-        require(
-              _delegates.length == _isDelegate.length
-            , "BadgerScout::setDelegates: _delegates and _isDelegate arrays must be the same length."
-        );
-
-        /// @dev Loop through the delegates and update their status.        
-        for (
-            uint256 i; 
-            i < _delegates.length; 
-            i++
-        ) {
-            badges[_id].addressIsDelegate[_delegates[i]] = _isDelegate[i];
-        }
-
-        emit BadgeUpdated(_id);
-    }
-
-    /**
-     * @notice Allow the owner of the organization to control the delegates of multiple badges in one transaction.
-     * @dev This functionality is not exposed through the Dashboard UI however you can call this function directly.
-     * @param _ids The ids of the badges.
-     * @param _delegates The address of the delegates that we are updating the status of.
-     * @param _isDelegate The status of the delegates being updated.
-     * 
-     * Requirements:
-     * - Only the owner of the contract can call this function.
-     */
-    function setDelegatesBatch(
-          uint256[] calldata _ids
-        , address[] calldata _delegates
-        , bool[] calldata _isDelegate
-    )
-        external
-        virtual
-    {
-        require(
-                   _ids.length == _delegates.length 
-                && _delegates.length == _isDelegate.length
-            , "BadgerScout::setDelegatesBatch: _ids, _delegates, and _isDelegate must be the same length."
-        );
-
-        /// @dev Loop through the badges and update the delegates statuses.        
-        uint256 i;
-        uint256 id;
-        for (
-            i; 
-            i < _ids.length; 
-            i++
-        ) {
-            id = _ids[i];
-
-            /// @dev Confirm that the token exists and that the caller is a leader.
-            _verifyFullBatch(id);
-
-            badges[id].addressIsDelegate[_delegates[i]] = _isDelegate[i];
-
-            emit BadgeUpdated(id);
-        }
-    }
+    /*//////////////////////////////////////////////////////////////
+                        EXTERNAL ORGANIZATION CONTROL
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Allows the Owner to execute an Organization level transaction.
