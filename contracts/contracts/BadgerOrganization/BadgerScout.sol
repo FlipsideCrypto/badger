@@ -22,9 +22,8 @@ contract BadgerScout is
 
     /// @dev The structure of a Payment Token.
     struct PaymentToken { 
-        uint8 tokenType;        /// @dev 0 = ETH, 1 = ERC20, 2 = ERC721, 3 = ERC1155
-        uint256 amount;         /// @dev Amount per badge.
         bytes32 paymentKey;     /// @dev keccak256(abi.encodePacked(tokenAddress,tokenId));
+        uint256 amount;         /// @dev Amount per badge.
     }
 
     /// @dev The processing information for this token.
@@ -37,19 +36,20 @@ contract BadgerScout is
         mapping(address => bool) addressIsDelegate;
     }
 
+    /// @dev The address used to denote the ETH token.
     address public constant DOLPHIN_ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
     /// @dev The URI for the Organization / contract. 
     string public organizationURI;
-
-    /// @dev Mapping from token ID to badge
-    mapping(uint256 => Badge) public badges;
 
     /// @dev The name of the contract. Optional for ERC-1155. (Good EIP authors :))
     string public name;
 
     /// @dev The symbol of the contract. Optional for ERC-1155.
     string public symbol;
+
+    /// @dev Mapping from token ID to badge
+    mapping(uint256 => Badge) public badges;
 
     /// @dev Tracking the badges that one has funded the cost for.
     mapping(bytes32 => uint256) badgePaymentKeyToFunded;
@@ -66,7 +66,7 @@ contract BadgerScout is
     event PaymentTokenDeposited(
           uint256 indexed badgeId
         , address indexed payer
-        , uint256 amount
+        , uint256 indexed amount
     );
 
     /**
@@ -163,6 +163,28 @@ contract BadgerScout is
             , "BadgerOrganization::_verifyFullBatch: Only leaders can call this."
         );
     }        
+
+    function _verifyBadge(
+        uint256 _id
+    )
+        internal
+        view
+        virtual
+    { 
+        /// @dev Get the badge.
+        Badge storage badge = badges[_id];
+
+        require (
+              bytes(badge.uri).length > 0
+            , "BadgerScout::onlyRealBadge: Can only call this for setup badges."
+        );
+
+        require (
+                 badge.signer != address(0)
+              || badge.claimable
+            , "BadgerScout::onlyClaimableBadge: Can only call this for claimable badges."
+        );
+    }
 
     /**
      * @notice Allows an Organization to define a signer that will enable the claiming of a badge.

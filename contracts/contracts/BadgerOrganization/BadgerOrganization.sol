@@ -488,9 +488,6 @@ contract BadgerOrganization is
 
     /**
      * See {BadgerOrganizationInterface.depositETH}
-     * 
-     * Requirements:
-     * - The Badge must exist.
      */
     function depositETH(
         uint256 _id
@@ -498,8 +495,11 @@ contract BadgerOrganization is
         override 
         external
         payable
-        onlyRealBadge(_id)
     {
+        /// @dev Verify that the badge exists and is ready to mint.
+        _verifyBadge(_id);
+
+        /// @dev Verify that the badge is ETH and deposit them.
         _verifyDeposit(
               _id
             , DOLPHIN_ETH
@@ -520,6 +520,9 @@ contract BadgerOrganization is
         override
         external
     {
+        /// @dev Verify that the badge exists and is ready to mint.
+        _verifyBadge(_id);
+
         /// @dev Transfer the ERC20 into this contract.
         IERC20Upgradeable token = IERC20Upgradeable(_token);
 
@@ -530,7 +533,7 @@ contract BadgerOrganization is
             , _amount
         );
 
-        /// @dev Verify that the tokens being deposited are the token expected.
+        /// @dev Verify that the tokens being sent are as expected and deposit them.
         _verifyDeposit(
               _id
             , _token
@@ -541,7 +544,14 @@ contract BadgerOrganization is
     }
 
     /*
-     * See {IERC1155ReceiverUpgradeable.onERC1155Received}
+     * @notice This allows an individual to deposit an ERC1155 token into the contract and 
+     *      and fund the minting of a badge.
+     * @dev If not data provided see {IERC1155ReceiverUpgradeable.onERC1155Received}
+     * @param _operator The address which called `safeTransferFrom` function.
+     * @param _from The address which previously owned the token.
+     * @param _id The ID of the token being transferred.
+     * @param _amount The amount of tokens being transferred.
+     * @param _data Additional data that contains the badge id to fund.
      */
     function onERC1155Received(
           address
@@ -568,6 +578,10 @@ contract BadgerOrganization is
             , (uint256)
         );
 
+        /// @dev Verify that the badgeId is the same as the id.
+        _verifyBadge(badgeId);
+
+        /// @dev Verify that the tokens being sent are as expected and deposit them.
         _verifyDeposit(
               badgeId
             , _msgSender()
@@ -598,7 +612,9 @@ contract BadgerOrganization is
     }
 
     /**
-     * See {IERC721ReceiverUpgradeable.onERC721Received}
+     * @notice This allows an individual to deposit a ERC721 token into the contract and 
+     *      and fund the minting of a badge.
+     * If not data provided see {IERC721ReceiverUpgradeable.onERC721Received}
      */
     function onERC721Received(
           address 
@@ -624,6 +640,10 @@ contract BadgerOrganization is
             , (uint256)
         );
 
+        /// @dev Verify that the Badge exists and is ready to mint.
+        _verifyBadge(badgeId);
+
+        /// @dev Verify that the tokens being sent are as expected and deposit them.
         _verifyDeposit(
               badgeId 
             , _msgSender()
