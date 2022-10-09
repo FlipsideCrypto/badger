@@ -164,12 +164,20 @@ contract BadgerScout is
         );
     }        
 
+    /**
+     * @notice Confirms that a message sender is calling a Badge that exists
+     *         and is ready to be minted.
+     * @param _id The id of the badge to check.
+     * 
+     * Requirements:
+     * - The Badger must exist.
+     * - The Badge must have a signer set or be marked as claimable.
+     */
     function _verifyBadge(
         uint256 _id
     )
         internal
         view
-        virtual
     { 
         /// @dev Get the badge.
         Badge storage badge = badges[_id];
