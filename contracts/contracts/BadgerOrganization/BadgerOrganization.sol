@@ -295,7 +295,6 @@ contract BadgerOrganization is
         external
         virtual
         onlyLeader(_id)
-        onlyRealBadge(_id)
     {
         /// @dev Revoke the badge from the user.
         _burn(
@@ -322,7 +321,6 @@ contract BadgerOrganization is
         external
         virtual
         onlyLeader(_id)
-        onlyRealBadge(_id)
     {
         require(
             _froms.length == _amounts.length,
@@ -357,6 +355,7 @@ contract BadgerOrganization is
      *
      * Requirements:
      * - The arrays must be the same length.
+     * - The caller must be a leader of the Organization.
      */
     function revokeFullBatch(
           address[] memory _froms
@@ -373,21 +372,25 @@ contract BadgerOrganization is
         );
 
         uint256 i;
-        uint256 id;
+        Badge storage badge;
         for(
             i;
             i < _froms.length;
             i++
         ) {
-            id = _ids[i];
+            badge = badges[_ids[i]];
 
-            /// @dev Confirm that the token exists and that the caller is a leader.
-            _verifyFullBatch(id);
+             /// @dev Only allow the owner or leader to mint the badge.
+            require (
+                    _msgSender() == owner() 
+                || badge.addressIsDelegate[_msgSender()]
+                , "BadgerOrganization::_verifyFullBatch: Only leaders can call this."
+            );
 
             /// @dev Revoke the badge from the user.
             _burn(
                   _froms[i]
-                , id
+                , _ids[i]
                 , _amounts[i]
             );
         }
@@ -395,9 +398,6 @@ contract BadgerOrganization is
 
     /**
      * See {BadgerOrganizationInterface.forfeit}
-     *
-     * Requirements:
-     * - The Badge must exist.
      */
     function forfeit(
           uint256 _id
@@ -406,7 +406,6 @@ contract BadgerOrganization is
         override
         external
         virtual
-        onlyRealBadge(_id)
     {
         /// @dev Revoke the badge from the user.
         _burn(
