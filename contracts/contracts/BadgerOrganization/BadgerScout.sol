@@ -3,6 +3,7 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
+import { BadgerScoutInterface } from "./interfaces/BadgerScoutInterface.sol";
 import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol"; 
 import { ERC1155HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
 import { ERC721HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
@@ -16,28 +17,12 @@ import { IERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable
 import { IERC721ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable.sol";
 
 contract BadgerScout is 
-      OwnableUpgradeable
+      BadgerScoutInterface
+    , OwnableUpgradeable
     , ERC1155HolderUpgradeable 
     , ERC721HolderUpgradeable
 { 
     using ECDSA for bytes32;
-
-    /*//////////////////////////////////////////////////////////////
-                                SCHEMAS
-    //////////////////////////////////////////////////////////////*/
-
-    /// @dev The structure of a Payment Token.
-    struct PaymentToken { 
-        bytes32 paymentKey;     /// @dev keccak256(abi.encodePacked(tokenAddress,tokenId));
-        uint256 amount;         /// @dev Amount needed per badge to claim.
-    }
-
-    /// @dev The processing information for this Badger.
-    struct Badge { 
-        uint256 config;                 /// @dev Bitpacked claimable, accountBound and signer.
-        string uri;                     /// @dev The URI for the badge.
-        PaymentToken paymentToken;      /// @dev The payment token required to mint a badge.
-    }
 
     /// @dev The address used to denote the ETH token.
     address public constant DOLPHIN_ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
@@ -152,7 +137,7 @@ contract BadgerScout is
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * See {BadgerScout._setOrganization}
+     * See {BadgerScoutInterface.setOrganizationURI}
      * 
      * Requirements:
      * - The caller must be the owner.
@@ -160,6 +145,7 @@ contract BadgerScout is
     function setOrganizationURI(
         string memory _uri
     )
+        override
         public
         virtual
         onlyOwner
@@ -168,14 +154,7 @@ contract BadgerScout is
     }
 
     /**
-     * @notice Create a badge in the Organization.
-     * @param _id The id of the badge being created.
-     * @param _claimable Whether the badge is claimable or not.
-     * @param _accountBound Whether or not the badge is account bound.
-     * @param _signer The address of the signer.
-     * @param _uri The URI for the badge.
-     * @param _paymentToken The payment token for the badge.
-     * @param _delegates The addresses of the delegates.
+     * See {BadgerScoutInterface.setBadge}
      * 
      * Requirements:
      * - The caller must be a leader of the Organization.
@@ -190,6 +169,7 @@ contract BadgerScout is
         , PaymentToken memory _paymentToken
         , address[] memory _delegates 
     )
+        override
         public
         virtual
         onlyLeader(_id)
@@ -228,9 +208,7 @@ contract BadgerScout is
     }
 
     /**
-     * @notice Allows the owner of the contract to set a Badge as claimable or not.
-     * @param _id The id of the badge being updated.
-     * @param _claimable Whether the badge is claimable or not.
+     * See {BadgerScoutInterface.setClaimable}
      * 
      * Requirements:
      * - The caller must be a leader of the Organization.
@@ -240,6 +218,7 @@ contract BadgerScout is
           uint256 _id
         , bool _claimable
     )
+        override
         public
         virtual
         onlyLeader(_id)
@@ -251,9 +230,7 @@ contract BadgerScout is
     }
 
     /**
-     * @notice Control the account bound status of a badge.
-     * @param _id The id of the badge being updated.
-     * @param _accountBound The new account bound status.
+     * See {BadgerScoutInterface.setAccountBound}
      * 
      * Requirements:
      * - The caller must be a leader of the Organization.
@@ -263,6 +240,7 @@ contract BadgerScout is
           uint256 _id
         , bool _accountBound
     )
+        override
         public
         virtual
         onlyLeader(_id)
@@ -274,8 +252,7 @@ contract BadgerScout is
     }
 
     /**
-     * @notice Set the signer for the Badge.
-     * @param _signer The address of the signer.
+     * See {BadgerScoutInterface.setSigner}
      * 
      * Requirements:
      * - The caller must be a leader of the Organization.
@@ -285,6 +262,7 @@ contract BadgerScout is
           uint256 _id
         , address _signer
     )
+        override
         public
         virtual
         onlyLeader(_id)
@@ -296,8 +274,7 @@ contract BadgerScout is
     }
 
     /**
-     * @notice Set the uri for a Badge.
-     * @param _uri The address of the signer.
+     * See {BadgerScoutInterface.setBadgeURI}
      * 
      * Requirements:
      * - The caller must be a leader of the Organization.
@@ -308,6 +285,7 @@ contract BadgerScout is
           uint256 _id
         , string memory _uri
     )
+        override
         public
         virtual
         onlyLeader(_id)
@@ -324,9 +302,7 @@ contract BadgerScout is
     }
 
     /**
-     * @notice Set the payment for a specific badge id.
-     * @param _id The id of the badge being accessed.
-     * @param _paymentToken The payment token for the badge.
+     * See {BadgerScoutInterface.setPaymentToken}
      * 
      * Requirements:
      * - The caller must be a leader of the Organization.
@@ -347,10 +323,7 @@ contract BadgerScout is
     }
 
     /**
-     * @notice Allow the owner of the organization to control the leaders of the Badge.
-     * @param _id The id of the badge.
-     * @param _delegates The address of the delegates that we are updating the status of.
-     * @param _isDelegate The status of the delegates being updated.
+     * See {BadgerScoutInterface.setDelegate}
      * 
      * Requirements:
      * - The caller must be a leader of the Organization.
@@ -362,6 +335,7 @@ contract BadgerScout is
         , address[] calldata _delegates
         , bool[] calldata _isDelegate
     )
+        override
         public
         virtual
         onlyLeader(_id)
@@ -390,11 +364,7 @@ contract BadgerScout is
     }
 
     /**
-     * @notice Allow the owner of the organization to control the delegates of multiple badges in one transaction.
-     * @dev This functionality is not exposed through the Dashboard UI however you can call this function directly.
-     * @param _ids The ids of the badges.
-     * @param _delegates The address of the delegates that we are updating the status of.
-     * @param _isDelegate The status of the delegates being updated.
+     * See {BadgerScoutInterface.setDelegatesBatch}
      * 
      * Requirements:
      * - The arrays must be the same length.
@@ -404,6 +374,7 @@ contract BadgerScout is
         , address[] calldata _delegates
         , bool[] calldata _isDelegate
     )
+        override
         public
         virtual
     {
@@ -442,13 +413,12 @@ contract BadgerScout is
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * @notice Get the config for a specific badge id.
-     * @param _id The id of the badge being accessed.
-     * @return True if the badge is claimable, false otherwise. 
+     * See {BadgerScoutInterface.getClaimable}
      */
     function getClaimable(
         uint256 _id
     )
+        override
         public
         view
         virtual
@@ -460,13 +430,12 @@ contract BadgerScout is
     }
 
     /**
-     * @notice Get the config for a specific badge id.
-     * @param _id The id of the badge being accessed.
-     * @return True if the badge is account bound, false otherwise. 
+     * See {BadgerScoutInterface.getAccountBound}
      */
     function getAccountBound(
         uint256 _id
     )  
+        override
         public
         view
         virtual
@@ -478,13 +447,12 @@ contract BadgerScout is
     }
 
     /**
-     * @notice Get the signer for a specific badge id.
-     * @param _id The id of the badge being accessed.
-     * @return The address of the signer. 
+     * See {BadgerScoutInterface.getSigner}
      */
     function getSigner(
         uint256 _id
     )
+        override
         public
         view
         virtual
@@ -496,13 +464,7 @@ contract BadgerScout is
     }
 
     /**
-     * @notice Allow anyone to see the delegates of a Badge.
-     * @param _id The id of the badge.
-     * @param _delegate The address of the delegate.
-     * @return True if `_delegate` is a delegate, false otherwise.
-     * 
-     * Requirements:
-     * - `_id` must corresponding to an existing Badge config.
+     * See {BadgerScoutInterface.isDelegate}
      */
     function isDelegate(
           uint256 _id
