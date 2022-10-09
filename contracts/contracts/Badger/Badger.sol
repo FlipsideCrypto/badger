@@ -35,12 +35,20 @@ contract Badger is
 
     /**
      * See {BadgerInterface.createOrganization}.
-     * 
+     *
      * Requirements:
-     * - The license requirements must be met.
+     * - All requirements have been forgone in this function to enable the functionality 
+     *   of an individual extending the `BadgerOrganization` or `BadgerScout` contracts
+     *   while still maintaing the ability to have the official Badger front-end detect
+     *   the deployment and allow the user to interact with the organization without
+     *   needing to spin up their own front-end.
+     * - This means that if someone does not have all the functionality they need or want,
+     *   they can deploy a parent contract that extends the `BadgerOrganization` or
+     *  `BadgerScout` contracts and then deploy their own version of the `Badger` contract
+     *   that points to their own implementation and then deploy through this function.
      */  
     function createOrganization(
-          uint256 _version
+          address _implementation
         , address _deployer
         , string memory _uri
         , string memory _organizationURI
@@ -54,22 +62,14 @@ contract Badger is
             address
         )
     { 
-        /// @dev Determine the license schema associated with the version being used.
-        VersionLicense memory license = versions[_version].license;
+        /// @dev Load the version.
+        Version memory version = versions[_implementation];
 
-        /// @dev Get the hashed version key to track the funding of the msg sender.
-        bytes32 versionKey = getVersionKey(
-              _version
+        /// @dev Get the users license key to determine how much funding has been provided.
+        /// @notice Can deploy for someone but must have the cost covered themselves.
+        bytes32 licenseKey = getLicenseKey(
+              version.licenseKey
             , _msgSender()
-            , license
-        );
-
-        /// @dev Allow Organization creation if the version is free or if the sender
-        ///     has funded the version an amount larger than the required amount.
-        require(
-                   license.tokenAddress == address(0)
-                || versionKeyToFunded[versionKey] / license.amount >= 1
-              , "Badger::createOrganization: License requirements not met." 
         );
 
         /// @dev Deploy the Organization contract for the deployer chosen.
@@ -80,9 +80,9 @@ contract Badger is
         ///         that a exogenous protocol could be offering third-party extensions of 
         ///         Badger through a sub-licensing system.
         address organization = _createOrganization(
-              _version
-            , license
-            , versionKey
+              _implementation
+            , licenseKey
+            , version.amount
             , _deployer
             , _uri
             , _organizationURI
@@ -122,37 +122,32 @@ contract Badger is
             return this.onERC1155Received.selector;
         }
         
-        /// @dev Recover the uint256 of the version being used.
-        uint256 version = abi.decode(
+        /// @dev Recover the implementation address from `_data`.
+        address implementation = abi.decode(
               _data
-            , (uint256)
+            , (address)
         );
 
-        /// @dev Get the license schema associated with the version being funded.
-        VersionLicense memory license = versions[version].license;
-
-        /// @dev Confirm the token received is the payment token for the version being funded.
+        /// @dev Confirm that the token being transferred is the one expected.
         require(
-              _msgSender() == license.tokenAddress
-            , "Badger::onERC1155Received: Invalid license token."
+              keccak256(
+                  abi.encodePacked(
+                        _msgSender()
+                      , _id 
+                  )
+              ) == versions[implementation].licenseKey
+            , "Badger::onERC1155Received: Invalid license key."
         );
 
-        /// @dev Confirm the token id received is the payment token id for the license id being deployed.
-        require(
-              _id == license.tokenId
-            , "Badger::onERC1155Received: Invalid license token."
-        );
-
-        /// @dev Get the hashed version key to track the funding of the funder.
-        bytes32 versionKey = getVersionKey(
-              version
+        /// @dev Get the version license key to track the funding of the msg sender.
+        bytes32 licenseKey = getLicenseKey(
+              versions[implementation].licenseKey
             , _from
-            , license
         );
 
         /// @dev Fund the deployment of the Organization contract to 
         ///      the account covering the cost of the payment (not the transaction sender).
-        versionKeyToFunded[versionKey] += _amount;
+        versionKeyToFunded[licenseKey] += _amount;
 
         /// @dev Return the ERC1155 success response.
         return this.onERC1155Received.selector;

@@ -24,12 +24,12 @@ contract BadgerScout is
 { 
     using ECDSA for bytes32;
 
-    /// @dev The address used to denote the ETH token.
-    address public constant DOLPHIN_ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-
     /*//////////////////////////////////////////////////////////////
                            ORGANIZATION STATE
     //////////////////////////////////////////////////////////////*/
+
+    /// @dev The address used to denote the ETH token.
+    address public constant DOLPHIN_ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
     /// @dev The URI for the Organization/contract. 
     string public organizationURI;
@@ -48,25 +48,6 @@ contract BadgerScout is
 
     /// @dev Tracking the delegates of a Badge.
     mapping(bytes32 => bool) public badgeDelegateKeyToIsDelegate;
-
-    /*//////////////////////////////////////////////////////////////
-                                EVENTS
-    //////////////////////////////////////////////////////////////*/
-
-    /// @dev Event that announces when the Organization is updated.
-    event OrganizationUpdated();
-
-    /// @dev Event that announces when the status of a Badge is updated.
-    event BadgeUpdated(
-        uint256 indexed badgeId
-    );
-
-    /// @dev Event that announces when a payment token is deposited for a Badge.
-    event PaymentTokenDeposited(
-          uint256 indexed badgeId
-        , address indexed payer
-        , uint256 indexed amount
-    );
 
     /*//////////////////////////////////////////////////////////////
                              MODIFIERS
@@ -131,6 +112,25 @@ contract BadgerScout is
         );
         _;
     }
+
+    /*//////////////////////////////////////////////////////////////
+                                EVENTS
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Event that announces when the Organization is updated.
+    event OrganizationUpdated();
+
+    /// @dev Event that announces when the status of a Badge is updated.
+    event BadgeUpdated(
+        uint256 indexed badgeId
+    );
+
+    /// @dev Event that announces when a payment token is deposited for a Badge.
+    event PaymentTokenDeposited(
+          uint256 indexed badgeId
+        , address indexed payer
+        , uint256 indexed amount
+    );
 
     /*//////////////////////////////////////////////////////////////
                                 SETTERS

@@ -21,14 +21,13 @@ contract BadgerVersions is
 { 
     using Clones for address;
 
-
     /*//////////////////////////////////////////////////////////////
                            PROTOCOL STATE
     //////////////////////////////////////////////////////////////*/
 
     /// @dev All of the versions that are actively running.
     ///      This also enables the ability to self-fork ones product.
-    mapping(uint256 => Version) public versions;
+    mapping(address => Version) public versions;
 
     /// @dev Tracking the organizations that one has funded the cost for.
     mapping(bytes32 => uint256) public versionKeyToFunded;
@@ -41,14 +40,29 @@ contract BadgerVersions is
         address _implementation
     ) {
         _setVersion(
-              0
-            , _implementation
-            , address(0)
+              _implementation
+            , _msgSender()
             , 0
             , 0
         );
     }
 
+    /*//////////////////////////////////////////////////////////////
+                                 EVENTS
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Announces when a Version configuration is updated through the protocol Factory.
+    event VersionUpdated(
+        address indexed implementation
+    );
+
+    /// @dev Announces when a new Organization is created through the protocol Factory.
+    event OrganizationCreated(
+        address indexed organization,
+        address indexed owner,
+        address indexed implementation
+    );
+    
     /*//////////////////////////////////////////////////////////////
                                 SETTERS
     //////////////////////////////////////////////////////////////*/
@@ -58,22 +72,47 @@ contract BadgerVersions is
      * 
      * Requirements:
      * - The caller must be the owner.
+     * - If the caller is not the owner, cannot set a Payment Token as they cannot withdraw.
      */    
     function setVersion(
-        uint256 _version
-      , address _implementation
-      , address _tokenAddress
-      , uint256 _tokenId
-      , uint256 _amount
+          address _implementation
+        , address _owner
+        , address _tokenAddress
+        , uint256 _tokenId
+        , uint256 _amount
     ) 
-        external
-        onlyOwner
+        override
+        public
+        virtual
     {
+        /// @dev Only the owner can set the version.
+        require(
+                 versions[_implementation].owner == address(0)
+              || versions[_implementation].owner == _msgSender() 
+            , "BadgerVersions: You do not have permission to edit this version."
+        );
+
+        /// @dev Make sure that no exogenous version controllers can set a payment
+        ///      as there is not a mechanism for them to withdraw.
+        if(_msgSender() != owner()) {
+            require(
+                     _tokenAddress == address(0)
+                  && _tokenId == 0
+                  && _amount == 0
+                , "BadgerVersions: You do not have permission to set a payment token."
+            );
+        }
+
+        /// @dev Set the version configuration.
         _setVersion(
-              _version
-            , _implementation
-            , _tokenAddress
-            , _tokenId
+              _implementation
+            , _owner
+            , keccak256(
+                  abi.encodePacked(
+                        _tokenAddress
+                      , _tokenId
+                  )
+              )
             , _amount
         );
     }
@@ -86,24 +125,24 @@ contract BadgerVersions is
      * See {BadgerVersionsInterface.getVersion}
      */
     function getVersion(
-        uint256 _version
+        address _implementation
     ) 
-        external
+        override
+        public
         view
+        virtual
         returns (
-            uint256
-          , address
-          , address
-          , uint256
-          , uint256
+              address
+            , bytes32
+            , uint256
         )
     {
+        Version memory version = versions[_implementation];
+
         return (
-              _version
-            , versions[_version].implementation
-            , versions[_version].license.tokenAddress
-            , versions[_version].license.tokenId
-            , versions[_version].license.amount
+              version.owner
+            , version.licenseKey
+            , version.amount
         );
     }
 
@@ -111,22 +150,37 @@ contract BadgerVersions is
      * See {BadgerVersionsInterface.getVersionKey}
      */    
     function getVersionKey(
-          uint256 _version
-        , address _owner
-        , VersionLicense memory _license
+        address _implementation 
     ) 
+        override
         public 
-        pure 
+        view 
+        virtual
         returns (
             bytes32
         ) 
     {
+        return versions[_implementation].licenseKey;
+    }
+
+    /**
+     * See {BadgerVersionsInterface.getLicenseKey}
+     */
+    function getLicenseKey(
+          bytes32 _versionKey
+        , address _sender
+    )
+        override
+        public
+        pure
+        returns (
+            bytes32
+        )
+    {
         return keccak256(
             abi.encodePacked(
-                  _version
-                , _owner
-                , _license.tokenAddress
-                , _license.tokenId
+                  _versionKey
+                , _sender
             )
         );
     }
@@ -139,28 +193,29 @@ contract BadgerVersions is
      * See {BadgerVersionsInterface.setVersion}
      */
     function _setVersion(
-        uint256 _version
-      , address _implementation
-      , address _tokenAddress
-      , uint256 _tokenId
-      , uint256 _amount
+          address _implementation
+        , address _owner
+        , bytes32 _licenseKey
+        , uint256 _amount
     ) 
         internal
     {
-        versions[_version] = Version({
-              implementation: _implementation
-            , license: VersionLicense({
-                  tokenAddress: _tokenAddress
-                , tokenId: _tokenId
-                , amount: _amount
-            })
+        versions[_implementation] = Version({
+              owner: _owner
+            , licenseKey: _licenseKey
+            , amount: _amount
         });
+
+        emit VersionUpdated(
+            _implementation
+        );
     }
 
     /**
      * @notice Creates a new Organization to be led by the deploying address.
-     * @param _version The version to use for this version and sender.
-     * @param _versionKey The version key to use for this Organization.
+     * @param _implementation The address of the implementation to be used.
+     * @param _licenseKey The license key of the individual processing the Organization creation.
+     * @param _versionCost The cost of deploying the version.
      * @param _deployer The address that will be the deployer of the Organizatoin contract.
      * @param _uri The base URI used for the metadata of tokens.
      * @param _organizationURI The metadata of the Organization.
@@ -169,9 +224,9 @@ contract BadgerVersions is
      * @dev The Organization contract is created using the Organization implementation contract.
      */
     function _createOrganization(
-          uint256 _version
-        , VersionLicense memory _license
-        , bytes32 _versionKey
+          address _implementation
+        , bytes32 _licenseKey
+        , uint256 _versionCost
         , address _deployer
         , string memory _uri
         , string memory _organizationURI
@@ -183,16 +238,15 @@ contract BadgerVersions is
             address
         )
     {
-        /// @dev If this version is paid deduct from the funded amount of the sender.
-        if (_license.amount > 0) {
-            versionKeyToFunded[_versionKey] -= _license.amount;
-        }
-
-        /// @dev Get the address of the implementation for the desired version.
-        address versionImplementation = versions[_version].implementation;
+        /// @dev Deduct the amount of payment that is needed to cover deployment of this version.
+        /// @notice This will revert if an individual has not funded it with at least the needed amount
+        ///         to cover the cost of the version.
+        /// @dev If deploying a free version or using an exogenous contract, the cost will be 
+        ///      zero and proceed normally.
+        versionKeyToFunded[_licenseKey] -=  _versionCost;
 
         /// @dev Get the address of the target.
-        address organizationAddress = versionImplementation.clone();
+        address organizationAddress = _implementation.clone();
 
         /// @dev Interface with the newly created contract to initialize it. 
         BadgerOrganizationInterface organization = BadgerOrganizationInterface(
@@ -207,11 +261,12 @@ contract BadgerVersions is
             , _name
             , _symbol
         );
-
+        
+        /// @dev Announce the creation of the Organization.
         emit OrganizationCreated(
               organizationAddress
             , _deployer
-            , versionImplementation
+            , _implementation
         );
 
         return organizationAddress;

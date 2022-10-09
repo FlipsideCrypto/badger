@@ -3,6 +3,11 @@
 pragma solidity ^0.8.16;
 
 interface BadgerOrganizationInterface { 
+    
+    /*//////////////////////////////////////////////////////////////
+                                SETTERS
+    //////////////////////////////////////////////////////////////*/
+    
     /**
      * @notice Initialize the Organization with the starting state needed.
      * @param _owner The owner of the Organization. (Ideally a multi-sig).
