@@ -13,6 +13,7 @@ interface BadgerVersionsInterface {
         address owner;
         bytes32 licenseKey;
         uint256 amount;
+        bool locked;
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -28,6 +29,7 @@ interface BadgerVersionsInterface {
      * @param _tokenAddress The token address.
      * @param _tokenId The token ID.
      * @param _amount The amount that this user will have to pay.
+     * @param _locked Whether or not this version has been made immutable.
      */
     function setVersion(
           address _implementation 
@@ -35,28 +37,13 @@ interface BadgerVersionsInterface {
         , address _tokenAddress
         , uint256 _tokenId
         , uint256 _amount
+        , bool _locked
     )
         external;
 
     /*//////////////////////////////////////////////////////////////
                                 GETTERS
     //////////////////////////////////////////////////////////////*/
-
-    /**
-     * @notice Gets the version information.
-     * @param _implementation The implementation address.
-     * return The version information.
-     */
-    function getVersion(
-        address _implementation
-    ) 
-        external
-        view
-        returns (
-            address
-          , bytes32
-          , uint256
-        );
 
     /**
      * @notice Build the version key for a version and a sender.

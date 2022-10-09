@@ -39,11 +39,18 @@ contract BadgerVersions is
     constructor(
         address _implementation
     ) {
+        /// @dev Initialize the foundational version of Badger.
         _setVersion(
               _implementation
             , _msgSender()
+            , keccak256(
+                  abi.encodePacked(
+                      address(0)
+                      , uint256(0)
+                  )
+              )
             , 0
-            , 0
+            , false
         );
     }
 
@@ -80,15 +87,25 @@ contract BadgerVersions is
         , address _tokenAddress
         , uint256 _tokenId
         , uint256 _amount
+        , bool _locked
     ) 
         override
         public
         virtual
     {
+        /// @dev Load the existing Version object.
+        Version memory version = versions[_implementation];
+
+        /// @dev Prevent editing of a version once it has been locked.
+        require(
+              !version.locked
+            , "BadgerVersions: Cannot update a locked version."
+        );
+
         /// @dev Only the owner can set the version.
         require(
-                 versions[_implementation].owner == address(0)
-              || versions[_implementation].owner == _msgSender() 
+                 version.owner == address(0)
+              || version.owner == _msgSender()
             , "BadgerVersions: You do not have permission to edit this version."
         );
 
@@ -114,37 +131,13 @@ contract BadgerVersions is
                   )
               )
             , _amount
+            , _locked
         );
     }
 
     /*//////////////////////////////////////////////////////////////
                                 GETTERS
     //////////////////////////////////////////////////////////////*/
-
-    /**
-     * See {BadgerVersionsInterface.getVersion}
-     */
-    function getVersion(
-        address _implementation
-    ) 
-        override
-        public
-        view
-        virtual
-        returns (
-              address
-            , bytes32
-            , uint256
-        )
-    {
-        Version memory version = versions[_implementation];
-
-        return (
-              version.owner
-            , version.licenseKey
-            , version.amount
-        );
-    }
 
     /**
      * See {BadgerVersionsInterface.getVersionKey}
@@ -197,15 +190,19 @@ contract BadgerVersions is
         , address _owner
         , bytes32 _licenseKey
         , uint256 _amount
+        , bool _locked
     ) 
         internal
     {
+        /// @dev Set the version configuration.
         versions[_implementation] = Version({
               owner: _owner
             , licenseKey: _licenseKey
             , amount: _amount
+            , locked: _locked
         });
 
+        /// @dev Announce that the version has been updated to index it on the front-end.
         emit VersionUpdated(
             _implementation
         );
