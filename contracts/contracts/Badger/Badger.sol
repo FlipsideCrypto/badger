@@ -58,7 +58,7 @@ contract Badger is
         VersionLicense memory license = versions[_version].license;
 
         /// @dev Get the hashed version key to track the funding of the msg sender.
-        string memory versionKey = getVersionKey(
+        bytes32 versionKey = getVersionKey(
               _version
             , _msgSender()
             , license
@@ -144,7 +144,7 @@ contract Badger is
         );
 
         /// @dev Get the hashed version key to track the funding of the funder.
-        string memory versionKey = getVersionKey(
+        bytes32 versionKey = getVersionKey(
               version
             , _from
             , license

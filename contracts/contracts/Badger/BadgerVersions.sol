@@ -3,6 +3,7 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
+import { BadgerVersionsInterface } from "./interfaces/BadgerVersionsInterface.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { ERC1155Holder } from "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
@@ -13,35 +14,13 @@ import { BadgerOrganizationInterface } from "../BadgerOrganization/interfaces/Ba
 /// @dev Supported interfaces.
 import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 
-contract BadgerVersions is 
-      Ownable
+contract BadgerVersions is
+      BadgerVersionsInterface 
+    , Ownable
     , ERC1155Holder 
 { 
     using Clones for address;
 
-    /*//////////////////////////////////////////////////////////////
-                                SCHEMAS
-    //////////////////////////////////////////////////////////////*/
-
-    /// @dev The schema of the license control for a version.
-    struct VersionLicense { 
-        address tokenAddress;         
-        uint256 tokenId;              
-        uint256 amount;               
-    }
-
-    /// @dev The schema of a version.
-    struct Version { 
-        address implementation;
-        VersionLicense license;
-    }
-
-    /// @dev Announces when a new Organization is created through the protocol Factory.
-    event OrganizationCreated(
-        address indexed organization,
-        address indexed owner,
-        address indexed implementation
-    );
 
     /*//////////////////////////////////////////////////////////////
                            PROTOCOL STATE
@@ -52,7 +31,7 @@ contract BadgerVersions is
     mapping(uint256 => Version) public versions;
 
     /// @dev Tracking the organizations that one has funded the cost for.
-    mapping(string => uint256) public versionKeyToFunded;
+    mapping(bytes32 => uint256) public versionKeyToFunded;
 
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
@@ -104,15 +83,33 @@ contract BadgerVersions is
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * @notice Build the version key for a version and a sender.
-     * @dev If the license for a version is updated, then the previous fundings 
-     *      will be lost and no longer active unless the version is reverted back
-     *      to the previous configuration. 
-     * @param _version The version of the Organization that is being created.
-     * @param _owner The address that will be the owner of the Organization.
-     * @param _license The license schema for the version.
-     * @return The key that tracks the vresion, license and funding.
+     * See {BadgerVersionsInterface.getVersion}
      */
+    function getVersion(
+        uint256 _version
+    ) 
+        external
+        view
+        returns (
+            uint256
+          , address
+          , address
+          , uint256
+          , uint256
+        )
+    {
+        return (
+              _version
+            , versions[_version].implementation
+            , versions[_version].license.tokenAddress
+            , versions[_version].license.tokenId
+            , versions[_version].license.amount
+        );
+    }
+
+    /**
+     * See {BadgerVersionsInterface.getVersionKey}
+     */    
     function getVersionKey(
           uint256 _version
         , address _owner
@@ -120,9 +117,11 @@ contract BadgerVersions is
     ) 
         public 
         pure 
-        returns (string memory) 
+        returns (
+            bytes32
+        ) 
     {
-        return string(
+        return keccak256(
             abi.encodePacked(
                   _version
                 , _owner
@@ -137,14 +136,7 @@ contract BadgerVersions is
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * @notice Allows Badger to control the level of access to specific versions.
-     * @dev This enables the ability to have Enterprise versions as well as public versions. None of this
-     *      state is immutable as a license model may change in the future. 
-     * @param _version The version to update.
-     * @param _implementation The implementation address.
-     * @param _tokenAddress The token address.
-     * @param _tokenId The token ID.
-     * @param _amount The amount that this user will have to pay.
+     * See {BadgerVersionsInterface.setVersion}
      */
     function _setVersion(
         uint256 _version
@@ -179,7 +171,7 @@ contract BadgerVersions is
     function _createOrganization(
           uint256 _version
         , VersionLicense memory _license
-        , string memory _versionKey
+        , bytes32 _versionKey
         , address _deployer
         , string memory _uri
         , string memory _organizationURI
