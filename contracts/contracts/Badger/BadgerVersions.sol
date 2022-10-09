@@ -99,14 +99,14 @@ contract BadgerVersions is
         /// @dev Prevent editing of a version once it has been locked.
         require(
               !version.locked
-            , "BadgerVersions: Cannot update a locked version."
+            , "BadgerVersions::_setVersion: Cannot update a locked version."
         );
 
         /// @dev Only the owner can set the version.
         require(
                  version.owner == address(0)
               || version.owner == _msgSender()
-            , "BadgerVersions: You do not have permission to edit this version."
+            , "BadgerVersions::_setVersion: You do not have permission to edit this version."
         );
 
         /// @dev Make sure that no exogenous version controllers can set a payment
@@ -116,7 +116,7 @@ contract BadgerVersions is
                      _tokenAddress == address(0)
                   && _tokenId == 0
                   && _amount == 0
-                , "BadgerVersions: You do not have permission to set a payment token."
+                , "BadgerVersions::_setVersion: You do not have permission to set a payment token."
             );
         }
 

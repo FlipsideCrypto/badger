@@ -5,7 +5,6 @@ var chai = require('chai')
     .should()
 
 const { ethers } = require("hardhat");
-const { isCallTrace } = require('hardhat/internal/hardhat-network/stack-traces/message-trace');
 
 // TODO: Payment token needs to be tested THOROUGHLY tested.
 //      cases: no payment token
@@ -60,11 +59,104 @@ describe("Badger", function() {
             assert.equal(await organization.owner(), owner.address);
         });
 
-        // onERC1155Received() tests
-        // setVersion() tests
+        // TODO: Test createOrganization() payment token deployments
 
+        // onERC1155Received() tests
+    });
+
+    describe('Badger: BadgerVersions.sol', async() => {
+        // setVersion() tests
+        it('setVersion() success', async() => {
+            await badger.connect(owner).setVersion(
+                organizationMaster.address,
+                owner.address,
+                "0x0000000000000000000000000000000000000000",
+                0,
+                0,
+                false
+            );
+        });
+
+        it('setVersion() fail: not owner', async() => {
+            await badger.connect(signer1).setVersion(
+                organizationMaster.address,
+                owner.address,
+                "0x0000000000000000000000000000000000000000",
+                0,
+                0,
+                false
+            ).should.be.revertedWith("BadgerVersions::_setVersion: You do not have permission to edit this version.")
+        })
+
+        it('setVersion() fail: locked', async() => { 
+            await badger.connect(owner).setVersion(
+                organizationMaster.address,
+                owner.address,
+                "0x0000000000000000000000000000000000000000",
+                0,
+                0,
+                true
+            );
+
+            await badger.connect(owner).setVersion(
+                organizationMaster.address,
+                owner.address,
+                "0x0000000000000000000000000000000000000000",
+                0,
+                0,
+                false
+            ).should.be.revertedWith("BadgerVersions::_setVersion: Cannot update a locked version.");
+        })
+
+        it('setVersion() fail: not allowed to set payment token', async() => { 
+            await badger.connect(signer1).setVersion(
+                "0x0000000000000000000000000000000000000001",
+                owner.address,
+                "0x0000000000000000000000000000000000000001",
+                0,
+                0,
+                false
+            ).should.be.revertedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.")
+
+            await badger.connect(signer1).setVersion(
+                "0x0000000000000000000000000000000000000001",
+                owner.address,
+                "0x0000000000000000000000000000000000000000",
+                1,
+                0,
+                false
+            ).should.be.revertedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.")
+
+            await badger.connect(signer1).setVersion(
+                "0x0000000000000000000000000000000000000001",
+                owner.address,
+                "0x0000000000000000000000000000000000000000",
+                0,
+                1,
+                false
+            ).should.be.revertedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.")
+        })
+        
         // getVersionKey() tests
+        it('getVersionKey() success', async() => {
+            assert.equal(
+                await badger.getVersionKey(
+                    organizationMaster.address,
+                ),
+                "0xa86d54e9aab41ae5e520ff0062ff1b4cbd0b2192bb01080a058bb170d84e6457" 
+            );
+        });
+
         // getLicenseKey() tests
+        it('getLicenseKey() success', async() => { 
+            assert.equal(
+                await badger.getLicenseKey(
+                    "0xa86d54e9aab41ae5e520ff0062ff1b4cbd0b2192bb01080a058bb170d84e6457",
+                    owner.address
+                ), "0x93848cf20e57882b97600fbc400094557955b5c23968b2f0a0e868d5e193af48"
+            )
+
+        })
     });
 
     // describe("No Payment Sash", function() {
