@@ -187,4 +187,26 @@ contract Badger is
             , string(returnData)
         );
     }
+
+
+    /**
+     * @notice Signals to external callers that this is a Badger contract.
+     * @param _interfaceId The interface ID to check.
+     * @return True if the interface ID is supported.
+     */
+    function supportsInterface(
+        bytes4 _interfaceId
+    ) 
+        override
+        public
+        view
+        returns (
+            bool
+        ) 
+    {
+        return (
+               _interfaceId == type(BadgerInterface).interfaceId
+            || super.supportsInterface(_interfaceId)
+        );
+    }
 }
