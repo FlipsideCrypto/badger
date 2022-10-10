@@ -8,4 +8,10 @@ Simply walk through the 3 step process of setting up a collection for your Set o
 
 With the initial Polygon roll out, all metadata is on chain and images are automatically hosted and pinned on IPFS. Never worry about losing provenance of your Badges.
 
-*** IN PROGRESS ***
+**Running Locally**
+
+To run Badger locally, there are 3 steps in the set up. One each for the smart contracts, front end, and API.
+The README in each sub directory has advanced set up instructions.
+
+Contracts: 
+Front End: https://github.com/utc-24/authkey/tree/main/frontend

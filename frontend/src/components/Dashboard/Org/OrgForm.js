@@ -39,7 +39,6 @@ const OrgForm = () => {
         addressOrName: badger.address,
         contractInterface: badger.abi,
         eventName: "OrganizationCreated",
-        once: true,
         listener: (event) => onEventReceived(event)
     })
     
@@ -55,7 +54,6 @@ const OrgForm = () => {
         }
     ]
 
-    
     // Upon receiving the event from clone transaction,
     // POST the org to backend and redirect to org page.
     const onEventReceived = async (event) => {
@@ -71,6 +69,7 @@ const OrgForm = () => {
         }
         const contractAddress = event[0];
         orgObj.ethereum_address = contractAddress;
+        
         // If transaction was confirmed, add is_active to orgObj.
         if (contractAddress) {
             orgObj.is_active = true;

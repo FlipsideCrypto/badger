@@ -222,12 +222,14 @@ const Badge = () => {
                             You've set up your Organization and your Badge. 
                             Now for the final step of sending the first set of keys to your team members.
                         </p>
-                        <IconButton 
-                            icon={['fal', 'arrow-right']} 
-                            text="DISTRIBUTE KEYS" 
-                            onClick={() => setIsManage(true)}
-                            style={{textAlign: "center"}}
-                        />
+                        <div style={{margin: 'auto'}}>
+                            <IconButton 
+                                icon={['fal', 'arrow-right']} 
+                                text="DISTRIBUTE KEYS" 
+                                onClick={() => setIsManage(true)}
+                                style={{textAlign: "center"}}
+                            />
+                        </div>
                     </div>
                 }
             </div>
