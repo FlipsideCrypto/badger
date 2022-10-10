@@ -3,3 +3,6 @@ artifacts
 cache
 .env
 abis/
+
+coverage/
+coverage.json

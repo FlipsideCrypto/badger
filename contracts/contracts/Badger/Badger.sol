@@ -6,6 +6,8 @@ pragma solidity ^0.8.16;
 import { BadgerInterface } from "./interfaces/BadgerInterface.sol";
 import { BadgerVersions } from "./BadgerVersions.sol";
 
+import "hardhat/console.sol";
+
 /**
  * @title  Badger 
  * @author nftchance & masonchain
@@ -187,7 +189,6 @@ contract Badger is
             , string(returnData)
         );
     }
-
 
     /**
      * @notice Signals to external callers that this is a Badger contract.
