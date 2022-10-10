@@ -37,7 +37,7 @@ export async function SIWENonce() {
     .then(res => res.json())
     .then(res => response = res.nonce)
     .catch(err => {
-        console.log('Error getting nonce', err);
+        response = {error: err};
     })
 
     return response;
@@ -67,7 +67,6 @@ export async function SIWEAuthorize (signer, address, chainId) {
         return res;
     }
     catch (err) {
-        console.log('Error with SIWE', err);
         return {error: err};
     }
 }

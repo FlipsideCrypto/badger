@@ -29,7 +29,6 @@ export async function postOrgRequest(org) {
         })
     }
     catch (err) {
-        console.log('error creating org', err);
         response = {error: err}
     }
 
@@ -93,7 +92,6 @@ export async function postBadgeRequest(badge) {
         })
     }
     catch (err) {
-        console.log('error creating badge', err);
         response = {error: err};
     }
 
@@ -154,7 +152,6 @@ export async function postIPFSMetadata(badge) {
         })
     }
     catch (err) {
-        console.log('error uploading metadata to ipfs', err)
         response = {error: err}
     }
 
@@ -183,7 +180,6 @@ export async function getUserRequest(address) {
         })
     }
     catch (err) {
-        console.log('error fetching user data', err);
         response = {error: err};
     }
 
@@ -213,7 +209,6 @@ export async function getOrgRequest(orgId) {
         })
     }
     catch (err) {
-        console.log('error fetching user data', err);
         response = {error: err}
     }
 
@@ -262,7 +257,6 @@ export async function patchBadgeRolesRequest(badge, orgId) {
         })
     }
     catch (err) {
-        console.log('error updating badge status', err)
         response = {error: err}
     }
 

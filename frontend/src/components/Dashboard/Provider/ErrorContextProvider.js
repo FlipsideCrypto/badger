@@ -1,10 +1,10 @@
 import { createContext, useState } from "react";
 import ErrorCard from "@components/Card/ErrorCard";
 
-const ErrorContext = createContext();
+export const ErrorContext = createContext();
 
 const ErrorContextProvider = ({ children }) => {
-    const [ error, setError ] = useState("ERROR: No error message provided.");
+    const [ error, setError ] = useState();
 
     return (
         <ErrorContext.Provider value={{ error, setError }}>

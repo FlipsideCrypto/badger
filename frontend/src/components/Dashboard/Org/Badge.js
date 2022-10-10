@@ -9,6 +9,7 @@ import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import Select from "@components/Dashboard/Form/Select";
 
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
+import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { useManageBadgeOwnership, useSetDelegates } from "@hooks/useContracts";
 import { patchBadgeRolesRequest } from "@utils/api_requests";
 
@@ -26,6 +27,7 @@ const Badge = () => {
     const [ callTransaction, setCallTransaction ] = useState("");
     const [ txPending, setTxPending ] = useState(false);
     const { orgData, setOrgData } = useContext(OrgContext);
+    const { setError } = useContext(ErrorContext);
     const badgeIndex = orgData?.badges.findIndex(badge => badge.token_id === parseInt(badgeId));
     const [ badge, setBadge ] = useState(orgData?.badges[badgeIndex]);
 
@@ -82,9 +84,9 @@ const Badge = () => {
         })
 
         const response = await patchBadgeRolesRequest(badge, orgId)
-        console.log('response', response)
-
-        if (response?.users?.length > 0)
+        if (response.error)
+            setError(response.error);
+        else
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
 
         setCallTransaction("");
@@ -106,9 +108,9 @@ const Badge = () => {
         })
 
         const response = await patchBadgeRolesRequest(badge, orgId)
-        console.log('response', response)
-        
-        if (response?.delegates?.length > 0)
+        if (response.error)
+            setError(response.error);        
+        else
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
 
         setCallTransaction("");
@@ -143,7 +145,7 @@ const Badge = () => {
                     }
                 }
             } catch (error) {
-                console.log('Transaction failed:', error);
+                setError('Transaction failed:', error);
                 setCallTransaction("")
             }
             setTxPending(false);
