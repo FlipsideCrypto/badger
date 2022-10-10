@@ -50,6 +50,25 @@ contract BadgerScout is
     mapping(bytes32 => bool) public badgeDelegateKeyToIsDelegate;
 
     /*//////////////////////////////////////////////////////////////
+                                EVENTS
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Event that announces when the Organization is updated.
+    event OrganizationUpdated(string organizationURI);
+
+    /// @dev Event that announces when the status of a Badge is updated.
+    event BadgeUpdated(
+        Badge badge
+    );
+
+    /// @dev Event that announces when a payment token is deposited for a Badge.
+    event PaymentTokenDeposited(
+          uint256 indexed badgeId
+        , address indexed payer
+        , uint256 indexed amount
+    );
+
+    /*//////////////////////////////////////////////////////////////
                              MODIFIERS
     //////////////////////////////////////////////////////////////*/
 
@@ -94,25 +113,6 @@ contract BadgerScout is
         );
         _;
     }
-
-    /*//////////////////////////////////////////////////////////////
-                                EVENTS
-    //////////////////////////////////////////////////////////////*/
-
-    /// @dev Event that announces when the Organization is updated.
-    event OrganizationUpdated();
-
-    /// @dev Event that announces when the status of a Badge is updated.
-    event BadgeUpdated(
-        uint256 indexed badgeId
-    );
-
-    /// @dev Event that announces when a payment token is deposited for a Badge.
-    event PaymentTokenDeposited(
-          uint256 indexed badgeId
-        , address indexed payer
-        , uint256 indexed amount
-    );
 
     /*//////////////////////////////////////////////////////////////
                                 SETTERS
@@ -203,7 +203,7 @@ contract BadgerScout is
             )] = true;
         }
 
-        emit BadgeUpdated(_id);
+        emit BadgeUpdated(badge);
     }
 
     /**
@@ -230,7 +230,7 @@ contract BadgerScout is
             , _claimable
         );
 
-        emit BadgeUpdated(_id);
+        emit BadgeUpdated(badges[_id]);
     }
 
     /**
@@ -257,7 +257,7 @@ contract BadgerScout is
             , _accountBound
         );
 
-        emit BadgeUpdated(_id);
+        emit BadgeUpdated(badges[_id]);
     }
 
     /**
@@ -283,8 +283,7 @@ contract BadgerScout is
             , _signer
         );
     
-
-        emit BadgeUpdated(_id);
+        emit BadgeUpdated(badges[_id]);
     }
 
     /**
@@ -310,9 +309,11 @@ contract BadgerScout is
             , "BadgerScout::setBadgeURI: URI must be set."
         );
 
-        badges[_id].uri = _uri;
+        Badge storage badge = badges[_id];
 
-        emit BadgeUpdated(_id);
+        badge.uri = _uri;
+
+        emit BadgeUpdated(badge);
     }
 
     /**
@@ -331,9 +332,11 @@ contract BadgerScout is
         onlyLeader(_id)
         onlyRealBadge(_id)
     {
-        badges[_id].paymentToken = _paymentToken;
+        Badge storage badge = badges[_id];
 
-        emit BadgeUpdated(_id);
+        badge.paymentToken = _paymentToken;
+
+        emit BadgeUpdated(badge);
     }
 
     /**
@@ -374,7 +377,7 @@ contract BadgerScout is
             )] = _isDelegate[i];
         }
 
-        emit BadgeUpdated(_id);
+        emit BadgeUpdated(badges[_id]);
     }
 
     /**
@@ -418,7 +421,7 @@ contract BadgerScout is
                 )
             )] = _isDelegate[i];
 
-            emit BadgeUpdated(id);
+            emit BadgeUpdated(badges[id]);
         }
     }
 
@@ -517,7 +520,7 @@ contract BadgerScout is
     {
         organizationURI = _uri;
 
-        emit OrganizationUpdated();
+        emit OrganizationUpdated(_uri);
     }
 
     /**
