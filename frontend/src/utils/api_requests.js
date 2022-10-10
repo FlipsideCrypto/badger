@@ -1,14 +1,11 @@
 import { API_URL, IPFS_GATEWAY_URL } from "@static/constants/links"
 
-const CSRFToken = document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))?.[2] || null;
+const getCSRFToken = () => {
+    return document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))?.[2] || null;
+}
 
 export async function postOrgRequest(org) {
     let response;
-
-    // TODO: REMOVE THIS WHEN DELEGATES
-    delete org.delegates
-    console.log('POST body', org)
-    // TODO: REMOVE THIS WHEN DELEGATES WORKS
 
     try {
         await fetch(`${API_URL}/organizations/`, {
@@ -16,7 +13,7 @@ export async function postOrgRequest(org) {
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
-                'X-CSRFToken': CSRFToken,
+                'X-CSRFToken': getCSRFToken(),
             },
             credentials: 'include',
             body: JSON.stringify(org)
@@ -63,7 +60,6 @@ export async function postBadgeRequest(badge) {
         : badge?.organization;
 
     const badgeData = {
-        organization: badge.organization,
         is_active: true,
         name: badge.name,
         description: badge.description,
@@ -72,18 +68,10 @@ export async function postBadgeRequest(badge) {
         token_uri: badge.token_uri,
         account_bound: badge.account_bound,
         signer_ethereum_address: "",
-        users: badge.users,
+        users: users,
+        delegates: delegates,
+        organization: organization
     }
-    badge.users = users
-    badge.delegates = delegates
-    badge.organization = organization
-    delete badge.created
-    delete badge.updated
-
-    // TODO: REMOVE THIS WHEN DELEGATES
-    delete badge.delegates          //
-    console.log('POST body', badge) //
-    // TODO: REMOVE THIS WHEN DELEGATES WORKS
 
     try {
         await fetch(`${API_URL}/badges/`, {
@@ -91,7 +79,7 @@ export async function postBadgeRequest(badge) {
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
-                'X-CSRFToken': CSRFToken,
+                'X-CSRFToken': getCSRFToken(),
             },
             credentials: 'include',
             body: JSON.stringify(badgeData)
@@ -122,7 +110,7 @@ export async function postIPFSImage(image) {
             method: "POST",
             mode: "cors",
             headers: {
-                'X-CSRFToken': CSRFToken,
+                'X-CSRFToken': getCSRFToken(),
             },
             credentials: 'include',
             body: formData
@@ -155,7 +143,7 @@ export async function postIPFSMetadata(badge) {
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
-                'X-CSRFToken': CSRFToken,
+                'X-CSRFToken': getCSRFToken(),
             },
             credentials: 'include',
             body: JSON.stringify({data: metadata})
@@ -181,7 +169,7 @@ export async function getUserRequest(address) {
             mode: "cors",
             credentials: 'include',
             headers: {
-                'X-CSRFToken': CSRFToken,
+                'X-CSRFToken': getCSRFToken(),
             }
         })
         .then(res => res.json())
@@ -210,7 +198,7 @@ export async function getOrgRequest(orgId) {
             mode: "cors",
             headers: {
                 'Accept': 'application/json',
-                'X-CSRFToken': CSRFToken,
+                'X-CSRFToken': getCSRFToken(),
             },
             credentials: 'include'
         })
@@ -256,21 +244,13 @@ export async function patchBadgeRolesRequest(badge, orgId) {
     delete badge.created
     delete badge.updated
 
-    // const body = {
-    //     organization: organization,
-    //     users: users 
-    // }
-
-    console.log('PUT body', badge)
-    console.log('url', badge.url)
-
     try {
         await fetch(`${badge.url}`, {
             method: "PUT",
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
-                'X-CSRFToken': CSRFToken,
+                'X-CSRFToken': getCSRFToken(),
             },
             credentials: 'include',
             body: JSON.stringify(badge),
