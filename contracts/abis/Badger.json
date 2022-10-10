@@ -2,7 +2,7 @@
   "constructor(address)",
   "event OrganizationCreated(address indexed,address indexed,address indexed)",
   "event OwnershipTransferred(address indexed,address indexed)",
-  "event VersionUpdated(address indexed)",
+  "event VersionUpdated(address indexed,tuple(address,bytes32,uint256,bool) indexed)",
   "function createOrganization(address,address,string,string,string,string) returns (address)",
   "function execTransaction(address,bytes,uint256) payable",
   "function getLicenseKey(bytes32,address) pure returns (bytes32)",

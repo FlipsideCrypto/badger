@@ -1,10 +1,10 @@
 [
   "event ApprovalForAll(address indexed,address indexed,bool)",
-  "event BadgeUpdated(uint256 indexed)",
+  "event BadgeUpdated(tuple(uint256,string,tuple(bytes32,uint256)) indexed)",
   "event Initialized(uint8)",
-  "event OrganizationUpdated()",
+  "event OrganizationUpdated(string)",
   "event OwnershipTransferred(address indexed,address indexed)",
-  "event PaymentTokenDeposited(uint256 indexed,address indexed,uint256 indexed)",
+  "event PaymentTokenDeposited(tuple(uint256,string,tuple(bytes32,uint256)) indexed,address indexed,uint256 indexed)",
   "event TransferBatch(address indexed,address indexed,address indexed,uint256[],uint256[])",
   "event TransferSingle(address indexed,address indexed,address indexed,uint256,uint256)",
   "event URI(string,uint256 indexed)",

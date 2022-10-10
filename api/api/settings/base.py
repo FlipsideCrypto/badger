@@ -124,7 +124,6 @@ REST_FRAMEWORK = {
 }
 
 # Cors headers settings
-CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 # Web3 settings

@@ -1,9 +1,9 @@
 [
-  "event BadgeUpdated(uint256 indexed)",
+  "event BadgeUpdated(tuple(uint256,string,tuple(bytes32,uint256)) indexed)",
   "event Initialized(uint8)",
-  "event OrganizationUpdated()",
+  "event OrganizationUpdated(string)",
   "event OwnershipTransferred(address indexed,address indexed)",
-  "event PaymentTokenDeposited(uint256 indexed,address indexed,uint256 indexed)",
+  "event PaymentTokenDeposited(tuple(uint256,string,tuple(bytes32,uint256)) indexed,address indexed,uint256 indexed)",
   "function DOLPHIN_ETH() view returns (address)",
   "function badgeDelegateKeyToIsDelegate(bytes32) view returns (bool)",
   "function badges(uint256) view returns (uint256, string, tuple(bytes32,uint256))",
