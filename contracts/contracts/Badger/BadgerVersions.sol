@@ -33,6 +33,23 @@ contract BadgerVersions is
     mapping(bytes32 => uint256) public versionKeyToFunded;
 
     /*//////////////////////////////////////////////////////////////
+                                 EVENTS
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Announces when a Version configuration is updated through the protocol Factory.
+    event VersionUpdated(
+          address indexed implementation
+        , Version indexed version
+    );
+
+    /// @dev Announces when a new Organization is created through the protocol Factory.
+    event OrganizationCreated(
+        address indexed organization,
+        address indexed owner,
+        address indexed implementation
+    );
+
+    /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
@@ -53,22 +70,6 @@ contract BadgerVersions is
             , false
         );
     }
-
-    /*//////////////////////////////////////////////////////////////
-                                 EVENTS
-    //////////////////////////////////////////////////////////////*/
-
-    /// @dev Announces when a Version configuration is updated through the protocol Factory.
-    event VersionUpdated(
-        address indexed implementation
-    );
-
-    /// @dev Announces when a new Organization is created through the protocol Factory.
-    event OrganizationCreated(
-        address indexed organization,
-        address indexed owner,
-        address indexed implementation
-    );
     
     /*//////////////////////////////////////////////////////////////
                                 SETTERS
@@ -204,7 +205,8 @@ contract BadgerVersions is
 
         /// @dev Announce that the version has been updated to index it on the front-end.
         emit VersionUpdated(
-            _implementation
+              _implementation
+            , versions[_implementation]
         );
     }
 
