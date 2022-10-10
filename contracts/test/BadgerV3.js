@@ -118,9 +118,89 @@ describe("Badger", function () {
             assert.equal(await organization.owner(), owner.address);
         });
 
-        // TODO: Test createOrganization() payment token deployments
+        it('createOrganization() success: payable', async () => {
+            // mint 10 of the mock1155 to signer1
+            await mock1155.connect(owner).mint(signer1.address, 0, 10, "0x");
 
-        // onERC1155Received() tests
+            // set the new version using an 1155 as payment
+            await badger.connect(owner).setVersion(
+                organizationMaster.address,
+                owner.address,
+                mock1155.address,
+                0,
+                10,
+                false
+            );
+
+            transferData = ethers.utils.defaultAbiCoder.encode(
+                ["address"],
+                [organizationMaster.address]
+            )
+
+            // transfer the 1155 into the contract
+            await mock1155.connect(signer1).safeTransferFrom(
+                signer1.address, 
+                badger.address, 
+                0, 
+                10, 
+                transferData
+            );
+
+            // create the organization
+            cloneTx = await badger.connect(signer1).createOrganization(
+                organizationMaster.address,
+                owner.address,
+                "uri",
+                "contractURI",
+                "name",
+                "symbol",
+            );
+            cloneTx = await cloneTx.wait();
+
+            organizationAddress = cloneTx.events[4].args['organization']
+            organization = await organizationMaster.attach(organizationAddress);
+
+            assert.equal(await organization.owner(), owner.address);
+        })
+
+        it("createOrganization() fail: insufficient funding", async() => { 
+            // create the organization
+            await badger.connect(owner).createOrganization(
+                organizationMaster.address,
+                owner.address,
+                "uri",
+                "contractURI",
+                "name",
+                "symbol",
+            ).should.be.rejected;
+        })
+
+        it("onERC1155Received() fail: invalid payment token", async() => {
+            const Mock1155 = await ethers.getContractFactory("MockERC1155");
+            mock11552 = await Mock1155.connect(leaderSigner).deploy("testuri");
+            mock11552 = await mock11552.deployed();
+
+            // transfering fails
+            transferData = ethers.utils.defaultAbiCoder.encode(
+                ["address"],
+                [organizationMaster.address]
+                )
+
+            // mint the 11552 to signer1
+            await mock11552.connect(owner).mint(signer1.address, 0, 10, "0x");
+
+            // make sure the two 1155 contracts arent equal
+            assert.notEqual(mock1155.address, mock11552.address);
+
+            // transfer the 1155 into the contract
+            await mock11552.connect(signer1).safeTransferFrom(
+                signer1.address, 
+                badger.address, 
+                0, 
+                10, 
+                transferData
+            ).should.be.revertedWith("Badger::onERC1155Received: Invalid license key.");
+        })
     });
 
     describe('Badger: BadgerVersions.sol', async () => {
@@ -134,6 +214,27 @@ describe("Badger", function () {
                 0,
                 false
             );
+        });
+
+        it('setVersion() success: exogenous', async () => {
+            await badger.connect(sigSigner).setVersion(
+                "0x0000000000000000000000000000000000000012",
+                sigSigner.address,
+                "0x0000000000000000000000000000000000000000",
+                0,
+                0,
+                false
+            );
+
+            // setting payment token fails
+            await badger.connect(sigSigner).setVersion(
+                "0x0000000000000000000000000000000000000012",
+                sigSigner.address,
+                "0x0000000000000000000000000000000000000000",
+                1,
+                0,
+                true
+            ).should.be.rejectedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.");
         });
 
         it('setVersion() fail: not owner', async () => {
@@ -275,6 +376,16 @@ describe("Badger", function () {
     });
 
     describe("Badger: BadgerScout.sol", async () => {
+        it("initialize() fail: cannot call twice", async() => { 
+            await childOrganization.connect(signer1).initialize(
+                signer1.address,
+                "uri",
+                "contracturi",
+                "name",
+                "symbol"
+            ).should.be.revertedWith("Initializable: contract is already initialized");
+        })
+
         it('setOrganizationURI() success', async () => {
             await childOrganization.connect(owner).setOrganizationURI(
                 "newURI"
