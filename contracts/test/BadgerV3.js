@@ -299,7 +299,7 @@ describe("Badger", function () {
             ).should.be.revertedWith("BadgerScout::setBadge: URI must be set.")
         })
 
-        it('setBadge(delegates) success', async () => {
+        it('setBadge() success', async () => {
             await childOrganization.connect(owner).setBadge(
                 0,
                 false,
@@ -346,6 +346,16 @@ describe("Badger", function () {
             assert.equal(
                 await childOrganization.getAccountBound(0),
                 true
+            );
+
+            await childOrganization.connect(owner).setAccountBound(
+                0,
+                false
+            )
+
+            assert.equal(
+                await childOrganization.getAccountBound(0),
+                false
             );
         })
 
@@ -547,6 +557,385 @@ describe("Badger", function () {
     })
 
     describe("Badger: BadgerOrganization.sol", async () => {
+        it("leaderMint() success", async () => {
+            await childOrganization.connect(owner).leaderMint(
+                signer1.address,
+                0,
+                1,
+                "0x"
+            )
+        })
+
+        it("leaderMint() fail: not real badge", async () => {
+            await childOrganization.connect(owner).leaderMint(
+                signer1.address,
+                1000,
+                1,
+                "0x"
+            ).should.be.revertedWith("BadgerScout::onlyRealBadge: Can only call this for setup badges.")
+        });
+
+        it("leaderMint() fail: not leader", async () => {
+            await childOrganization.connect(signer1).leaderMint(
+                signer1.address,
+                0,
+                1,
+                "0x"
+            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
+        });
+
+        it("leaderMintBatch() success", async () => {
+            await childOrganization.connect(owner).leaderMintBatch(
+                [signer1.address, leaderSigner.address],
+                0,
+                [1, 1],
+                "0x"
+            )
+        })
+
+        it("leaderMintBatch() fail: not real badge", async () => {
+            await childOrganization.connect(owner).leaderMintBatch(
+                [signer1.address, leaderSigner.address],
+                1000,
+                [1, 1],
+                "0x"
+            ).should.be.revertedWith("BadgerScout::onlyRealBadge: Can only call this for setup badges.")
+        });
+
+        it("leaderMintBatch() fail: not leader", async () => {
+            await childOrganization.connect(signer1).leaderMintBatch(
+                [signer1.address, leaderSigner.address],
+                0,
+                [1, 1],
+                "0x"
+            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
+        });
+
+        it("leaderMintBatch() fail: arrays not equal length", async () => {
+            await childOrganization.connect(owner).leaderMintBatch(
+                [signer1.address, leaderSigner.address],
+                0,
+                [1, 1, 1],
+                "0x"
+            ).should.be.revertedWith("BadgerOrganization::leaderMintBatch: _tos and _amounts must be the same length.")
+        });
+
+        it("leaderMintFullBatch() success", async () => {
+            await childOrganization.connect(owner).leaderMintFullBatch(
+                [signer1.address, leaderSigner.address],
+                [0, 0],
+                [1, 1],
+                "0x"
+            )
+        })
+
+        it("leaderMintFullBatch() fail: not real badge", async () => {
+            await childOrganization.connect(owner).leaderMintFullBatch(
+                [signer1.address, leaderSigner.address],
+                [1000, 1000],
+                [1, 1],
+                "0x"
+            ).should.be.revertedWith("BadgerScout::_verifyFullBatch: Can only call this for setup badges.")
+        });
+
+        it("leaderMintFullBatch() fail: not leader", async () => {
+            await childOrganization.connect(signer1).leaderMintFullBatch(
+                [signer1.address, leaderSigner.address],
+                [0, 0],
+                [1, 1],
+                "0x"
+            ).should.be.revertedWith("BadgerScout::_verifyFullBatch: Only leaders can call this.")
+        });
+
+        it("leaderMintFullBatch() fail: arrays not equal length", async () => {
+            await childOrganization.connect(owner).leaderMintFullBatch(
+                [signer1.address, leaderSigner.address],
+                [0, 0],
+                [1, 1, 1],
+                "0x"
+            ).should.be.revertedWith("BadgerOrganization::leaderMintFullBatch: _froms, _ids, and _amounts must be the same length.")
+        });
+
+        it("revoke() success", async () => {
+            await childOrganization.connect(owner).revoke(
+                signer1.address,
+                0,
+                1,
+            )
+        })
+
+        it("revoke() fail: insufficient balance", async () => {
+            await childOrganization.connect(owner).revoke(
+                signer1.address,
+                1000,
+                1,
+            ).should.be.revertedWith("ERC1155: burn amount exceeds balance")
+        });
+
+        it("revoke() fail: not leader", async () => {
+            await childOrganization.connect(signer1).revoke(
+                signer1.address,
+                0,
+                1,
+            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
+        });
+
+        it('revokeBatch()', async () => {
+            // mint 10 badge 0s to signer1
+            await childOrganization.connect(owner).leaderMint(
+                signer1.address,
+                0,
+                10,
+                "0x"
+            )
+
+            await childOrganization.connect(owner).revokeBatch(
+                [signer1.address, leaderSigner.address],
+                0,
+                [1, 1],
+            )
+        })
+
+        it("revokeBatch() fail: not leader", async () => {
+            await childOrganization.connect(signer1).revokeBatch(
+                [signer1.address, leaderSigner.address],
+                0,
+                [1, 1],
+            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
+        });
+
+        it("revokeBatch() fail: arrays not equal length", async () => {
+            await childOrganization.connect(owner).revokeBatch(
+                [signer1.address, leaderSigner.address],
+                0,
+                [1, 1, 1],
+            ).should.be.revertedWith("BadgerOrganization::revokeBatch: _from and _amounts must be the same length.")
+        });
+
+        it("revokeFullBatch() success", async () => {
+            await childOrganization.connect(owner).revokeFullBatch(
+                [signer1.address, leaderSigner.address],
+                [0, 0],
+                [1, 1],
+            )
+        })
+
+        it("revokeFullBatch() success: delegate", async () => {
+            await childOrganization.connect(owner).setDelegates(
+                0,
+                [leaderSigner.address],
+                [true]
+            )
+
+            await childOrganization.connect(leaderSigner).revokeFullBatch(
+                [signer1.address],
+                [0],
+                [1],
+            )
+        })
+
+        it('revokeFullBatch() fail: insufficient balance', async () => {
+            await childOrganization.connect(owner).revokeFullBatch(
+                [signer1.address, leaderSigner.address],
+                [1000, 1000],
+                [1, 1],
+            ).should.be.revertedWith("ERC1155: burn amount exceeds balance")
+        })
+
+        it("revokeFullBatch() fail: not leader", async () => {
+            await childOrganization.connect(signer1).revokeFullBatch(
+                [signer1.address, leaderSigner.address],
+                [0, 0],
+                [1, 1],
+            ).should.be.revertedWith("BadgerOrganization::_verifyFullBatch: Only leaders can call this.")
+        });
+
+        it("revokeFullBatch() fail: arrays not equal length", async () => {
+            await childOrganization.connect(owner).revokeFullBatch(
+                [signer1.address, leaderSigner.address],
+                [0, 0],
+                [1, 1, 1],
+            ).should.be.revertedWith("BadgerOrganization::revokeFullBatch: _froms, _ids, and _amounts must be the same length.")
+        });
+
+        it("forfeit() success", async () => {
+            await childOrganization.connect(signer1).forfeit(
+                0,
+                1,
+            )
+        });
+
+        it("forfeit() fail: insufficient balance", async () => {
+            await childOrganization.connect(signer1).forfeit(
+                0,
+                10000,
+            ).should.be.revertedWith("ERC1155: burn amount exceeds balance")
+        })
+
+        it("safeTransferFrom() success", async () => {
+            // Set the account bound token to be transferable
+            await childOrganization.connect(owner).setAccountBound(
+                0,
+                false
+            );
+
+            assert.equal(
+                await childOrganization.getAccountBound(0),
+                false
+            )
+
+            // Try and transfer the account bound token to another account will succeed
+            await childOrganization.connect(signer1).safeTransferFrom(
+                signer1.address,
+                userSigner.address,
+                0,
+                1,
+                "0x"
+            )
+        })
+
+        it('safeTransferFrom() success: leader can transfer account bound', async() => { 
+            // Set this badge as account bound
+            await childOrganization.connect(owner).setAccountBound(
+                0,
+                true
+            );
+
+            assert.equal(
+                await childOrganization.getAccountBound(0),
+                true
+            )
+
+            // mint a token to the owner to test transferring
+            await childOrganization.connect(owner).leaderMint(
+                owner.address,
+                0,
+                2,
+                "0x"
+            )
+
+            // Try and transfer the account bound token to another account will succeed
+            await childOrganization.connect(owner).safeTransferFrom(
+                owner.address,
+                userSigner.address,
+                0,
+                1,
+                "0x"
+            )
+        }) 
+
+        it("safeTransferFrom() success: delegate can transfer account bound", async () => {
+            // Set this badge as account bound
+            await childOrganization.connect(owner).setAccountBound(
+                0,
+                true
+            );
+
+            assert.equal(
+                await childOrganization.getAccountBound(0),
+                true
+            )
+
+            // mint a token to the owner to test transferring
+            await childOrganization.connect(owner).leaderMint(
+                leaderSigner.address,
+                0,
+                2,
+                "0x"
+            )
+
+            // Set the delegate
+            await childOrganization.connect(owner).setDelegates(
+                0,
+                [leaderSigner.address],
+                [true]
+            )
+
+            // Try and transfer the account bound token to another account will succeed
+            await childOrganization.connect(leaderSigner).safeTransferFrom(
+                leaderSigner.address,
+                userSigner.address,
+                0,
+                1,
+                "0x"
+            )
+        });
+
+        it("safeTransferFrom() success: can transfer to contract", async() => {
+            // mint a token to the owner to test transferring
+            await childOrganization.connect(owner).leaderMint(
+                signer1.address,
+                0,
+                2,
+                "0x"
+            )
+
+            // Try and transfer the account bound token to another account will succeed
+            await childOrganization.connect(signer1).safeTransferFrom(
+                signer1.address,
+                childOrganization.address,
+                0,
+                1,
+                "0x"
+            ) 
+        })
+
+        it("safeTransferFrom() fail: transferring out of contract as user", async () => {
+            await childOrganization.connect(signer1).safeTransferFrom(
+                childOrganization.address,
+                userSigner.address,
+                0,
+                1,
+                "0x"
+            ).should.be.revertedWith("ERC1155: caller is not token owner nor approved")
+        })
+
+        it("safeTransferFrom() fail: account bound", async () => {
+            // Set this badge as account bound
+            await childOrganization.connect(owner).setAccountBound(
+                0,
+                true
+            );
+
+            // mint a stand in
+            await childOrganization.connect(owner).leaderMint(
+                signer1.address,
+                0,
+                1,
+                "0x"
+            )
+
+            // Try and transfer the account bound token to another account will fail
+            await childOrganization.connect(signer1).safeTransferFrom(
+                signer1.address,
+                userSigner.address,
+                0,
+                1,
+                "0x"
+            ).should.be.revertedWith("BadgerOrganization::safeTransferFrom: Missing the proper transfer permissions.")
+        })
+
+        // it('User can claim', async() => {
+        //     const _badgeId = 0;
+        //     const _quantity = 1;
+
+        //     const messageHash = ethers.utils.solidityKeccak256(
+        //         ["address", "uint256", "uint256"], 
+        //         [userSigner.address, _badgeId, _quantity]
+        //     )
+
+        //     const messageHashArrayify = ethers.utils.arrayify(messageHash);
+
+        //     const _signature = await sigSigner.signMessage(messageHashArrayify);
+
+        //     await sashPress.connect(userSigner).claimMint(
+        //           _signature        // bytes calldata _signature
+        //         , _badgeId          // uint256 _id
+        //         , _quantity         // uint256 _quantity
+        //         , "0x"              // bytes memory _data
+        //     );
+        // });
+
         it("uri() success: has badge uri", async () => {
             assert.equal(
                 await childOrganization.uri(0),

@@ -183,8 +183,21 @@ contract BadgerScout is
 
         /// @dev Set the config of the Badge.
         badge.config = 0;
-        badge.config |= uint256(_claimable ? 1 : 0) << 0;
-        badge.config |= uint256(_accountBound ? 1 : 0) << 1;
+
+        /// @dev Set the claimable bit of the Badge.
+        _setBit(
+              _id
+            , 0
+            , _claimable
+        );
+
+        /// @dev Set the account bound bit of the Badge.
+        _setBit(
+              _id
+            , 1
+            , _accountBound
+        );
+
         badge.config |= uint256(uint160(_signer)) << 2;
         
         badge.uri = _uri;
@@ -224,7 +237,12 @@ contract BadgerScout is
         onlyLeader(_id)
         onlyRealBadge(_id)
     {
-        badges[_id].config |= uint256(_claimable ? 1 : 0) << 0;
+        /// @dev Set the claimable bit of the Badge.
+        _setBit(
+              _id
+            , 0
+            , _claimable
+        );
 
         emit BadgeUpdated(_id);
     }
@@ -246,7 +264,12 @@ contract BadgerScout is
         onlyLeader(_id)
         onlyRealBadge(_id)
     {
-        badges[_id].config |= uint256(_accountBound ? 1 : 0) << 1;
+        /// @dev Set the account bound bit of the Badge.
+        _setBit(
+              _id
+            , 1
+            , _accountBound
+        );
 
         emit BadgeUpdated(_id);
     }
@@ -504,6 +527,27 @@ contract BadgerScout is
         organizationURI = _uri;
 
         emit OrganizationUpdated();
+    }
+
+    /**
+     * @notice Converts a boolean into a bit and packs it into the config.
+     * @param _id The ID of the badge.
+     * @param _bit The bit to pack.
+     * @param _value The value to pack.
+     */
+    function _setBit(
+          uint256 _id
+        , uint256 _bit
+        , bool _value
+    )
+        internal
+        virtual
+    {
+        if (_value) {
+            badges[_id].config |= (1 << _bit);
+        } else {
+            badges[_id].config &= ~(1 << _bit);
+        }
     }
 
     /**
