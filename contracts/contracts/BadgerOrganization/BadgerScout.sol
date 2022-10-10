@@ -58,12 +58,12 @@ contract BadgerScout is
 
     /// @dev Event that announces when the status of a Badge is updated.
     event BadgeUpdated(
-        Badge badge
+        Badge indexed badge
     );
 
     /// @dev Event that announces when a payment token is deposited for a Badge.
     event PaymentTokenDeposited(
-          uint256 indexed badgeId
+          Badge indexed badge
         , address indexed payer
         , uint256 indexed amount
     );
@@ -599,7 +599,7 @@ contract BadgerScout is
         badgePaymentKeyToFunded[paymentKey] += _amount;
 
         emit PaymentTokenDeposited(
-              _badgeId
+              badges[_badgeId]
             , _from
             , _amount
         );
