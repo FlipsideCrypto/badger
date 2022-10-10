@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { usePrepareContractWrite, useContractWrite } from 'wagmi';
+import { ethers } from "ethers";
 
 const BADGER_ADDRESSES = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES);
 const PRIMARY_IMPLEMENTATION = process.env.REACT_APP_BADGER_IMPLEMENTATION;
@@ -71,13 +72,16 @@ export const useCreateBadge = (badge) => {
             badge.delegates.pop(index)
         }
     })
+    // Format to bytes32
+    // let paymentKey = ethers.utils.formatBytes32String(badge.payment_token[0]);
 
     let args = [
         badge.token_id,
+        badge.claimable,
         badge.account_bound,
         badge.signer || "",
         badge.token_uri,
-        badge.payment_token || [0, "0x0000000000000000000000000000000000000000", 0, 0],
+        badge.payment_token || [ethers.constants.HashZero, 0],
         badge.delegates || []
     ]
 

@@ -7,7 +7,7 @@ export const OrgContext = createContext();
 // TODO: Would it be better to have orgContext hold all fetched orgData?
 //       And then have a separate context for the current org? 
 //       Or a method to get out an individual org with index?
-//       Will probably need to be able to memoize the orgData to increase
+//       Will probably need to be able to memoize the orgData to decrease
 //       loading times and reduce api calls.
 const OrgContextProvider = ({ children }) => {
     const [ orgData, setOrgData ] = useState();
