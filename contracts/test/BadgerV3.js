@@ -6,16 +6,6 @@ var chai = require('chai')
 
 const { ethers } = require("hardhat");
 
-// TODO: Payment token needs to be tested THOROUGHLY tested.
-//      cases: no payment token
-//             native payment
-//             1155 payment
-// TODO: State var updates
-// TODO: Subscription Implementation
-// TODO: Batch functions
-// TODO: Make every array field batchable
-// TODO: Should there be an ERC20 payment type?
-
 describe("Badger", function () {
     before(async () => {
         [owner, signer1, userSigner, leaderSigner, sigSigner] = await ethers.getSigners();
@@ -34,6 +24,14 @@ describe("Badger", function () {
         mock1155 = await Mock1155.deploy("testuri");
         mock1155 = await mock1155.deployed();
 
+        const Mock20 = await ethers.getContractFactory("MockERC20");
+        mock20 = await Mock20.deploy("testtoken", "test");
+        mock20 = await mock20.deployed();
+
+        const Mock721 = await ethers.getContractFactory("MockERC721");
+        mock721 = await Mock721.deploy("name", "symbol");
+        mock721 = await mock721.deployed();
+
         // Deploy an Organization for testing through Badger
         childOrganizationTx = await badger.connect(owner).createOrganization(
             organizationMaster.address,
@@ -50,18 +48,51 @@ describe("Badger", function () {
 
         assert.equal(await childOrganization.owner(), owner.address);
 
+        const DOLPHIN_ETH = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+
+        paymentKeyETH = ethers.utils.solidityKeccak256(
+            ["address", "uint256"],
+            [DOLPHIN_ETH, 0]
+        )
+
+        paymentKey20 = ethers.utils.solidityKeccak256(
+            ["address", "uint256"],
+            [mock20.address, 0]
+        )
+
         // bytes32 encode token address and token id using the contract and use as paymentKey
         paymentKey1155 = ethers.utils.solidityKeccak256(
             ["address", "uint256"],
             [mock1155.address, 0]
         );
 
+        paymentKey721 = ethers.utils.solidityKeccak256(
+            ["address", "uint256"],
+            [mock721.address, 0]
+        );
+
         paymentAmount = 0;
+
+        paymentTokenETH = [
+            paymentKeyETH,
+            ethers.utils.parseEther("1")
+        ]
+
+        paymentToken20 = [
+            paymentKey20,
+            1
+        ]
 
         paymentToken1155 = [
             paymentKey1155,
             paymentAmount
         ]
+
+        paymentToken721 = [
+            paymentKey721,
+            1
+        ]
+
     });
 
     describe("Badger: Badger.sol", async () => {
@@ -382,6 +413,16 @@ describe("Badger", function () {
             assert.equal(
                 await childOrganization.getSigner(0),
                 owner.address
+            );
+
+            await childOrganization.connect(owner).setSigner(
+                0,
+                "0x0000000000000000000000000000000000000000"
+            )
+
+            assert.equal(
+                await childOrganization.getSigner(0),
+                "0x0000000000000000000000000000000000000000"
             );
         })
 
@@ -794,7 +835,7 @@ describe("Badger", function () {
             )
         })
 
-        it('safeTransferFrom() success: leader can transfer account bound', async() => { 
+        it('safeTransferFrom() success: leader can transfer account bound', async () => {
             // Set this badge as account bound
             await childOrganization.connect(owner).setAccountBound(
                 0,
@@ -822,7 +863,7 @@ describe("Badger", function () {
                 1,
                 "0x"
             )
-        }) 
+        })
 
         it("safeTransferFrom() success: delegate can transfer account bound", async () => {
             // Set this badge as account bound
@@ -861,7 +902,7 @@ describe("Badger", function () {
             )
         });
 
-        it("safeTransferFrom() success: can transfer to contract", async() => {
+        it("safeTransferFrom() success: can transfer to contract", async () => {
             // mint a token to the owner to test transferring
             await childOrganization.connect(owner).leaderMint(
                 signer1.address,
@@ -877,7 +918,7 @@ describe("Badger", function () {
                 0,
                 1,
                 "0x"
-            ) 
+            )
         })
 
         it("safeTransferFrom() fail: transferring out of contract as user", async () => {
@@ -912,8 +953,592 @@ describe("Badger", function () {
                 0,
                 1,
                 "0x"
-            ).should.be.revertedWith("BadgerOrganization::safeTransferFrom: Missing the proper transfer permissions.")
+            ).should.be.revertedWith("BadgerScout::_verifyTransfer: Missing the proper transfer permissions.")
         })
+
+        it("safeBatchTransferFrom() success", async () => {
+            // Set the account bound token to be transferable
+            await childOrganization.connect(owner).setAccountBound(
+                0,
+                false
+            );
+
+            assert.equal(
+                await childOrganization.getAccountBound(0),
+                false
+            )
+
+            // Try and transfer the account bound token to another account will succeed
+            await childOrganization.connect(signer1).safeBatchTransferFrom(
+                signer1.address,
+                userSigner.address,
+                [0, 0],
+                [1, 1],
+                "0x"
+            )
+        })
+
+        it('safeBatchTransferFrom() success: leader can transfer account bound', async () => {
+            // Set this badge as account bound
+            await childOrganization.connect(owner).setAccountBound(
+                0,
+                true
+            );
+
+            assert.equal(
+                await childOrganization.getAccountBound(0),
+                true
+            )
+
+            // mint a token to the owner to test transferring
+            await childOrganization.connect(owner).leaderMint(
+                owner.address,
+                0,
+                2,
+                "0x"
+            )
+
+            // Try and transfer the account bound token to another account will succeed
+            await childOrganization.connect(owner).safeBatchTransferFrom(
+                owner.address,
+                userSigner.address,
+                [0, 0],
+                [1, 1],
+                "0x"
+            )
+        })
+
+        it("safeBatchTransferFrom() success: delegate can transfer account bound", async () => {
+            // Set this badge as account bound
+            await childOrganization.connect(owner).setAccountBound(
+                0,
+                true
+            );
+
+            assert.equal(
+                await childOrganization.getAccountBound(0),
+                true
+            )
+
+            // mint a token to the owner to test transferring
+            await childOrganization.connect(owner).leaderMint(
+                leaderSigner.address,
+                0,
+                2,
+                "0x"
+            )
+
+            // Set the delegate
+            await childOrganization.connect(owner).setDelegates(
+                0,
+                [leaderSigner.address],
+                [true]
+            )
+
+            // Try and transfer the account bound token to another account will succeed
+            await childOrganization.connect(leaderSigner).safeBatchTransferFrom(
+                leaderSigner.address,
+                userSigner.address,
+                [0, 0],
+                [1, 1],
+                "0x"
+            )
+        });
+
+        it("safeBatchTransferFrom() success: can transfer to contract", async () => {
+            // mint a token to the owner to test transferring
+            await childOrganization.connect(owner).leaderMint(
+                signer1.address,
+                0,
+                2,
+                "0x"
+            )
+
+            // Try and transfer the account bound token to another account will succeed
+            await childOrganization.connect(signer1).safeBatchTransferFrom(
+                signer1.address,
+                childOrganization.address,
+                [0, 0],
+                [1, 1],
+                "0x"
+            )
+        })
+
+        it("safeBatchTransferFrom() fail: transferring out of contract as user", async () => {
+            await childOrganization.connect(signer1).safeBatchTransferFrom(
+                childOrganization.address,
+                userSigner.address,
+                [0, 0],
+                [1, 1],
+                "0x"
+            ).should.be.revertedWith("ERC1155: caller is not token owner nor approved")
+        })
+
+        it("safeBatchTransferFrom() fail: account bound", async () => {
+            // Set this badge as account bound
+            await childOrganization.connect(owner).setAccountBound(
+                0,
+                true
+            );
+
+            // mint a stand in
+            await childOrganization.connect(owner).leaderMint(
+                signer1.address,
+                0,
+                1,
+                "0x"
+            )
+
+            // Try and transfer the account bound token to another account will fail
+            await childOrganization.connect(signer1).safeBatchTransferFrom(
+                signer1.address,
+                userSigner.address,
+                [0, 0],
+                [1, 1],
+                "0x"
+            ).should.be.revertedWith("BadgerScout::_verifyTransfer: Missing the proper transfer permissions.")
+        })
+
+        it("depositETH() success", async () => {
+            /// set claimable to true
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                true
+            )
+
+            // set 1 ETH as the payment token 
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentTokenETH
+            );
+
+            // deposit the eth
+            await childOrganization.connect(signer1).depositETH(0, {
+                value: ethers.utils.parseEther("1")
+            })
+        })
+
+        it('depositETH() fail: not real badge', async () => {
+            await childOrganization.connect(signer1).depositETH(1000, {
+                value: ethers.utils.parseEther("1")
+            }).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for setup badges.")
+        })
+
+        it("depositETH() fail: not claimable", async () => {
+            // set signer to none
+            await childOrganization.connect(owner).setSigner(
+                0,
+                "0x0000000000000000000000000000000000000000"
+            )
+
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                false
+            );
+
+            await childOrganization.connect(signer1).depositETH(0, {
+                value: ethers.utils.parseEther("1")
+            }).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for claimable badges.")
+        })
+
+        it("depositETH() fail: invalid payment token", async () => {
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentToken1155
+            )
+
+            // set the badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                true
+            );
+
+            await childOrganization.connect(signer1).depositETH(0, {
+                value: ethers.utils.parseEther("1")
+            }).should.be.revertedWith("BadgerScout::_verifyPayment: Invalid payment token.")
+        })
+
+        it('depositERC20() success', async () => {
+            // set the badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                true
+            );
+
+            // set the payment token
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentToken20
+            );
+
+            // mint some tokens to the signer
+            await mock20.connect(owner).mint(
+                signer1.address,
+                1000
+            )
+
+            // approve the contract to spend the tokens
+            await mock20.connect(signer1).approve(
+                childOrganization.address,
+                1000
+            )
+
+            // deposit the tokens
+            await childOrganization.connect(signer1).depositERC20(
+                0,
+                mock20.address,
+                1
+            )
+        })
+
+        it('depositERC20() fail: not real badge', async () => {
+            await childOrganization.connect(signer1).depositERC20(
+                1000,
+                mock20.address,
+                1
+            ).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for setup badges.")
+        })
+
+        it('depositERC20() fail: not claimable', async () => {
+            // set the badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                false
+            );
+
+            await childOrganization.connect(signer1).depositERC20(
+                0,
+                mock20.address,
+                1
+            ).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for claimable badges.")
+        })
+
+        it('depositERC20() fail: invalid payment token', async () => {
+            // set the badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                true
+            );
+
+            // set the payment token
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentToken1155
+            );
+
+            await childOrganization.connect(signer1).depositERC20(
+                0,
+                mock20.address,
+                1
+            ).should.be.revertedWith("BadgerScout::_verifyPayment: Invalid payment token.")
+        })
+
+        it('depositERC20() fail: not enough allowance', async () => {
+            // set the badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                true
+            );
+
+            // set the payment token
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentToken20
+            );
+
+            // mint some tokens to the signer
+            await mock20.connect(owner).mint(
+                signer1.address,
+                1000
+            )
+
+            // deposit the tokens
+            await childOrganization.connect(signer1).depositERC20(
+                0,
+                mock20.address,
+                10000000
+            ).should.be.revertedWith("ERC20: insufficient allowance")
+        })
+
+        it("onERC1155Received() success", async () => {
+            // set the badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                true
+            );
+
+            // set the payment token
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentToken1155
+            );
+
+            // mint some tokens to the signer
+            await mock1155.connect(owner).mint(
+                signer1.address,
+                0,
+                15,
+                "0x"
+            )
+
+            // encode 0 as badge into the data
+            const data = ethers.utils.defaultAbiCoder.encode(
+                ["uint256"],
+                [0]
+            )
+
+            assert.notEqual(
+                data,
+                "0x"
+            )
+
+            // transfer the token to the contract
+            await mock1155.connect(signer1).safeTransferFrom(
+                signer1.address,
+                childOrganization.address,
+                0,
+                1,
+                data
+            );
+        });
+
+        it("onERC1155Received() success: normal transfer", async () => {
+            await mock1155.connect(owner).mint(
+                signer1.address,
+                0,
+                15,
+                "0x"
+            )
+            
+            // transfer the token to the contract
+            await mock1155.connect(signer1).safeTransferFrom(
+                signer1.address,
+                childOrganization.address,
+                0,
+                1,
+                "0x"
+            );
+        })
+
+        it("onERC1155Received() fail: not real badge", async () => {
+            // encode 1000 as badge into the data
+            const data = ethers.utils.defaultAbiCoder.encode(
+                ["uint256"],
+                [1000]
+            )
+
+            // transfer the token to the contract
+            await mock1155.connect(signer1).safeTransferFrom(
+                signer1.address,
+                childOrganization.address,
+                0,
+                1,
+                data
+            ).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for setup badges.")
+        });
+
+        it("onERC1155Received() fail: not claimable", async () => {
+            // set the badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                false
+            );
+
+            // encode 0 as badge into the data
+            const data = ethers.utils.defaultAbiCoder.encode(
+                ["uint256"],
+                [0]
+            )
+
+            // transfer the token to the contract
+            await mock1155.connect(signer1).safeTransferFrom(
+                signer1.address,
+                childOrganization.address,
+                0,
+                1,
+                data
+            ).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for claimable badges.")
+        });
+
+        it("onERC1155Received() fail: invalid payment token", async () => {
+            // set the badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                true
+            );
+
+            // set the payment token
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentToken20
+            );
+
+            // encode 0 as badge into the data
+            const data = ethers.utils.defaultAbiCoder.encode(
+                ["uint256"],
+                [0]
+            )
+
+            // transfer the token to the contract
+            await mock1155.connect(signer1).safeTransferFrom(
+                signer1.address,
+                childOrganization.address,
+                0,
+                1,
+                data
+            ).should.be.revertedWith("BadgerScout::_verifyPayment: Invalid payment token.")
+        });
+
+        it("onERC1155Received() fail: not enough balance", async () => {
+            // set the badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                true
+            );
+
+            // set the payment token
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentToken1155
+            );
+
+            // encode 0 as badge into the data
+            const data = ethers.utils.defaultAbiCoder.encode(
+                ["uint256"],
+                [0]
+            )
+
+            // transfer the token to the contract
+            await mock1155.connect(signer1).safeTransferFrom(
+                signer1.address,
+                childOrganization.address,
+                0,
+                10000000,
+                data
+            ).should.be.revertedWith("ERC1155: insufficient balance for transfer")
+        });
+
+        it("onERC721Received() success", async () => {
+            // set the badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                true
+            );
+
+            // set the payment token
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentToken721
+            );
+
+            // mint 50 tokens to the signer
+            for (let i = 0; i < 10; i++) {
+                tx = await mock721.connect(owner).mint(
+                    signer1.address,
+                    i
+                )
+                tx.wait()
+            }
+
+            const data = ethers.utils.defaultAbiCoder.encode(
+                ["uint256"],
+                [0]
+            )
+
+            // build the overloaded safeTransferFrom function
+            await mock721.connect(signer1)["safeTransferFrom(address,address,uint256,bytes)"](
+                signer1.address,
+                childOrganization.address,
+                0,
+                data
+            )
+        });
+
+        it("onERC721Received() success: normal transfer", async () => {
+            await mock721.connect(signer1)["safeTransferFrom(address,address,uint256,bytes)"](
+                signer1.address,
+                childOrganization.address,
+                2,
+                "0x"
+            )
+        })
+
+        it("onERC721Received() fail: not real badge", async () => {
+            // encode 1000 as badge into the data
+            const data = ethers.utils.defaultAbiCoder.encode(
+                ["uint256"],
+                [1000]
+            )
+
+            // build the overloaded transfer from
+            await mock721.connect(signer1)["safeTransferFrom(address,address,uint256,bytes)"](
+                signer1.address,
+                childOrganization.address,
+                1,
+                data
+            ).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for setup badges.")
+        });
+
+        it("onERC721Received() fail: not claimable", async () => {
+            // set the badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                false
+            );
+
+            // set signer as none
+            await childOrganization.connect(owner).setSigner(
+                0,
+                "0x0000000000000000000000000000000000000000"
+            );
+
+            // encode 0 as badge into the data
+            const data = ethers.utils.defaultAbiCoder.encode(
+                ["uint256"],
+                [0]
+            )
+
+            await mock721.connect(owner).mint(
+                signer1.address,
+                55
+            )
+
+            // transfer the token to the contract
+            await mock721.connect(signer1)["safeTransferFrom(address,address,uint256,bytes)"](
+                signer1.address,
+                childOrganization.address,
+                55,
+                data
+            ).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for claimable badges.")
+        });
+
+        it("onERC721Received() fail: invalid payment token", async () => {
+            // set the badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                true
+            );
+
+            // set the payment token
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentToken20
+            );
+
+            // encode 0 as badge into the data
+            const data = ethers.utils.defaultAbiCoder.encode(
+                ["uint256"],
+                [0]
+            )
+
+            // transfer the token to the contract
+            await mock721.connect(signer1)["safeTransferFrom(address,address,uint256,bytes)"](
+                signer1.address,
+                childOrganization.address,
+                3,
+                data
+            ).should.be.revertedWith("BadgerScout::_verifyPayment: Invalid payment token.")
+        });
 
         // it('User can claim', async() => {
         //     const _badgeId = 0;
@@ -986,570 +1611,4 @@ describe("Badger", function () {
             )
         });
     })
-
-    // describe("No Payment Sash", function() {
-    //     it('Leader can mint', async() => {
-    //         const _badgeId = 0;
-    //         const _amount = 1;
-
-    //         await sashPress.connect(leaderSigner).leaderMint(
-    //               userSigner.address
-    //             , _badgeId
-    //             , _amount
-    //             , "0x"
-    //         )
-
-    //         assert.equal(await sashPress.balanceOf(userSigner.address, _badgeId), _amount)
-    //     });
-
-    //     it('Leader can revoke', async() => {
-    //         const _badgeId = 0;
-    //         const _amount = 1;
-    //         const balanceBefore = await sashPress.balanceOf(userSigner.address, _badgeId);
-
-    //         await sashPress.connect(leaderSigner).revoke(
-    //               userSigner.address
-    //             , _badgeId
-    //             , _amount
-    //         )
-
-    //         const balanceAfter = await sashPress.balanceOf(userSigner.address, _badgeId);
-    //         assert.equal(balanceAfter.toString(), (balanceBefore.sub(_amount)).toString())
-    //     });
-
-    //     it('Owner can airdrop mint', async() => {
-    //         const _badgeId = 0;
-    //         const _amount = 1;
-    //         const balanceBefore = await sashPress.balanceOf(userSigner.address, _badgeId);
-
-    //         await sashPress.connect(owner).leaderMintBatch(
-    //                 [userSigner.address, signer1.address]
-    //             , _badgeId
-    //             , [_amount, _amount]
-    //             , "0x"
-    //         )
-
-    //         const balanceAfter = await sashPress.balanceOf(userSigner.address, _badgeId);
-    //         assert.equal(balanceAfter.toString(), (balanceBefore.add(_amount)).toString())
-    //     });
-
-    //     it('Owner can revoke', async() => {
-    //         const _badgeId = 0;
-    //         const _amount = 1;
-    //         const balanceBefore = await sashPress.balanceOf(userSigner.address, _badgeId);
-
-    //         await sashPress.connect(owner).revoke(
-    //                 userSigner.address
-    //             , _badgeId
-    //             , _amount
-    //         )
-
-    //         const balanceAfter = await sashPress.balanceOf(userSigner.address, _badgeId);
-    //         assert.equal(balanceAfter.toString(), (balanceBefore.sub(_amount)).toString())
-    //     });
-
-    //     it('Admin and Leaders can set signer', async() => {
-    //         await sashPress.connect(owner).setSigner(
-    //             0,
-    //             owner.address
-    //         )
-
-    //         const { signer: signer1 } = await sashPress.badges(0);
-
-    //         assert.equal(signer1.toString(), owner.address);
-
-    //         await sashPress.connect(owner).setSigner(
-    //             0,
-    //             sigSigner.address
-    //         )
-
-    //         const { signer: signer2 } = await sashPress.badges(0);
-
-    //         assert.equal(signer2.toString(), sigSigner.address);
-    //     });
-
-    //     it('Users cannot set signer', async() => {
-    //         await sashPress.connect(userSigner).setSigner(
-    //             0,
-    //             signer1.address
-    //         ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
-    //     });
-
-    //     it('User can claim', async() => {
-    //         const _badgeId = 0;
-    //         const _quantity = 1;
-
-    //         const messageHash = ethers.utils.solidityKeccak256(
-    //             ["address", "uint256", "uint256"], 
-    //             [userSigner.address, _badgeId, _quantity]
-    //         )
-
-    //         const messageHashArrayify = ethers.utils.arrayify(messageHash);
-
-    //         const _signature = await sigSigner.signMessage(messageHashArrayify);
-
-    //         await sashPress.connect(userSigner).claimMint(
-    //               _signature        // bytes calldata _signature
-    //             , _badgeId          // uint256 _id
-    //             , _quantity         // uint256 _quantity
-    //             , "0x"              // bytes memory _data
-    //         );
-    //     });
-
-    //     it('User can revoke own badge', async() => {
-    //         const _badgeId = 0;
-    //         const _quantity = 1;
-    //         const balanceBefore = await sashPress.balanceOf(userSigner.address, _badgeId);
-
-    //         await sashPress.connect(userSigner).forfeit(
-    //             _badgeId,
-    //             _quantity
-    //         )
-
-    //         const balanceAfter = await sashPress.balanceOf(userSigner.address, _badgeId);
-    //         assert.equal(balanceAfter, balanceBefore - _quantity)
-    //     });
-
-    //     it('Can batch mint and revoke', async() => {
-    //         await sashPress.connect(owner).leaderMintBatch(
-    //             [signer1.address, userSigner.address],
-    //             0,
-    //             [1, 2],
-    //             "0x"
-    //         );
-    //         assert.equal(await sashPress.balanceOf(signer1.address, 0), 2);
-    //         assert.equal(await sashPress.balanceOf(userSigner.address, 0), 2);
-
-    //         await sashPress.connect(owner).revokeBatch(
-    //             [signer1.address, userSigner.address],
-    //             0,
-    //             [1, 2]
-    //         )
-    //         assert.equal(await sashPress.balanceOf(signer1.address, 0), 1);
-    //         assert.equal(await sashPress.balanceOf(userSigner.address, 0), 0);
-    //     })
-    //     it('Cannot move soul bound', async() => {
-    //         await sashPress.connect(signer1).safeTransferFrom(
-    //             signer1.address,
-    //             userSigner.address,
-    //             0,
-    //             1,
-    //             "0x"
-    //         ).should.be.revertedWith("BadgerOrganization::safeTransferFrom: Missing the proper transfer permissions.")
-    //     })
-    //     // it('Leader can move soulbound', async() => {
-    //     //     await sashPress.connect(leaderSigner).safeTransferFrom(
-    //     //         signer1.address,
-    //     //         userSigner.address,
-    //     //         0,
-    //     //         1,
-    //     //         "0x"
-    //     //     )
-    //     //     assert.equal(await sashPress.balanceOf(signer1.address, 0), 0);
-    //     //     assert.equal(await sashPress.balanceOf(userSigner.address, 0), 1);
-    //     // })
-    // });
-
-    // describe("Security Tests", function() {
-    //     it("User cannot create badge", async() => {
-
-    //     })
-    //     it("User cannot set leader", async() => {
-
-    //     })
-    //     it("User cannot set signer", async() => {
-
-    //     })
-    //     it("User cannot revoke", async() => {
-
-    //     })
-    //     it("User cannot create badge", async() => {
-
-    //     })
-    //     it("Leader cannot set leader", async() => {
-
-    //     })
-    //     it("Cannot initialize twice", async() => {
-
-    //     })
-    //     it("Cannot mint uncreated badge", async() => {
-
-    //     })
-    //     it("Batch transfer always reverts", async() => {
-
-    //     })
-    // });
-
-    // describe("Native Payment Sash", function() {
-    //     it('Initialized New Sash', async() => {
-    //         cloneTx = await house.connect(owner).createOrganization("0x");
-    //         cloneTx = await cloneTx.wait();
-
-    //         sashPressAddress = cloneTx.events[0].address;
-    //         sashPress = await sashMaster.attach(sashPressAddress);
-
-    //         assert.equal(await sashPress.owner(), owner.address);
-    //     });
-
-    //     it('Sash Initialized.', async () => {
-    //         assert.equal(await sashPress.owner(), owner.address)
-    //     })
-
-    //     it('Can create Sash', async() => {
-    //         const _badgeId = 0;
-    //         const _paymentToken = [
-    //             0,                          // enum TOKEN_TYPE
-    //             signer1.address,            // address tokenAddress
-    //             0,                          // uint256 tokenId
-    //             100                         // uint256 quantity
-    //         ]
-
-    //         await sashPress.connect(owner).setBadge(
-    //               _badgeId                      //   uint256 _id
-    //             , false                         // , bool _accountBound
-    //             , sigSigner.address             // , address _signer
-    //             , "https://badger.utc24.io/0"   // , string memory _uri
-    //             , _paymentToken                 // , paymentToken memory _paymentToken
-    //             , [leaderSigner.address]        // , address[] memory _leaders
-    //         )
-
-    //         const { signer } = await sashPress.badges(0);
-
-    //         assert.equal(signer.toString(), sigSigner.address);
-    //     });
-
-    //     it('Owner can designate leader', async() => {
-    //         await sashPress.setDelegates(0, [leaderSigner.address, signer1.address], [true, true]);
-
-    //         assert.equal(await sashPress.isDelegate(0, leaderSigner.address), true);
-    //         assert.equal(await sashPress.isDelegate(0, signer1.address), true);
-    //     });
-
-    //     it('Leader can mint', async() => {
-    //         const _badgeId = 0;
-    //         const _amount = 1;
-
-    //         await sashPress.connect(leaderSigner).leaderMint(
-    //               userSigner.address
-    //             , _badgeId
-    //             , _amount
-    //             , "0x"
-    //         )
-
-    //         assert.equal(await sashPress.balanceOf(userSigner.address, _badgeId), _amount)
-    //     });
-
-    //     it('Leader can revoke', async() => {
-    //         const _badgeId = 0;
-    //         const _amount = 1;
-    //         const balanceBefore = await sashPress.balanceOf(userSigner.address, _badgeId);
-
-    //         await sashPress.connect(leaderSigner).revoke(
-    //               userSigner.address
-    //             , _badgeId
-    //             , _amount
-    //         )
-
-    //         const balanceAfter = await sashPress.balanceOf(userSigner.address, _badgeId);
-    //         assert.equal(balanceAfter.toString(), (balanceBefore.sub(_amount)).toString())
-    //     });
-
-    //     it('Owner can airdrop mint', async() => {
-    //         const _badgeId = 0;
-    //         const _amount = 1;
-    //         const balanceBefore = await sashPress.balanceOf(userSigner.address, _badgeId);
-
-    //         await sashPress.connect(owner).leaderMintBatch(
-    //                 [userSigner.address, signer1.address]
-    //             , _badgeId
-    //             , [_amount, _amount]
-    //             , "0x"
-    //         )
-
-    //         const balanceAfter = await sashPress.balanceOf(userSigner.address, _badgeId);
-    //         assert.equal(balanceAfter.toString(), (balanceBefore.add(_amount)).toString())
-    //     });
-
-    //     it('Owner can revoke', async() => {
-    //         const _badgeId = 0;
-    //         const _amount = 1;
-    //         const balanceBefore = await sashPress.balanceOf(userSigner.address, _badgeId);
-
-    //         await sashPress.connect(owner).revoke(
-    //                 userSigner.address
-    //             , _badgeId
-    //             , _amount
-    //         )
-
-    //         const balanceAfter = await sashPress.balanceOf(userSigner.address, _badgeId);
-    //         assert.equal(balanceAfter.toString(), (balanceBefore.sub(_amount)).toString())
-    //     });
-
-    //     it('User can claim', async() => {
-    //         const _badgeId = 0;
-    //         const _quantity = 1;
-
-    //         const messageHash = ethers.utils.solidityKeccak256(
-    //             ["address", "uint256", "uint256"], 
-    //             [userSigner.address, _badgeId, _quantity]
-    //         )
-
-    //         const messageHashArrayify = ethers.utils.arrayify(messageHash);
-
-    //         const _signature = await sigSigner.signMessage(messageHashArrayify);
-
-    //         await sashPress.connect(userSigner).claimMint(
-    //               _signature        // bytes calldata _signature
-    //             , _badgeId          // uint256 _id
-    //             , _quantity         // uint256 _quantity
-    //             , "0x"              // bytes memory _data
-    //             , { value: 100 }
-    //         );
-    //     });
-
-    //     it('User can revoke own badge', async() => {
-    //         const _badgeId = 0;
-    //         const _quantity = 1;
-    //         const balanceBefore = await sashPress.balanceOf(userSigner.address, _badgeId);
-
-    //         await sashPress.connect(userSigner).forfeit(
-    //             _badgeId,
-    //             _quantity
-    //         )
-
-    //         const balanceAfter = await sashPress.balanceOf(userSigner.address, _badgeId);
-    //         assert.equal(balanceAfter, balanceBefore - _quantity)
-    //     });
-
-    //     it('Can batch mint and revoke', async() => {
-    //         await sashPress.connect(owner).leaderMintBatch(
-    //             [signer1.address, userSigner.address],
-    //             0,
-    //             [1, 2],
-    //             "0x"
-    //         );
-    //         assert.equal(await sashPress.balanceOf(signer1.address, 0), 2);
-    //         assert.equal(await sashPress.balanceOf(userSigner.address, 0), 2);
-
-    //         await sashPress.connect(owner).revokeBatch(
-    //             [signer1.address, userSigner.address],
-    //             0,
-    //             [2, 2]
-    //         )
-    //         assert.equal(await sashPress.balanceOf(signer1.address, 0), 0);
-    //         assert.equal(await sashPress.balanceOf(userSigner.address, 0), 0);
-    //     })
-    // });
-
-    // WTF why is 1155 deploy failing
-    // describe("1155 Payment Sash", function() {
-    //     it('Initialized New Sash', async() => {
-    //         cloneTx = await house.connect(owner).createOrganization("0x");
-    //         cloneTx = await cloneTx.wait();
-
-    //         sashPressAddress = cloneTx.events[0].address;
-    //         sashPress = await sashMaster.attach(sashPressAddress);
-
-    //         assert.equal(await sashPress.owner(), owner.address);
-    //     });
-
-    //     it('Sash and Mock1155 Deployed.', async () => {
-    //         assert.equal(await sashPress.owner(), owner.address)
-    //         assert.equal(await mock1155.uri(), "testuri/");
-    //     })
-
-    //     it('Can create Sash', async() => {
-    //         const _badgeId = 0;
-    //         const _paymentToken = [
-    //             0,                          // enum TOKEN_TYPE
-    //             signer1.address,            // address tokenAddress
-    //             0,                          // uint256 tokenId
-    //             0                           // uint256 quantity
-    //         ]
-
-    //         await sashPress.connect(owner).setBadge(
-    //               _badgeId                      //   uint256 _id
-    //             , true                          // , bool _accountBound
-    //             , signer1.address               // , address _signer
-    //             , "https://badger.utc24.io/0"   // , string memory _uri
-    //             , _paymentToken                 // , paymentToken memory _paymentToken
-    //             , []                            // , address[] memory _leaders
-    //         )
-
-    //         const { signer } = await sashPress.badges(0);
-
-    //         assert.equal(signer.toString(), signer1.address);
-    //     });
-
-    //     it('Badges have correct URI', async() => {
-    //         let uri = await sashPress.uri(0)
-    //         assert.equal(uri, "https://badger.utc24.io/0")
-    //         uri = await sashPress.uri(1);
-    //         let lowercaseAddress = sashPress.address.toLowerCase();
-    //         assert.equal(uri, "https://badger.utc24.io/api/?seed=" + lowercaseAddress + "1")
-    //     })
-
-    //     it('Owner can designate leader', async() => {
-    //         await sashPress.setDelegates(0, [leaderSigner.address, signer1.address], [true, true]);
-
-    //         assert.equal(await sashPress.isDelegate(0, leaderSigner.address), true);
-    //         assert.equal(await sashPress.isDelegate(0, signer1.address), true);
-    //     });
-
-    //     it('Owner can revoke leader', async() => {
-    //         await sashPress.setDelegates(0, [signer1.address], [false]);
-
-    //         assert.equal(await sashPress.isDelegate(0, signer1.address), false);
-    //     });
-
-    //     it('Leader and user cannot designate leader', async() => {
-    //         await sashPress.connect(leaderSigner).setDelegates(
-    //             0, [signer1.address], [true]
-    //         ).should.be.revertedWith("Ownable: caller is not the owner");
-    //         await sashPress.connect(signer1).setDelegates(
-    //             0, [signer1.address], [true]
-    //         ).should.be.revertedWith("Ownable: caller is not the owner");
-    //     });
-
-    //     it('Leader can mint', async() => {
-    //         const _badgeId = 0;
-    //         const _amount = 1;
-
-    //         await sashPress.connect(leaderSigner).leaderMint(
-    //               userSigner.address
-    //             , _badgeId
-    //             , _amount
-    //             , "0x"
-    //         )
-
-    //         assert.equal(await sashPress.balanceOf(userSigner.address, _badgeId), _amount)
-    //     });
-
-    //     it('Leader can revoke', async() => {
-    //         const _badgeId = 0;
-    //         const _amount = 1;
-    //         const balanceBefore = await sashPress.balanceOf(userSigner.address, _badgeId);
-
-    //         await sashPress.connect(leaderSigner).revoke(
-    //               userSigner.address
-    //             , _badgeId
-    //             , _amount
-    //         )
-
-    //         const balanceAfter = await sashPress.balanceOf(userSigner.address, _badgeId);
-    //         assert.equal(balanceAfter.toString(), (balanceBefore.sub(_amount)).toString())
-    //     });
-
-    //     it('Owner can airdrop mint', async() => {
-    //         const _badgeId = 0;
-    //         const _amount = 1;
-    //         const balanceBefore = await sashPress.balanceOf(userSigner.address, _badgeId);
-
-    //         await sashPress.connect(owner).leaderMintBatch(
-    //                 [userSigner.address, signer1.address]
-    //             , _badgeId
-    //             , [_amount, _amount]
-    //             , "0x"
-    //         )
-
-    //         const balanceAfter = await sashPress.balanceOf(userSigner.address, _badgeId);
-    //         assert.equal(balanceAfter.toString(), (balanceBefore.add(_amount)).toString())
-    //     });
-
-    //     it('Owner can revoke', async() => {
-    //         const _badgeId = 0;
-    //         const _amount = 1;
-    //         const balanceBefore = await sashPress.balanceOf(userSigner.address, _badgeId);
-
-    //         await sashPress.connect(owner).revoke(
-    //                 userSigner.address
-    //             , _badgeId
-    //             , _amount
-    //         )
-
-    //         const balanceAfter = await sashPress.balanceOf(userSigner.address, _badgeId);
-    //         assert.equal(balanceAfter.toString(), (balanceBefore.sub(_amount)).toString())
-    //     });
-
-    //     it('Admin and Leaders can set signer', async() => {
-    //         await sashPress.connect(owner).setSigner(
-    //             0,
-    //             owner.address
-    //         )
-
-    //         const { signer: signer1 } = await sashPress.badges(0);
-
-    //         assert.equal(signer1.toString(), owner.address);
-
-    //         await sashPress.connect(owner).setSigner(
-    //             0,
-    //             sigSigner.address
-    //         )
-
-    //         const { signer: signer2 } = await sashPress.badges(0);
-
-    //         assert.equal(signer2.toString(), sigSigner.address);
-    //     });
-
-    //     it('Users cannot set signer', async() => {
-    //         await sashPress.connect(userSigner).setSigner(
-    //             0,
-    //             signer1.address
-    //         ).should.be.revertedWith("BadgerOrganization::onlyLeader: Only leaders can call this.")
-    //     });
-
-    //     it('User can claim', async() => {
-    //         const _badgeId = 0;
-    //         const _quantity = 1;
-
-    //         const messageHash = ethers.utils.solidityKeccak256(
-    //             ["address", "uint256", "uint256"], 
-    //             [userSigner.address, _badgeId, _quantity]
-    //         )
-
-    //         const messageHashArrayify = ethers.utils.arrayify(messageHash);
-
-    //         const _signature = await sigSigner.signMessage(messageHashArrayify);
-
-    //         await sashPress.connect(userSigner).claimMint(
-    //               _signature        // bytes calldata _signature
-    //             , _badgeId          // uint256 _id
-    //             , _quantity         // uint256 _quantity
-    //             , "0x"              // bytes memory _data
-    //         );
-    //     });
-
-    //     it('User can revoke own badge', async() => {
-    //         const _badgeId = 0;
-    //         const _quantity = 1;
-    //         const balanceBefore = await sashPress.balanceOf(userSigner.address, _badgeId);
-
-    //         await sashPress.connect(userSigner).forfeit(
-    //             _badgeId,
-    //             _quantity
-    //         )
-
-    //         const balanceAfter = await sashPress.balanceOf(userSigner.address, _badgeId);
-    //         assert.equal(balanceAfter, balanceBefore - _quantity)
-    //     });
-
-    //     it('Can batch mint and revoke', async() => {
-    //         await sashPress.connect(owner).leaderMintBatch(
-    //             [signer1.address, userSigner.address],
-    //             0,
-    //             [1, 2],
-    //             "0x"
-    //         );
-    //         assert.equal(await sashPress.balanceOf(signer1.address, 0), 2);
-    //         assert.equal(await sashPress.balanceOf(userSigner.address, 0), 2);
-
-    //         await sashPress.connect(owner).revokeBatch(
-    //             [signer1.address, userSigner.address],
-    //             0,
-    //             [2, 2]
-    //         )
-    //         assert.equal(await sashPress.balanceOf(signer1.address, 0), 0);
-    //         assert.equal(await sashPress.balanceOf(userSigner.address, 0), 0);
-    //     })
-    // });
 })

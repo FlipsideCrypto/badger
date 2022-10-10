@@ -531,19 +531,19 @@ contract BadgerOrganization is
         /// @dev Transfer the ERC20 into this contract.
         IERC20Upgradeable token = IERC20Upgradeable(_token);
 
-        /// @dev Transfer the token into this contract.
-        token.transferFrom(
-              _msgSender()
-            , address(this)
-            , _amount
-        );
-
         /// @dev Verify that the tokens being sent are as expected and deposit them.
         _verifyDeposit(
               _id
             , _token
             , 0
             , _msgSender()
+            , _amount
+        );
+
+        /// @dev Transfer the token into this contract.
+        token.transferFrom(
+              _msgSender()
+            , address(this)
             , _amount
         );
     }
@@ -636,7 +636,7 @@ contract BadgerOrganization is
     {
         /// @dev Return the typical ERC-1155 response if transfer is not intended to be a payment.
         if(bytes(_data).length == 0) {
-            return this.onERC1155Received.selector;
+            return this.onERC721Received.selector;
         }
 
         /// @dev Recover the uint256 for badgeId.

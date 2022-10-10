@@ -198,7 +198,11 @@ contract BadgerScout is
             , _accountBound
         );
 
-        badge.config |= uint256(uint160(_signer)) << 2;
+        /// @dev Set the signer of the Badge.
+        _setSigner(
+              _id
+            , _signer
+        );
         
         badge.uri = _uri;
         badge.paymentToken = _paymentToken;
@@ -291,7 +295,12 @@ contract BadgerScout is
         onlyLeader(_id)
         onlyRealBadge(_id)
     {
-        badges[_id].config |= uint256(uint160(_signer)) << 2;
+        /// @dev Override the existing data and bitpack _signer into the config of the Badge.
+        _setSigner(
+              _id
+            , _signer
+        );
+    
 
         emit BadgeUpdated(_id);
     }
@@ -551,6 +560,22 @@ contract BadgerScout is
     }
 
     /**
+     * @notice Sets the signer for the badge.
+     * @param _id The ID of the badge.
+     * @param _signer The address of the signer.
+     */    
+    function _setSigner(
+          uint256 _id
+        , address _signer
+    )
+        internal
+        virtual
+    {
+        badges[_id].config &= 0x0000000000000000000000000000000000000000000000000000000000000003;
+        badges[_id].config |= uint256(uint160(_signer)) << 2;
+    }
+
+    /**
      * @notice Handle the token-agnostic depositing of funds needed
      *         to claim a Badge.
      * @param _badgeId The id of the badge being claimed.
@@ -697,13 +722,13 @@ contract BadgerScout is
 
         require (
               bytes(badge.uri).length > 0
-            , "BadgerScout::onlyRealBadge: Can only call this for setup badges."
+            , "BadgerScout::_verifyBadge: Can only call this for setup badges."
         );
 
         require (
                  getSigner(_id) != address(0)
               || getClaimable(_id)
-            , "BadgerScout::onlyClaimableBadge: Can only call this for claimable badges."
+            , "BadgerScout::_verifyBadge: Can only call this for claimable badges."
         );
     }
 
@@ -818,7 +843,7 @@ contract BadgerScout is
                            )
                      )
               )
-            , "BadgerOrganization::safeTransferFrom: Missing the proper transfer permissions."
+            , "BadgerScout::_verifyTransfer: Missing the proper transfer permissions."
         );
     }
 
