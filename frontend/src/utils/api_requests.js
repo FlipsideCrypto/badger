@@ -7,6 +7,8 @@ const getCSRFToken = () => {
 export async function postOrgRequest(org) {
     let response;
 
+    console.log('POST body', org)
+
     try {
         await fetch(`${API_URL}/organizations/`, {
             method: "POST",
@@ -20,7 +22,7 @@ export async function postOrgRequest(org) {
         })
         .then(res => res.json())
         .then(data => {
-            if (!data?.id) throw new Error("Org POST request failed, id not found");
+            if (!data?.id) throw new Error("Org POST request failed");
             console.log('got org response', data);
             response = data;
         })
@@ -117,6 +119,9 @@ export async function postIPFSImage(image) {
         .then(data => {
             response = data
         })
+        .catch(error => {
+            throw new Error(error);
+        })
     }
     catch (err) {
         console.log('error uploading to ipfs', err)
@@ -126,13 +131,13 @@ export async function postIPFSImage(image) {
     return response;
 }
 
-export async function postIPFSMetadata(badge) {
+export async function postIPFSMetadata(obj) {
     let response;
 
     const metadata = {
-        name: badge.name,
-        description: badge.description,
-        image: `${IPFS_GATEWAY_URL}/${badge.image_hash}`
+        name: obj.name,
+        description: obj.description,
+        image: `${IPFS_GATEWAY_URL}/${obj.image_hash}`
     }
 
     try {
@@ -149,6 +154,9 @@ export async function postIPFSMetadata(badge) {
         .then(res => res.json())
         .then(data => {
             response = data
+        })
+        .catch(error => {
+            throw new Error(error);
         })
     }
     catch (err) {

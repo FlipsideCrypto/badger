@@ -60,7 +60,6 @@ const Badge = () => {
         "Remove Leader"
     ]
 
-    // TODO: Hook up contract hooks and API PATCH
     const onButtonClick = async () => {
         const method = selectedAction === "Mint" || selectedAction === "Revoke" ? 
             "manageOwnership" : "setDelegates";
@@ -71,8 +70,8 @@ const Badge = () => {
     // Update the badge array after the transaction is completed, POST 
     // out to the API, update our orgData context, and reset call transaction flag.
     const onMembersUpdate = async () => {
-        // API is currently returning no key with empty array, so we need to check for that
         if (!badge.users) badge.users = [];
+
         membersToUpdate.forEach(member => {
             if (selectedAction === "Revoke") {
                 const index = badge.users.findIndex(user => user.ethereum_address === member);
@@ -85,7 +84,7 @@ const Badge = () => {
 
         const response = await patchBadgeRolesRequest(badge, orgId)
         if (response.error)
-            setError(response.error);
+            setError('Adding members to database failed: ' + response.error);
         else
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
 
@@ -97,6 +96,7 @@ const Badge = () => {
     // out to the API, update our orgData context, and reset call transaction flag.
     const onDelegatesUpdate = async () => {
         if (!badge.delegates) badge.delegates = [];
+        
         membersToUpdate.forEach(member => {
             if (selectedAction === "Remove Leader") {
                 const index = badge.delegates.findIndex(delegate => delegate.ethereum_address === member);
@@ -109,7 +109,7 @@ const Badge = () => {
 
         const response = await patchBadgeRolesRequest(badge, orgId)
         if (response.error)
-            setError(response.error);        
+            setError('Adding delegates to database failed: ' + response.error);        
         else
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
 
@@ -145,7 +145,7 @@ const Badge = () => {
                     }
                 }
             } catch (error) {
-                setError('Transaction failed:', error);
+                setError('Transaction failed: ' + error);
                 setCallTransaction("")
             }
             setTxPending(false);
@@ -161,10 +161,6 @@ const Badge = () => {
             setBadge(orgData?.badges[badgeIndex]);
         }
     }, [orgData, badgeIndex])
-
-    useEffect(() => {
-        if (!orgData) navigate("/dashboard/");
-    }, [orgData, navigate])
 
     return (
         <>

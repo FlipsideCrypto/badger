@@ -68,7 +68,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         // Get the token uri
         const response = await postIPFSMetadata(badgeObj);
         if (response.error) {
-            setError(response.error);
+            setError('Error creating token URI: ' + response.error);
         }
         const token_uri = `${IPFS_GATEWAY_URL}/${response.hash}`
         setBadgeObj({
@@ -88,7 +88,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         
         const response = await postIPFSImage(image)
         if (response.error) {
-            setError(response.error);
+            setError('Could not upload image to IPFS: ' + response.error);
         }
         setIpfsImageHash(response.hash)
         setBadgeObj({...badgeObj, image_hash: response.hash})
@@ -121,7 +121,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
                 navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${badgeObj.token_id}`);
             }
             else {
-                setError(response.error);
+                setError('Could not add badge to database: ' + response.error);
             }
 
             setTxPending(false);
@@ -131,17 +131,11 @@ const BadgeForm = ({name, desc, image, delegates}) => {
             try {
                 createBadgeTx();
             } catch (error) {
-                setError(error);
+                setError('Transaction failed: ' + error);
             }
         }
         // eslint-disable-next-line
     }, [createBadge.isSuccess])
-
-    // If no org data is found then navigate home.
-    // This probably could be removed and handled better.
-    useEffect(() => {
-        if (!orgData) navigate("/dashboard/");
-    }, [orgData, navigate])
 
     return (
         <div id="new-badge">
