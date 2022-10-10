@@ -15,7 +15,6 @@ const UserContextProvider = ({ children, signer, address }) => {
     // Get user data from backend and set it to userData.
     // If user is not authenticated, run the authentication flow.
     useEffect(() => {
-        console.log('getting user data', address, userData)
         if (
             !address ||
             userData?.ethereum_address === address

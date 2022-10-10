@@ -49,7 +49,10 @@
     transform: translateX(2px);
 }
 
-.button.button__loading {
+.button.button__loading,
+.button.button__loading:hover,
+.button.button__loading:active,
+.button.button__loading:focus {
     background: #00FF9D;
     background-image: linear-gradient(to right, white 0%, #72fec9 30%, #00FF9D 40%, #72fec9 50%, white);
     background-repeat: no-repeat;

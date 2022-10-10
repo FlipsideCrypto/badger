@@ -2,14 +2,18 @@
   "constructor(address)",
   "event OrganizationCreated(address indexed,address indexed,address indexed)",
   "event OwnershipTransferred(address indexed,address indexed)",
-  "function createOrganization(string) returns (address)",
+  "event VersionUpdated(address indexed)",
+  "function createOrganization(address,address,string,string,string,string) returns (address)",
   "function execTransaction(address,bytes,uint256) payable",
+  "function getLicenseKey(bytes32,address) pure returns (bytes32)",
+  "function getVersionKey(address) view returns (bytes32)",
   "function onERC1155BatchReceived(address,address,uint256[],uint256[],bytes) returns (bytes4)",
   "function onERC1155Received(address,address,uint256,uint256,bytes) returns (bytes4)",
   "function owner() view returns (address)",
   "function renounceOwnership()",
-  "function setVersion(uint256,address,uint8,address,uint256,uint256)",
+  "function setVersion(address,address,address,uint256,uint256,bool)",
   "function supportsInterface(bytes4) view returns (bool)",
   "function transferOwnership(address)",
-  "function versions(uint256) view returns (address, tuple(uint8,address,uint256,uint256))"
+  "function versionKeyToFunded(bytes32) view returns (uint256)",
+  "function versions(address) view returns (address, bytes32, uint256, bool)"
 ]

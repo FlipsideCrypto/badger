@@ -46,7 +46,7 @@ const OrgSidebar = ({ address }) => {
     // If programmatic network switching does not work,
     // then change the connect button to switch network.    
     const onSwitchNetworkRequest = useCallback(() => {
-        if (!(chain.name in BADGER_ADDRESSES)) {
+        if (!(chain?.name in BADGER_ADDRESSES)) {
             const primaryChain = chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)
             switchNetwork?.(primaryChain.id)
             setCannotSwitchNetwork(true);

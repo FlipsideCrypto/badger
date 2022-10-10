@@ -1,13 +1,13 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { useNetwork, useContractEvent } from "wagmi";
+import { useNetwork, useAccount, useContractEvent } from "wagmi";
 
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 
-import { useBadgerPress } from "@hooks/useContracts";
+import { useBadgerFactory } from "@hooks/useContracts";
 import { postOrgRequest } from "@utils/api_requests";
 import { getBadgerAbi } from "@hooks/useContracts";
 
@@ -17,9 +17,18 @@ const OrgForm = () => {
     const [ txPending, setTxPending ] = useState(false);
     const { userData, setUserData } = useContext(UserContext);
 
+    const { address } = useAccount();
     const { chain } = useNetwork();
     const navigate = useNavigate();
-    const createContract = useBadgerPress(chain.name);
+    const createContract = useBadgerFactory(
+        chain.name,                     // chain name
+        address,                        // deployer address
+        orgName,                        // org name
+        orgSymbol,                      // org symbol
+        "",                             // base URI
+        "",                             // contract URI
+        Boolean(address && orgName)     // transaction enabled
+    );
 
     // Listener for the confirmed transaction in order to
     // pull the new contract address from events.
@@ -48,11 +57,10 @@ const OrgForm = () => {
     // Upon receiving the event from clone transaction,
     // POST the org to backend and redirect to org page.
     const onEventReceived = async (event) => {
-        console.log('event', event)
         const orgObj = {
             is_active: false,
             chain: chain.name,
-            ethereum_address: '',
+            ethereum_address: event,
             name: orgName,
             symbol: orgSymbol,
             description: 'This is a super cool description.',
