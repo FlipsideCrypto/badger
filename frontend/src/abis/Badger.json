@@ -1,19 +1,377 @@
 [
-  "constructor(address)",
-  "event OrganizationCreated(address indexed,address indexed,address indexed)",
-  "event OwnershipTransferred(address indexed,address indexed)",
-  "event VersionUpdated(address indexed,tuple(address,bytes32,uint256,bool) indexed)",
-  "function createOrganization(address,address,string,string,string,string) returns (address)",
-  "function execTransaction(address,bytes,uint256) payable",
-  "function getLicenseKey(bytes32,address) pure returns (bytes32)",
-  "function getVersionKey(address) view returns (bytes32)",
-  "function onERC1155BatchReceived(address,address,uint256[],uint256[],bytes) returns (bytes4)",
-  "function onERC1155Received(address,address,uint256,uint256,bytes) returns (bytes4)",
-  "function owner() view returns (address)",
-  "function renounceOwnership()",
-  "function setVersion(address,address,address,uint256,uint256,bool)",
-  "function supportsInterface(bytes4) view returns (bool)",
-  "function transferOwnership(address)",
-  "function versionKeyToFunded(bytes32) view returns (uint256)",
-  "function versions(address) view returns (address, bytes32, uint256, bool)"
+    {
+        "type": "constructor",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_implementation"
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "OrganizationCreated",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "organization",
+                "indexed": true
+            },
+            {
+                "type": "address",
+                "name": "owner",
+                "indexed": true
+            },
+            {
+                "type": "address",
+                "name": "implementation",
+                "indexed": true
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "OwnershipTransferred",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "previousOwner",
+                "indexed": true
+            },
+            {
+                "type": "address",
+                "name": "newOwner",
+                "indexed": true
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "VersionUpdated",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "implementation",
+                "indexed": true
+            },
+            {
+                "type": "tuple",
+                "name": "version",
+                "indexed": true,
+                "components": [
+                    {
+                        "type": "address",
+                        "name": "owner"
+                    },
+                    {
+                        "type": "bytes32",
+                        "name": "licenseKey"
+                    },
+                    {
+                        "type": "uint256",
+                        "name": "amount"
+                    },
+                    {
+                        "type": "bool",
+                        "name": "locked"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "createOrganization",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_implementation"
+            },
+            {
+                "type": "address",
+                "name": "_deployer"
+            },
+            {
+                "type": "string",
+                "name": "_uri"
+            },
+            {
+                "type": "string",
+                "name": "_organizationURI"
+            },
+            {
+                "type": "string",
+                "name": "_name"
+            },
+            {
+                "type": "string",
+                "name": "_symbol"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "execTransaction",
+        "constant": false,
+        "stateMutability": "payable",
+        "payable": true,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_to"
+            },
+            {
+                "type": "bytes",
+                "name": "_data"
+            },
+            {
+                "type": "uint256",
+                "name": "_value"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "getLicenseKey",
+        "constant": true,
+        "stateMutability": "pure",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "bytes32",
+                "name": "_versionKey"
+            },
+            {
+                "type": "address",
+                "name": "_sender"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bytes32"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "getVersionKey",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_implementation"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bytes32"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "onERC1155BatchReceived",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address"
+            },
+            {
+                "type": "address"
+            },
+            {
+                "type": "uint256[]"
+            },
+            {
+                "type": "uint256[]"
+            },
+            {
+                "type": "bytes"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bytes4"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "onERC1155Received",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address"
+            },
+            {
+                "type": "address",
+                "name": "_from"
+            },
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "uint256",
+                "name": "_amount"
+            },
+            {
+                "type": "bytes",
+                "name": "_data"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bytes4"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "owner",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+            {
+                "type": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "renounceOwnership",
+        "constant": false,
+        "payable": false,
+        "inputs": [],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "setVersion",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_implementation"
+            },
+            {
+                "type": "address",
+                "name": "_owner"
+            },
+            {
+                "type": "address",
+                "name": "_tokenAddress"
+            },
+            {
+                "type": "uint256",
+                "name": "_tokenId"
+            },
+            {
+                "type": "uint256",
+                "name": "_amount"
+            },
+            {
+                "type": "bool",
+                "name": "_locked"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "supportsInterface",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "bytes4",
+                "name": "_interfaceId"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bool"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "transferOwnership",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "newOwner"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "versionKeyToFunded",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "bytes32"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "uint256"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "versions",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "address",
+                "name": "owner"
+            },
+            {
+                "type": "bytes32",
+                "name": "licenseKey"
+            },
+            {
+                "type": "uint256",
+                "name": "amount"
+            },
+            {
+                "type": "bool",
+                "name": "locked"
+            }
+        ]
+    }
 ]

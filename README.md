@@ -1,11 +1,16 @@
 ![opengraph](frontend/src/static/images/opengraph.png)
 
-NFT Credential Issuer for organizations implementing on chain roles, titles, payment plans, and other tracking functions for their members and employees.
+- potentially provide alchemy test case because the setup of needing a million things a million different places sucks
 
-Badger is intended to be used as a way for organizations to bootstrap on-chain roles and token-gated areas for their members.
+## [[[API]]](backend/README.md)
+- Should use Docker for database
+- Have to have pinata
 
-Simply walk through the 3 step process of setting up a collection for your Set of Badges, create your different Badge types, and then mint at will on Polygon.
+## [[[Contracts]]](contracts/README.md)
+- run the local hardhat node
+- make sure that a local hardhat node is NOT running when you try and run the coverage tests otherwise ganache will not be able to spin up it's node
+- when running deploy script the deployed addresses should be added to the config file
 
-With the initial Polygon roll out, all metadata is on chain and images are automatically hosted and pinned on IPFS. Never worry about losing provenance of your Badges.
-
-*** IN PROGRESS ***
+## [[[Frontend]]](frontend/README.md)
+- needs deployments
+- needs alchemy

@@ -51,3 +51,10 @@
     margin-top: 10px;
     color: rgba(0,0,0,.35);
 }
+
+@media only screen and (max-width: 1200px) {
+    .home .home__cards { 
+        grid-template: none;
+        grid-template-columns: 1fr;
+    }
+}

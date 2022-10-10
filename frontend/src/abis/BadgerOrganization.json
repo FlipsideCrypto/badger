@@ -1,57 +1,1184 @@
 [
-  "event ApprovalForAll(address indexed,address indexed,bool)",
-  "event BadgeUpdated(tuple(uint256,string,tuple(bytes32,uint256)) indexed)",
-  "event Initialized(uint8)",
-  "event OrganizationUpdated(string)",
-  "event OwnershipTransferred(address indexed,address indexed)",
-  "event PaymentTokenDeposited(tuple(uint256,string,tuple(bytes32,uint256)) indexed,address indexed,uint256 indexed)",
-  "event TransferBatch(address indexed,address indexed,address indexed,uint256[],uint256[])",
-  "event TransferSingle(address indexed,address indexed,address indexed,uint256,uint256)",
-  "event URI(string,uint256 indexed)",
-  "function DOLPHIN_ETH() view returns (address)",
-  "function badgeDelegateKeyToIsDelegate(bytes32) view returns (bool)",
-  "function badges(uint256) view returns (uint256, string, tuple(bytes32,uint256))",
-  "function balanceOf(address,uint256) view returns (uint256)",
-  "function balanceOfBatch(address[],uint256[]) view returns (uint256[])",
-  "function claimMint(bytes,uint256,uint256,bytes) payable",
-  "function contractURI() view returns (string)",
-  "function depositERC20(uint256,address,uint256)",
-  "function depositETH(uint256) payable",
-  "function execTransaction(address,bytes,uint256) payable",
-  "function forfeit(uint256,uint256)",
-  "function getAccountBound(uint256) view returns (bool)",
-  "function getClaimable(uint256) view returns (bool)",
-  "function getSigner(uint256) view returns (address)",
-  "function initialize(address,string,string,string,string)",
-  "function isApprovedForAll(address,address) view returns (bool)",
-  "function isDelegate(uint256,address) view returns (bool)",
-  "function leaderMint(address,uint256,uint256,bytes)",
-  "function leaderMintBatch(address[],uint256,uint256[],bytes)",
-  "function leaderMintFullBatch(address[],uint256[],uint256[],bytes)",
-  "function name() view returns (string)",
-  "function onERC1155BatchReceived(address,address,uint256[],uint256[],bytes) returns (bytes4)",
-  "function onERC1155Received(address,address,uint256,uint256,bytes) returns (bytes4)",
-  "function onERC721Received(address,address,uint256,bytes) returns (bytes4)",
-  "function organizationURI() view returns (string)",
-  "function owner() view returns (address)",
-  "function renounceOwnership()",
-  "function revoke(address,uint256,uint256)",
-  "function revokeBatch(address[],uint256,uint256[])",
-  "function revokeFullBatch(address[],uint256[],uint256[])",
-  "function safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)",
-  "function safeTransferFrom(address,address,uint256,uint256,bytes)",
-  "function setAccountBound(uint256,bool)",
-  "function setApprovalForAll(address,bool)",
-  "function setBadge(uint256,bool,bool,address,string,tuple(bytes32,uint256),address[])",
-  "function setBadgeURI(uint256,string)",
-  "function setClaimable(uint256,bool)",
-  "function setDelegates(uint256,address[],bool[])",
-  "function setDelegatesBatch(uint256[],address[],bool[])",
-  "function setOrganizationURI(string)",
-  "function setPaymentToken(uint256,tuple(bytes32,uint256))",
-  "function setSigner(uint256,address)",
-  "function supportsInterface(bytes4) view returns (bool)",
-  "function symbol() view returns (string)",
-  "function transferOwnership(address)",
-  "function uri(uint256) view returns (string)"
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "ApprovalForAll",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "account",
+                "indexed": true
+            },
+            {
+                "type": "address",
+                "name": "operator",
+                "indexed": true
+            },
+            {
+                "type": "bool",
+                "name": "approved",
+                "indexed": false
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "BadgeUpdated",
+        "inputs": [
+            {
+                "type": "tuple",
+                "name": "badge",
+                "indexed": true,
+                "components": [
+                    {
+                        "type": "uint256",
+                        "name": "config"
+                    },
+                    {
+                        "type": "string",
+                        "name": "uri"
+                    },
+                    {
+                        "type": "tuple",
+                        "name": "paymentToken",
+                        "components": [
+                            {
+                                "type": "bytes32",
+                                "name": "paymentKey"
+                            },
+                            {
+                                "type": "uint256",
+                                "name": "amount"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "Initialized",
+        "inputs": [
+            {
+                "type": "uint8",
+                "name": "version",
+                "indexed": false
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "OrganizationUpdated",
+        "inputs": [
+            {
+                "type": "string",
+                "name": "organizationURI",
+                "indexed": false
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "OwnershipTransferred",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "previousOwner",
+                "indexed": true
+            },
+            {
+                "type": "address",
+                "name": "newOwner",
+                "indexed": true
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "PaymentTokenDeposited",
+        "inputs": [
+            {
+                "type": "tuple",
+                "name": "badge",
+                "indexed": true,
+                "components": [
+                    {
+                        "type": "uint256",
+                        "name": "config"
+                    },
+                    {
+                        "type": "string",
+                        "name": "uri"
+                    },
+                    {
+                        "type": "tuple",
+                        "name": "paymentToken",
+                        "components": [
+                            {
+                                "type": "bytes32",
+                                "name": "paymentKey"
+                            },
+                            {
+                                "type": "uint256",
+                                "name": "amount"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "address",
+                "name": "payer",
+                "indexed": true
+            },
+            {
+                "type": "uint256",
+                "name": "amount",
+                "indexed": true
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "TransferBatch",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "operator",
+                "indexed": true
+            },
+            {
+                "type": "address",
+                "name": "from",
+                "indexed": true
+            },
+            {
+                "type": "address",
+                "name": "to",
+                "indexed": true
+            },
+            {
+                "type": "uint256[]",
+                "name": "ids",
+                "indexed": false
+            },
+            {
+                "type": "uint256[]",
+                "name": "values",
+                "indexed": false
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "TransferSingle",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "operator",
+                "indexed": true
+            },
+            {
+                "type": "address",
+                "name": "from",
+                "indexed": true
+            },
+            {
+                "type": "address",
+                "name": "to",
+                "indexed": true
+            },
+            {
+                "type": "uint256",
+                "name": "id",
+                "indexed": false
+            },
+            {
+                "type": "uint256",
+                "name": "value",
+                "indexed": false
+            }
+        ]
+    },
+    {
+        "type": "event",
+        "anonymous": false,
+        "name": "URI",
+        "inputs": [
+            {
+                "type": "string",
+                "name": "value",
+                "indexed": false
+            },
+            {
+                "type": "uint256",
+                "name": "id",
+                "indexed": true
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "DOLPHIN_ETH",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+            {
+                "type": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "badgeDelegateKeyToIsDelegate",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "bytes32"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bool"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "badges",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "uint256",
+                "name": "config"
+            },
+            {
+                "type": "string",
+                "name": "uri"
+            },
+            {
+                "type": "tuple",
+                "name": "paymentToken",
+                "components": [
+                    {
+                        "type": "bytes32",
+                        "name": "paymentKey"
+                    },
+                    {
+                        "type": "uint256",
+                        "name": "amount"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "balanceOf",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "account"
+            },
+            {
+                "type": "uint256",
+                "name": "id"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "uint256"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "balanceOfBatch",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address[]",
+                "name": "accounts"
+            },
+            {
+                "type": "uint256[]",
+                "name": "ids"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "uint256[]"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "claimMint",
+        "constant": false,
+        "stateMutability": "payable",
+        "payable": true,
+        "inputs": [
+            {
+                "type": "bytes",
+                "name": "_signature"
+            },
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "uint256",
+                "name": "_amount"
+            },
+            {
+                "type": "bytes",
+                "name": "_data"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "contractURI",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+            {
+                "type": "string"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "depositERC20",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "address",
+                "name": "_token"
+            },
+            {
+                "type": "uint256",
+                "name": "_amount"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "depositETH",
+        "constant": false,
+        "stateMutability": "payable",
+        "payable": true,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "execTransaction",
+        "constant": false,
+        "stateMutability": "payable",
+        "payable": true,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_to"
+            },
+            {
+                "type": "bytes",
+                "name": "_data"
+            },
+            {
+                "type": "uint256",
+                "name": "_value"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "forfeit",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "uint256",
+                "name": "_amount"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "getAccountBound",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bool"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "getClaimable",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bool"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "getSigner",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "initialize",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_owner"
+            },
+            {
+                "type": "string",
+                "name": "_uri"
+            },
+            {
+                "type": "string",
+                "name": "_organizationURI"
+            },
+            {
+                "type": "string",
+                "name": "_name"
+            },
+            {
+                "type": "string",
+                "name": "_symbol"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "isApprovedForAll",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "account"
+            },
+            {
+                "type": "address",
+                "name": "operator"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bool"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "isDelegate",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "address",
+                "name": "_delegate"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bool"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "leaderMint",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_to"
+            },
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "uint256",
+                "name": "_amount"
+            },
+            {
+                "type": "bytes",
+                "name": "_data"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "leaderMintBatch",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address[]",
+                "name": "_tos"
+            },
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "uint256[]",
+                "name": "_amounts"
+            },
+            {
+                "type": "bytes",
+                "name": "_data"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "leaderMintFullBatch",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address[]",
+                "name": "_tos"
+            },
+            {
+                "type": "uint256[]",
+                "name": "_ids"
+            },
+            {
+                "type": "uint256[]",
+                "name": "_amounts"
+            },
+            {
+                "type": "bytes",
+                "name": "_data"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "name",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+            {
+                "type": "string"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "onERC1155BatchReceived",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address"
+            },
+            {
+                "type": "address"
+            },
+            {
+                "type": "uint256[]"
+            },
+            {
+                "type": "uint256[]"
+            },
+            {
+                "type": "bytes"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bytes4"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "onERC1155Received",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address"
+            },
+            {
+                "type": "address",
+                "name": "_from"
+            },
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "uint256",
+                "name": "_amount"
+            },
+            {
+                "type": "bytes",
+                "name": "_data"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bytes4"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "onERC721Received",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address"
+            },
+            {
+                "type": "address",
+                "name": "_from"
+            },
+            {
+                "type": "uint256"
+            },
+            {
+                "type": "bytes",
+                "name": "_data"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bytes4"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "organizationURI",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+            {
+                "type": "string"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "owner",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+            {
+                "type": "address"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "renounceOwnership",
+        "constant": false,
+        "payable": false,
+        "inputs": [],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "revoke",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_from"
+            },
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "uint256",
+                "name": "_amount"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "revokeBatch",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address[]",
+                "name": "_froms"
+            },
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "uint256[]",
+                "name": "_amounts"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "revokeFullBatch",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address[]",
+                "name": "_froms"
+            },
+            {
+                "type": "uint256[]",
+                "name": "_ids"
+            },
+            {
+                "type": "uint256[]",
+                "name": "_amounts"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "safeBatchTransferFrom",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_from"
+            },
+            {
+                "type": "address",
+                "name": "_to"
+            },
+            {
+                "type": "uint256[]",
+                "name": "_ids"
+            },
+            {
+                "type": "uint256[]",
+                "name": "_amounts"
+            },
+            {
+                "type": "bytes",
+                "name": "_data"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "safeTransferFrom",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "_from"
+            },
+            {
+                "type": "address",
+                "name": "_to"
+            },
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "uint256",
+                "name": "_amount"
+            },
+            {
+                "type": "bytes",
+                "name": "_data"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "setAccountBound",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "bool",
+                "name": "_accountBound"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "setApprovalForAll",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "operator"
+            },
+            {
+                "type": "bool",
+                "name": "approved"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "setBadge",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "bool",
+                "name": "_claimable"
+            },
+            {
+                "type": "bool",
+                "name": "_accountBound"
+            },
+            {
+                "type": "address",
+                "name": "_signer"
+            },
+            {
+                "type": "string",
+                "name": "_uri"
+            },
+            {
+                "type": "tuple",
+                "name": "_paymentToken",
+                "components": [
+                    {
+                        "type": "bytes32",
+                        "name": "paymentKey"
+                    },
+                    {
+                        "type": "uint256",
+                        "name": "amount"
+                    }
+                ]
+            },
+            {
+                "type": "address[]",
+                "name": "_delegates"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "setBadgeURI",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "string",
+                "name": "_uri"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "setClaimable",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "bool",
+                "name": "_claimable"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "setDelegates",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "address[]",
+                "name": "_delegates"
+            },
+            {
+                "type": "bool[]",
+                "name": "_isDelegate"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "setDelegatesBatch",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256[]",
+                "name": "_ids"
+            },
+            {
+                "type": "address[]",
+                "name": "_delegates"
+            },
+            {
+                "type": "bool[]",
+                "name": "_isDelegate"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "setOrganizationURI",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "string",
+                "name": "_uri"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "setPaymentToken",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "tuple",
+                "name": "_paymentToken",
+                "components": [
+                    {
+                        "type": "bytes32",
+                        "name": "paymentKey"
+                    },
+                    {
+                        "type": "uint256",
+                        "name": "amount"
+                    }
+                ]
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "setSigner",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            },
+            {
+                "type": "address",
+                "name": "_signer"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "supportsInterface",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "bytes4",
+                "name": "_interfaceId"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "bool"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "symbol",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+            {
+                "type": "string"
+            }
+        ]
+    },
+    {
+        "type": "function",
+        "name": "transferOwnership",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+            {
+                "type": "address",
+                "name": "newOwner"
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "type": "function",
+        "name": "uri",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+            {
+                "type": "uint256",
+                "name": "_id"
+            }
+        ],
+        "outputs": [
+            {
+                "type": "string"
+            }
+        ]
+    }
 ]
