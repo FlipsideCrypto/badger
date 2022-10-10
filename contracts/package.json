@@ -23,5 +23,9 @@
     "hardhat-tracer": "^1.1.0-rc.9",
     "hardhat-watcher": "^2.5.0",
     "mocha": "^10.0.0"
+  },
+  "dependencies": {
+    "ganache-cli": "^6.12.2",
+    "solidity-coverage": "^0.8.2"
   }
 }

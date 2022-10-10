@@ -618,8 +618,8 @@ contract BadgerScout is
 
         /// @dev Confirm the Badge exists.
         require(
-                bytes(badge.uri).length != 0
-            , "BadgerOrganization::_verifyFullBatch: Badge does not exist."
+              bytes(badge.uri).length != 0
+            , "BadgerScout::_verifyFullBatch: Can only call this for setup badges."
         );
         
         /// @dev Only allow the owner or leader to mint the badge.
@@ -629,7 +629,7 @@ contract BadgerScout is
                        _id
                      , _msgSender()
                  )
-            , "BadgerOrganization::_verifyFullBatch: Only leaders can call this."
+            , "BadgerScout::_verifyFullBatch: Only leaders can call this."
         );
     }        
 

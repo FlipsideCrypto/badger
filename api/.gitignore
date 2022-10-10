@@ -7,9 +7,6 @@ db.sqlite3
 .env
 .pnp.js
 
-# testing
-/coverage
-
 # production
 /build
 

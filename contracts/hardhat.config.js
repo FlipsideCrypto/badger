@@ -7,6 +7,7 @@ require("hardhat-api-builder");
 require("hardhat-docgen");
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
+require('solidity-coverage');
 
 require("dotenv").config();
 
