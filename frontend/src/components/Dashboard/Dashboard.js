@@ -2,7 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import { useAccount, useSigner } from "wagmi";
 
 import UserContextProvider from "@components/Dashboard/Provider/UserContextProvider";
-import OrgContextProvider from "@components/Dashboard//Provider/OrgContextProvider";
+import OrgContextProvider from "@components/Dashboard/Provider/OrgContextProvider";
+import ErrorContextProvider from "@components/Dashboard/Provider/ErrorContextProvider";
 import DashboardContent from "@components/Dashboard/Content/DashboardContent";
 import OrgSidebar from "@components/Dashboard/Sidebar/OrgSidebar";
 import HelpSidebar from "@components/Dashboard/Sidebar/HelpSidebar";
@@ -25,13 +26,15 @@ const Dashboard = () => {
                     <OrgSidebar address={address} />
 
                     <DashboardContent>
-                        <Routes>
-                            <Route path="/" element={ <Home /> } />
-                            <Route path="/organization/new" element={ <OrgForm /> } />
-                            <Route path="/organization" element={ <Org /> } />
-                            <Route path="/badge/new" element={ <BadgeForm /> } />
-                            <Route path="/badge" element={ <Badge /> } />
-                        </Routes>
+                        <ErrorContextProvider>
+                            <Routes>
+                                <Route path="/" element={ <Home /> } />
+                                <Route path="/organization/new" element={ <OrgForm /> } />
+                                <Route path="/organization" element={ <Org /> } />
+                                <Route path="/badge/new" element={ <BadgeForm /> } />
+                                <Route path="/badge" element={ <Badge /> } />
+                            </Routes>
+                        </ErrorContextProvider>
                     </DashboardContent>
 
                     <HelpSidebar />

@@ -1,0 +1,60 @@
+.error__wrapper {
+    position: relative;
+    width: 60%;
+    margin: auto;
+}
+
+.error__card {
+    background: rgb(255, 180, 180);
+    display: grid;
+    grid-template-columns: 10% 80% 10%;
+    grid-template-rows: auto;
+    position: absolute;
+    border-radius: 8px;
+    color: red;
+    width: 100%;
+    min-height: 32px;
+    margin-top: 16px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.error__card__message {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+.error__card__text {
+    padding: 10px;
+    font-size: 12px;
+    line-height: 14px;
+    font-weight: 400;
+    text-align: center;
+}
+
+.error__card__button { 
+    /* position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translate(0%, -50%); */
+    /* width: 24px;
+    height: 24px; */
+    width: auto;
+    justify-content: center;
+    align-content: center;
+    display: flex;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.65);
+}
+
+.error__card__icon {
+    /* position: absolute;
+    top: 50%;
+    left: 0; */
+    /* transform: translate(0%, -50%); */
+    width: 40px;
+    justify-content: center;
+}
