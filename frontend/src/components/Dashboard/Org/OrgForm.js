@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useNetwork, useAccount, useContractEvent } from "wagmi";
 
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
+import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
@@ -16,6 +17,7 @@ const OrgForm = () => {
     const [ orgSymbol, setOrgSymbol ] = useState("");
     const [ txPending, setTxPending ] = useState(false);
     const { userData, setUserData } = useContext(UserContext);
+    const { setError } = useContext(ErrorContext);
 
     const { address } = useAccount();
     const { chain } = useNetwork();
@@ -78,6 +80,9 @@ const OrgForm = () => {
             if (!response?.error && response?.id) {
                 addOrgToState(response);
                 navigate(`/dashboard/organization?orgId=${response.id}`);
+            }
+            else {
+                setError(response.error);
             }
         }
         setTxPending(false);

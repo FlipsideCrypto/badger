@@ -6,6 +6,7 @@ import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
+import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 
 import { IPFS_GATEWAY_URL } from "@static/constants/links"
 import { postBadgeRequest, postIPFSImage, postIPFSMetadata } from "@utils/api_requests";
@@ -23,6 +24,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     const [ ipfsImageHash, setIpfsImageHash ] = useState();
     const [ txPending, setTxPending ] = useState(false);
     const { orgData, setOrgData } = useContext(OrgContext);
+    const { setError } = useContext(ErrorContext);
     
     const [ badgeObj, setBadgeObj ] = useState({
         name: badgeName,
@@ -64,8 +66,11 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     // As we have to await the transaction to be prepared by wagmi before calling it.
     const onBadgeFormSubmission = async () => {
         // Get the token uri
-        const metadata_response = await postIPFSMetadata(badgeObj);
-        const token_uri = `${IPFS_GATEWAY_URL}/${metadata_response.hash}`
+        const response = await postIPFSMetadata(badgeObj);
+        if (response.error) {
+            setError(response.error);
+        }
+        const token_uri = `${IPFS_GATEWAY_URL}/${response.hash}`
         setBadgeObj({
             ...badgeObj, 
             token_uri: token_uri,
@@ -82,6 +87,9 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         setBadgeImage(image)
         
         const response = await postIPFSImage(image)
+        if (response.error) {
+            setError(response.error);
+        }
         setIpfsImageHash(response.hash)
         setBadgeObj({...badgeObj, image_hash: response.hash})
     }
@@ -105,7 +113,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
             badgeObj.url = response.url
 
             // if POST is successful
-            if (response?.url) {
+            if (!response.error) {
                 // Set in orgData context
                 let prev = {...orgData}
                 prev.badges.push(badgeObj)
@@ -113,14 +121,18 @@ const BadgeForm = ({name, desc, image, delegates}) => {
                 navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${badgeObj.token_id}`);
             }
             else {
-                console.log('Error creating badge.')
+                setError(response.error);
             }
 
             setTxPending(false);
         }
 
         if (createBadge.isSuccess) {
-            createBadgeTx();
+            try {
+                createBadgeTx();
+            } catch (error) {
+                setError(error);
+            }
         }
         // eslint-disable-next-line
     }, [createBadge.isSuccess])
