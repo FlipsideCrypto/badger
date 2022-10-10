@@ -190,6 +190,7 @@ contract BadgerOrganization is
      * 
      * Requirements:
      * - The Badge must exist.
+     * - The amount to mint must be greater than zero.
      * - The caller must have a valid signature or the token be claimable.
      */
     function claimMint(
@@ -204,18 +205,24 @@ contract BadgerOrganization is
         virtual
         onlyRealBadge(_id)
     { 
+        /// @dev Confirm that the user is trying to mint at least one.
+        require(
+              _amount > 0
+            , "BadgerScout::claimMint: Amount must be greater than 0."
+        );
+
         if(getSigner(_id) != address(0)) {
             /// @dev Verify that the signer signed the message permitting a mint of `_id`
             ///      to `_msgSender()` for `_quantity` amount.
             _verifySignature(
-                _msgSender()
+                  _msgSender()
                 , _id
                 , _amount
                 , _data
                 , _signature
             );
         } else { 
-            /// @dev If the badge does not have a signer, then it is a free mint
+            /// @dev If the badge does not have a signer, then it is a free min t
             ///      but need to make sure it has been marked as claimable.
             require(
                   getClaimable(_id)

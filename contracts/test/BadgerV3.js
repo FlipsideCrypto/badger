@@ -500,6 +500,16 @@ describe("Badger", function () {
                 await childOrganization.isDelegate(0, leaderSigner.address),
                 true
             );
+
+            await childOrganization.connect(leaderSigner).setSigner(
+                0,
+                leaderSigner.address
+            )
+
+            assert.equal(
+                await childOrganization.getSigner(0),
+                leaderSigner.address
+            );
         })
 
         it('setDelegates() fail: not real badge', async () => {
@@ -663,6 +673,21 @@ describe("Badger", function () {
 
         it("leaderMintFullBatch() success", async () => {
             await childOrganization.connect(owner).leaderMintFullBatch(
+                [signer1.address, leaderSigner.address],
+                [0, 0],
+                [1, 1],
+                "0x"
+            )
+        })
+
+        it("leaderMintFullBatch() success: delegate", async() => { 
+            await childOrganization.connect(owner).setDelegates(
+                0,
+                [leaderSigner.address],
+                [true]
+            )
+
+            await childOrganization.connect(leaderSigner).leaderMintFullBatch(
                 [signer1.address, leaderSigner.address],
                 [0, 0],
                 [1, 1],
@@ -1309,7 +1334,7 @@ describe("Badger", function () {
                 15,
                 "0x"
             )
-            
+
             // transfer the token to the contract
             await mock1155.connect(signer1).safeTransferFrom(
                 signer1.address,
@@ -1540,26 +1565,237 @@ describe("Badger", function () {
             ).should.be.revertedWith("BadgerScout::_verifyPayment: Invalid payment token.")
         });
 
-        // it('User can claim', async() => {
-        //     const _badgeId = 0;
-        //     const _quantity = 1;
+        it("claimMint() success: signature", async () => {
+            mnemonic = "test test test test test test test test test test test junk";
+            claimSigner = await ethers.Wallet.fromMnemonic(mnemonic, "m/44'/60'/0'/0/1");
 
-        //     const messageHash = ethers.utils.solidityKeccak256(
-        //         ["address", "uint256", "uint256"], 
-        //         [userSigner.address, _badgeId, _quantity]
-        //     )
+            // set the badge as claimable
+            await childOrganization.connect(owner).setSigner(
+                0,
+                claimSigner.address
+            )
 
-        //     const messageHashArrayify = ethers.utils.arrayify(messageHash);
+            const messageHash = ethers.utils.solidityKeccak256(
+                ["address", "uint256", "uint256", "bytes"],
+                [
+                    signer1.address,
+                    0,
+                    1,
+                    "0x"
+                ]
+            )
 
-        //     const _signature = await sigSigner.signMessage(messageHashArrayify);
+            // sign the message hash
+            const signature = await claimSigner.signMessage(ethers.utils.arrayify(messageHash))
 
-        //     await sashPress.connect(userSigner).claimMint(
-        //           _signature        // bytes calldata _signature
-        //         , _badgeId          // uint256 _id
-        //         , _quantity         // uint256 _quantity
-        //         , "0x"              // bytes memory _data
-        //     );
-        // });
+            // set the payment token
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentToken20
+            );
+
+            // mint some tokens to the signer
+            await mock20.connect(owner).mint(
+                signer1.address,
+                1000
+            )
+
+            // approve the contract to spend the tokens
+            await mock20.connect(signer1).approve(
+                childOrganization.address,
+                1000
+            )
+
+            // deposit the tokens
+            await childOrganization.connect(signer1).depositERC20(
+                0,
+                mock20.address,
+                1
+            )
+
+            // claim the mint
+            await childOrganization.connect(signer1).claimMint(
+                signature,
+                0,
+                1,
+                "0x"
+            )
+        })
+
+        it("claimMint() success: claimable", async () => {
+            // set signer as none
+            await childOrganization.connect(owner).setSigner(
+                0,
+                "0x0000000000000000000000000000000000000000"
+            );
+
+            // set the badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                true
+            );
+
+            // set the payment token
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentToken20
+            );
+
+            // mint some tokens to the signer
+            await mock20.connect(owner).mint(
+                signer1.address,
+                1000
+            )
+
+            // approve the contract to spend the tokens
+            await mock20.connect(signer1).approve(
+                childOrganization.address,
+                1000
+            )
+
+            // deposit the tokens
+            await childOrganization.connect(signer1).depositERC20(
+                0,
+                mock20.address,
+                1
+            )
+
+            // claim the mint
+            await childOrganization.connect(signer1).claimMint(
+                "0x",
+                0,
+                1,
+                "0x"
+            )
+        })
+
+        it("claimMint() fail: invalid signature", async () => {
+            mnemonic = "test test test test test test test test test test test junk";
+            claimSigner = await ethers.Wallet.fromMnemonic(mnemonic, "m/44'/60'/0'/0/1");
+
+            // set the badge as claimable
+            await childOrganization.connect(owner).setSigner(
+                0,
+                signer1.address
+            )
+
+            const messageHash = ethers.utils.solidityKeccak256(
+                ["address", "uint256", "uint256", "bytes"],
+                [
+                    signer1.address,
+                    0,
+                    1,
+                    "0x"
+                ]
+            )
+
+            // sign the message hash
+            const signature = await claimSigner.signMessage(ethers.utils.arrayify(messageHash))
+
+            // set the payment token
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentToken20
+            );
+
+            // mint some tokens to the signer
+            await mock20.connect(owner).mint(
+                signer1.address,
+                1000
+            )
+
+            // approve the contract to spend the tokens
+            await mock20.connect(signer1).approve(
+                childOrganization.address,
+                1000
+            )
+
+            // deposit the tokens
+            await childOrganization.connect(signer1).depositERC20(
+                0,
+                mock20.address,
+                1
+            )
+
+            // claim the mint
+            await childOrganization.connect(signer1).claimMint(
+                signature,
+                0,
+                1,
+                "0x"
+            ).should.be.revertedWith("BadgerScout::_verifySignature: Invalid signature.")
+        })
+
+        it("claimMint() fail: not real badge", async () => {
+            // set badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                true
+            );
+
+            // set signer to none
+            await childOrganization.connect(owner).setSigner(
+                0,
+                "0x0000000000000000000000000000000000000000"
+            );
+
+            // deposit
+            await childOrganization.connect(signer1).depositERC20(
+                0,
+                mock20.address,
+                100
+            )
+
+            // claim the mint
+            await childOrganization.connect(signer1).claimMint(
+                "0x",
+                1000,
+                1,
+                "0x"
+            ).should.be.revertedWith("BadgerScout::onlyRealBadge: Can only call this for setup badges.")
+        })
+
+        it("claimMint() fail: not claimable", async () => {
+            // set badge as not claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                false
+            );
+
+            // claim the mint
+            await childOrganization.connect(signer1).claimMint(
+                "0x",
+                0,
+                1,
+                "0x"
+            ).should.be.revertedWith("BadgerOragnization::claimMint: This badge is not claimable.")
+        });
+
+        it("claimMint() fail: amount is zero", async () => {
+            // claim the mint
+            await childOrganization.connect(sigSigner).claimMint(
+                "0x",
+                0,
+                0,
+                "0x"
+            ).should.be.revertedWith("BadgerScout::claimMint: Amount must be greater than 0.")
+        })
+
+        it("claimMint() fail: has not funded", async () => {
+            // set badge as claimable
+            await childOrganization.connect(owner).setClaimable(
+                0,
+                true
+            );
+
+            // claim the mint
+            await childOrganization.connect(sigSigner).claimMint(
+                "0x",
+                0,
+                1,
+                "0x"
+            ).should.be.revertedWith("BadgerScout::_verifyFunding: User has not funded the badge.")
+        })
 
         it("uri() success: has badge uri", async () => {
             assert.equal(

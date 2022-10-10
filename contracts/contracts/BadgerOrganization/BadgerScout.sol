@@ -95,24 +95,6 @@ contract BadgerScout is
         _;
     }
 
-    /**
-     * @notice Make sure that only badges with a signer or that are claimable pass.
-     * @param _id The id of the badge being accessed.
-     * 
-     * Requirements:
-     * - The badge must have a signer or be claimable.
-     */
-    modifier onlyClaimableBadge(
-        uint256 _id
-    ) {
-        require (
-                 getSigner(_id) != address(0)
-              || getClaimable(_id)
-            , "BadgerScout::onlyClaimableBadge: Can only call this for claimable badges."
-        );
-        _;
-    }
-
     /*//////////////////////////////////////////////////////////////
                                 EVENTS
     //////////////////////////////////////////////////////////////*/
@@ -627,7 +609,6 @@ contract BadgerScout is
      * @param _amount The amount that the user is trying to claim.
      *
      * Requirements:
-     * - The amount to verify must be greater than zero.
      * - The user must have funded the payment token with an amount greater than 
      *   or equal to the amount required.
      */
@@ -637,12 +618,6 @@ contract BadgerScout is
     )
         internal
     {
-        /// @dev Confirm that the user is trying to mint at least one.
-        require(
-              _amount > 0
-            , "BadgerScout::_verifyFunding: Amount must be greater than 0."
-        );
-
         /// @dev Build the key that is used to track what an individual has funded.
         bytes32 paymentKey = (
             keccak256(
