@@ -2,7 +2,7 @@ export const BADGER_ADDRESSES = {"Hardhat":"0xe7f1725E7734CE288F8367e1Bb143E90bb
 export const PRIMARY_PRODUCTION_CHAIN = "Hardhat"
 
 export const holderHeadRows = {
-    address: {
+    ethereum_address: {
         label: "Address",
         sortable: true,
         method: "",

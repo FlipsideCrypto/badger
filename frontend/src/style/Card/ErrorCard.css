@@ -5,9 +5,9 @@
 }
 
 .error__card {
-    background: rgb(255, 180, 180);
+    background: rgb(255, 155, 155);
     display: grid;
-    grid-template-columns: 10% 80% 10%;
+    grid-template-columns: 5% 90% 5%;
     grid-template-rows: auto;
     position: absolute;
     border-radius: 8px;
@@ -34,10 +34,6 @@
 }
 
 .error__card__button { 
-    /* position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translate(0%, -50%); */
     /* width: 24px;
     height: 24px; */
     width: auto;
@@ -51,10 +47,6 @@
 }
 
 .error__card__icon {
-    /* position: absolute;
-    top: 50%;
-    left: 0; */
-    /* transform: translate(0%, -50%); */
-    width: 40px;
+    width: 100%;
     justify-content: center;
 }
