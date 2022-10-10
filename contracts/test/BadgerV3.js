@@ -11,7 +11,6 @@ const { ethers } = require("hardhat");
 //             native payment
 //             1155 payment
 // TODO: State var updates
-// TODO: Withdrawing ETH and ERC1155
 // TODO: Subscription Implementation
 // TODO: Batch functions
 // TODO: Make every array field batchable
@@ -155,9 +154,11 @@ describe("Badger", function() {
                     owner.address
                 ), "0x93848cf20e57882b97600fbc400094557955b5c23968b2f0a0e868d5e193af48"
             )
-
         })
     });
+
+    describe("Badger: BadgerOrganization.sol", async() => { 
+    })
 
     // describe("No Payment Sash", function() {
     //     it('Can create Badge', async() => {

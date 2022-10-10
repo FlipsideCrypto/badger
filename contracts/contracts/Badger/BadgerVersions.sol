@@ -12,7 +12,7 @@ import { Clones } from "@openzeppelin/contracts/proxy/Clones.sol";
 import { BadgerOrganizationInterface } from "../BadgerOrganization/interfaces/BadgerOrganizationInterface.sol";
 
 /// @dev Supported interfaces.
-import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import { IERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol";
 
 contract BadgerVersions is
       BadgerVersionsInterface 
@@ -267,5 +267,27 @@ contract BadgerVersions is
         );
 
         return organizationAddress;
+    }
+
+    /**
+     * @notice Signals to external callers that this is a BadgerVersions contract.
+     * @param _interfaceId The interface ID to check.
+     * @return True if the interface ID is supported.
+     */
+    function supportsInterface(
+        bytes4 _interfaceId
+    ) 
+        override
+        public 
+        view 
+        virtual
+        returns (
+            bool
+        ) 
+    {
+        return (
+               _interfaceId == type(BadgerVersionsInterface).interfaceId
+            || _interfaceId == type(IERC1155ReceiverUpgradeable).interfaceId
+        );
     }
 }
