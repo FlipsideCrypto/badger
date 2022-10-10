@@ -560,6 +560,42 @@ describe("Badger", function () {
                 "baseuri"
             )
         })
+
+        it('contractURI() success', async () => {
+            assert.equal(
+                await childOrganization.contractURI(),
+                "newURI"
+            )
+        })
+
+        it('supportsInterface() success', async () => {
+            // Test ERC1155Upgradeable
+            assert.equal(
+                await childOrganization.supportsInterface("0xd9b67a26"),
+                true
+            );
+
+            // Test ERC1155HolderUpgradeable
+            assert.equal(
+                await childOrganization.supportsInterface(
+                    "0x4e2312e0"
+                ), true
+            )
+
+            // Test ERC721ReceiverUpgradeable
+            assert.equal(
+                await childOrganization.supportsInterface(
+                    "0x150b7a02"
+                ), true
+            )
+
+            // Test ERC165Upgradeable
+            assert.equal(
+                await childOrganization.supportsInterface(
+                    "0x01ffc9a7"
+                ), true
+            )
+        });
     })
 
     // describe("No Payment Sash", function() {
