@@ -53,19 +53,28 @@
 .button.button__loading:hover,
 .button.button__loading:active,
 .button.button__loading:focus {
-    background: #00FF9D;
-    background-image: linear-gradient(to right, white 0%, #72fec9 30%, #00FF9D 40%, #72fec9 50%, white);
+    background: #fff;
+    /* background-image: linear-gradient(to right, white 0%, white 50%, #72fec9, #00FF9D 60%, white 70%); */
+    background-image: linear-gradient(to right, #fff, #00FF9D, #fff);
     background-repeat: no-repeat;
-    background-size: 800px 104px; 
-    animation: loading__shimmer 2s linear infinite;
+    background-size: 400px 104px;
+    animation: loading__shimmer 3s linear infinite alternate;
+}
+
+.button.button__loading .button__text,
+.button.button__loading:hover .button__text,
+.button.button__loading:active .button__text,
+.button.button__loading:focus .button__text {
+    color: #000;
+    background: inherit;
 }
 
 @keyframes loading__shimmer {
     0% {
-      background-position: -468px 0;
+      background-position: -500px 0;
     }
     100% {
-      background-position: 468px 0; 
+      background-position: 200px 0; 
     }
   }
 
