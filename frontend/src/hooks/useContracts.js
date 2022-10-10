@@ -48,7 +48,7 @@ export const useBadgerFactory = (chainName, address, name, symbol, baseURI, orgU
         symbol,
     ]
 
-    const { config } = usePrepareContractWrite({
+    const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: Badger.address,
         contractInterface: Badger.abi,
         functionName: "createOrganization",
@@ -58,7 +58,7 @@ export const useBadgerFactory = (chainName, address, name, symbol, baseURI, orgU
 
     const { writeAsync } = useContractWrite(config);
 
-    return { write: writeAsync, response };
+    return { write: writeAsync, response, isSuccess };
 }
 
 // Creates a badge from a cloned sash contract.

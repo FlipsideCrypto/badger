@@ -9,7 +9,6 @@ import StatusIndicators from './StatusIndicators/StatusIndicators';
 import "@style/Dashboard/Sidebar/Sidebar.css";
 import "@style/Dashboard/Sidebar/HelpSidebar.css";
 
-// TODO: This needs to be hidden if we're at /dashboard/ or the home component.
 const HelpSidebar = () => {
     const [collapsed, setCollapsed] = useState(false);
 

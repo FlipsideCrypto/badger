@@ -12,6 +12,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = os.getenv('DEBUG', False)
 
+SECRET_KEY = os.getenv("SECRET_KEY", "secret")
+
 # Application definition
 INSTALLED_APPS = [
     'siwe_auth.apps.SiweAuthConfig',
