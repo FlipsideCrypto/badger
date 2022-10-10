@@ -33,10 +33,11 @@ const BadgeForm = ({name, desc, image, delegates}) => {
         token_id: orgData?.badges?.length,
         organization: orgData?.id,
         account_bound: true,
+        claimable: false,
         is_active: false,
         signer: orgData?.owner?.ethereum_address,
         token_uri: "",
-        payment_token: [0, "0x0000000000000000000000000000000000000000", 0, 0],
+        // payment_token: ["paymentKey", 0],
     })
     
     const imageInput = useRef();

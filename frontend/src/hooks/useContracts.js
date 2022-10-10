@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 import { usePrepareContractWrite, useContractWrite } from 'wagmi';
+import { ethers } from "ethers";
 
-const BadgerAddresses = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES)
-const primaryProdChain = process.env.REACT_APP_PRODUCTION_CHAIN
+const BADGER_ADDRESSES = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES);
+const PRIMARY_IMPLEMENTATION = process.env.REACT_APP_BADGER_IMPLEMENTATION;
+const PRIMARY_PROD_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
 
 // Gets the ABI for sash contracts.
 export function getBadgerOrganizationAbi() {
@@ -20,7 +22,7 @@ export function getBadgerOrganizationAbi() {
 export function getBadgerAbi(chainName) {
     try {
         const abi = require('@abis/Badger.json');
-        const address = BadgerAddresses[chainName] ? BadgerAddresses[chainName] : BadgerAddresses[primaryProdChain]
+        const address = BADGER_ADDRESSES[chainName] ? BADGER_ADDRESSES[chainName] : BADGER_ADDRESSES[PRIMARY_PROD_CHAIN]
         return {
             abi: abi,
             address: address
@@ -33,15 +35,24 @@ export function getBadgerAbi(chainName) {
 }
 
 // Creates a new sash contract for an organization.
-export const useBadgerPress = (chainName, enabled) => {
+export const useBadgerFactory = (chainName, address, name, symbol, baseURI, orgURI, enabled) => {
     const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
     let response = {status: 'ok', message: 'Transaction is ready to call.'};
+
+    const args = [
+        PRIMARY_IMPLEMENTATION,
+        address,
+        baseURI,
+        orgURI,
+        name,
+        symbol,
+    ]
 
     const { config } = usePrepareContractWrite({
         addressOrName: Badger.address,
         contractInterface: Badger.abi,
         functionName: "createOrganization",
-        args: [""],
+        args: args,
         enabled: enabled,
     })
 
@@ -61,13 +72,16 @@ export const useCreateBadge = (badge) => {
             badge.delegates.pop(index)
         }
     })
+    // Format to bytes32
+    // let paymentKey = ethers.utils.formatBytes32String(badge.payment_token[0]);
 
     let args = [
         badge.token_id,
+        badge.claimable,
         badge.account_bound,
         badge.signer || "",
         badge.token_uri,
-        badge.payment_token || [0, "0x0000000000000000000000000000000000000000", 0, 0],
+        badge.payment_token || [ethers.constants.HashZero, 0],
         badge.delegates || []
     ]
 
