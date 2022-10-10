@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { 
     Table, TableHead, TableRow, 
     TableContainer, TableCell, TableBody 
@@ -30,7 +30,15 @@ const HolderTable = ({ holders, isDelegate }) => {
         setSortedList(newSortedList);
     }
 
-    console.log('Holder data in table', holders)
+    console.log('sortedList', sortedList, 'headrows', headRows)
+
+    // If holders changes, update the sorted list and add delegate boolean.
+    useEffect(() => {
+        for (let holder of holders) {
+            holder.delegate = isDelegate(holder);
+        }
+        setSortedList(holders);
+    }, [holders, isDelegate])
 
     return (
         <div id="holder__table">
@@ -64,8 +72,8 @@ const HolderTable = ({ holders, isDelegate }) => {
                             <TableCell>{holder?.nickname}</TableCell>
                             <TableCell>{holder?.pod}</TableCell>
                             <TableCell>
-                                <div className={`delegate__status__${isDelegate(holder)}`}>
-                                    <span>{isDelegate(holder) ? "Yes" : "No"}</span>
+                                <div className={`delegate__status__${holder?.delegate}`}>
+                                    <span>{holder?.delegate ? "Yes" : "No"}</span>
                                 </div>
                             </TableCell>
                         </TableRow>
@@ -77,4 +85,4 @@ const HolderTable = ({ holders, isDelegate }) => {
     )
 }
 
-export default HolderTable
+export default HolderTable;
