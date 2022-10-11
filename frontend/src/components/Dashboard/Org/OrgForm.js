@@ -1,4 +1,4 @@
-import { useState, useContext, useRef, useEffect } from "react";
+import { useState, useContext, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNetwork, useAccount, useContractEvent } from "wagmi";
 
@@ -35,19 +35,11 @@ const OrgForm = () => {
     const [ orgImage, setOrgImage ] = useState({name: ""});
     const [ txPending, setTxPending ] = useState(false);
 
-    const createContract = useBadgerFactory(
-        orgObj.chain,                       // chain name
-        address,                            // deployer address
-        orgObj.name,                        // org name
-        orgObj.symbol,                      // org symbol
-        "",                                 // base URI
-        orgObj.contract_uri_hash,           // contract URI
-        orgObj.contract_uri_hash !== ""     // transaction enabled
-    );
+    const createContract = useBadgerFactory(orgObj, address, chain.name)
 
     // Listener for the confirmed transaction in order to
     // pull the new contract address from events.
-    const badger = getBadgerAbi(chain.name)
+    const badger = useMemo(() => getBadgerAbi(chain.name), [chain.name]);
     useContractEvent({
         addressOrName: badger.address,
         contractInterface: badger.abi,
@@ -68,6 +60,7 @@ const OrgForm = () => {
     // Upon receiving the event from clone transaction,
     // POST the org to backend and redirect to org page.
     const onEventReceived = async (event) => {
+        console.log('event', event)
         const contractAddress = event[0];
         const deployer = event[1];
         
@@ -138,14 +131,15 @@ const OrgForm = () => {
             await tx?.wait();
         }
 
-        if (createContract.isSuccess) {
+        if (createContract.isSuccess && orgObj.contract_uri_hash) {
             try {
                 createOrgTx();
             } catch (error) {
                 setError('Transaction failed: ' + error);
+                setTxPending(false);
             }
         }
-    }, [createContract, setError])
+    }, [createContract.isSuccess, orgObj.contract_uri_hash])
 
     // Upon receiving contract address,
     // POST org to backend and if successful, add to state and navigate to org page.
@@ -204,13 +198,13 @@ const OrgForm = () => {
                 label="Organization Image"
                 placeholder="Upload Organization Image"
                 disabled={true}
-                value={orgImage.name}
+                value={orgImage?.name}
                 append={
                     <button
                         className="button-secondary"
                         onClick={() => imageInput.current.click()}
                     >
-                        {orgImage.name ? "CHANGE" : "UPLOAD"}
+                        {orgImage?.name ? "CHANGE" : "UPLOAD"}
                     </button>
                 }
             />

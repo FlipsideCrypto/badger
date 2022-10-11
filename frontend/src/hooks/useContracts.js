@@ -35,17 +35,17 @@ export function getBadgerAbi(chainName) {
 }
 
 // Creates a new sash contract for an organization.
-export const useBadgerFactory = (chainName, address, name, symbol, baseURI, orgURI, enabled) => {
+export const useBadgerFactory = (orgObj, address, chainName) => {
     const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
     let response = {status: 'ok', message: 'Transaction is ready to call.'};
 
     const args = [
         PRIMARY_IMPLEMENTATION,
         address,
-        baseURI,
-        orgURI,
-        name,
-        symbol,
+        "",
+        orgObj.contract_uri_hash,
+        orgObj.name,
+        orgObj.symbol,
     ]
 
     const { config, isSuccess } = usePrepareContractWrite({
@@ -53,7 +53,7 @@ export const useBadgerFactory = (chainName, address, name, symbol, baseURI, orgU
         contractInterface: Badger.abi,
         functionName: "createOrganization",
         args: args,
-        enabled: enabled,
+        enabled: Boolean(orgObj?.contract_uri_hash),
     })
 
     const { writeAsync } = useContractWrite(config);
