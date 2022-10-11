@@ -16,11 +16,11 @@ import { useCreateBadge } from "@hooks/useContracts";
 //       get the badge and set the state, and change component to edit mode. (also get rid of props
 // TODO: This is a lot of state vars. Probably worth it to move everything into one badge dict.
 // TODO: Clean and validate badgeDelegates array
-const BadgeForm = ({name, desc, image, delegates}) => {
-    const [ badgeName, setBadgeName ] = useState(name || "");
-    const [ badgeDescription, setBadgeDescription ] = useState(desc || "");
-    const [ badgeImage, setBadgeImage ] = useState(image || {name: ""});
-    const [ badgeDelegates, setBadgeDelegates ] = useState(delegates || []);
+const BadgeForm = () => {
+    const [ badgeName, setBadgeName ] = useState("");
+    const [ badgeDescription, setBadgeDescription ] = useState("");
+    const [ badgeImage, setBadgeImage ] = useState({name: ""});
+    const [ badgeDelegates, setBadgeDelegates ] = useState([]);
     const [ ipfsImageHash, setIpfsImageHash ] = useState();
     const [ txPending, setTxPending ] = useState(false);
     const { orgData, setOrgData } = useContext(OrgContext);

@@ -32,9 +32,8 @@ const OrgSidebar = ({ address }) => {
     const { orgData } = useContext(OrgContext);
     const orgId = window.location.pathname.includes('organization') ? orgData?.id : null;
 
-    // Dual purpose connect button. If we're not connected, connect with rainbowkit
-    // else if we are connected, use it to kick off the SIWE process in event of a cancelled
-    // signature.
+    // Dual purpose connect button. If we're not connected, connect with rainbowkit else if 
+    // we are connected, use it to kick off the SIWE process in event of a cancelled signature.
     const onConnect = () => {
         if (!address)
             openConnectModal();
@@ -42,10 +41,9 @@ const OrgSidebar = ({ address }) => {
             setIsAuthenticating(true);
     }
 
-    // If chain is not in the keys of current badger addresses,
-    // then switch network to the current primary chain.
-    // If programmatic network switching does not work,
-    // then change the connect button to switch network.    
+    // If chain is not in the keys of current badger addresses, then switch network to the 
+    // current primary chain. If programmatic network switching does not work, then change 
+    // the connect button to switch network.
     const onSwitchNetworkRequest = useCallback(() => {
         if (!(chain?.name in BADGER_ADDRESSES)) {
             const primaryChain = chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)

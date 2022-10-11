@@ -17,7 +17,7 @@ const Org = () => {
         if (orgId !== orgData?.id) {
             setCurrentOrgId(orgId)
         }
-    }, [orgId, setCurrentOrgId]);
+    }, [orgId, setCurrentOrgId, orgData?.id]);
 
     return (
         <>
