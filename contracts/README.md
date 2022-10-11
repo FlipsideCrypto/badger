@@ -18,16 +18,33 @@ Built on the standard ERC-1155, Badges allow for top-down management of any on-c
     * Achieved without breaking the composability of any standard or any of the existing locks in the market. Anyone that conforms to already released standards will be able to use Badger as keys.   
 * The tokens can be used as a way to bootstrap on-chain roles and token-gated areas for their members.
 
-## Running The Tests / Contributing
+## Prerequisites
 
-```
 - fork the repo
-- npm i 
-- setup your .env (in ~root/contracts/) to reflect example.env
-- npx hardhat coverage --network localhost
-```
+- terminal: `cd contracts`
+- terminaL `npm i`
+- setup your `.env` (in `~root/contracts/`) to reflect `example.env`
+
+## Running The Tests
+
+- terminal: `npx hardhat coverage --network localhost`
+
+## Running Local Hardhat Node
+
+Once your repository has been setup and you have run the tests you are now ready to use the pieces of the Badger Primitive.
+
+- terminal: `npx hardhat node`
+
+## Deploying To Local Hardhat Node
+
+Now that we finally have everything running, you are almost done. The last step is to deploy the contracts to the local hardhat node so that the front-end can use them.
+
+- terminal: `npx hardhat run scripts/deploy/deploy.js --network localhost`
+
+**Important:** Please, make sure that you type in `localhost` here. Hardhat has a default network called `hardhat` that is used for testing. If you use that network you will not be able to use the front-end.
 
 ## Tests
+
 ```
 Version
 =======
