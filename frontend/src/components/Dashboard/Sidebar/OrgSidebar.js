@@ -30,13 +30,10 @@ const OrgSidebar = ({ address }) => {
     const navigate = useNavigate();
     const { userData, authenticationError, setIsAuthenticating } = useContext(UserContext);
     const { orgData } = useContext(OrgContext);
-    
-    const params = new URLSearchParams(window.location.search);
-    const orgId = params.has("orgId") ? params.get("orgId") : null;
+    const orgId = window.location.pathname.includes('organization') ? orgData?.id : null;
 
-    // Dual purpose connect button. If we're not connected, connect with rainbowkit
-    // else if we are connected, use it to kick off the SIWE process in event of a cancelled
-    // signature.
+    // Dual purpose connect button. If we're not connected, connect with rainbowkit else if 
+    // we are connected, use it to kick off the SIWE process in event of a cancelled signature.
     const onConnect = () => {
         if (!address)
             openConnectModal();
@@ -44,10 +41,9 @@ const OrgSidebar = ({ address }) => {
             setIsAuthenticating(true);
     }
 
-    // If chain is not in the keys of current badger addresses,
-    // then switch network to the current primary chain.
-    // If programmatic network switching does not work,
-    // then change the connect button to switch network.    
+    // If chain is not in the keys of current badger addresses, then switch network to the 
+    // current primary chain. If programmatic network switching does not work, then change 
+    // the connect button to switch network.
     const onSwitchNetworkRequest = useCallback(() => {
         if (!(chain?.name in BADGER_ADDRESSES)) {
             const primaryChain = chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)
@@ -141,7 +137,7 @@ const OrgSidebar = ({ address }) => {
                             />
                             <button 
                                 className="button__unstyled"
-                                onClick={() => navigate(`/dashboard/badge?orgId=${orgData.id}&badgeId=${badge.token_id}`)}
+                                onClick={() => navigate(`/dashboard/organization/${orgData.id}/badge/${badge.token_id}`)}
                             >
                                 {badge.name}
                             </button>
@@ -157,7 +153,7 @@ const OrgSidebar = ({ address }) => {
                             />
                             <button 
                                 className="button__unstyled"
-                                onClick={() => navigate(`/dashboard/organization?orgId=${org.id}`)}
+                                onClick={() => navigate(`/dashboard/organization/${org.id}`)}
                             >
                                 {org.name}
                             </button>

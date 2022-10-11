@@ -11,7 +11,7 @@ import "@style/Dashboard/Home/Home.css"
 // TODO: If a user has an account in our DB and an associated org, then show them a different
 //       a different card than the Create Org one.
 const Home = () => {
-    const { authenticationError, setIsAuthenticating } = useContext(UserContext);
+    const { userData, authenticationError, setIsAuthenticating } = useContext(UserContext);
     const navigate = useNavigate();
 
     const announcement = {
@@ -93,10 +93,17 @@ const Home = () => {
                         <button className="button__unstyled link-wrapper home-link" onClick={() => onEnter()} style={{fontWeight: "400"}}>
                             <div className="home__card__content">
                                 <FontAwesomeIcon icon={['fal', 'sitemap']} />
-                                <div>
-                                    <h2>Create your first Organization</h2>
-                                    <p>It only takes a few seconds to create your first Organization and be on your way. Badger isn't like your normal tool that takes hours to setup.</p>
-                                </div>
+                                {userData?.organizations?.length > 0 ? 
+                                    <div>
+                                        <h2>Manage your Organizations</h2>
+                                        <p>The credentials of your Organization are under your full control. Edit, Mint, Revoke, and Manage at will.</p>
+                                    </div>
+                                    :
+                                    <div>
+                                        <h2>Create your first Organization</h2>
+                                        <p>It only takes a few seconds to create your first Organization and be on your way. Badger isn't like your normal tool that takes hours to setup.</p>
+                                    </div>
+                                }
                             </div>
                         </button>
                     </Card>

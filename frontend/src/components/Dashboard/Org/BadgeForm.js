@@ -16,11 +16,11 @@ import { useCreateBadge } from "@hooks/useContracts";
 //       get the badge and set the state, and change component to edit mode. (also get rid of props
 // TODO: This is a lot of state vars. Probably worth it to move everything into one badge dict.
 // TODO: Clean and validate badgeDelegates array
-const BadgeForm = ({name, desc, image, delegates}) => {
-    const [ badgeName, setBadgeName ] = useState(name || "");
-    const [ badgeDescription, setBadgeDescription ] = useState(desc || "");
-    const [ badgeImage, setBadgeImage ] = useState(image || {name: ""});
-    const [ badgeDelegates, setBadgeDelegates ] = useState(delegates || []);
+const BadgeForm = () => {
+    const [ badgeName, setBadgeName ] = useState("");
+    const [ badgeDescription, setBadgeDescription ] = useState("");
+    const [ badgeImage, setBadgeImage ] = useState({name: ""});
+    const [ badgeDelegates, setBadgeDelegates ] = useState([]);
     const [ ipfsImageHash, setIpfsImageHash ] = useState();
     const [ txPending, setTxPending ] = useState(false);
     const { orgData, setOrgData } = useContext(OrgContext);
@@ -44,9 +44,6 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     
     const imageInput = useRef();
     const navigate = useNavigate();
-
-    const params = new URLSearchParams(window.location.search);
-    const orgId = params.get("orgId");
 
     const createBadge = useCreateBadge(badgeObj);
     const disabled = !badgeName || !badgeDescription || !ipfsImageHash
@@ -118,7 +115,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
                 let prev = {...orgData}
                 prev.badges.push(badgeObj)
                 setOrgData(prev)
-                navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${badgeObj.token_id}`);
+                navigate(`/dashboard/organization/${orgData?.id}/badge/${badgeObj.token_id}`);
             }
             else {
                 setError('Could not add badge to database: ' + response.error);
@@ -139,7 +136,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
 
     return (
         <div id="new-badge">
-            <Header back={() => navigate(`/dashboard/organization/orgId=${orgId}`)} />
+            <Header back={() => navigate(`/dashboard/organization/${orgData?.id}`)} />
 
             <h2>Create Badge</h2>
             <Input
