@@ -1,5 +1,7 @@
 /.pnp
 
+database/
+
 venv/
 cache
 *.pyc
