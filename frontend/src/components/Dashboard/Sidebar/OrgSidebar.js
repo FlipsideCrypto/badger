@@ -22,7 +22,10 @@ const PRIMARY_PRODUCTION_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
 const OrgSidebar = ({ address }) => {
     const { openConnectModal } = useConnectModal();
     const placeholderAvatar = "https://avatars.githubusercontent.com/u/77760087?s=200&v=4";
-    const { data: ensAvatar } = useEnsAvatar({addressOrName: address});
+    const { data: ensAvatar } = useEnsAvatar({
+        addressOrName: address,
+        chainId: 1
+    });
     const { chain } = useNetwork();
     const { chains, switchNetwork } = useSwitchNetwork();
     const [ cannotSwitchNetwork, setCannotSwitchNetwork ] = useState(false);

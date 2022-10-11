@@ -10,7 +10,7 @@ const PRIMARY_PROD_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
 export function getBadgerOrganizationAbi() {
     try {
         const abi = require('@abis/BadgerOrganization.json');
-        return {abi: abi}
+        return {abi: new ethers.utils.Interface(abi)}
     }
     catch (err) {
         console.error('Error importing BadgerOrganization:', err);
@@ -24,7 +24,7 @@ export function getBadgerAbi(chainName) {
         const abi = require('@abis/Badger.json');
         const address = BADGER_ADDRESSES[chainName] ? BADGER_ADDRESSES[chainName] : BADGER_ADDRESSES[PRIMARY_PROD_CHAIN]
         return {
-            abi: abi,
+            abi: new ethers.utils.Interface(abi),
             address: address
         }
     }
@@ -37,7 +37,6 @@ export function getBadgerAbi(chainName) {
 // Creates a new sash contract for an organization.
 export const useBadgerFactory = (orgObj, address, chainName) => {
     const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
-    let response = {status: 'ok', message: 'Transaction is ready to call.'};
 
     const args = [
         PRIMARY_IMPLEMENTATION,
@@ -58,13 +57,12 @@ export const useBadgerFactory = (orgObj, address, chainName) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    return { write: writeAsync, response, isSuccess };
+    return { write: writeAsync, isSuccess };
 }
 
 // Creates a badge from a cloned sash contract.
 export const useCreateBadge = (badge) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    let response = {status: 'ok', message: 'Transaction is ready to call.'};
 
     // This should also clean/check the addresses as well.
     badge?.delegates?.forEach((delegate, index) => {
@@ -95,7 +93,7 @@ export const useCreateBadge = (badge) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    return { write: writeAsync, response, isSuccess };
+    return { write: writeAsync, isSuccess };
 }
 
 /* 
@@ -104,7 +102,6 @@ export const useCreateBadge = (badge) => {
 */
 export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, holders, action, amounts) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    let response = {status: 'unprepared', message: 'Transaction is not ready to call.'};
     
     // Might look a little funky but cleaner than a switch IMO.
     // If revoke is true, then we check if there is just one holder for a single revoke.
@@ -153,10 +150,7 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, holders, act
 
     const { writeAsync } = useContractWrite(config);
 
-    if (isSuccess) 
-        response = {status: 'ok', message: 'Transaction is ready to call.'};
-
-    return { write: writeAsync, response, isSuccess };
+    return { write: writeAsync, isSuccess };
 }
 
 /*
@@ -165,7 +159,6 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, holders, act
 */
 export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    let response = {status: 'unprepared', message: 'Transaction is not ready to call.'}
 
     const revoke = action === "Remove Leader" ? true : false
     const isDelegateArray = Array(delegates.length).fill(!revoke);
@@ -194,5 +187,5 @@ export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) =
 
     const { writeAsync } = useContractWrite(config);
 
-    return { write: writeAsync, response, isSuccess };
+    return { write: writeAsync, isSuccess };
 }

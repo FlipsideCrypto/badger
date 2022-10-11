@@ -1,6 +1,6 @@
 import { useState, useContext, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useNetwork, useAccount, useContractEvent } from "wagmi";
+import { useNetwork, useAccount } from "wagmi";
 
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
@@ -30,47 +30,24 @@ const OrgForm = () => {
         contract_uri_hash: "",
         owner: "",
         ethereum_address: "",
-        chain: chain.name,
+        chain: chain?.name,
     })
     const [ orgImage, setOrgImage ] = useState({name: ""});
     const [ txPending, setTxPending ] = useState(false);
+    const [ loading, setLoading ] = useState(false);
 
-    const createContract = useBadgerFactory(orgObj, address, chain.name)
-
-    // Listener for the confirmed transaction in order to
-    // pull the new contract address from events.
-    const badger = useMemo(() => getBadgerAbi(chain.name), [chain.name]);
-    useContractEvent({
-        addressOrName: badger.address,
-        contractInterface: badger.abi,
-        eventName: "OrganizationCreated",
-        listener: (event) => onEventReceived(event)
-    })
+    const createContract = useBadgerFactory(orgObj, address, chain?.name)
+    const badger = useMemo(() => getBadgerAbi(chain?.name), [chain?.name]);
     
     const actions = [
         {
             text: "CREATE",
             icon: ["fal", "arrow-right"],
-            loading: txPending,
+            loading: loading || txPending,
             disabled: !orgObj.name || !orgObj.symbol || !orgObj.image_hash,
             event: () => onFormSubmission()
         }
     ]
-
-    // Upon receiving the event from clone transaction,
-    // POST the org to backend and redirect to org page.
-    const onEventReceived = async (event) => {
-        console.log('event', event)
-        const contractAddress = event[0];
-        const deployer = event[1];
-        
-        // Check to make sure event caught is valid and for this user.
-        if (deployer !== address || !contractAddress) return;
-
-        // If transaction was confirmed, add is_active and contract address to orgObj.
-        // Adding the ethereum address will trigger a useEffect to post to backend.
-        setOrgObj({...orgObj, ethereum_address: contractAddress, is_active: true});
-    }
 
     // Converts an org name to a symbol.
     const nameToSymbol = (name) => {
@@ -114,34 +91,54 @@ const OrgForm = () => {
 
     // Posts contract uri to IPFS and sets the returned hash to orgObj uri hash.
     const onFormSubmission = async () => {
-        setTxPending(true);
+        setLoading(true);
         const response = await postIPFSMetadata(orgObj);
         if (response.error) {
             setError('Error creating Org URI: ' + response.error);
-            setTxPending(false);
+            setLoading(false);
         } else {
             setOrgObj({...orgObj, contract_uri_hash: response.hash});
         }
     }
 
-    // Awaits a prepared transaction before running it and posting the new Org to the database.
+    // Awaits a prepared transaction before running it.
     useEffect(() => {
         async function createOrgTx() {
-            let tx = await createContract.write?.();
-            await tx?.wait();
-        }
-
-        if (createContract.isSuccess && orgObj.contract_uri_hash) {
+            setTxPending(true);
             try {
-                createOrgTx();
-            } catch (error) {
-                setError('Transaction failed: ' + error);
-                setTxPending(false);
+                let tx = await createContract.write?.();
+                tx = await tx?.wait();
+                // Decode the transaction receipt to get the contract address from the event.
+                const orgCreatedTopic = badger.abi.getEventTopic("OrganizationCreated");
+                const orgCreatedEvent = tx.logs.find((log) => log.topics[0] === orgCreatedTopic);
+                const orgEvent = badger.abi.decodeEventLog("OrganizationCreated", orgCreatedEvent.data, orgCreatedEvent.topics);
+                const contractAddress = orgEvent.organization;
+    
+                // If transaction was confirmed, add is_active and contract address to orgObj.
+                // Adding the ethereum address will trigger a useEffect to post to backend.
+                setOrgObj({...orgObj, ethereum_address: contractAddress, is_active: true});
             }
+            catch (error) {
+                setError('Error creating Org: ' + error);
+                setLoading(false);
+            }
+            setTxPending(false);
         }
-    }, [createContract.isSuccess, orgObj.contract_uri_hash])
 
-    // Upon receiving contract address,
+        // This is bad/ugly code, but it works to only trigger the call when the button has been clicked
+        // (loading), the transaction is prepared (isSuccess), there's not a pending transaction
+        // (!txPending), and the ethereum address has not been set after a successful transaction.
+        if (   
+               createContract.isSuccess
+            && loading
+            && !txPending
+            && !orgObj.ethereum_address
+        ) {
+            createOrgTx();
+        }
+    }, [createContract.isSuccess, orgObj.ethereum_address, loading, txPending])
+
+    // Upon receiving contract address from transaction event,
     // POST org to backend and if successful, add to state and navigate to org page.
     useEffect(() => {
         async function postOrg() {
@@ -154,7 +151,7 @@ const OrgForm = () => {
                 setError('Could not add org to database: ' + response.error);
             }
 
-            setTxPending(false);
+            setLoading(false);
         }
 
         if (orgObj.ethereum_address) 
