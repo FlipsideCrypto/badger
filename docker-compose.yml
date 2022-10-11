@@ -10,22 +10,24 @@ services:
       POSTGRES_USER: badger
       POSTGRES_DB: badger
     volumes:
-      - ./database:/var/lib/postgresql/data
+      - ./api/database:/var/lib/postgresql/data
     hostname: badger_db
     ports:
       - '5432:5432'
   # Run the badger server
   web:
     container_name: badger_server
-    build: .
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./api
     command: python manage.py runserver 0.0.0.0:8000
     restart: always
     ports:
       - '8000:8000'
     env_file:
-    - .env
+      - ./api/.env
     volumes:
-      - .:/code
+      - .:/api/code
     depends_on:
       - badger_db
     links:
