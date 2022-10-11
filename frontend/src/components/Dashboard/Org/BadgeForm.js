@@ -45,9 +45,6 @@ const BadgeForm = ({name, desc, image, delegates}) => {
     const imageInput = useRef();
     const navigate = useNavigate();
 
-    const params = new URLSearchParams(window.location.search);
-    const orgId = params.get("orgId");
-
     const createBadge = useCreateBadge(badgeObj);
     const disabled = !badgeName || !badgeDescription || !ipfsImageHash
     
@@ -118,7 +115,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
                 let prev = {...orgData}
                 prev.badges.push(badgeObj)
                 setOrgData(prev)
-                navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${badgeObj.token_id}`);
+                navigate(`/dashboard/organization/${orgData?.id}/badge/${badgeObj.token_id}`);
             }
             else {
                 setError('Could not add badge to database: ' + response.error);
@@ -139,7 +136,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
 
     return (
         <div id="new-badge">
-            <Header back={() => navigate(`/dashboard/organization/orgId=${orgId}`)} />
+            <Header back={() => navigate(`/dashboard/organization/${orgData?.id}`)} />
 
             <h2>Create Badge</h2>
             <Input

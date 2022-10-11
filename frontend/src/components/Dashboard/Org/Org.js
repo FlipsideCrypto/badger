@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
 
 import IconButton from "@components/Button/IconButton";
 import Header from "@components/Dashboard/Header/Header";
@@ -10,19 +10,14 @@ import "@style/Dashboard/Org/Org.css";
 const Org = () => {
     const navigate = useNavigate();
     const { orgData, setCurrentOrgId } = useContext(OrgContext);
-    const params = new URLSearchParams(window.location.search);
-    const orgId = params.get("orgId");
+    const { orgId } = useParams();
 
     // If orgId param changes then fetch or get the org data from context
     useEffect(() => {
-        setCurrentOrgId(orgId)
+        if (orgId !== orgData?.id) {
+            setCurrentOrgId(orgId)
+        }
     }, [orgId, setCurrentOrgId]);
-
-    // If org has badges already, go to first badge in index.
-    useEffect(() => {
-        if (orgData?.badges?.length > 0) 
-            navigate(`/dashboard/badge?orgId=${orgId}&badgeId=${orgData.badges[0].token_id}`)
-    }, [orgData, navigate, orgId])
 
     return (
         <>
@@ -41,7 +36,7 @@ const Org = () => {
                         Congrats! You are one step closer to having the keys to your on-chain Organization. 
                         Now you can create and distribute your keys in a matter of seconds.
                     </p>
-                    <Link className="internal-link" to={`/dashboard/badge/new?orgId=${orgId}`}>
+                    <Link className="internal-link" to={`/dashboard/organization/${orgId}/badge/new`}>
                         <IconButton icon={['fal', 'arrow-right']} text="CREATE" />
                     </Link>
                 </div>

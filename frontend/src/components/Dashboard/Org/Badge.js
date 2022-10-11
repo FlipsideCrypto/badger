@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Header from "@components/Dashboard/Header/Header";
@@ -17,9 +17,7 @@ import "@style/Dashboard/Org/Badge.css";
 
 const Badge = () => {
     const navigate = useNavigate();
-    const params = new URLSearchParams(window.location.search);
-    const orgId = params.get("orgId");
-    const badgeId = params.get("badgeId");
+    const { orgId, badgeId } = useParams();
 
     const [ isManage, setIsManage ] = useState(false);
     const [ membersToUpdate, setMembersToUpdate ] = useState([]);
@@ -96,7 +94,7 @@ const Badge = () => {
     // out to the API, update our orgData context, and reset call transaction flag.
     const onDelegatesUpdate = async () => {
         if (!badge.delegates) badge.delegates = [];
-        
+
         membersToUpdate.forEach(member => {
             if (selectedAction === "Remove Leader") {
                 const index = badge.delegates.findIndex(delegate => delegate.ethereum_address === member);
@@ -164,7 +162,7 @@ const Badge = () => {
 
     return (
         <>
-            <Header back={() => navigate(`/dashboard/badge/new?orgId=${orgId}`)} actions={actions} />
+            <Header back={() => navigate(`/dashboard`)} actions={actions} />
 
             <div id="badge">
                 <div className="center__gutter">
@@ -174,7 +172,7 @@ const Badge = () => {
                             {/* TODO: Analytics page
                             <button 
                                 className="button__unstyled badge__action" 
-                                onClick={() => { navigate(`/dashboard/badge/analytics?orgId=${orgId}&badgeId=${badgeId}`)}}
+                                onClick={() => { navigate(`/dashboard/organization/${orgId}/badge/${badgeId}/analytics`)}}
                             >
                                 <FontAwesomeIcon icon={["fal", "fa-chart-simple"]} />
                                 <span>Analytics</span>

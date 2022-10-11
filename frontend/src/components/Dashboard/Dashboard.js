@@ -30,9 +30,9 @@ const Dashboard = () => {
                             <Routes>
                                 <Route path="/" element={ <Home /> } />
                                 <Route path="/organization/new" element={ <OrgForm /> } />
-                                <Route path="/organization" element={ <Org /> } />
-                                <Route path="/badge/new" element={ <BadgeForm /> } />
-                                <Route path="/badge" element={ <Badge /> } />
+                                <Route path="/organization/:orgId" element={ <Org /> } />
+                                <Route path="/organization/:orgId/badge/new" element={ <BadgeForm /> } />
+                                <Route path="/organization/:orgId/badge/:badgeId" element={ <Badge /> } />
                             </Routes>
                         </ErrorContextProvider>
                     </DashboardContent>

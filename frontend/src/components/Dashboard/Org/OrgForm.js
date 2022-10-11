@@ -154,7 +154,7 @@ const OrgForm = () => {
             const response = await postOrgRequest(orgObj);
             if (!response?.error && response?.id) {
                 addOrgToState(response);
-                navigate(`/dashboard/organization?orgId=${response.id}`);
+                navigate(`/dashboard/organization/${response.id}`);
             }
             else {
                 setError('Could not add org to database: ' + response.error);
