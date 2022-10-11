@@ -29,24 +29,22 @@ const HolderTable = ({ badge }) => {
         );
         setSortedList(newSortedList);
     }
-
-    // Is delegate is not a default property of the user object, so we need to add it.
-    const isDelegate = (holder) => {
-        return Boolean(badge?.delegates?.find(delegate => 
-            delegate.ethereum_address === holder.ethereum_address
-        ));
-    }
-
-    console.log('sortedList', sortedList, 'headrows', headRows)
-
+    
     // If holders changes, update the sorted list and add delegate boolean.
     useEffect(() => {
+        // Is delegate is not a default property of the user object, so we need to add it.
+        function isDelegate (holder) {
+            return Boolean(badge?.delegates?.find(delegate => 
+                delegate.ethereum_address === holder.ethereum_address
+            ));
+        }
+
         let newSortedList = [...badge.users];
         for (let holder of newSortedList) {
             holder.delegate = isDelegate(holder);
         }
         setSortedList(newSortedList);
-    }, [badge.users, isDelegate])
+    }, [badge.users, badge.delegates])
 
     return (
         <div id="holder__table">

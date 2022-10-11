@@ -29,3 +29,9 @@
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
+
+.org__badges .card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}

@@ -1,4 +1,5 @@
 import { useState, createContext, useContext, useEffect } from "react"
+import { useLocation } from "react-router-dom";
 import { UserContext } from "./UserContextProvider";
 import { getOrgRequest } from "@utils/api_requests";
 
@@ -13,6 +14,7 @@ const OrgContextProvider = ({ children }) => {
     const [ orgData, setOrgData ] = useState();
     const [ currentOrgId, setCurrentOrgId ] = useState();
     const { authenticationError, setAuthenticationError } = useContext(UserContext);
+    const { pathname } = useLocation();
 
     // If we have a currentOrgId and the orgData is not that org's,
     // fetch it and set orgData.
@@ -39,14 +41,17 @@ const OrgContextProvider = ({ children }) => {
         }
     }, [currentOrgId, orgData, authenticationError, setAuthenticationError])
 
+    // Fetches the appropriate badge based on the current org id in the URL.
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const orgId = params.has("orgId") ? params.get("orgId") : null;
+        // hacky way to get OrgId. TODO: Put sidebars and context providers inside of a 
+        // base "/dashboard" route so that we can use useParams() to get the orgId.
+        const path = pathname.split('/');
+        const orgId = path[path.indexOf('organization') + 1] || null
 
         if (orgId && orgId !== currentOrgId) {
             setCurrentOrgId(orgId);
         }
-    }, [currentOrgId, setCurrentOrgId])
+    }, [pathname, currentOrgId, setCurrentOrgId])
 
     return (
         <OrgContext.Provider value={{ orgData, setOrgData, currentOrgId, setCurrentOrgId }}>
