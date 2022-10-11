@@ -121,7 +121,7 @@ const OrgSidebar = ({ address }) => {
 
                     <div className="sidebar__category">
                         <h5>Badges</h5>
-                        <Link className="link-wrapper" to={`/dashboard/badge/new?orgId=${orgId}`}>
+                        <Link className="link-wrapper" to={`/dashboard/organization/${orgId}/badge/new`}>
                             <FontAwesomeIcon icon={['fal', 'plus']} />
                         </Link>
                     </div>
