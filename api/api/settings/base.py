@@ -10,9 +10,9 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-DEBUG = os.getenv('DEBUG', False)
+DEBUG = os.getenv('API_DEBUG', False)
 
-SECRET_KEY = os.getenv("SECRET_KEY", "secret")
+SECRET_KEY = os.getenv("API_SECRET_KEY", "secret")
 
 # Application definition
 INSTALLED_APPS = [
@@ -129,7 +129,7 @@ REST_FRAMEWORK = {
 CORS_ALLOW_CREDENTIALS = True
 
 # Web3 settings
-ALCHEMY_API_KEY = os.getenv("ALCHEMY_API_KEY")
+ALCHEMY_API_KEY = os.getenv("API_ALCHEMY_API_KEY")
 AUTHENTICATION_BACKENDS = ["siwe_auth.backend.SiweBackend"]
 
 CREATE_GROUPS_ON_AUTHN = False
@@ -141,5 +141,5 @@ CUSTOM_GROUPS = [
 PROVIDER = os.getenv("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}")
 
 # IPFS settings
-PINATA_API_KEY = os.getenv("PINATA_API_KEY")
-PINATA_API_SECRET_KEY = os.getenv("PINATA_API_SECRET_KEY")
+PINATA_API_KEY = os.getenv("API_PINATA_API_KEY")
+PINATA_API_SECRET_KEY = os.getenv("API_PINATA_API_SECRET_KEY")

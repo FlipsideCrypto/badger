@@ -1,5 +1,23 @@
 version: '3.8'
 services:
+  # Run the hardhat node
+  badger_local_hardhat_node:
+    build:
+      dockerfile: Dockerfile.dev.node
+      context: ./contracts
+    volumes:
+      - .:/contracts/code
+    ports:
+      - "8545:8545"
+    restart: unless-stopped
+  # Deploy the contracts
+  badger_local_hardhat_deploy:
+    build:
+      dockerfile: Dockerfile.dev.deploy
+      context: ./contracts
+    volumes:
+      - .:/contracts/code
+    restart: "no"
   # Run the postgres server 
   badger_db:
     image: postgres:13.2
@@ -25,10 +43,33 @@ services:
     ports:
       - '8000:8000'
     env_file:
-      - ./api/.env
+      - ./.env
     volumes:
       - .:/api/code
     depends_on:
       - badger_db
     links:
       - badger_db
+  # Run the React frontend
+  frontend:
+    container_name: badger_frontend
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./frontend
+      args:
+        # use FONTAWSOME_TOKEN in .env to get access to private fontawesome packages
+        FONTAWESOME_NPM_AUTH_TOKEN: ${FONTAWESOME_NPM_AUTH_TOKEN}
+    command: npm start
+    restart: always
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/frontend/code
+    environment:
+      - NODE_OPTIONS=--openssl-legacy-provider
+    env_file:
+      - ./.env
+    depends_on:
+      - web
+    links:
+      - web
