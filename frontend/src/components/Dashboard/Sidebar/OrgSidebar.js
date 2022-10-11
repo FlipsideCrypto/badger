@@ -106,7 +106,12 @@ const OrgSidebar = ({ address }) => {
             {/* Org level user header */}
             {orgId && orgData?.name && !cannotSwitchNetwork &&
                 <>
-                    <div className="sidebar__header single">
+                    <div className="sidebar__header">
+                        <img 
+                            src={`${IPFS_GATEWAY_URL}/${orgData.image_hash}`} 
+                            alt="avatar" 
+                            onError={(e) => e.currentTarget.src = placeholderAvatar}
+                        />
                         <div className="link-text" style={{marginTop: "2px", color: "#000000"}}>
                             {orgData?.name}
                         </div>
@@ -126,21 +131,33 @@ const OrgSidebar = ({ address }) => {
                 {orgId && orgData?.name ?
                     orgData?.badges?.map((badge, index) => (
                         <div className="sidebar__organization" key={index}>
-                            <img src={`${IPFS_GATEWAY_URL}/${badge.image_hash}` || placeholderAvatar} alt="avatar" />
+                            <img 
+                                src={`${IPFS_GATEWAY_URL}/${badge.image_hash}`} 
+                                alt="avatar" 
+                                onError={(e) => e.currentTarget.src = placeholderAvatar}
+                            />
                             <button 
                                 className="button__unstyled"
                                 onClick={() => navigate(`/dashboard/badge?orgId=${orgData.id}&badgeId=${badge.token_id}`)}
-                            >{badge.name}</button>
+                            >
+                                {badge.name}
+                            </button>
                         </div>
                     ))
                     :
                     userData?.organizations?.map((org, index) => (
                         <div className="sidebar__organization" key={index}>
-                            <img src={org.avatar || placeholderAvatar} alt="avatar" />
+                            <img 
+                                src={`${IPFS_GATEWAY_URL}/${org.image_hash}`} 
+                                alt="avatar" 
+                                onError={(e) => e.currentTarget.src = placeholderAvatar}
+                            />
                             <button 
                                 className="button__unstyled"
                                 onClick={() => navigate(`/dashboard/organization?orgId=${org.id}`)}
-                            >{org.name}</button>
+                            >
+                                {org.name}
+                            </button>
                         </div>
                 ))}
             </div>

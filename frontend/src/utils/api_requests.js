@@ -7,8 +7,6 @@ const getCSRFToken = () => {
 export async function postOrgRequest(org) {
     let response;
 
-    console.log('POST body', org)
-
     try {
         await fetch(`${API_URL}/organizations/`, {
             method: "POST",
@@ -23,7 +21,6 @@ export async function postOrgRequest(org) {
         .then(res => res.json())
         .then(data => {
             if (!data?.id) throw new Error("Org POST request failed");
-            console.log('got org response', data);
             response = data;
         })
         .catch(err => {
@@ -124,7 +121,6 @@ export async function postIPFSImage(image) {
         })
     }
     catch (err) {
-        console.log('error uploading to ipfs', err)
         response = {error: err}
     }
 
@@ -180,7 +176,6 @@ export async function getUserRequest(address) {
         .then(res => res.json())
         .then(data => {
             if (data.length < 1) throw new Error("No user data found");
-            console.log('got user data', data);
             response = data;
         })
         .catch(err => {
@@ -209,7 +204,6 @@ export async function getOrgRequest(orgId) {
         .then(res => res.json())
         .then(data => {
             if (data.length < 1) throw new Error("No org data found");
-            console.log('got org data', data);
             response = data;
         })
         .catch(err => {

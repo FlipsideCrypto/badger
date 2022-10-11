@@ -14,29 +14,35 @@ const UserContextProvider = ({ children, signer, address }) => {
 
     // Get user data from backend and set it to userData.
     // If user is not authenticated, run the authentication flow.
-    useEffect(() => {
-        if (
-            !address ||
-            userData?.ethereum_address === address
-        ) return void {};
-        
+    useEffect(() => {        
         async function getData() {
             let response = await getUserRequest(address);
+            console.log('user data response', response)
 
             if (
                    response.detail === "Authentication credentials were not provided."
+                || response.detail === "You do not have permission to perform this action."
                 || response.detail === "Not found."
             ) {
+                // Switching connected wallets causes the csrf token to be invalid.
+                // This clearing of the cookie allows the SIWE process to start over if an invalid
+                // cookie has been cached.
+                document.cookie = 'csrftoken=; Path=/; Expires=Sat, 01 Jan 2000 00:00:001 GMT;';
                 setAuthenticationError(true);
                 setIsAuthenticating(true);
             }
-
-            if (response?.ethereum_address === address)
+            else if (response?.ethereum_address === address)
                 setUserData(response);
         }
 
-        getData();
-    }, [userData, address])
+        if (
+               address
+            && !authenticationError 
+            && userData?.ethereum_address !== address
+        ) {
+            getData();
+        }
+    }, [userData, address, authenticationError])
 
     // If we have an authentication error and are not currently awaiting a signature
     // for authentication, then attempt to authenticate.

@@ -40,10 +40,13 @@ const OrgContextProvider = ({ children }) => {
     }, [currentOrgId, orgData, authenticationError, setAuthenticationError])
 
     useEffect(() => {
-        if (authenticationError) {
-            setAuthenticationError(true);
+        const params = new URLSearchParams(window.location.search);
+        const orgId = params.has("orgId") ? params.get("orgId") : null;
+
+        if (orgId && orgId !== currentOrgId) {
+            setCurrentOrgId(orgId);
         }
-    }, [authenticationError, setAuthenticationError])
+    }, [currentOrgId, setCurrentOrgId])
 
     return (
         <OrgContext.Provider value={{ orgData, setOrgData, currentOrgId, setCurrentOrgId }}>

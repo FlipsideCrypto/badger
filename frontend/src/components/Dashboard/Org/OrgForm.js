@@ -135,7 +135,7 @@ const OrgForm = () => {
     useEffect(() => {
         async function createOrgTx() {
             let tx = await createContract.write?.();
-            tx = await tx?.wait();
+            await tx?.wait();
         }
 
         if (createContract.isSuccess) {
@@ -145,7 +145,7 @@ const OrgForm = () => {
                 setError('Transaction failed: ' + error);
             }
         }
-    }, [createContract.isSuccess])
+    }, [createContract, setError])
 
     // Upon receiving contract address,
     // POST org to backend and if successful, add to state and navigate to org page.
@@ -165,6 +165,7 @@ const OrgForm = () => {
 
         if (orgObj.ethereum_address) 
             postOrg();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [orgObj.ethereum_address])
 
     return (
