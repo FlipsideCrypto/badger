@@ -34,11 +34,14 @@ const OrgSidebar = ({ address }) => {
     const params = new URLSearchParams(window.location.search);
     const orgId = params.has("orgId") ? params.get("orgId") : null;
 
+    // Dual purpose connect button. If we're not connected, connect with rainbowkit
+    // else if we are connected, use it to kick off the SIWE process in event of a cancelled
+    // signature.
     const onConnect = () => {
-        if (address)
-            setIsAuthenticating(true);
-        else
+        if (!address)
             openConnectModal();
+        else
+            setIsAuthenticating(true);
     }
 
     // If chain is not in the keys of current badger addresses,

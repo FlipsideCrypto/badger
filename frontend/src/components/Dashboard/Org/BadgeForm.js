@@ -139,7 +139,7 @@ const BadgeForm = ({name, desc, image, delegates}) => {
 
     return (
         <div id="new-badge">
-            <Header back={() => navigate(`/dashboard/organization/new`)} />
+            <Header back={() => navigate(`/dashboard/organization/orgId=${orgId}`)} />
 
             <h2>Create Badge</h2>
             <Input

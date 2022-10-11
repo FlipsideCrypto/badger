@@ -17,22 +17,22 @@ const UserContextProvider = ({ children, signer, address }) => {
     useEffect(() => {        
         async function getData() {
             let response = await getUserRequest(address);
-            console.log('user data response', response)
 
+            // If there is any issue with authentication then we need to clear the CSRF cookie
+            // and start the SIWE process.
             if (
                    response.detail === "Authentication credentials were not provided."
                 || response.detail === "You do not have permission to perform this action."
                 || response.detail === "Not found."
             ) {
-                // Switching connected wallets causes the csrf token to be invalid.
-                // This clearing of the cookie allows the SIWE process to start over if an invalid
-                // cookie has been cached.
                 document.cookie = 'csrftoken=; Path=/; Expires=Sat, 01 Jan 2000 00:00:001 GMT;';
                 setAuthenticationError(true);
                 setIsAuthenticating(true);
             }
-            else if (response?.ethereum_address === address)
+            else if (response?.ethereum_address === address) {
                 setUserData(response);
+                setIsAuthenticating(false);
+            }
         }
 
         if (
@@ -48,17 +48,18 @@ const UserContextProvider = ({ children, signer, address }) => {
     // for authentication, then attempt to authenticate.
     useEffect(() => {
         async function getAuthorized() {
+            setIsAuthenticating(false);
+            
             const siweResponse = await SIWEAuthorize(signer, address, chain?.id);
+            console.log('siwe response', siweResponse)
 
             if(siweResponse.success) {
                 setUserData({})
                 setAuthenticationError(false);
             }
-
-            setIsAuthenticating(false);
         }
         
-        if (authenticationError && isAuthenticating) {
+        if (authenticationError && isAuthenticating && signer) {
             getAuthorized();
         }
 
