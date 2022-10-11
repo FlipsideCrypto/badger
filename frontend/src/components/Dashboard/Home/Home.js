@@ -8,8 +8,6 @@ import { UserContext } from "@components/Dashboard/Provider/UserContextProvider"
 
 import "@style/Dashboard/Home/Home.css"
 
-// TODO: If a user has an account in our DB and an associated org, then show them a different
-//       a different card than the Create Org one.
 const Home = () => {
     const { userData, authenticationError, setIsAuthenticating } = useContext(UserContext);
     const navigate = useNavigate();

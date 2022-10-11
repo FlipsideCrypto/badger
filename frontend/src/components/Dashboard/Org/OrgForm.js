@@ -42,7 +42,7 @@ const OrgForm = () => {
         orgObj.symbol,                      // org symbol
         "",                                 // base URI
         orgObj.contract_uri_hash,           // contract URI
-        Boolean(orgObj.contract_uri_hash)   // transaction enabled
+        orgObj.contract_uri_hash !== ""     // transaction enabled
     );
 
     // Listener for the confirmed transaction in order to

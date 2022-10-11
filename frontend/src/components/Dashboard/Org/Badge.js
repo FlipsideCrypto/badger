@@ -169,7 +169,7 @@ const Badge = () => {
                     <h1>{badge?.name}</h1>
                     {!isManage && badge?.name &&
                         <div className="badge__actions">
-                            {/* TODO: Analytics page
+                            {/* Analytics page
                             <button 
                                 className="button__unstyled badge__action" 
                                 onClick={() => { navigate(`/dashboard/organization/${orgId}/badge/${badgeId}/analytics`)}}
