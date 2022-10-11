@@ -10,7 +10,7 @@ import Logout from "./Logout/Logout";
 import { sliceAddress } from "@utils/helpers";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
-import { IPFS_GATEWAY_URL } from "@static/constants/links";
+import { IPFS_GATEWAY_URL, PLACEHOLDER_AVATAR } from "@static/constants/links";
 
 import '@rainbow-me/rainbowkit/dist/index.css';
 import "@style/Dashboard/Sidebar/Sidebar.css";
@@ -21,7 +21,6 @@ const PRIMARY_PRODUCTION_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
 
 const OrgSidebar = ({ address }) => {
     const { openConnectModal } = useConnectModal();
-    const placeholderAvatar = "https://avatars.githubusercontent.com/u/77760087?s=200&v=4";
     const { data: ensAvatar } = useEnsAvatar({
         addressOrName: address,
         chainId: 1
@@ -33,7 +32,10 @@ const OrgSidebar = ({ address }) => {
     const navigate = useNavigate();
     const { userData, authenticationError, setIsAuthenticating } = useContext(UserContext);
     const { orgData } = useContext(OrgContext);
-    const orgId = window.location.pathname.includes('organization') ? orgData?.id : null;
+
+    // kinda hacky way to get our current location.
+    const path = window.location.pathname
+    const orgId = path.includes('organization') && !path.includes('organization/new') ? orgData?.id : null;
 
     // Dual purpose connect button. If we're not connected, connect with rainbowkit else if 
     // we are connected, use it to kick off the SIWE process in event of a cancelled signature.
@@ -90,7 +92,7 @@ const OrgSidebar = ({ address }) => {
             {address && !orgId && !authenticationError && !cannotSwitchNetwork &&
                 <>
                     <div className="sidebar__header">
-                        <img src={ensAvatar || placeholderAvatar} alt="avatar" />
+                        <img src={ensAvatar || PLACEHOLDER_AVATAR} alt="avatar" />
                         <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
                             {userData?.ens_name ? userData.ens_name : sliceAddress(address)}
                         </Link>
@@ -110,9 +112,9 @@ const OrgSidebar = ({ address }) => {
                 <>
                     <div className="sidebar__header">
                         <img 
-                            src={`${IPFS_GATEWAY_URL}/${orgData.image_hash}`} 
+                            src={IPFS_GATEWAY_URL + orgData.image_hash} 
                             alt="avatar" 
-                            onError={(e) => e.currentTarget.src = placeholderAvatar}
+                            onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
                         />
                         <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
                             {orgData?.name}
@@ -134,13 +136,13 @@ const OrgSidebar = ({ address }) => {
                     orgData?.badges?.map((badge, index) => (
                         <div className="sidebar__organization" key={index}>
                             <img 
-                                src={`${IPFS_GATEWAY_URL}/${badge.image_hash}`} 
+                                src={IPFS_GATEWAY_URL + badge.image_hash} 
                                 alt="avatar" 
-                                onError={(e) => e.currentTarget.src = placeholderAvatar}
+                                onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
                             />
                             <button 
                                 className="button__unstyled"
-                                onClick={() => navigate(`/dashboard/organization/${orgData.id}/badge/${badge.token_id}`)}
+                                onClick={() => navigate(`/dashboard/organization/${orgData.id}/badge/${badge.id}`)}
                             >
                                 {badge.name}
                             </button>
@@ -150,9 +152,9 @@ const OrgSidebar = ({ address }) => {
                     userData?.organizations?.map((org, index) => (
                         <div className="sidebar__organization" key={index}>
                             <img 
-                                src={`${IPFS_GATEWAY_URL}/${org.image_hash}`} 
+                                src={IPFS_GATEWAY_URL + org.image_hash} 
                                 alt="avatar" 
-                                onError={(e) => e.currentTarget.src = placeholderAvatar}
+                                onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
                             />
                             <button 
                                 className="button__unstyled"

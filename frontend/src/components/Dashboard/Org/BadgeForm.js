@@ -67,7 +67,7 @@ const BadgeForm = () => {
         if (response.error) {
             setError('Error creating token URI: ' + response.error);
         }
-        const token_uri = `${IPFS_GATEWAY_URL}/${response.hash}`
+        const token_uri = IPFS_GATEWAY_URL + response.hash
         setBadgeObj({
             ...badgeObj, 
             token_uri: token_uri,
@@ -98,39 +98,39 @@ const BadgeForm = () => {
         async function createBadgeTx() {
             setTxPending(true);
             // Write to contract
-            let tx = await createBadge.write?.();
-            tx = await tx?.wait();
-
-            // if transaction is successful
-            if (tx.status === 1)
-                badgeObj.is_active = true;
-
-            // Post to database
-            const response = await postBadgeRequest(badgeObj);
-            badgeObj.url = response.url
-
-            // if POST is successful
-            if (!response.error) {
-                // Set in orgData context
-                let prev = {...orgData}
-                prev.badges.push(badgeObj)
-                setOrgData(prev)
-                navigate(`/dashboard/organization/${orgData?.id}/badge/${badgeObj.token_id}`);
+            try {
+                let tx = await createBadge.write?.();
+                tx = await tx?.wait();
+    
+                // if transaction is successful
+                if (tx.status === 1)
+                    badgeObj.is_active = true;
+    
+                // Post to database
+                const response = await postBadgeRequest(badgeObj);
+                badgeObj.url = response.url
+    
+                // if POST is successful
+                if (!response.error) {
+                    // Set in orgData context
+                    let prev = {...orgData}
+                    prev.badges.push(badgeObj)
+                    setOrgData(prev)
+                    navigate(`/dashboard/organization/${orgData?.id}/badge/${badgeObj.id}`);
+                }
+                else {
+                    throw new Error('Could not add badge to database ' + response.error);
+                }
             }
-            else {
-                setError('Could not add badge to database: ' + response.error);
+            catch (error) {
+                setError('Error creating badge: ' + error);
             }
 
             setTxPending(false);
         }
 
-        if (createBadge.isSuccess) {
-            try {
-                createBadgeTx();
-            } catch (error) {
-                setError('Transaction failed: ' + error);
-            }
-        }
+        if (createBadge.isSuccess)
+            createBadgeTx();
         // eslint-disable-next-line
     }, [createBadge.isSuccess])
 

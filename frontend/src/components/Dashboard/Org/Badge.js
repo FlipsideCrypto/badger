@@ -26,7 +26,7 @@ const Badge = () => {
     const [ txPending, setTxPending ] = useState(false);
     const { orgData, setOrgData } = useContext(OrgContext);
     const { setError } = useContext(ErrorContext);
-    const badgeIndex = orgData?.badges.findIndex(badge => badge.token_id === parseInt(badgeId));
+    const badgeIndex = orgData?.badges.findIndex(badge => badge.id === parseInt(badgeId));
     const [ badge, setBadge ] = useState(orgData?.badges[badgeIndex]);
 
     const setDelegates = useSetDelegates(
@@ -162,7 +162,7 @@ const Badge = () => {
 
     return (
         <>
-            <Header back={() => navigate(`/dashboard`)} actions={actions} />
+            <Header back={() => navigate(`/dashboard/organization/${orgId}`)} actions={actions} />
 
             <div id="badge">
                 <div className="center__gutter">

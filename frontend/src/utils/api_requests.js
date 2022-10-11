@@ -133,7 +133,7 @@ export async function postIPFSMetadata(obj) {
     const metadata = {
         name: obj.name,
         description: obj.description,
-        image: `${IPFS_GATEWAY_URL}/${obj.image_hash}`
+        image: IPFS_GATEWAY_URL + obj.image_hash
     }
 
     try {
@@ -243,7 +243,7 @@ export async function patchBadgeRolesRequest(badge, orgId) {
 
     try {
         await fetch(`${badge.url}`, {
-            method: "PUT",
+            method: "POST",
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
