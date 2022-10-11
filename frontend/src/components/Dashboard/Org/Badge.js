@@ -115,15 +115,6 @@ const Badge = () => {
         setTxPending(false);
     }
 
-    // Function to pass to the table without changing the org data context and causing API issues.
-    // Possibly should put this either into the API or put it in the state and ensure that no
-    // API calls have the isDelegate injected into the data.
-    const isDelegate = (holder) => {
-        return Boolean(badge?.delegates?.find(delegate => 
-            delegate.ethereum_address === holder.ethereum_address
-        ));
-    }
-
     // Run the transaction hook once it has been prepped. If successful, update the badge data.
     useEffect(() => {
         async function runTransaction() {
@@ -206,7 +197,7 @@ const Badge = () => {
                 }
 
                 {badge?.users && badge?.users.length > 0 &&
-                    <HolderTable holders={badge.users} isDelegate={isDelegate}/>
+                    <HolderTable badge={badge} />
                 }
 
                 {(!badge?.users || badge?.users?.length < 1) && !isManage && 

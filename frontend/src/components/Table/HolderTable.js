@@ -10,9 +10,9 @@ import { holderHeadRows } from "@static/constants/constants";
 
 import "@style/Table/HolderTable.css";
 
-const HolderTable = ({ holders, isDelegate }) => {
+const HolderTable = ({ badge }) => {
     const [ headRows, setHeadRows ] = useState(holderHeadRows);
-    const [ sortedList, setSortedList ] = useState(holders);
+    const [ sortedList, setSortedList ] = useState(badge.users);
 
     const onSortChange = (key) => {
         // Get the current sort method and inverse it for chevron display.
@@ -30,15 +30,23 @@ const HolderTable = ({ holders, isDelegate }) => {
         setSortedList(newSortedList);
     }
 
+    // Is delegate is not a default property of the user object, so we need to add it.
+    const isDelegate = (holder) => {
+        return Boolean(badge?.delegates?.find(delegate => 
+            delegate.ethereum_address === holder.ethereum_address
+        ));
+    }
+
     console.log('sortedList', sortedList, 'headrows', headRows)
 
     // If holders changes, update the sorted list and add delegate boolean.
     useEffect(() => {
-        for (let holder of holders) {
+        let newSortedList = [...badge.users];
+        for (let holder of newSortedList) {
             holder.delegate = isDelegate(holder);
         }
-        setSortedList(holders);
-    }, [holders, isDelegate])
+        setSortedList(newSortedList);
+    }, [badge.users, isDelegate])
 
     return (
         <div id="holder__table">
