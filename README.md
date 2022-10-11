@@ -2,14 +2,6 @@
 
 - potentially provide alchemy test case because the setup of needing a million things a million different places sucks
 
-## [[[API]]](backend/README.md)
-- Should use Docker for database
-- Have to have pinata
-
-# [[[Frontend]]](frontend/README.md)
-- needs deployments
-- needs alchemy
-
 # Badger Primitive & Protocol
 
 In this repository is contained the base primitive of Badger (`BadgerOrganization.sol`) as well as the Badger protocol (`Badger.sol`) on top of it.
@@ -30,7 +22,21 @@ Built on the standard ERC-1155, Badges allow for top-down management of any on-c
     * Achieved without breaking the composability of any standard or any of the existing locks in the market. Anyone that conforms to already released standards will be able to use Badger as keys.   
 * The tokens can be used as a way to bootstrap on-chain roles and token-gated areas for their members.
 
-## Tests
+## Running The Dapp
+
+### Prerequisites
+
+- Node.js 
+- Docker
+
+- fork the repo
+- setup `.env` to reflect `example.env` with your choosing of keys
+- terminal: `docker compose build`
+- ???: set the contract addresses in `.env`
+- terminal: `docker compose run web python manage.py migrate`
+- terminal: `docker compose up`
+
+## Contract Tests
 
 ```
 Version
