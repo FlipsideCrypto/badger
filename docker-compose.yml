@@ -7,6 +7,8 @@ services:
       context: ./contracts
     volumes:
       - .:/contracts/code
+    env_file:
+      - ./.env
     ports:
       - "8545:8545"
     restart: unless-stopped
@@ -17,6 +19,8 @@ services:
       context: ./contracts
     volumes:
       - .:/contracts/code
+    env_file:
+      - ./.env
     restart: "no"
   # Run the postgres server 
   badger_db:

@@ -147,7 +147,7 @@ module.exports = {
             gasPrice: 5000000000, // 5 gwei
         },
         mumbai: {
-            url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.POLYGONSCAN_API_KEY}`,
+            url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.POLYGON_ALCHEMY_KEY}`,
             accounts: [`0x${process.env.POLYGON_PRIVATE_KEY}`],
             gas: 3000000,
             gasPrice: 100000000000 // 100 gwei
@@ -158,8 +158,8 @@ module.exports = {
             gasPrice: 50000000000, // 50 gwei
         },
         polygon: {
-            url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGONSCAN_API_KEY}`,
-            accounts: [`0x${process.env.PRIVATPOLYGON_PRIVATE_KEYE_KEY}`],
+            url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_ALCHEMY_KEY}`,
+            accounts: [`0x${process.env.POLYGON_PRIVATE_KEY}`],
             gasPrice: 'auto'
         },
     }
