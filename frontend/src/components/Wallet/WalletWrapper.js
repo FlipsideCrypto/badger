@@ -5,7 +5,7 @@ import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
 const WalletWrapper = ({ children }) => {
     const { chains, provider } = configureChains(
-        [...defaultChains, chain.hardhat, chain.localhost],
+        [...defaultChains, chain.localhost],
         [
           alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_API_KEY }),
           publicProvider()

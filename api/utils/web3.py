@@ -11,11 +11,13 @@ POLYGON = "Polygon"
 OPTIMISM = "Optimism"
 HARDHAT = "Hardhat"
 GNOSIS = "Gnosis"
+LOCALHOST = "Localhost"
 CHAINS = (
     (ETHEREUM, "Ethereum"),
     (POLYGON, "Polygon"),
     (OPTIMISM, "Optimism"),
     (HARDHAT, "Hardhat"),
+    (LOCALHOST, "Localhost"),
     (GNOSIS, "Gnosis"),
 )
 
