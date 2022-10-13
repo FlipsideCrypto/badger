@@ -5,7 +5,7 @@ import "@style/Card/ErrorCard.css"
 const ErrorCard = ({ message, setError, style }) => {
     return (
         <div className="error__wrapper">
-            <div className="error__card" style={style}>
+            <div className={message.length !== 0 ? "error__card active" : "error__card"} style={style}>
                 <div className="error__card__icon">
                     <FontAwesomeIcon icon={['fal', 'fa-triangle-exclamation']} />
                 </div>
@@ -14,9 +14,6 @@ const ErrorCard = ({ message, setError, style }) => {
                         {message}
                     </span>
                 </div>
-                <button className="error__card__button" onClick={() => setError()}>
-                    <FontAwesomeIcon icon={['fal', 'fa-x']} />
-                </button>
             </div>
         </div>
     )
