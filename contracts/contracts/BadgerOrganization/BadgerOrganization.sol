@@ -374,6 +374,7 @@ contract BadgerOrganization is
     function forfeit(
           uint256 _id
         , uint256 _amount
+        , bytes memory _data
     )
         override
         external
@@ -384,6 +385,12 @@ contract BadgerOrganization is
               _msgSender()
             , _id
             , _amount
+        );
+
+        emit BadgerForfeited(
+              badges[_id]
+            , _amount
+            , _data
         );
     }
 

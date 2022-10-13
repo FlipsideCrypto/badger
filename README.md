@@ -33,8 +33,12 @@ Built on the standard ERC-1155, Badges allow for top-down management of any on-c
 - setup `.env` to reflect `example.env` with your choosing of keys
 - terminal: `docker compose build`
 - ???: set the contract addresses in `.env`
-- terminal: `docker compose run web python manage.py migrate`
 - terminal: `docker compose up`
+
+### Helpers
+
+- Migrating the database: The Badger backend is built using Django. Anytime there are changes to the database schema the migrations need to be made and applied. If you're just forking, we've already pre-built the migrations, you just need to apply them to your database. Migrations are automatically applied when you build using Docker, but if you have an issue this is how you can migrate the database manually. 
+    - terminal: `docker compose run --rm web python manage.py migrate`
 
 ## Contract Tests
 

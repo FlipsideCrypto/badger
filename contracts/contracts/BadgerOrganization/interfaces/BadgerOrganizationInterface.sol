@@ -119,10 +119,12 @@ interface BadgerOrganizationInterface {
      * @notice Allows the owner of a badge to forfeit their ownership.
      * @param _id The id of the badge to forfeit.
      * @param _amount The amount of the badge to forfeit.
+     * @param _data The data to pass to the receiver.
      */
     function forfeit(
           uint256 _id
         , uint256 _amount
+        , bytes memory _data
     )
         external;
 

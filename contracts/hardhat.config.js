@@ -131,7 +131,7 @@ module.exports = {
     defaultNetwork: "hardhat",
     networks: {
         hardhat: {
-            chainId: 31337,
+            chainId: 1337,
             gas: "auto",
             gasPrice: "auto",
             saveDeployments: false,

@@ -12,17 +12,7 @@ services:
     ports:
       - "8545:8545"
     restart: unless-stopped
-  # Deploy the contracts
-  badger_local_hardhat_deploy:
-    build:
-      dockerfile: Dockerfile.dev.deploy
-      context: ./contracts
-    volumes:
-      - .:/contracts/code
-    env_file:
-      - ./.env
-    restart: "no"
-  # Run the postgres server 
+    command: npx hardhat run scripts/deploy/deploy.js
   badger_db:
     image: postgres:13.2
     container_name: badger_db
@@ -42,7 +32,8 @@ services:
     build:
       dockerfile: Dockerfile.dev
       context: ./api
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     restart: always
     ports:
       - '8000:8000'
@@ -63,7 +54,7 @@ services:
       args:
         # use FONTAWSOME_TOKEN in .env to get access to private fontawesome packages
         FONTAWESOME_NPM_AUTH_TOKEN: ${FONTAWESOME_NPM_AUTH_TOKEN}
-    command: npm start
+    command: npm start --host 0.0.0.0 --disableHostCheck true
     restart: always
     ports:
       - '3000:3000'
@@ -71,6 +62,14 @@ services:
       - .:/frontend/code
     environment:
       - NODE_OPTIONS=--openssl-legacy-provider
+      # ENABLE this to use the local backend
+      - REACT_APP_BACKEND_URL=http://localhost:8000
+      # Enable this for hot reloads
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true 
+      - WDS_SOCKET_HOST=127.0.0.1
+      - NODE_ENV=development
+    CHOKIDAR_USEPOLLING: "true"
     env_file:
       - ./.env
     depends_on:

@@ -10,4 +10,3 @@ COPY . /code/
 
 # Run the local node
 CMD ["npx", "hardhat", "node"]
-

@@ -61,6 +61,13 @@ contract BadgerScout is
         Badge indexed badge
     );
 
+    /// @dev Event that announces when a Badge is funded.
+    event BadgerForfeited(
+          Badge indexed badge
+        , uint256 indexed amount
+        , bytes indexed data
+    );
+
     /// @dev Event that announces when a payment token is deposited for a Badge.
     event PaymentTokenDeposited(
           Badge indexed badge

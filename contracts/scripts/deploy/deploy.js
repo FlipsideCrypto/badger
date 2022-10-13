@@ -12,6 +12,12 @@ const hre = require("hardhat");
 const { getChainId, ethers } = require("hardhat");
 
 async function main() {
+    // Run the node and then run the contracts in a child process that uses the node network
+    hre.run('node');
+
+    // sleep for 5 seconds to allow the node to start
+    await new Promise(r => setTimeout(r, 5000));
+
     // Compiling all of the contracts again just in case
     await hre.run('compile');
 
@@ -48,53 +54,8 @@ async function main() {
     }
     console.table(badgerDeployment)
 
-    // Dump the deployment results to a file
-    // Determine which version to write to
-    // use timestamp to denote version
-    const timestamp = Date.now();
-    const versionKey = `${chainId}v${timestamp.toString()}`
-
-    // Create the deployment dictionary
-    const deployment = {
-        "Chain ID": chainId,
-        "Deployer": deployer.address,
-        "Badger Address": badger.address,
-        "Organization Implementation Address": organizationMaster.address,
-        "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
-    }
-
-    // Save abi file to frontend/src/abis/
-    // export the abi for badger
-    fs.writeFileSync(
-        `../frontend/src/abis/Badger.json`, 
-        JSON.stringify(JSON.parse(badger.interface.format('json')), null, 4), 
-        'utf8'
-    );
-
-    // export for abi for the organization
-    fs.writeFileSync(
-        `../frontend/src/abis/BadgerOrganization.json`,
-        JSON.stringify(JSON.parse(organizationMaster.interface.format('json')), null, 4),
-        'utf8'
-    );
-
-    // Create deployments folder
-    const deploymentsFolder = './scripts/deploy/deployments';
-
-    if (!fs.existsSync(deploymentsFolder)){
-        fs.mkdirSync(deploymentsFolder);
-    }
-
-    // Add the new version to the list of versions
-    fs.writeFileSync(
-        `./scripts/deploy/deployments/${versionKey}.json`, 
-        JSON.stringify(deployment, null, 4), 
-        'utf8'
-    );
-    console.log(`✅ Deployment ${versionKey} saved to deployments folder.`)
-
     // Verifying
-    if (chainId != '31337') {
+    if (chainId != '1337') {
         // Give time for etherscan to confirm the contract before verifying.
         await new Promise(r => setTimeout(r, 30000));
         await hre.run("verify:verify", {
@@ -110,6 +71,9 @@ async function main() {
         });
         console.log("✅ Badger Verified.")
     }
+
+    // Keep Promise open to keep node running
+    await new Promise((resolve) => {})
 }
 
 main()
