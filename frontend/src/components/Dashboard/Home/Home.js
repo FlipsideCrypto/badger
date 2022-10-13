@@ -9,7 +9,7 @@ import { UserContext } from "@components/Dashboard/Provider/UserContextProvider"
 import "@style/Dashboard/Home/Home.css"
 
 const Home = () => {
-    const { userData, authenticationError, setIsAuthenticating } = useContext(UserContext);
+    const { userData, authenticationError, tryAuthentication } = useContext(UserContext);
     const navigate = useNavigate();
 
     const announcement = {
@@ -23,7 +23,7 @@ const Home = () => {
 
     const onEnter = () => {
         authenticationError ?
-              setIsAuthenticating(true)
+              tryAuthentication()
             : navigate("/dashboard/organization/new")
     }
 

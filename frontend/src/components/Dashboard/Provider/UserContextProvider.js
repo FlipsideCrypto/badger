@@ -1,4 +1,4 @@
-import { useState, createContext, useEffect } from "react";
+import { useState, createContext, useEffect, useCallback } from "react";
 import { useNetwork } from "wagmi";
 
 import { getUserRequest } from "@utils/api_requests";
@@ -27,42 +27,46 @@ const UserContextProvider = ({ children, signer, address }) => {
             ) {
                 document.cookie = 'csrftoken=; Path=/; Expires=Sat, 01 Jan 2000 00:00:001 GMT;';
                 setAuthenticationError(true);
-                setIsAuthenticating(true);
             }
             else if (response?.ethereum_address === address) {
                 setUserData(response);
                 setIsAuthenticating(false);
+                setAuthenticationError(false);
             }
         }
 
         if (
                address
             && !authenticationError 
-            && userData?.ethereum_address !== address
         ) {
             getData();
         }
-    }, [userData, address, authenticationError])
+    }, [address, authenticationError])
+
+   const tryAuthentication = useCallback(async () => {
+        if (isAuthenticating) return;
+
+        setIsAuthenticating(true);
+        const siweResponse = await SIWEAuthorize(signer, address, chain?.id);
+
+        if(siweResponse.success) {
+            setAuthenticationError(false);
+            setIsAuthenticating(false);
+        }
+    }, [signer, address, chain?.id, isAuthenticating, setAuthenticationError, setIsAuthenticating])
 
     // If we have an authentication error and are not currently awaiting a signature
     // for authentication, then attempt to authenticate.
     useEffect(() => {
-        async function getAuthorized() {
-            setIsAuthenticating(false);
-            
-            const siweResponse = await SIWEAuthorize(signer, address, chain?.id);
-
-            if(siweResponse.success) {
-                setUserData({})
-                setAuthenticationError(false);
-            }
-        }
-        
-        if (authenticationError && isAuthenticating && signer) {
-            getAuthorized();
+        if (   
+               authenticationError 
+            && !isAuthenticating 
+            && signer
+        ) {
+            tryAuthentication();
         }
 
-    }, [authenticationError, setAuthenticationError, isAuthenticating, chain, signer, address])
+    }, [authenticationError, isAuthenticating, signer, tryAuthentication])
 
     return (
         <UserContext.Provider value={{
@@ -70,8 +74,7 @@ const UserContextProvider = ({ children, signer, address }) => {
             setUserData, 
             authenticationError, 
             setAuthenticationError,
-            isAuthenticating,
-            setIsAuthenticating
+            tryAuthentication
         }}>
             {children}
         </UserContext.Provider>

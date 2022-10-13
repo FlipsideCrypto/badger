@@ -102,15 +102,15 @@ const BadgeForm = () => {
 
             // Post to database
             const response = await postBadgeRequest(badgeObj);
-            badgeObj.url = response.url
-
             // if POST is successful
             if (!response.error) {
                 // Set in orgData context
                 let prev = {...orgData}
-                prev.badges.push(badgeObj)
+                prev.badges.push(response)
+
+                setBadgeObj(response)
                 setOrgData(prev)
-                navigate(`/dashboard/organization/${orgData?.id}/badge/${badgeObj.id}`);
+                navigate(`/dashboard/organization/${orgData?.id}/badge/${response.id}`);
             }
             else {
                 throw new Error('Could not add badge to database ' + response.error);
@@ -135,13 +135,12 @@ const BadgeForm = () => {
             setTxPending(true);
             createBadgeTx();
         }
-    }, [createBadge.isSuccess, txPending, createBadgeTx])
+    }, [createBadge.isSuccess, txPending, badgeObj?.ethereum_address, createBadgeTx])
 
     // Set the badgeObj state when orgData is updated
     useEffect(() => {
-        setBadgeObj({
+        setBadgeObj((badgeObj) => ({
             ...badgeObj,
-            image_hash: ipfsImageHash,
             ethereum_address: orgData?.ethereum_address,
             token_id: orgData?.badges?.length,
             organization: orgData?.id,
@@ -149,7 +148,7 @@ const BadgeForm = () => {
             claimable: false,
             is_active: false,
             signer: orgData?.owner?.ethereum_address,
-        })
+        }));
     }, [orgData, setBadgeObj])
 
     return (

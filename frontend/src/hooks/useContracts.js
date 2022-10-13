@@ -2,9 +2,22 @@ import { useMemo } from "react";
 import { usePrepareContractWrite, useContractWrite } from 'wagmi';
 import { ethers } from "ethers";
 
-const BADGER_ADDRESSES = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES);
+import { IPFS_GATEWAY_URL } from "@static/constants/links";
 const PRIMARY_IMPLEMENTATION = process.env.REACT_APP_BADGER_IMPLEMENTATION;
 const PRIMARY_PROD_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
+
+// Putting the parse into a try catch block to account for missing env var breaking the app.
+export function getBadgerAddress(chainName) {
+    try {
+        const BADGER_ADDRESSES = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES);
+        const address = BADGER_ADDRESSES[chainName] ? BADGER_ADDRESSES[chainName] : BADGER_ADDRESSES[PRIMARY_PROD_CHAIN];
+        return address;
+    }
+    catch {
+        console.log(`Badger contract address not found in .env.`)
+        return null;
+    }
+}
 
 // Gets the ABI for sash contracts.
 export function getBadgerOrganizationAbi() {
@@ -22,7 +35,7 @@ export function getBadgerOrganizationAbi() {
 export function getBadgerAbi(chainName) {
     try {
         const abi = require('@abis/Badger.json');
-        const address = BADGER_ADDRESSES[chainName] ? BADGER_ADDRESSES[chainName] : BADGER_ADDRESSES[PRIMARY_PROD_CHAIN]
+        const address = getBadgerAddress(chainName);
         return {
             abi: new ethers.utils.Interface(abi),
             address: address
@@ -41,8 +54,8 @@ export const useBadgerFactory = (orgObj, address, chainName) => {
     const args = [
         PRIMARY_IMPLEMENTATION,
         address,
-        "",
-        orgObj.contract_uri_hash,
+        IPFS_GATEWAY_URL + orgObj.image_hash,
+        IPFS_GATEWAY_URL + orgObj.contract_uri_hash,
         orgObj.name,
         orgObj.symbol,
     ]
