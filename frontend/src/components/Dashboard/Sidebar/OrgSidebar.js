@@ -25,8 +25,8 @@ const OrgSidebar = ({ address }) => {
         chainId: 1
     });
     const { chain } = useNetwork();
-    const { chains, switchNetwork } = useSwitchNetwork();
-    const [ cannotSwitchNetwork, setCannotSwitchNetwork ] = useState(false);
+    const { chains, switchNetwork, isLoading } = useSwitchNetwork();
+    const [ isWrongNetwork, setIsWrongNetwork ] = useState(false);
 
     const navigate = useNavigate();
     const { userData, authenticationError, tryAuthentication } = useContext(UserContext);
@@ -49,46 +49,47 @@ const OrgSidebar = ({ address }) => {
     // current primary chain. If programmatic network switching does not work, then change 
     // the connect button to switch network.
     const onSwitchNetworkRequest = useCallback(() => {
-        try {
-            const primaryChain = chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)
-            switchNetwork?.(primaryChain.id)
-            setCannotSwitchNetwork(false);
-        } 
-        catch {
-            setCannotSwitchNetwork(true);
-        }}, 
-        [chains, switchNetwork]
+        const primaryChain = chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)
+        switchNetwork?.(primaryChain.id)
+        
+        }, [chains, switchNetwork]
     )
+
     useEffect(() => {
-        onSwitchNetworkRequest();
-    }, [chain, chains, onSwitchNetworkRequest]);
+        setIsWrongNetwork(chain.name !== PRIMARY_PRODUCTION_CHAIN)
+
+        if (
+               isWrongNetwork
+            && !isLoading
+        )
+            onSwitchNetworkRequest();
+    }, [chain, isWrongNetwork, onSwitchNetworkRequest]);
 
     // Opens the connect modal on landing if connection has not already been
     // established in prior session.
     useEffect(() => {
-        if (!openConnectModal) return;
-            
-        openConnectModal()
+        if (openConnectModal)
+            openConnectModal()
     }, [openConnectModal])
 
     return (
         <div className="sidebar left">
             {/* Logged out user header */}
-            {!orgId && authenticationError && !cannotSwitchNetwork &&
+            {!orgId && authenticationError && !isWrongNetwork &&
                 <button onClick={() => onConnect()} style={{ marginBottom: '20px' }}>
                     Connect Wallet
                 </button>
             }
 
             {/* Wrong network header */}
-            {cannotSwitchNetwork &&
+            {isWrongNetwork &&
                 <button onClick={() => onSwitchNetworkRequest()} style={{ marginBottom: '20px' }}>
                     {`Switch to ${PRIMARY_PRODUCTION_CHAIN}`}
                 </button>
             }
 
             {/* Logged in user header */}
-            {address && !orgId && !authenticationError && !cannotSwitchNetwork &&
+            {address && !orgId && !authenticationError && !isWrongNetwork &&
                 <>
                     <div className="sidebar__header">
                         <img src={ensAvatar || PLACEHOLDER_AVATAR} alt="avatar" />
@@ -107,7 +108,7 @@ const OrgSidebar = ({ address }) => {
             }
 
             {/* Org level user header */}
-            {orgId && orgData?.name && !cannotSwitchNetwork &&
+            {orgId && orgData?.name && !isWrongNetwork &&
                 <>
                     <div className="sidebar__header">
                         <img 
