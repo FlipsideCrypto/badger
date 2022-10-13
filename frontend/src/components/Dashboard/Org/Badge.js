@@ -54,8 +54,8 @@ const Badge = () => {
     const selectActions = [
         "Mint",
         "Revoke",
-        "Add Leader",
-        "Remove Leader"
+        "Add Delegate",
+        "Remove Delegate"
     ]
 
     const onButtonClick = async () => {
@@ -96,11 +96,11 @@ const Badge = () => {
         if (!badge.delegates) badge.delegates = [];
 
         membersToUpdate.forEach(member => {
-            if (selectedAction === "Remove Leader") {
+            if (selectedAction === "Remove Delegate") {
                 const index = badge.delegates.findIndex(delegate => delegate.ethereum_address === member);
                 badge.delegates.splice(index, 1);
             }
-            else if (selectedAction === "Add Leader") {
+            else if (selectedAction === "Add Delegate") {
                 badge.delegates.push({ethereum_address: member});
             }
         })
@@ -191,6 +191,7 @@ const Badge = () => {
                             onClick={onButtonClick}
                             style={{margin: "20px 0px 20px auto"}}
                             loading={txPending}
+                            disabled={membersToUpdate.length < 1}
                         />
                     </>
                 }

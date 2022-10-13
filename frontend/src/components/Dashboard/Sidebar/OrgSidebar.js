@@ -25,7 +25,7 @@ const OrgSidebar = ({ address }) => {
         chainId: 1
     });
     const { chain } = useNetwork();
-    const { chains, switchNetwork, isLoading } = useSwitchNetwork();
+    const { chains, switchNetwork } = useSwitchNetwork();
     const [ isWrongNetwork, setIsWrongNetwork ] = useState(false);
 
     const navigate = useNavigate();
@@ -50,7 +50,7 @@ const OrgSidebar = ({ address }) => {
     // the connect button to switch network.
     const onSwitchNetworkRequest = useCallback(() => {
         const primaryChain = chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)
-        switchNetwork?.(primaryChain.id)
+        switchNetwork?.(primaryChain?.id)
         
         }, [chains, switchNetwork]
     )
@@ -59,8 +59,8 @@ const OrgSidebar = ({ address }) => {
         setIsWrongNetwork(chain.name !== PRIMARY_PRODUCTION_CHAIN)
 
         if (
-               isWrongNetwork
-            && !isLoading
+               chain
+            && isWrongNetwork
         )
             onSwitchNetworkRequest();
     }, [chain, isWrongNetwork, onSwitchNetworkRequest]);
