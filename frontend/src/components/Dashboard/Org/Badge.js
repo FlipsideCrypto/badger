@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -67,7 +67,7 @@ const Badge = () => {
 
     // Update the badge array after the transaction is completed, POST 
     // out to the API, update our orgData context, and reset call transaction flag.
-    const onMembersUpdate = async () => {
+    const onMembersUpdate = useCallback(async () => {
         if (!badge.users) badge.users = [];
 
         membersToUpdate.forEach(member => {
@@ -88,11 +88,11 @@ const Badge = () => {
 
         setCallTransaction("");
         setTxPending(false);
-    }
+    }, [badge, membersToUpdate, selectedAction, orgId, setError, setOrgData, badgeIndex]);
 
     // Update the badge array after the transaction is completed, POST 
     // out to the API, update our orgData context, and reset call transaction flag.
-    const onDelegatesUpdate = async () => {
+    const onDelegatesUpdate = useCallback(async () => {
         if (!badge.delegates) badge.delegates = [];
 
         membersToUpdate.forEach(member => {
@@ -113,37 +113,36 @@ const Badge = () => {
 
         setCallTransaction("");
         setTxPending(false);
-    }
+    }, [badge, badgeIndex, membersToUpdate, orgId, selectedAction, setError, setOrgData]);
+
+   const runTransaction = useCallback(async () => {
+        setTxPending(true);
+        let tx;
+        try {
+            if (setDelegates.isSuccess)
+                tx = await setDelegates.write?.()
+            else if (manageOwnership.isSuccess)
+                tx = await manageOwnership.write?.()
+
+            if (tx) {
+                const txReceipt = await tx?.wait();
+        
+                if (txReceipt.status === 1) {
+                    callTransaction === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
+                }
+            }
+        } catch (error) {
+            setError('Transaction failed: ' + error);
+            setCallTransaction("")
+        }
+        setTxPending(false);
+    }, [callTransaction, setDelegates, manageOwnership, setError, onMembersUpdate, onDelegatesUpdate]);
 
     // Run the transaction hook once it has been prepped. If successful, update the badge data.
-    useEffect(() => {
-        async function runTransaction() {
-            setTxPending(true);
-            let tx;
-            try {
-                if (setDelegates.isSuccess)
-                    tx = await setDelegates.write?.()
-                else if (manageOwnership.isSuccess)
-                    tx = await manageOwnership.write?.()
-    
-                if (tx) {
-                    const txReceipt = await tx?.wait();
-            
-                    if (txReceipt.status === 1) {
-                        callTransaction === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
-                    }
-                }
-            } catch (error) {
-                setError('Transaction failed: ' + error);
-                setCallTransaction("")
-            }
-            setTxPending(false);
-        }
-        
+    useEffect(() => {        
         if (callTransaction && !txPending) 
             runTransaction();
-    // eslint-disable-next-line
-    }, [setDelegates.isSuccess, manageOwnership.isSuccess, callTransaction])
+    }, [setDelegates.isSuccess, callTransaction, runTransaction, txPending])
 
     useEffect(() => {
         if (orgData?.badges[badgeIndex]) {

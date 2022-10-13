@@ -1,4 +1,4 @@
-import { useState, useRef, useContext, useEffect } from "react";
+import { useState, useRef, useContext, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Header from "@components/Dashboard/Header/Header";
@@ -8,7 +8,6 @@ import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 
-import { IPFS_GATEWAY_URL } from "@static/constants/links"
 import { postBadgeRequest, postIPFSImage, postIPFSMetadata } from "@utils/api_requests";
 import { useCreateBadge } from "@hooks/useContracts";
 
@@ -25,13 +24,13 @@ const BadgeForm = () => {
     const [ txPending, setTxPending ] = useState(false);
     const { orgData, setOrgData } = useContext(OrgContext);
     const { setError } = useContext(ErrorContext);
-    
+
     const [ badgeObj, setBadgeObj ] = useState({
         name: badgeName,
         description: badgeDescription,
         delegates: badgeDelegates,
         image_hash: ipfsImageHash,
-        contract_address: orgData?.ethereum_address,
+        ethereum_address: orgData?.ethereum_address,
         token_id: orgData?.badges?.length,
         organization: orgData?.id,
         account_bound: true,
@@ -67,10 +66,10 @@ const BadgeForm = () => {
         if (response.error) {
             setError('Error creating token URI: ' + response.error);
         }
-        const token_uri = IPFS_GATEWAY_URL + response.hash
+
         setBadgeObj({
             ...badgeObj, 
-            token_uri: token_uri,
+            token_uri: response.hash,
             name: badgeName,
             description: badgeDescription,
             delegates: badgeDelegates,
@@ -91,48 +90,66 @@ const BadgeForm = () => {
         setBadgeObj({...badgeObj, image_hash: response.hash})
     }
 
+    // Write to contract
+    const createBadgeTx = useCallback(async () => {
+        try {
+            let tx = await createBadge.write?.();
+            tx = await tx?.wait();
+
+            // if transaction is successful
+            if (tx.status === 1)
+                badgeObj.is_active = true;
+
+            // Post to database
+            const response = await postBadgeRequest(badgeObj);
+            // if POST is successful
+            if (!response.error) {
+                // Set in orgData context
+                let prev = {...orgData}
+                prev.badges.push(response)
+
+                setBadgeObj(response)
+                setOrgData(prev)
+                navigate(`/dashboard/organization/${orgData?.id}/badge/${response.id}`);
+            }
+            else {
+                throw new Error('Could not add badge to database ' + response.error);
+            }
+        }
+        catch (error) {
+            setError('Error creating badge: ' + error);
+            setTxPending(false);
+        }
+
+    }, [badgeObj, createBadge, navigate, orgData, setError, setOrgData]);
+
     // Run the transaction after it has been prepared by wagmi.
     // After the transaction is successful, POST badge to is_active,
     // set the new badge in orgData, and navigate to the badge page.
     useEffect(() => {
-        async function createBadgeTx() {
+        if (
+               createBadge.isSuccess 
+            && !txPending
+            && badgeObj?.ethereum_address
+        ) {
             setTxPending(true);
-            // Write to contract
-            try {
-                let tx = await createBadge.write?.();
-                tx = await tx?.wait();
-    
-                // if transaction is successful
-                if (tx.status === 1)
-                    badgeObj.is_active = true;
-    
-                // Post to database
-                const response = await postBadgeRequest(badgeObj);
-                badgeObj.url = response.url
-    
-                // if POST is successful
-                if (!response.error) {
-                    // Set in orgData context
-                    let prev = {...orgData}
-                    prev.badges.push(badgeObj)
-                    setOrgData(prev)
-                    navigate(`/dashboard/organization/${orgData?.id}/badge/${badgeObj.id}`);
-                }
-                else {
-                    throw new Error('Could not add badge to database ' + response.error);
-                }
-            }
-            catch (error) {
-                setError('Error creating badge: ' + error);
-            }
-
-            setTxPending(false);
-        }
-
-        if (createBadge.isSuccess)
             createBadgeTx();
-        // eslint-disable-next-line
-    }, [createBadge.isSuccess])
+        }
+    }, [createBadge.isSuccess, txPending, badgeObj?.ethereum_address, createBadgeTx])
+
+    // Set the badgeObj state when orgData is updated
+    useEffect(() => {
+        setBadgeObj((badgeObj) => ({
+            ...badgeObj,
+            ethereum_address: orgData?.ethereum_address,
+            token_id: orgData?.badges?.length,
+            organization: orgData?.id,
+            account_bound: true,
+            claimable: false,
+            is_active: false,
+            signer: orgData?.owner?.ethereum_address,
+        }));
+    }, [orgData, setBadgeObj])
 
     return (
         <div id="new-badge">

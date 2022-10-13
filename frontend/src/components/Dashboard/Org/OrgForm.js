@@ -1,4 +1,4 @@
-import { useState, useContext, useRef, useEffect, useMemo } from "react";
+import { useState, useContext, useRef, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNetwork, useAccount } from "wagmi";
 
@@ -76,19 +76,6 @@ const OrgForm = () => {
         }
     }
 
-    // Determines if organizations is already in userData, before pushing or settings
-    // the new organization to userData.
-    const addOrgToState = (org) => {
-        let newUserData = {...userData};
-
-        if (newUserData.organizations)
-            newUserData.organizations.push(org);
-        else
-            newUserData.organizations = [org];
-
-        setUserData(newUserData);
-    }
-
     // Posts contract uri to IPFS and sets the returned hash to orgObj uri hash.
     const onFormSubmission = async () => {
         setLoading(true);
@@ -102,29 +89,29 @@ const OrgForm = () => {
     }
 
     // Awaits a prepared transaction before running it.
-    useEffect(() => {
-        async function createOrgTx() {
-            setTxPending(true);
-            try {
-                let tx = await createContract.write?.();
-                tx = await tx?.wait();
-                // Decode the transaction receipt to get the contract address from the event.
-                const orgCreatedTopic = badger.abi.getEventTopic("OrganizationCreated");
-                const orgCreatedEvent = tx.logs.find((log) => log.topics[0] === orgCreatedTopic);
-                const orgEvent = badger.abi.decodeEventLog("OrganizationCreated", orgCreatedEvent.data, orgCreatedEvent.topics);
-                const contractAddress = orgEvent.organization;
-    
-                // If transaction was confirmed, add is_active and contract address to orgObj.
-                // Adding the ethereum address will trigger a useEffect to post to backend.
-                setOrgObj({...orgObj, ethereum_address: contractAddress, is_active: true});
-            }
-            catch (error) {
-                setError('Error creating Org: ' + error);
-                setLoading(false);
-            }
-            setTxPending(false);
-        }
+    const createOrgTx = useCallback(async () => {
+        setTxPending(true);
+        try {
+            let tx = await createContract.write?.();
+            tx = await tx?.wait();
+            // Decode the transaction receipt to get the contract address from the event.
+            const orgCreatedTopic = badger.abi.getEventTopic("OrganizationCreated");
+            const orgCreatedEvent = tx.logs.find((log) => log.topics[0] === orgCreatedTopic);
+            const orgEvent = badger.abi.decodeEventLog("OrganizationCreated", orgCreatedEvent.data, orgCreatedEvent.topics);
+            const contractAddress = orgEvent.organization;
 
+            // If transaction was confirmed, add is_active and contract address to orgObj.
+            // Adding the ethereum address will trigger a useEffect to post to backend.
+            setOrgObj({...orgObj, ethereum_address: contractAddress, is_active: true});
+        }
+        catch (error) {
+            setError('Error creating Org: ' + error);
+            setLoading(false);
+        }
+        setTxPending(false);
+    }, [createContract, badger.abi, orgObj, setError]);
+    
+    useEffect(() => {
         // This is bad/ugly code, but it works to only trigger the call when the button has been clicked
         // (loading), the transaction is prepared (isSuccess), there's not a pending transaction
         // (!txPending), and the ethereum address has not been set after a successful transaction.
@@ -136,28 +123,33 @@ const OrgForm = () => {
         ) {
             createOrgTx();
         }
-    }, [createContract.isSuccess, orgObj.ethereum_address, loading, txPending])
+    }, [createContract.isSuccess, orgObj.ethereum_address, loading, txPending, createOrgTx])
 
+    const postOrg = useCallback(async () => {
+        const response = await postOrgRequest(orgObj);
+        if (!response?.error && response?.id) {
+            let newUserData = {...userData};
+
+            if (newUserData.organizations)
+                newUserData.organizations.push(response);
+            else
+                newUserData.organizations = [response];
+    
+            setUserData(newUserData);
+            navigate(`/dashboard/organization/${response.id}`);
+        }
+        else {
+            setError('Could not add org to database: ' + response.error);
+        }
+
+        setLoading(false);
+    }, [orgObj, navigate, userData, setUserData, setError]);
     // Upon receiving contract address from transaction event,
     // POST org to backend and if successful, add to state and navigate to org page.
     useEffect(() => {
-        async function postOrg() {
-            const response = await postOrgRequest(orgObj);
-            if (!response?.error && response?.id) {
-                addOrgToState(response);
-                navigate(`/dashboard/organization/${response.id}`);
-            }
-            else {
-                setError('Could not add org to database: ' + response.error);
-            }
-
-            setLoading(false);
-        }
-
         if (orgObj.ethereum_address) 
             postOrg();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [orgObj.ethereum_address])
+    }, [orgObj.ethereum_address, postOrg])
 
     return (
         <div id="new-org">

@@ -46,7 +46,7 @@ const OrgContextProvider = ({ children }) => {
         // hacky way to get OrgId. TODO: Put sidebars and context providers inside of a 
         // base "/dashboard" route so that we can use useParams() to get the orgId.
         const path = pathname.split('/');
-        const orgId = path[path.indexOf('organization') + 1] || null
+        const orgId = path.includes('organization') && path[3] !== "new" ? path[3] : null;
 
         if (orgId && orgId !== currentOrgId) {
             setCurrentOrgId(orgId);
