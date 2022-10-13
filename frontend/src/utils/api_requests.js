@@ -1,4 +1,5 @@
 import { API_URL, IPFS_GATEWAY_URL } from "@static/constants/links"
+import { cleanAddresses } from "./helpers";
 
 const getCSRFToken = () => {
     return document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))?.[2] || null;
@@ -217,41 +218,31 @@ export async function getOrgRequest(orgId) {
     return response
 }
 
-export async function patchBadgeRolesRequest(badge, orgId) {
+export async function putBadgeRolesRequest(badge, orgId) {
     let response;
     // Have to clean input addresses to match the API
-    const users = badge.users?.length > 0 ? 
-        badge.users.map(user => {
-            if (user.ethereum_address)
-                return user
-            return {ethereum_address: user}
-        })
-        : [];
-    const delegates = badge.delegates?.length > 0 ? 
-        badge.delegates.map(delegate => {
-            if (delegate.ethereum_address) 
-                return delegate
-            return {ethereum_address: delegate}
-        })
-        : [];
+    const users = cleanAddresses(badge.users);
+    const delegates = cleanAddresses(badge.delegates);
     const organization = typeof(orgId) === "string" ? parseInt(orgId) : orgId;
-    badge.users = users
-    badge.delegates = delegates
-    badge.organization = organization
-    delete badge.created
-    delete badge.updated
+
+    console.log('badge', badge)
+    const data = {
+        organization: organization,
+        users: users,
+        delegates: delegates
+    }
+    console.log('request body', data)
 
     try {
         await fetch(`${badge.url}`, {
-            method: "POST",
+            method: "PUT",
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
                 'X-CSRFToken': getCSRFToken(),
             },
             credentials: 'include',
-            body: JSON.stringify(badge),
-            redirect: 'follow'
+            body: JSON.stringify(data),
         })
         .then(res => res.json())
         .then(data => {
@@ -261,6 +252,7 @@ export async function patchBadgeRolesRequest(badge, orgId) {
     catch (err) {
         response = {error: err}
     }
+    console.log('response', response)
 
     return response;
 }

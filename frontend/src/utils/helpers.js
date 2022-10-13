@@ -23,3 +23,13 @@ export const compareByProperty = (property, direction, a, b) => {
     if (a[property] < b[property]) return -1 * inverse;
     return 0;
 }
+
+export const cleanAddresses = (addresses) => {
+    return addresses.length > 0 ? 
+        addresses.map(user => {
+            if (user.ethereum_address)
+                return user
+            return {ethereum_address: user}
+        })
+        : [];
+}

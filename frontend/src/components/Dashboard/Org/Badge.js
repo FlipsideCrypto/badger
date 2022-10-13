@@ -11,7 +11,7 @@ import Select from "@components/Dashboard/Form/Select";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { useManageBadgeOwnership, useSetDelegates } from "@hooks/useContracts";
-import { patchBadgeRolesRequest } from "@utils/api_requests";
+import { putBadgeRolesRequest } from "@utils/api_requests";
 
 import "@style/Dashboard/Org/Badge.css";
 
@@ -26,8 +26,8 @@ const Badge = () => {
     const [ txPending, setTxPending ] = useState(false);
     const { orgData, setOrgData } = useContext(OrgContext);
     const { setError } = useContext(ErrorContext);
-    const badgeIndex = orgData?.badges.findIndex(badge => badge.id === parseInt(badgeId));
-    const [ badge, setBadge ] = useState(orgData?.badges[badgeIndex]);
+    const badgeIndex = orgData?.badges?.findIndex(badge => badge.id === parseInt(badgeId));
+    const [ badge, setBadge ] = useState(orgData?.badges?.[badgeIndex] || {});
 
     const setDelegates = useSetDelegates(
         callTransaction === "setDelegates",
@@ -80,7 +80,7 @@ const Badge = () => {
             }
         })
 
-        const response = await patchBadgeRolesRequest(badge, orgId)
+        const response = await putBadgeRolesRequest(badge, orgId)
         if (response.error)
             setError('Adding members to database failed: ' + response.error);
         else
@@ -105,7 +105,7 @@ const Badge = () => {
             }
         })
 
-        const response = await patchBadgeRolesRequest(badge, orgId)
+        const response = await putBadgeRolesRequest(badge, orgId)
         if (response.error)
             setError('Adding delegates to database failed: ' + response.error);        
         else
@@ -145,7 +145,7 @@ const Badge = () => {
     }, [setDelegates.isSuccess, callTransaction, runTransaction, txPending])
 
     useEffect(() => {
-        if (orgData?.badges[badgeIndex]) {
+        if (orgData?.badges?.[badgeIndex]) {
             setBadge(orgData?.badges[badgeIndex]);
         }
     }, [orgData, badgeIndex])

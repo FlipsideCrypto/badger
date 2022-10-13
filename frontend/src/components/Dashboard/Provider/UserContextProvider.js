@@ -44,8 +44,6 @@ const UserContextProvider = ({ children, signer, address }) => {
     }, [address, authenticationError])
 
    const tryAuthentication = useCallback(async () => {
-        if (isAuthenticating) return;
-
         setIsAuthenticating(true);
         const siweResponse = await SIWEAuthorize(signer, address, chain?.id);
 

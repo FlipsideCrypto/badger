@@ -56,7 +56,7 @@ const OrgSidebar = ({ address }) => {
     )
 
     useEffect(() => {
-        setIsWrongNetwork(chain.name !== PRIMARY_PRODUCTION_CHAIN)
+        setIsWrongNetwork(chain?.name !== PRIMARY_PRODUCTION_CHAIN)
 
         if (
                chain
