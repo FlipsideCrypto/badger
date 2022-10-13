@@ -42,7 +42,7 @@ class BadgeViewSet(viewsets.ModelViewSet):
         return users
 
     def _handle_user_creation(self, users, queryset):
-        if users:
+        if users is not None:
             # Clear the active set of users, whatever they may be.
             queryset.clear()
 
