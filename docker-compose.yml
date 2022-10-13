@@ -58,8 +58,11 @@ services:
     restart: always
     ports:
       - '3000:3000'
+    # make sure the volumes for hot reloading to work are setup
     volumes:
-      - .:/frontend/code
+      - ./frontend:/code
+      - /code/node_modules
+      - /code/public
     environment:
       - NODE_OPTIONS=--openssl-legacy-provider
       # ENABLE this to use the local backend
