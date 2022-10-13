@@ -42,6 +42,10 @@ class BadgeViewSet(viewsets.ModelViewSet):
 
     def _handle_user_creation(self, users, queryset):
         if users:
+            # Clear the active set of users, whatever they may be.
+            queryset.clear()
+
+            # Build the new data for the users
             users = self._handle_users(users)
             for user in users:
                 queryset.add(user)
