@@ -15,7 +15,8 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_permissions(self): 
+        permission_classes = []
         if self.action in ['update', 'partial_update', 'destroy']:
-            self.permission_classes += [CanManageOrganization]
+            permission_classes += [CanManageOrganization]
 
-        return generator(self.permission_classes)
+        return generator(self.permission_classes + permission_classes)

@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.permissions import (
     IsAuthenticated,
+    AllowAny,
     IsAdminUser
 )
 
@@ -22,9 +23,10 @@ class WalletViewSet(viewsets.ModelViewSet):
         return context
 
     def get_permissions(self):
+        permission_classes = []
         if self.action == 'create':
-            self.permission_classes += [IsAdminUser]
+            permission_classes = [IsAdminUser]
         elif self.action in ['update', 'partial_update', 'destroy']:
-            self.permission_classes += [CanManageWallet]
+            permission_classes = [CanManageWallet]
 
-        return generator(self.permission_classes)
+        return generator(self.permission_classes + permission_classes)

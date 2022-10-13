@@ -23,10 +23,11 @@ class BadgeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
+        permission_classes = []
         if self.action in ['update', 'partial_update', 'destroy']:
-            self.permission_classes += [CanManageBadge]
+            permission_classes += [CanManageBadge]
 
-        return generator(self.permission_classes)
+        return generator(self.permission_classes + permission_classes)
 
     def _handle_users(self, users_data):
         users = []
