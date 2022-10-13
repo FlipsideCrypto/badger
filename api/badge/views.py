@@ -45,10 +45,11 @@ class BadgeViewSet(viewsets.ModelViewSet):
         # Clear the active set of users, whatever they may be.
         queryset.clear()
 
-        # Build the new data for the users
-        users = self._handle_users(users)
-        for user in users:
-            queryset.add(user)
+        if users is not None:
+            # Build the new data for the users
+            users = self._handle_users(users)
+            for user in users:
+                queryset.add(user)
 
     # on create handle the badge creation and add it to .badges of the organization it is being added to
     def create(self, request, *args, **kwargs):
