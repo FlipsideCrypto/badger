@@ -51,7 +51,6 @@ const UserContextProvider = ({ children, signer, address }) => {
             setIsAuthenticating(false);
             
             const siweResponse = await SIWEAuthorize(signer, address, chain?.id);
-            console.log('siwe response', siweResponse)
 
             if(siweResponse.success) {
                 setUserData({})

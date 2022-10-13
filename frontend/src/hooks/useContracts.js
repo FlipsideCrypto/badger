@@ -70,8 +70,6 @@ export const useCreateBadge = (badge) => {
             badge.delegates.pop(index)
         }
     })
-    // Format to bytes32
-    // let paymentKey = ethers.utils.formatBytes32String(badge.payment_token[0]);
 
     let args = [
         badge.token_id,
@@ -84,7 +82,7 @@ export const useCreateBadge = (badge) => {
     ]
 
     const { config, isSuccess } = usePrepareContractWrite({
-        addressOrName: badge.contract_address,
+        addressOrName: badge.ethereum_address,
         contractInterface: BadgerOrganization.abi,
         functionName: "setBadge",
         args: args,

@@ -1,4 +1,5 @@
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
     webpack: {
@@ -22,6 +23,25 @@ module.exports = {
             '@utils': path.resolve(__dirname, 'src/utils/'),
             '@hooks': path.resolve(__dirname, 'src/hooks/'),
             '@abis': path.resolve(__dirname, 'src/abis/')
-        }
+        },
+        plugins: [
+            new Dotenv({
+              path: '../.env',
+              safe: true,
+              ignoreStub: true,
+            })
+        ],
+        configure: {
+            ignoreWarnings: [
+              function ignoreSourcemapsloaderWarnings(warning) {
+                return (
+                  warning.module &&
+                  warning.module.resource.includes("node_modules") &&
+                  warning.details &&
+                  warning.details.includes("source-map-loader")
+                );
+              },
+            ],
+        },
     }
 }

@@ -12,11 +12,11 @@ import { UserContext } from "@components/Dashboard/Provider/UserContextProvider"
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { IPFS_GATEWAY_URL, PLACEHOLDER_AVATAR } from "@static/constants/links";
 
-import '@rainbow-me/rainbowkit/dist/index.css';
+import '@rainbow-me/rainbowkit/styles.css'
 import "@style/Dashboard/Sidebar/Sidebar.css";
 import "@style/Dashboard/Sidebar/OrgSidebar.css";
 
-const BADGER_ADDRESSES = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES)
+// const BADGER_ADDRESSES = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES)
 const PRIMARY_PRODUCTION_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
 
 const OrgSidebar = ({ address }) => {
@@ -50,15 +50,15 @@ const OrgSidebar = ({ address }) => {
     // current primary chain. If programmatic network switching does not work, then change 
     // the connect button to switch network.
     const onSwitchNetworkRequest = useCallback(() => {
-        if (!(chain?.name in BADGER_ADDRESSES)) {
+        try {
             const primaryChain = chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)
             switchNetwork?.(primaryChain.id)
-            setCannotSwitchNetwork(true);
-        } 
-        else {
             setCannotSwitchNetwork(false);
+        } 
+        catch {
+            setCannotSwitchNetwork(true);
         }}, 
-        [chain, chains, switchNetwork]
+        [chains, switchNetwork]
     )
     useEffect(() => {
         onSwitchNetworkRequest();
