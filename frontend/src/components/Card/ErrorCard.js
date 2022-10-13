@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import "@style/Card/ErrorCard.css"
 
 const ErrorCard = ({ message, setError, style }) => {
-    
     return (
         <div className="error__wrapper">
             <div className="error__card" style={style}>

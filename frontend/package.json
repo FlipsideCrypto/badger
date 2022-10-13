@@ -34,7 +34,7 @@
     "webpack": "^5.74.0"
   },
   "scripts": {
-    "start": "CHOKIDAR_USEPOLLING=true craco start",
+    "start": "WATCHBACK_POLLING=true craco start",
     "build": "CI=false && craco build",
     "test": "craco test",
     "eject": "craco eject"

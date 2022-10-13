@@ -5,13 +5,12 @@
 }
 
 .error__card {
-    background: rgb(255, 155, 155);
+    background: #FF0000;
     display: grid;
-    grid-template-columns: 5% 90% 5%;
+    grid-template-columns: 1fr 9fr 1fr;
     grid-template-rows: auto;
     position: absolute;
-    border-radius: 8px;
-    color: red;
+    color: #fff;
     width: 100%;
     min-height: 32px;
     margin-top: 16px;
@@ -24,7 +23,9 @@
     display: flex;
     justify-content: center;
     align-content: center;
+    text-align: left;
 }
+
 .error__card__text {
     padding: 10px;
     font-size: 12px;
@@ -43,7 +44,8 @@
     border: none;
     background: none;
     cursor: pointer;
-    color: rgba(0, 0, 0, 0.65);
+    color: rgba(255, 255, 255, 0.65);
+    padding: 0px;
 }
 
 .error__card__icon {

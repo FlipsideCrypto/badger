@@ -17,4 +17,7 @@ RUN echo "//npm.fontawesome.com/:_authToken=${FONTAWESOME_NPM_AUTH_TOKEN}" > /co
     npm install && \
     rm -f /code/.npmrc
 
+# Set WATCHBACK_POLLING as true
+ENV WATCHBACK_POLLING=true
+
 COPY . /code/
