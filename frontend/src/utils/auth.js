@@ -1,4 +1,5 @@
 import { SignatureType, SiweMessage } from "siwe"
+import { getCSRFToken } from "./helpers";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -9,7 +10,7 @@ export async function SIWELogin(message, signature) {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))[2],
+            'X-CSRFToken': getCSRFToken(),
         },
         body: JSON.stringify({ message, signature }),
         credentials: 'include'
