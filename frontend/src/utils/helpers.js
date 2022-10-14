@@ -35,10 +35,17 @@ export const cleanAddresses = (addresses) => {
 }
 
 export const getCSRFToken = () => {
-    let cookie = {};
-    document.cookie.split(';').forEach(function(el) {
-        let [key,value] = el.split('=');
-        cookie[key.trim()] = value;
-    })
-    return cookie['csrftoken'];
+    let name = "csrftoken=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
 }
