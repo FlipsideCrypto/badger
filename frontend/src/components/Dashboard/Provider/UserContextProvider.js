@@ -51,7 +51,7 @@ const UserContextProvider = ({ children, signer, address }) => {
             setAuthenticationError(false);
             setIsAuthenticating(false);
         }
-    }, [signer, address, chain?.id, isAuthenticating, setAuthenticationError, setIsAuthenticating])
+    }, [signer, address, chain?.id, setAuthenticationError, setIsAuthenticating])
 
     // If we have an authentication error and are not currently awaiting a signature
     // for authentication, then attempt to authenticate.

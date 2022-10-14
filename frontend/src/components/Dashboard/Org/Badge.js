@@ -86,7 +86,6 @@ const Badge = () => {
         else
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
 
-        setCallTransaction("");
         setTxPending(false);
     }, [badge, membersToUpdate, selectedAction, orgId, setError, setOrgData, badgeIndex]);
 
@@ -111,7 +110,6 @@ const Badge = () => {
         else
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
 
-        setCallTransaction("");
         setTxPending(false);
     }, [badge, badgeIndex, membersToUpdate, orgId, selectedAction, setError, setOrgData]);
 
@@ -126,15 +124,16 @@ const Badge = () => {
 
             if (tx) {
                 const txReceipt = await tx?.wait();
-        
-                if (txReceipt.status === 1) {
-                    callTransaction === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
-                }
+                if (txReceipt.status !== 1)
+                    throw new Error(setDelegates.error || manageOwnership.error);
+    
+                callTransaction === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
             }
         } catch (error) {
-            setError('Transaction failed: ' + error);
-            setCallTransaction("")
+            setError('Error managing members: ' + error);
         }
+
+        setCallTransaction("")
         setTxPending(false);
     }, [callTransaction, setDelegates, manageOwnership, setError, onMembersUpdate, onDelegatesUpdate]);
 

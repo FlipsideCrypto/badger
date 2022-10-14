@@ -96,9 +96,8 @@ const BadgeForm = () => {
             let tx = await createBadge.write?.();
             tx = await tx?.wait();
 
-            // if transaction is successful
-            if (tx.status === 1)
-                badgeObj.is_active = true;
+            if (tx.status !== 1)
+                throw new Error(createBadge.error);
 
             // Post to database
             const response = await postBadgeRequest(badgeObj);
@@ -107,9 +106,8 @@ const BadgeForm = () => {
                 // Set in orgData context
                 let prev = {...orgData}
                 prev.badges.push(response)
-
-                setBadgeObj(response)
                 setOrgData(prev)
+                setBadgeObj(response)
                 navigate(`/dashboard/organization/${orgData?.id}/badge/${response.id}`);
             }
             else {

@@ -59,18 +59,22 @@ export const useBadgerFactory = (orgObj, address, chainName) => {
         orgObj.name,
         orgObj.symbol,
     ]
-
+    
+    let error;
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: Badger.address,
         contractInterface: Badger.abi,
         functionName: "createOrganization",
         args: args,
         enabled: Boolean(orgObj?.contract_uri_hash),
+        onError(e) {
+            error = e
+        }
     })
 
     const { writeAsync } = useContractWrite(config);
 
-    return { write: writeAsync, isSuccess };
+    return { write: writeAsync, isSuccess, error };
 }
 
 // Creates a badge from a cloned sash contract.
@@ -84,7 +88,7 @@ export const useCreateBadge = (badge) => {
         }
     })
 
-    let args = [
+    const args = [
         badge.token_id,
         badge.claimable,
         badge.account_bound,
@@ -94,17 +98,21 @@ export const useCreateBadge = (badge) => {
         badge.delegates || []
     ]
 
+    let error;
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: badge.ethereum_address,
         contractInterface: BadgerOrganization.abi,
         functionName: "setBadge",
         args: args,
         enabled: Boolean(badge.token_uri),
+        onError(e) {
+            error = e
+        }
     })
 
     const { writeAsync } = useContractWrite(config);
 
-    return { write: writeAsync, isSuccess };
+    return { write: writeAsync, isSuccess, error };
 }
 
 /* 
@@ -151,17 +159,21 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, holders, act
     if (!revoke) 
         args.push("0x")
 
+    let error;
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: orgAddress,
         contractInterface: BadgerOrganization.abi,
         functionName: method,
         args: args,
         enabled: isTxReady,
+        onError(e) {
+            error = e
+        }
     })
 
     const { writeAsync } = useContractWrite(config);
 
-    return { write: writeAsync, isSuccess };
+    return { write: writeAsync, isSuccess, error };
 }
 
 /*
@@ -188,15 +200,19 @@ export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) =
         isDelegateArray,
     ]
 
+    let error;
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: orgAddress,
         contractInterface: BadgerOrganization.abi,
         functionName: method,
         args: args,
         enabled: isTxReady,
+        onError(e) {
+            error = e
+        }
     })
 
     const { writeAsync } = useContractWrite(config);
 
-    return { write: writeAsync, isSuccess };
+    return { write: writeAsync, isSuccess, error };
 }

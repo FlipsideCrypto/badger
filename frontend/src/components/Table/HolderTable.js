@@ -10,6 +10,7 @@ import { holderHeadRows } from "@static/constants/constants";
 
 import "@style/Table/HolderTable.css";
 
+// TODO: Table should show both holders and delegates.
 const HolderTable = ({ badge }) => {
     const [ headRows, setHeadRows ] = useState(holderHeadRows);
     const [ sortedList, setSortedList ] = useState(badge.users);

@@ -94,6 +94,9 @@ const OrgForm = () => {
         try {
             let tx = await createContract.write?.();
             tx = await tx?.wait();
+
+            if (tx.status !== 1)
+                throw new Error(createContract?.error);
             // Decode the transaction receipt to get the contract address from the event.
             const orgCreatedTopic = badger.abi.getEventTopic("OrganizationCreated");
             const orgCreatedEvent = tx.logs.find((log) => log.topics[0] === orgCreatedTopic);
