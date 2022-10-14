@@ -3,6 +3,7 @@ import dj_database_url
 from .base import *
 
 import django_heroku
+django_heroku.settings(locals())
 
 # Handling hosting / intitialization values
 ACTIVE_URL = "https://badger.utc24.io"
@@ -17,7 +18,10 @@ X_FRAME_OPTIONS = "DENY"
 
 CORS_ORIGIN_ALLOW_ALL = True
 CSRF_COOKIE_SECURE = False
-CSRF_TRUSTED_ORIGINS = ["https://badger.utc24.io"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://api.badger.utc24.io",
+    "https://badger.utc24.io"
+]
 SESSION_COOKIE_DOMAIN = ["https://badger.utc24.io"]
 
 ALLOWED_HOSTS = ['*']
