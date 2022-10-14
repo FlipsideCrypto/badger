@@ -157,6 +157,14 @@ const BadgeForm = () => {
             <Header back={() => navigate(`/dashboard/organization/${orgData?.id}`)} />
 
             <h2>Create Badge</h2>
+
+            <div style={{display: "grid", gridTemplateColumns: "min-content auto"}}>
+                <Switch
+                    checked={accountBound}
+                    setChecked={() => setAccountBound(!accountBound)}
+                    label="Account Bound"
+                />
+            </div>
             
             <Input
                 name="badge-name"
@@ -199,13 +207,6 @@ const BadgeForm = () => {
                     type="file"
                     onChange={(event) => onImageUpload(event)}
                 />
-            <div style={{display: "grid", gridTemplateColumns: "min-content auto"}}>
-                <Switch
-                    checked={accountBound}
-                    setChecked={() => setAccountBound(!accountBound)}
-                    label="Account Bound"
-                />
-            </div>
 
             <InputListCSV
                 label={"Delegates"}
