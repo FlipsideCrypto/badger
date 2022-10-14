@@ -18,7 +18,10 @@ X_FRAME_OPTIONS = "DENY"
 
 CORS_ORIGIN_ALLOW_ALL = True
 CSRF_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = ["https://badger.utc24.io"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://api.badger.utc24.io",
+    "https://badger.utc24.io"
+]
 
 ALLOWED_HOSTS = ['*']
 
