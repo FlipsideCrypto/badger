@@ -939,6 +939,7 @@ describe("Badger", function () {
             await childOrganization.connect(signer1).forfeit(
                 0,
                 1,
+                "0x"
             )
         });
 
@@ -946,6 +947,7 @@ describe("Badger", function () {
             await childOrganization.connect(signer1).forfeit(
                 0,
                 10000,
+                "0x"
             ).should.be.revertedWith("ERC1155: burn amount exceeds balance")
         })
 
