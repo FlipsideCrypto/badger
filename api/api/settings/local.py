@@ -9,6 +9,17 @@ REST_FRAMEWORK = {
     ]
 }
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB", "badger"),
+        "USER": os.getenv("POSTGRES_USER", "badger"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "badger"),
+        "HOST": os.getenv("POSTGRES_HOST", "badger_db"),
+        "PORT": os.getenv("POSTGRES_PORT", 5432),
+    }
+}
+
 # Request settings
 CSRF_COOKIE_SECURE = False
 ALLOWED_HOSTS = ['*']

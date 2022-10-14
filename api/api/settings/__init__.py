@@ -1,6 +1,6 @@
 from .base import *
 
-try:
+if DEBUG:
     from .local import *
-except:
+else:
     from .production import *

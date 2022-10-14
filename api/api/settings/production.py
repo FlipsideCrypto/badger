@@ -5,7 +5,7 @@ from .base import *
 import django_heroku
 
 # Handling hosting / intitialization values
-ACTIVE_URL = "https://chance.utc24.io"
+ACTIVE_URL = "https://badger.utc24.io"
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = True
