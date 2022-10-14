@@ -1,5 +1,7 @@
 import dj_database_url
 
+from api.api.settings.local import CSRF_TRUSTED_ORIGINS
+
 from .base import *
 
 import django_heroku
@@ -20,6 +22,7 @@ PROPAGATE_EXCEPTIONS = True
 X_FRAME_OPTIONS = "DENY"
 
 CORS_ORIGIN_ALLOW_ALL = True
+CSRF_TRUSTED_ORIGINS = ["https://badger.utc24.io"]
 
 ALLOWED_HOSTS = ['*']
 
