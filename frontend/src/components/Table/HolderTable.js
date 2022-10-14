@@ -5,7 +5,7 @@ import {
 } from "@mui/material"
 
 import TableSortHead from "./TableSortHead";
-import { sliceAddress, compareByProperty } from "@utils/helpers";
+import { compareByProperty } from "@utils/helpers";
 import { holderHeadRows } from "@static/constants/constants";
 
 import "@style/Table/HolderTable.css";
@@ -17,8 +17,8 @@ const HolderTable = ({ badge }) => {
     const onSortChange = (key) => {
         // Get the current sort method and inverse it for chevron display.
         let newHeadRows = {...headRows};
-        let method = newHeadRows[key].method 
-        method = !method || method === "desc" ? "asc" : "desc"
+        let method = newHeadRows[key].method;
+        method = !method || method === "desc" ? "asc" : "desc";
         newHeadRows[key].method = method;
         setHeadRows(newHeadRows);
 
