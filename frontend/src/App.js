@@ -19,12 +19,12 @@ function App() {
         <Router>
           <Helmet>
             <title>BADGER</title>
-            <meta property="og:title" content="BADGER" />
-            <meta name="twitter:title" content="BADGER" />
+            <meta property="og:title" content="BADGER | The Web3 Organization Key Solution" />
+            <meta name="twitter:title" content="BADGER | The Web3 Organization Key Solution" />
 
-            <meta name="description" content="Badge-ify the roles that control the gates of your on-chain organization." />
-            <meta property="og:description" content="Badge-ify the roles that control the gates of your on-chain organization." />
-            <meta name="twitter:description" content="Badge-ify the roles that control the gates of your on-chain organization." />
+            <meta name="description" content="Level up the access-controls of your on-chain organization and enjoy the benefits of a Web3 focused key solution." />
+            <meta property="og:description" content="Level up the access-controls of your on-chain organization and enjoy the benefits of a Web3 focused key solution." />
+            <meta name="twitter:description" content="Level up the access-controls of your on-chain organization and enjoy the benefits of a Web3 focused key solution." />
           </Helmet>
 
           <WalletWrapper>
