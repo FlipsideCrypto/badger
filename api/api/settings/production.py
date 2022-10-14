@@ -4,6 +4,8 @@ from .base import *
 
 import django_heroku
 
+DEBUG = True
+
 # Handling hosting / intitialization values
 ACTIVE_URL = "https://badger.utc24.io"
 
