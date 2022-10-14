@@ -1,7 +1,7 @@
 export const HOME_LINKS = {
-    gitbook: "https://app.gitbook.com/o/uh3wvRXawCOXvkfIEWJ7/s/QZWCUfgiU4xiUvp0OWx4/what-is-badger",
-    discord: "https://discord.gg/",
-    github: "https://github.com/utc-24/authkey",
+    gitbook: "https://app.gitbook.com/o/-LdEn7uFmFX9w2zbU4Eu/s/SHHWdpnx0yjltaz59L4F/",
+    discord: "https://discord.gg/QnxkCQcg",
+    github: "https://github.com/FlipsideCrypto/badger",
 }
 
 export const API_URL = "http://localhost:8000"
