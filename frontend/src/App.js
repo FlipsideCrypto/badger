@@ -18,7 +18,7 @@ function App() {
       <HelmetProvider>
         <Router>
           <Helmet>
-            <title>BADGER</title>
+            <title>BADGER | The Web3 Organization Key Solution</title>
             <meta property="og:title" content="BADGER | The Web3 Organization Key Solution" />
             <meta name="twitter:title" content="BADGER | The Web3 Organization Key Solution" />
 
