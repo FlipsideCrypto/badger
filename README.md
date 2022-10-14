@@ -1,7 +1,5 @@
 ![opengraph](frontend/src/static/images/opengraph.png)
 
-- potentially provide alchemy test case because the setup of needing a million things a million different places sucks
-
 # Badger Primitive & Protocol
 
 In this repository is contained the base primitive of Badger (`BadgerOrganization.sol`) as well as the Badger protocol (`Badger.sol`) on top of it.
@@ -31,9 +29,9 @@ Built on the standard ERC-1155, Badges allow for top-down management of any on-c
 
 - fork the repo
 - setup `.env` to reflect `example.env` with your choosing of keys
-- terminal: `docker compose build`
-- ???: set the contract addresses in `.env`
-- terminal: `docker compose up`
+- terminal: `docker compose build` (let everything build)
+- grab the contract addresses that were just deployed with docker (the address will remain the same) in `.env`
+- terminal: `docker compose up --build`
 
 ### Helpers
 
