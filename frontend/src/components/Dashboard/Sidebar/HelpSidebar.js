@@ -44,11 +44,11 @@ const HelpSidebar = () => {
                 <StatusIndicators />
             </div>
 
-            <div className="sidebar__footer">
+            {/* <div className="sidebar__footer">
                 <p>Do you like this page?</p>
                 <FontAwesomeIcon icon={['fal', 'thumbs-up']} />
                 <FontAwesomeIcon icon={['fal', 'thumbs-down']} />
-            </div>
+            </div> */}
         </div>
     )
 }
