@@ -143,6 +143,7 @@ const Badge = () => {
             runTransaction();
     }, [setDelegates.isSuccess, callTransaction, runTransaction, txPending])
 
+    // Set badge data if orgData has been updated.
     useEffect(() => {
         if (orgData?.badges?.[badgeIndex]) {
             setBadge(orgData?.badges[badgeIndex]);
