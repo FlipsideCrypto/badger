@@ -50,6 +50,8 @@ const UserContextProvider = ({ children, signer, address }) => {
         if(siweResponse.success) {
             setAuthenticationError(false);
             setIsAuthenticating(false);
+        } else {
+            console.log('Error authenticating', siweResponse);
         }
     }, [signer, address, chain?.id, setAuthenticationError, setIsAuthenticating])
 
