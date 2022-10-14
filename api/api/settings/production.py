@@ -22,7 +22,6 @@ CSRF_TRUSTED_ORIGINS = [
     "https://api.badger.utc24.io",
     "https://badger.utc24.io"
 ]
-SESSION_COOKIE_DOMAIN = ["https://badger.utc24.io"]
 
 ALLOWED_HOSTS = ['*']
 
