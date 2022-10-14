@@ -27,6 +27,7 @@
     bottom: 0;
     background-color: #F0F0F0;
     transition: .4s;
+    border-radius: 16px;
 }
 
 .slider:before {
@@ -38,6 +39,7 @@
     bottom: 2px;
     background-color: #fff;
     transition: .4s;
+    border-radius: 50%;
 }
 
 input:checked + .slider {
