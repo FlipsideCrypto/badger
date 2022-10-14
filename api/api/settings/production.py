@@ -4,6 +4,8 @@ from .base import *
 
 import django_heroku
 
+DEBUG = True
+
 # Handling hosting / intitialization values
 ACTIVE_URL = "https://badger.utc24.io"
 
@@ -11,8 +13,8 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 DEBUG_PROPAGATE_EXCEPTIONS = True
 PROPAGATE_EXCEPTIONS = True
@@ -20,7 +22,7 @@ PROPAGATE_EXCEPTIONS = True
 X_FRAME_OPTIONS = "DENY"
 
 CORS_ORIGIN_ALLOW_ALL = True
-CSRF_TRUSTED_ORIGINS = ["https://badger.utc24.io", "https://*.utc24.io"]
+CSRF_TRUSTED_ORIGINS = ["https://badger.utc24.io"]
 
 ALLOWED_HOSTS = ['*']
 
