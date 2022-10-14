@@ -1,16 +1,17 @@
 .table__sort__head {
     padding: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: row;
     font-weight: 700;
     cursor: pointer;
     transition: .1s all ease-in-out;
     color: transparent;
+    align-items: center;
 }
 .table__sort__head__label {
     color: rgba(0, 0, 0, .35);
+    padding-right: 8px;
     height: 100%;
-    display: flex;
     align-items: center;
     transition: .1s all ease-in-out;
 }
@@ -20,7 +21,6 @@
 
 .table__sort__icon {
     width: min-content;
-    margin-left: auto;
 }
 
 .table__sort__icon svg {

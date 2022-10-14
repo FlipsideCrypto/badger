@@ -34,8 +34,8 @@ th:not(:last-child) {
     border-radius: 50px;
     text-align: center;
     width: 40px;
-    margin-left: auto;
     padding: 1px;
+    /* margin: auto; */
 }
 
 .delegate__status__false {
@@ -44,6 +44,6 @@ th:not(:last-child) {
     border-radius: 50px;
     text-align: center;
     width: 40px;
-    margin-left: auto;
     padding: 1px;
+    /* margin: auto; */
 }

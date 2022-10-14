@@ -10,7 +10,6 @@ import { holderHeadRows } from "@static/constants/constants";
 
 import "@style/Table/HolderTable.css";
 
-// TODO: Table should show both holders and delegates.
 const HolderTable = ({ badge }) => {
     const [ headRows, setHeadRows ] = useState(holderHeadRows);
     const [ sortedList, setSortedList ] = useState(badge.users);
@@ -31,20 +30,29 @@ const HolderTable = ({ badge }) => {
         setSortedList(newSortedList);
     }
     
-    // If holders changes, update the sorted list and add delegate boolean.
-    useEffect(() => {
-        // Is delegate is not a default property of the user object, so we need to add it.
-        function isDelegate (holder) {
-            return Boolean(badge?.delegates?.find(delegate => 
-                delegate.ethereum_address === holder.ethereum_address
-            ));
-        }
+    // Combines the user and delegates arrays into one array with a user and delegate boolean property.
+    const combineUsersAndDelegates = (users, delegates) => {
+        let combinedUsers = [];
+        users.forEach(user => {
+            combinedUsers.push({ ...user, holder: true })
+        })
+        delegates.forEach(delegate => {
+            const index = combinedUsers.findIndex(user => 
+                user.ethereum_address === delegate.ethereum_address
+            )
+            
+            index === -1 ?
+                  combinedUsers.push({ ...delegate, holder: false, delegate: true })
+                : combinedUsers[index].delegate = true;
+        })
 
-        let newSortedList = [...badge.users];
-        for (let holder of newSortedList) {
-            holder.delegate = isDelegate(holder);
-        }
-        setSortedList(newSortedList);
+        return combinedUsers;
+    }
+
+    // If users changes, update and combine holders and delegates in the sorted list.
+    useEffect(() => {
+        const combinedUsers = combineUsersAndDelegates(badge.users, badge.delegates);
+        setSortedList(combinedUsers);
     }, [badge.users, badge.delegates])
 
     return (
@@ -60,7 +68,7 @@ const HolderTable = ({ badge }) => {
                                     label={headRows[key].label}
                                     sortMethod={headRows[key].method}
                                     onSortChange={onSortChange}
-                                    align={key === "delegate" ? "right" : "left"}
+                                    align={headRows[key].align}
                                     width={headRows[key].width}
                                 />
                             ))}
@@ -68,19 +76,24 @@ const HolderTable = ({ badge }) => {
                     </TableHead>
 
                     <TableBody>
-                    {sortedList.map((holder, index) => (
+                    {sortedList.map((user, index) => (
                         <TableRow
-                            key={holder.address +'-'+ index}
+                            key={user.ethereum_address +'-'+ index}
                         >
                             <TableCell component="th" scope="row">
-                                {sliceAddress(holder.ethereum_address)}
+                                {user.ethereum_address}
                             </TableCell>
-                            <TableCell>{holder?.received}</TableCell>
-                            <TableCell>{holder?.nickname}</TableCell>
-                            <TableCell>{holder?.pod}</TableCell>
+                            <TableCell component="th" scope="row">
+                                {user?.ens_name}
+                            </TableCell>
                             <TableCell>
-                                <div className={`delegate__status__${holder?.delegate}`}>
-                                    <span>{holder?.delegate ? "Yes" : "No"}</span>
+                                <div className={`delegate__status__${user?.holder ? 'true' : 'false'}`}>
+                                    <span>{user?.holder ? "Yes" : "No"}</span>
+                                </div>
+                            </TableCell>
+                            <TableCell>
+                                <div className={`delegate__status__${user?.delegate ? 'true' : 'false'}`}>
+                                    <span>{user?.delegate ? "Yes" : "No"}</span>
                                 </div>
                             </TableCell>
                         </TableRow>
