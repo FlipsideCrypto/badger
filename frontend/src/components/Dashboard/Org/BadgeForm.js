@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
+import Switch from "@components/Dashboard/Form/Switch";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
@@ -21,7 +22,9 @@ const BadgeForm = () => {
     const [ badgeImage, setBadgeImage ] = useState({name: ""});
     const [ badgeDelegates, setBadgeDelegates ] = useState([]);
     const [ ipfsImageHash, setIpfsImageHash ] = useState();
+    const [ accountBound, setAccountBound ] = useState(true);
     const [ txPending, setTxPending ] = useState(false);
+
     const { orgData, setOrgData } = useContext(OrgContext);
     const { setError } = useContext(ErrorContext);
 
@@ -33,7 +36,7 @@ const BadgeForm = () => {
         ethereum_address: orgData?.ethereum_address,
         token_id: orgData?.badges?.length,
         organization: orgData?.id,
-        account_bound: true,
+        account_bound: accountBound,
         claimable: false,
         is_active: false,
         signer: orgData?.owner?.ethereum_address,
@@ -154,6 +157,7 @@ const BadgeForm = () => {
             <Header back={() => navigate(`/dashboard/organization/${orgData?.id}`)} />
 
             <h2>Create Badge</h2>
+            
             <Input
                 name="badge-name"
                 label="Badge Name"
@@ -175,6 +179,7 @@ const BadgeForm = () => {
                 accept="image/*"
                 label="Badge Image"
                 placeholder="Upload Badge Image"
+                required={true}
                 disabled={true}
                 value={badgeImage.name}
                 append={
@@ -194,6 +199,13 @@ const BadgeForm = () => {
                     type="file"
                     onChange={(event) => onImageUpload(event)}
                 />
+            <div style={{display: "grid", gridTemplateColumns: "min-content auto"}}>
+                <Switch
+                    checked={accountBound}
+                    setChecked={() => setAccountBound(!accountBound)}
+                    label="Account Bound"
+                />
+            </div>
 
             <InputListCSV
                 label={"Delegates"}
