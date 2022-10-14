@@ -1,5 +1,6 @@
 import { SignatureType, SiweMessage } from "siwe"
-import { API_URL } from "@static/constants/links"
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 export async function SIWELogin(message, signature) {
     let response;

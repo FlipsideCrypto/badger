@@ -1,5 +1,7 @@
-import { API_URL, IPFS_GATEWAY_URL } from "@static/constants/links"
+import { IPFS_GATEWAY_URL } from "@static/constants/links"
 import { cleanAddresses } from "./helpers";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const getCSRFToken = () => {
     return document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'))?.[2] || null;

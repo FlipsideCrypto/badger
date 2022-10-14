@@ -4,8 +4,6 @@ export const HOME_LINKS = {
     github: "https://github.com/FlipsideCrypto/badger",
 }
 
-export const API_URL = "http://localhost:8000"
-
 export const IPFS_GATEWAY_URL = "https://badger.mypinata.cloud/ipfs/"
 
 export const PLACEHOLDER_AVATAR = "https://avatars.githubusercontent.com/u/77760087?s=200&v=4"
