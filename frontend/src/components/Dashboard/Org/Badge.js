@@ -150,7 +150,6 @@ const Badge = () => {
     // If the transaction has been called, is not pending, and one of the transactions are prepped,
     // run the transaction.
     useEffect(() => {        
-        console.log("txCalled", txCalled, "txPending", txPending, "setDelegates", setDelegates.isSuccess, "manageOwnership", manageOwnership.isSuccess);
         if (
             txCalled && 
             !txPending &&

@@ -88,6 +88,8 @@ export const useCreateBadge = (badge) => {
         }
     })
 
+    console.log("Badge:", badge)
+
     const args = [
         badge.token_id,
         badge.claimable,
@@ -97,6 +99,8 @@ export const useCreateBadge = (badge) => {
         badge.payment_token || [ethers.constants.HashZero, 0],
         badge.delegates || []
     ]
+
+    console.log('args', args)
 
     let error;
     const { config, isSuccess } = usePrepareContractWrite({
@@ -121,8 +125,6 @@ export const useCreateBadge = (badge) => {
 */
 export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, action, amounts) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-
-    console.log('isTxReady', isTxReady, 'orgAddress', orgAddress, 'ids', ids, 'users', users, 'action', action, 'amounts', amounts)
     
     // Might look a little funky but cleaner than a switch IMO.
     // If revoke is true, then we check if there is just one holder for a single revoke.
