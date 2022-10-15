@@ -24,11 +24,31 @@ const BadgeForm = () => {
     const [ ipfsImageHash, setIpfsImageHash ] = useState();
     const [ accountBound, setAccountBound ] = useState(true);
     const [ txPending, setTxPending ] = useState(false);
+    const [ txCalled, setTxCalled ] = useState(false);
 
     const { orgData, setOrgData } = useContext(OrgContext);
     const { setError } = useContext(ErrorContext);
 
-    const [ badgeObj, setBadgeObj ] = useState({
+    // const [ badgeObj, setBadgeObj ] = useState({
+    //     name: badgeName,
+    //     description: badgeDescription,
+    //     delegates: badgeDelegates,
+    //     image_hash: ipfsImageHash,
+    //     ethereum_address: orgData?.ethereum_address,
+    //     token_id: orgData?.badges?.length,
+    //     organization: orgData?.id,
+    //     account_bound: accountBound,
+    //     claimable: false,
+    //     is_active: false,
+    //     signer: orgData?.owner?.ethereum_address,
+    //     token_uri: "",
+    //     // payment_token: ["paymentKey", 0],
+    // })
+
+    const imageInput = useRef();
+    const navigate = useNavigate();
+    
+    let badgeRef = useRef({
         name: badgeName,
         description: badgeDescription,
         delegates: badgeDelegates,
@@ -40,14 +60,10 @@ const BadgeForm = () => {
         claimable: false,
         is_active: false,
         signer: orgData?.owner?.ethereum_address,
-        token_uri: "",
         // payment_token: ["paymentKey", 0],
     })
-    
-    const imageInput = useRef();
-    const navigate = useNavigate();
 
-    const createBadge = useCreateBadge(badgeObj);
+    const createBadge = useCreateBadge(badgeRef.current);
     const disabled = !badgeName || !badgeDescription || !ipfsImageHash
     
     const actions = [
@@ -69,15 +85,16 @@ const BadgeForm = () => {
         if (response.error) {
             setError('Error creating token URI: ' + response.error);
         }
-
-        setBadgeObj({
-            ...badgeObj, 
-            token_uri: response.hash,
+        
+        badgeRef.current = {
+            ...badgeRef.current,
             name: badgeName,
             description: badgeDescription,
             delegates: badgeDelegates,
-            image_hash: ipfsImageHash,
-        })
+            token_uri: response.hash,
+            account_bound: accountBound,
+        }
+        setTxCalled(true);
     }
 
     // Post the badge to the backend for IPFS upload.
@@ -90,7 +107,7 @@ const BadgeForm = () => {
             setError('Could not upload image to IPFS: ' + response.error);
         }
         setIpfsImageHash(response.hash)
-        setBadgeObj({...badgeObj, image_hash: response.hash})
+        badgeRef.current.image_hash = response.hash;
     }
 
     // Write to contract
@@ -103,14 +120,14 @@ const BadgeForm = () => {
                 throw new Error(createBadge.error);
 
             // Post to database
-            const response = await postBadgeRequest(badgeObj);
+            const response = await postBadgeRequest(badgeRef.current);
             // if POST is successful
             if (!response.error) {
                 // Set in orgData context
                 let prev = {...orgData}
                 prev.badges.push(response)
                 setOrgData(prev)
-                setBadgeObj(response)
+                badgeRef.current = response;
                 navigate(`/dashboard/organization/${orgData?.id}/badge/${response.id}`);
             }
             else {
@@ -122,35 +139,33 @@ const BadgeForm = () => {
             setTxPending(false);
         }
 
-    }, [badgeObj, createBadge, navigate, orgData, setError, setOrgData]);
+    }, [createBadge, navigate, orgData, setError, setOrgData]);
 
     // Run the transaction after it has been prepared by wagmi.
     // After the transaction is successful, POST badge to is_active,
     // set the new badge in orgData, and navigate to the badge page.
     useEffect(() => {
         if (
-               createBadge.isSuccess 
+               createBadge.isSuccess
             && !txPending
-            && badgeObj?.ethereum_address
+            && txCalled
         ) {
+            setTxCalled(false);
             setTxPending(true);
             createBadgeTx();
         }
-    }, [createBadge.isSuccess, txPending, badgeObj?.ethereum_address, createBadgeTx])
+    }, [createBadge.isSuccess, txPending, txCalled, createBadgeTx])
 
-    // Set the badgeObj state when orgData is updated
+    // Set the badge when orgData is updated
     useEffect(() => {
-        setBadgeObj((badgeObj) => ({
-            ...badgeObj,
+        badgeRef.current = {
+            ...badgeRef.current,
             ethereum_address: orgData?.ethereum_address,
             token_id: orgData?.badges?.length,
             organization: orgData?.id,
-            account_bound: true,
-            claimable: false,
-            is_active: false,
             signer: orgData?.owner?.ethereum_address,
-        }));
-    }, [orgData, setBadgeObj])
+        }
+    }, [orgData])
 
     return (
         <div id="new-badge">

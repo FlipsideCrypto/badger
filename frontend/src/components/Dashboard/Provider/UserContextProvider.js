@@ -51,7 +51,7 @@ const UserContextProvider = ({ children, signer, address }) => {
             setAuthenticationError(false);
             setIsAuthenticating(false);
         } else {
-            console.log('Error authenticating', siweResponse);
+            console.log('Error authenticating', siweResponse.error);
         }
     }, [signer, address, chain?.id, setAuthenticationError, setIsAuthenticating])
 
