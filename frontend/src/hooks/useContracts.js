@@ -68,6 +68,7 @@ export const useBadgerFactory = (orgObj, address, chainName) => {
         args: args,
         enabled: Boolean(orgObj?.contract_uri_hash),
         onError(e) {
+            console.error('Error creating Org: ', e);
             error = e
         }
     })
@@ -106,6 +107,7 @@ export const useCreateBadge = (badge) => {
         args: args,
         enabled: Boolean(badge.token_uri),
         onError(e) {
+            console.error('Error creating Badge: ', e);
             error = e
         }
     })
@@ -167,6 +169,7 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
         args: args,
         enabled: isTxReady,
         onError(e) {
+            console.log('Error setting delegates:', e)
             error = e
         }
     })
@@ -208,6 +211,7 @@ export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) =
         args: args,
         enabled: isTxReady,
         onError(e) {
+            console.log('Error setting delegates:', e)
             error = e
         }
     })

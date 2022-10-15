@@ -64,33 +64,36 @@ const Badge = () => {
     // method to determine function flow and to send to be further parsed
     // into single, bundle, or full bundle methods at the contract level.
     const onMethodChange = (event) => {
-        setSelectedAction(event.target.value);
-        if (selectedAction === "Mint" || selectedAction === "Revoke") {
+        const method = event.target.value
+        setSelectedAction(method);
+        if (method === "Mint" || method === "Revoke") {
             setTxMethod("manageOwnership");
         } else {
-            setTxMethod("setDelegates");   
+            setTxMethod("setDelegates");
         }
     }
 
     // Update the badge array after the transaction is completed, POST 
     // out to the API, update our orgData context, and reset call transaction flag.
     const onMembersUpdate = useCallback(async () => {
-        if (!badge.users) badge.users = [];
+        let badgeObj = {...badge}
+        if (!badgeObj.users) badge.users = [];
 
         membersToUpdate.forEach(member => {
             if (selectedAction === "Revoke") {
-                const index = badge.users.findIndex(user => user.ethereum_address === member);
-                badge.users.splice(index, 1);
+                const index = badgeObj.users.findIndex(user => user.ethereum_address === member);
+                badgeObj.users.splice(index, 1);
             }
             else if (selectedAction === "Mint") {
-                badge.users.push({ethereum_address: member});
+                badgeObj.users.push({ethereum_address: member});
             }
         })
 
-        const response = await putBadgeRolesRequest(badge, orgId)
+        const response = await putBadgeRolesRequest(badgeObj, orgId)
         if (response.error)
             setError('Adding members to database failed: ' + response.error);
         else {
+            setBadge(response);
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
         }
 
@@ -100,23 +103,27 @@ const Badge = () => {
     // Update the badge array after the transaction is completed, POST 
     // out to the API, update our orgData context, and reset call transaction flag.
     const onDelegatesUpdate = useCallback(async () => {
-        if (!badge.delegates) badge.delegates = [];
+        let badgeObj = {...badge}
+        if (!badgeObj.delegates) badge.delegates = [];
 
         membersToUpdate.forEach(member => {
             if (selectedAction === "Remove Delegate") {
-                const index = badge.delegates.findIndex(delegate => delegate.ethereum_address === member);
-                badge.delegates.splice(index, 1);
+                const index = badgeObj.delegates.findIndex(delegate => delegate.ethereum_address === member);
+                badgeObj.delegates.splice(index, 1);
             }
             else if (selectedAction === "Add Delegate") {
-                badge.delegates.push({ethereum_address: member});
+                badgeObj.delegates.push({ethereum_address: member});
             }
         })
 
-        const response = await putBadgeRolesRequest(badge, orgId)
-        if (response.error)
+        const response = await putBadgeRolesRequest(badgeObj, orgId)
+        if (response.error) {
             setError('Adding delegates to database failed: ' + response.error);        
-        else
+        }
+        else {
+            setBadge(response);
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
+        }
 
         setTxPending(false);
     }, [badge, badgeIndex, membersToUpdate, orgId, selectedAction, setError, setOrgData]);
@@ -213,7 +220,7 @@ const Badge = () => {
                     </>
                 }
 
-                {badge?.users && badge?.users.length > 0 &&
+                {(badge?.users?.length > 0 || badge?.delegates?.length > 0) &&
                     <HolderTable badge={badge} />
                 }
 

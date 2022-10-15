@@ -218,6 +218,7 @@ export async function getOrgRequest(orgId) {
 
 export async function putBadgeRolesRequest(badge, orgId) {
     let response;
+
     // Have to clean input addresses to match the API
     const users = cleanAddresses(badge.users);
     const delegates = cleanAddresses(badge.delegates);
