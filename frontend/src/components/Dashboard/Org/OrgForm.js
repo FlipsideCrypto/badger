@@ -12,6 +12,8 @@ import { useBadgerFactory } from "@hooks/useContracts";
 import { postOrgRequest, postIPFSImage, postIPFSMetadata } from "@utils/api_requests";
 import { getBadgerAbi } from "@hooks/useContracts";
 
+// TODO: Move orgObj into a reducer. (Should we have a reducer for values that are rendered and 
+//       a ref for the full orgObj?)
 const OrgForm = () => {
     const { userData, setUserData } = useContext(UserContext);
     const { setError } = useContext(ErrorContext);
@@ -33,8 +35,10 @@ const OrgForm = () => {
         chain: chain?.name,
     })
     const [ orgImage, setOrgImage ] = useState({name: ""});
+    const [ imageUploading, setImageUploading ] = useState(false);
+    const [ txCalled, setTxCalled ] = useState(false);
     const [ txPending, setTxPending ] = useState(false);
-    const [ loading, setLoading ] = useState(false);
+
 
     const createContract = useBadgerFactory(orgObj, address, chain?.name)
     const badger = useMemo(() => getBadgerAbi(chain?.name), [chain?.name]);
@@ -43,7 +47,7 @@ const OrgForm = () => {
         {
             text: "CREATE",
             icon: ["fal", "arrow-right"],
-            loading: loading || txPending,
+            loading: txCalled || txPending,
             disabled: !orgObj.name || !orgObj.symbol || !orgObj.image_hash,
             event: () => onFormSubmission()
         }
@@ -67,22 +71,25 @@ const OrgForm = () => {
     const onImageUpload = async (event) => {
         const image = event.target.files[0]
         setOrgImage(image)
-        
+
+        setImageUploading(true);
         const response = await postIPFSImage(image)
         if (response.error) {
             setError('Could not upload image to IPFS: ' + response.error);
         } else {
             setOrgObj({...orgObj, image_hash: response.hash});
         }
+        setImageUploading(false);
     }
 
     // Posts contract uri to IPFS and sets the returned hash to orgObj uri hash.
     const onFormSubmission = async () => {
-        setLoading(true);
+        setTxCalled(true);
+
         const response = await postIPFSMetadata(orgObj.name, orgObj.description, orgObj.image_hash);
         if (response.error) {
             setError('Error creating Org URI: ' + response.error);
-            setLoading(false);
+            setTxCalled(false);
         } else {
             setOrgObj({...orgObj, contract_uri_hash: response.hash});
         }
@@ -109,24 +116,21 @@ const OrgForm = () => {
         }
         catch (error) {
             setError('Error creating Org: ' + error);
-            setLoading(false);
+            setTxPending(false);
         }
-        setTxPending(false);
     }, [createContract, badger.abi, orgObj, setError]);
     
     useEffect(() => {
-        // This is bad/ugly code, but it works to only trigger the call when the button has been clicked
-        // (loading), the transaction is prepared (isSuccess), there's not a pending transaction
-        // (!txPending), and the ethereum address has not been set after a successful transaction.
         if (   
                createContract.isSuccess
-            && loading
+            && txCalled
             && !txPending
-            && !orgObj.ethereum_address
+            // && !orgObj.ethereum_address
         ) {
+            setTxCalled(false);
             createOrgTx();
         }
-    }, [createContract.isSuccess, orgObj.ethereum_address, loading, txPending, createOrgTx])
+    }, [createContract.isSuccess, txCalled, setTxCalled, txPending, createOrgTx])
 
     const postOrg = useCallback(async () => {
         const response = await postOrgRequest(orgObj);
@@ -145,7 +149,7 @@ const OrgForm = () => {
             setError('Could not add org to database: ' + response.error);
         }
 
-        setLoading(false);
+        setTxPending(false);
     }, [orgObj, navigate, userData, setUserData, setError]);
     // Upon receiving contract address from transaction event,
     // POST org to backend and if successful, add to state and navigate to org page.
@@ -195,8 +199,14 @@ const OrgForm = () => {
                     <button
                         className="button-secondary"
                         onClick={() => imageInput.current.click()}
+                        style={{width: "100px", padding: "0px"}}
                     >
-                        {orgImage?.name ? "CHANGE" : "UPLOAD"}
+                        {imageUploading ?
+                            "LOADING..." :
+                            orgImage?.name ? 
+                                "CHANGE" : 
+                                "UPLOAD"
+                        }
                     </button>
                 }
             />

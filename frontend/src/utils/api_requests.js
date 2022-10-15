@@ -135,8 +135,6 @@ export async function postIPFSMetadata(name, description, imageHash) {
         image: IPFS_GATEWAY_URL + imageHash
     }
 
-    console.log('POST METADATA', metadata)
-
     try {
         await fetch(`${API_URL}/ipfs/pin-json/`, {
             method: "POST",
@@ -225,13 +223,11 @@ export async function putBadgeRolesRequest(badge, orgId) {
     const delegates = cleanAddresses(badge.delegates);
     const organization = typeof(orgId) === "string" ? parseInt(orgId) : orgId;
 
-    console.log('badge', badge)
     const data = {
         organization: organization,
         users: users,
         delegates: delegates
     }
-    console.log('request body', data)
 
     try {
         await fetch(`${badge.url}`, {
@@ -252,7 +248,6 @@ export async function putBadgeRolesRequest(badge, orgId) {
     catch (err) {
         response = {error: err}
     }
-    console.log('response', response)
 
     return response;
 }
