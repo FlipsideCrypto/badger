@@ -14,7 +14,6 @@ CSRF_TRUSTED_ORIGINS = [
     'https://badger.utc24.io', 
     'https://api.badger.utc24.io'
 ]
-SESSION_COOKIE_DOMAIN = ".badger.utc24.io"
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
