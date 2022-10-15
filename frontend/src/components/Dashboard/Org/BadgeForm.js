@@ -194,7 +194,7 @@ const BadgeForm = () => {
                 append={
                     <button
                         className="button-secondary"
-                        onClick={() => badgeImage.current.click()}
+                        onClick={() => imageInput.current.click()}
                         style={{width: "100px", padding: "0px"}}
                     >
                         {imageUploading ?
