@@ -152,7 +152,7 @@ const Badge = () => {
 
     return (
         <>
-            <Header back={() => navigate(`/dashboard/organization/${orgId}`)} actions={actions} />
+            <Header back={() => navigate(`/dashboard`)} actions={actions} />
 
             <div id="badge">
                 <div className="center__gutter">

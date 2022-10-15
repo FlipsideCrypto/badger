@@ -12,9 +12,6 @@ import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvide
 import { postBadgeRequest, postIPFSImage, postIPFSMetadata } from "@utils/api_requests";
 import { useCreateBadge } from "@hooks/useContracts";
 
-// TODO: EDIT MODE: Check the orgData context and if the badge is in it then
-//       get the badge and set the state, and change component to edit mode. (also get rid of props
-// TODO: This is a lot of state vars. Probably worth it to move everything into one badge dict.
 // TODO: Clean and validate badgeDelegates array
 const BadgeForm = () => {
     const [ badgeName, setBadgeName ] = useState("");
@@ -28,22 +25,6 @@ const BadgeForm = () => {
 
     const { orgData, setOrgData } = useContext(OrgContext);
     const { setError } = useContext(ErrorContext);
-
-    // const [ badgeObj, setBadgeObj ] = useState({
-    //     name: badgeName,
-    //     description: badgeDescription,
-    //     delegates: badgeDelegates,
-    //     image_hash: ipfsImageHash,
-    //     ethereum_address: orgData?.ethereum_address,
-    //     token_id: orgData?.badges?.length,
-    //     organization: orgData?.id,
-    //     account_bound: accountBound,
-    //     claimable: false,
-    //     is_active: false,
-    //     signer: orgData?.owner?.ethereum_address,
-    //     token_uri: "",
-    //     // payment_token: ["paymentKey", 0],
-    // })
 
     const imageInput = useRef();
     const navigate = useNavigate();
