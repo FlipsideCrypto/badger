@@ -6,17 +6,25 @@ import django_heroku
 django_heroku.settings(locals())
 
 # Handling hosting / intitialization values
-# Request settings
-CSRF_COOKIE_SECURE = False
-ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = [
-    'https://*.utc24.io', 
-    'https://badger.utc24.io', 
-    'https://api.badger.utc24.io'
-]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+DEBUG_PROPAGATE_EXCEPTIONS = True
+PROPAGATE_EXCEPTIONS = True
+
+X_FRAME_OPTIONS = "DENY"
+
+CORS_ORIGIN_ALLOW_ALL = True
+CSRF_TRUSTED_ORIGINS = ["https://badger.utc24.io"]
 
 CSRF_COOKIE_DOMAIN = ".badger.utc24.io"
 SESSION_COOKIE_DOMAIN = ".badger.utc24.io"
+
+ALLOWED_HOSTS = ['*']
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
