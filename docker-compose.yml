@@ -40,7 +40,7 @@ services:
     env_file:
       - ./.env
     volumes:
-      - .:/api/code
+      - ./api:/code
     depends_on:
       - badger_db
     links:

@@ -34,13 +34,16 @@
 
 .sidebar.right .sidebar__footer {
     display: grid;
-    grid-template-columns: 200px auto auto;
+    grid-template-columns: auto auto auto;
     align-items: center;
+}
+
+.sidebar.right .sidebar__footer p { 
+    margin-right: 20px;
 }
 
 .sidebar.right .sidebar__footer svg { 
     color:rgba(0, 0, 0, .35);
-    margin-right: 10px;
 }
 
 .sidebar.right.collapsed { 

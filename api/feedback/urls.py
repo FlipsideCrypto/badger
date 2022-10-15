@@ -5,4 +5,6 @@ from .views import (
 )
 
 router = routers.DefaultRouter()
-router.register(r'badges', FeedbackViewSet)
+router.register(r'feedback', FeedbackViewSet)
+
+urlpatterns = router.urls

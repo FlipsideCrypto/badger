@@ -1,8 +1,9 @@
 import { useState } from "react";
 
 import { Button } from "@mui/material";
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { postFeedbackRequest } from "@utils/api_requests";
 
 import StatusIndicators from './StatusIndicators/StatusIndicators';
 
@@ -14,8 +15,17 @@ const HelpSidebar = () => {
 
     const collapseIcon = collapsed ? "chevron-left" : "chevron-right";
 
-    const toggleCollapsed = () => {
-        setCollapsed(!collapsed);
+    const onFeedbackSubmission = async ({ liked }) => { 
+        const feedbackObj = { 
+            feedback_url: window.location.href,
+            liked,
+        }
+
+        // TODO: Needs to be updated to support adding error when feedback is not added
+        const response = await postFeedbackRequest(feedbackObj);
+        if(response.status === 200) {
+            console.log("Feedback submitted successfully");
+        }
     }
 
     return (
@@ -23,7 +33,7 @@ const HelpSidebar = () => {
             <div className="sidebar__header">
                 <h5>Help</h5>
                 <div>
-                    <Button onClick={toggleCollapsed}>
+                    <Button onClick={() => { setCollapsed(!collapsed) }}>
                         <FontAwesomeIcon icon={['fal', collapseIcon]} />
                     </Button>
                 </div>
@@ -44,11 +54,17 @@ const HelpSidebar = () => {
                 <StatusIndicators />
             </div>
 
-            {/* <div className="sidebar__footer">
+            <div className="sidebar__footer">
                 <p>Do you like this page?</p>
-                <FontAwesomeIcon icon={['fal', 'thumbs-up']} />
-                <FontAwesomeIcon icon={['fal', 'thumbs-down']} />
-            </div> */}
+
+                <Button onClick={() => { onFeedbackSubmission({ liked: true }) }}>
+                    <FontAwesomeIcon icon={['fal', 'thumbs-up']} />
+                </Button>
+
+                <Button onClick={() => { onFeedbackSubmission({ liked: false }) }}>
+                    <FontAwesomeIcon icon={['fal', 'thumbs-down']} />
+                </Button>
+            </div>
         </div>
     )
 }

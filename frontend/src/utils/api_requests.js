@@ -3,6 +3,36 @@ import { cleanAddresses, getCSRFToken } from "./helpers";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+export async function postFeedbackRequest(feedback) { 
+    let response;
+
+    try {
+        await fetch(`${API_URL}/feedback/`, {
+            method: 'POST',
+            mode: "cors",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            credentials: 'include',
+            body: JSON.stringify(feedback)
+        })
+        .then(res => res.json())
+        .then(data => { 
+            if(!data?.id) throw new Error("Feedback POST request failed");
+            response = data;
+        })
+        .catch(err => { 
+            throw new Error(err);
+        })
+    }
+    catch(err) { 
+        response = { error: err };
+    }
+
+    return response;
+}
+
 export async function postOrgRequest(org) {
     let response;
 
