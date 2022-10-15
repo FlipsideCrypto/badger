@@ -16,8 +16,6 @@ const Org = () => {
     // This is a temporary solution until an org page is created once we
     // have more org data to show.
     useEffect(() => {
-        console.log(orgData, orgId);
-        console.log(orgData, parseInt(orgId), orgData === parseInt(orgId));
         const totalBadges = orgData?.badges?.length;
         if (totalBadges > 0 && orgData?.id === parseInt(orgId)) {
             const latestId = orgData?.badges[totalBadges - 1].id;

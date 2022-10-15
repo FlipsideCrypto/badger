@@ -24,7 +24,7 @@ const Badge = () => {
     const [ isManage, setIsManage ] = useState(false);
     const [ membersToUpdate, setMembersToUpdate ] = useState([]);
     const [ selectedAction, setSelectedAction ] = useState("Mint");
-    const [ txMethod, setTxMethod ] = useState("");
+    const [ txMethod, setTxMethod ] = useState("manageOwnership");
     const [ txCalled, setTxCalled ] = useState(false);
     const [ txPending, setTxPending ] = useState(false);
     
@@ -90,8 +90,9 @@ const Badge = () => {
         const response = await putBadgeRolesRequest(badge, orgId)
         if (response.error)
             setError('Adding members to database failed: ' + response.error);
-        else
+        else {
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
+        }
 
         setTxPending(false);
     }, [badge, membersToUpdate, selectedAction, orgId, setError, setOrgData, badgeIndex]);
@@ -124,6 +125,7 @@ const Badge = () => {
    const runTransaction = useCallback(async () => {
         setTxCalled(false);
         setTxPending(true);
+
         let tx;
         try {
             if (setDelegates.isSuccess)
@@ -135,7 +137,7 @@ const Badge = () => {
                 const txReceipt = await tx?.wait();
                 if (txReceipt.status !== 1)
                     throw new Error(setDelegates.error || manageOwnership.error);
-    
+                
                 txMethod === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
             }
         } catch (error) {

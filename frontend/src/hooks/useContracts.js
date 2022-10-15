@@ -88,8 +88,6 @@ export const useCreateBadge = (badge) => {
         }
     })
 
-    console.log("Badge:", badge)
-
     const args = [
         badge.token_id,
         badge.claimable,
@@ -99,8 +97,6 @@ export const useCreateBadge = (badge) => {
         badge.payment_token || [ethers.constants.HashZero, 0],
         badge.delegates || []
     ]
-
-    console.log('args', args)
 
     let error;
     const { config, isSuccess } = usePrepareContractWrite({
