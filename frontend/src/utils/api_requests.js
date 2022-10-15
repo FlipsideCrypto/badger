@@ -126,14 +126,16 @@ export async function postIPFSImage(image) {
     return response;
 }
 
-export async function postIPFSMetadata(obj) {
+export async function postIPFSMetadata(name, description, imageHash) {
     let response;
 
     const metadata = {
-        name: obj.name,
-        description: obj.description,
-        image: IPFS_GATEWAY_URL + obj.image_hash
+        name: name,
+        description: description,
+        image: IPFS_GATEWAY_URL + imageHash
     }
+
+    console.log('POST METADATA', metadata)
 
     try {
         await fetch(`${API_URL}/ipfs/pin-json/`, {

@@ -79,7 +79,7 @@ const OrgForm = () => {
     // Posts contract uri to IPFS and sets the returned hash to orgObj uri hash.
     const onFormSubmission = async () => {
         setLoading(true);
-        const response = await postIPFSMetadata(orgObj);
+        const response = await postIPFSMetadata(orgObj.name, orgObj.description, orgObj.image_hash);
         if (response.error) {
             setError('Error creating Org URI: ' + response.error);
             setLoading(false);

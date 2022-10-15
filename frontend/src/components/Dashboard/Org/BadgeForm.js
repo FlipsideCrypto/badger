@@ -65,7 +65,7 @@ const BadgeForm = () => {
     // As we have to await the transaction to be prepared by wagmi before calling it.
     const onBadgeFormSubmission = async () => {
         // Get the token uri
-        const response = await postIPFSMetadata(badgeObj);
+        const response = await postIPFSMetadata(badgeName, badgeDescription, ipfsImageHash);
         if (response.error) {
             setError('Error creating token URI: ' + response.error);
         }
