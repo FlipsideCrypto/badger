@@ -116,9 +116,9 @@ const OrgSidebar = ({ address }) => {
                             alt="avatar" 
                             onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
                         />
-                        <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
+                        <div className="link-text" style={{marginTop: "2px", color: "#000"}}>
                             {orgData?.name}
-                        </Link>
+                        </div>
                     </div>
 
                     <div className="sidebar__category">
