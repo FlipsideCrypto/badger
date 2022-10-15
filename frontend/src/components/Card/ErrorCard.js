@@ -11,7 +11,7 @@ const ErrorCard = ({ message, setError, style }) => {
                 </div>
                 <div className="error__card__message">
                     <span className="error__card__text">
-                        {message}
+                        {typeof(message !== "string") ? JSON.stringify(message) : message}
                     </span>
                 </div>
             </div>
