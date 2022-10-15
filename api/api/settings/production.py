@@ -15,6 +15,10 @@ CSRF_TRUSTED_ORIGINS = [
     'https://api.badger.utc24.io'
 ]
 
+CSRF_COOKIE_DOMAIN = "badger.utc24.io"
+SESSION_COOKIE_DOMAIN = "badger.utc24.io"
+CSRF_TRUSTED_ORIGINS = "badger.utc24.ui"
+
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
