@@ -10,9 +10,9 @@ django_heroku.settings(locals())
 CSRF_COOKIE_SECURE = False
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000', 
-    'http://127.0.0.1:3000', 
-    'http://10.0.0.24:3000'
+    'https://*.utc24.io', 
+    'https://badger.utc24.io', 
+    'https://api.badger.utc24.io'
 ]
 
 STATIC_URL = "/static/"
