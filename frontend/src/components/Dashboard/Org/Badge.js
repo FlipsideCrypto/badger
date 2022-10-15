@@ -18,26 +18,28 @@ import "@style/Dashboard/Org/Badge.css";
 const Badge = () => {
     const navigate = useNavigate();
     const { orgId, badgeId } = useParams();
+    const { orgData, setOrgData } = useContext(OrgContext);
+    const { setError } = useContext(ErrorContext);
 
     const [ isManage, setIsManage ] = useState(false);
     const [ membersToUpdate, setMembersToUpdate ] = useState([]);
     const [ selectedAction, setSelectedAction ] = useState("Mint");
-    const [ callTransaction, setCallTransaction ] = useState("");
+    const [ txMethod, setTxMethod ] = useState("");
+    const [ txCalled, setTxCalled ] = useState(false);
     const [ txPending, setTxPending ] = useState(false);
-    const { orgData, setOrgData } = useContext(OrgContext);
-    const { setError } = useContext(ErrorContext);
+    
     const badgeIndex = orgData?.badges?.findIndex(badge => badge.id === parseInt(badgeId));
     const [ badge, setBadge ] = useState(orgData?.badges?.[badgeIndex] || {});
 
     const setDelegates = useSetDelegates(
-        callTransaction === "setDelegates",
+        txCalled,
         orgData?.ethereum_address,          // orgAddress
         badge?.token_id,                    // tokenId array
         membersToUpdate,                    // address array
         selectedAction,                     // mint, revoke, add or remove leaders
     );
     const manageOwnership = useManageBadgeOwnership(
-        callTransaction === "manageOwnership",
+        txCalled,
         orgData?.ethereum_address,          // orgAddress
         badge?.token_id,                    // tokenId array
         membersToUpdate,                    // address array
@@ -58,11 +60,16 @@ const Badge = () => {
         "Remove Delegate"
     ]
 
-    const onButtonClick = async () => {
-        const method = selectedAction === "Mint" || selectedAction === "Revoke" ? 
-            "manageOwnership" : "setDelegates";
-
-        setCallTransaction(method);
+    // When select option changes, set the controlled value and update the
+    // method to determine function flow and to send to be further parsed
+    // into single, bundle, or full bundle methods at the contract level.
+    const onMethodChange = (event) => {
+        setSelectedAction(event.target.value);
+        if (selectedAction === "Mint" || selectedAction === "Revoke") {
+            setTxMethod("manageOwnership");
+        } else {
+            setTxMethod("setDelegates");   
+        }
     }
 
     // Update the badge array after the transaction is completed, POST 
@@ -113,7 +120,9 @@ const Badge = () => {
         setTxPending(false);
     }, [badge, badgeIndex, membersToUpdate, orgId, selectedAction, setError, setOrgData]);
 
+    // Manage the transaction write and clean up effects.
    const runTransaction = useCallback(async () => {
+        setTxCalled(false);
         setTxPending(true);
         let tx;
         try {
@@ -127,21 +136,28 @@ const Badge = () => {
                 if (txReceipt.status !== 1)
                     throw new Error(setDelegates.error || manageOwnership.error);
     
-                callTransaction === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
+                txMethod === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
             }
         } catch (error) {
             setError('Error managing members: ' + error);
         }
 
-        setCallTransaction("")
         setTxPending(false);
-    }, [callTransaction, setDelegates, manageOwnership, setError, onMembersUpdate, onDelegatesUpdate]);
+    }, [txMethod, setDelegates, manageOwnership, setError, onMembersUpdate, onDelegatesUpdate]);
 
-    // Run the transaction hook once it has been prepped. If successful, update the badge data.
+    // TODO: I don't like this method of mixing the transactions after getting here. This is due
+    //       a refactor that breaks each method out into its own flow.
+    // If the transaction has been called, is not pending, and one of the transactions are prepped,
+    // run the transaction.
     useEffect(() => {        
-        if (callTransaction && !txPending) 
+        console.log("txCalled", txCalled, "txPending", txPending, "setDelegates", setDelegates.isSuccess, "manageOwnership", manageOwnership.isSuccess);
+        if (
+            txCalled && 
+            !txPending &&
+            (setDelegates.isSuccess || manageOwnership.isSuccess)
+        ) 
             runTransaction();
-    }, [setDelegates.isSuccess, callTransaction, runTransaction, txPending])
+    }, [setDelegates.isSuccess, manageOwnership.isSuccess, txCalled, txPending, runTransaction])
 
     // Set badge data if orgData has been updated.
     useEffect(() => {
@@ -178,7 +194,7 @@ const Badge = () => {
                             label="Update Type"
                             options={selectActions} 
                             value={selectedAction}
-                            setValue={(e) => setSelectedAction(e.target.value)}
+                            setValue={onMethodChange}
                         />
                         <InputListCSV
                             label="Members to update"
@@ -188,7 +204,7 @@ const Badge = () => {
                         <IconButton
                             icon={['fal', 'arrow-right']} 
                             text="UPDATE MEMBERS" 
-                            onClick={onButtonClick}
+                            onClick={() => setTxCalled(true)}
                             style={{margin: "20px 0px 20px auto"}}
                             loading={txPending}
                             disabled={membersToUpdate.length < 1}

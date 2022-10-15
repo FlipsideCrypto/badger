@@ -119,8 +119,10 @@ export const useCreateBadge = (badge) => {
     Determines which function to call based on if it is a revoke or a mint,
     if there are multiple badge ids, and if there are multiple holders.
 */
-export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, holders, action, amounts) => {
+export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, action, amounts) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
+
+    console.log('isTxReady', isTxReady, 'orgAddress', orgAddress, 'ids', ids, 'users', users, 'action', action, 'amounts', amounts)
     
     // Might look a little funky but cleaner than a switch IMO.
     // If revoke is true, then we check if there is just one holder for a single revoke.
@@ -129,28 +131,28 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, holders, act
     // If revoke is false, same checks but for minting instead of revoke
     const revoke = action === "Revoke" ? true : false
     const method = revoke ? 
-        holders.length === 1 ? "revoke" : 
+        users.length === 1 ? "revoke" : 
         typeof(ids) === "number" ? "revokeBatch" : "revokeFullBatch"
         :
-        holders.length === 1 ? "leaderMint" :
+        users.length === 1 ? "leaderMint" :
         typeof(ids) === "number" ? "leaderMintBatch" : "leaderMintFullBatch"
 
     // This should also clean/check the addresses as well.
-    holders.forEach((holder, index) => {
-        if (holder === "") {
-            holders.pop(index)
+    users.forEach((user, index) => {
+        if (user === "") {
+            users.pop(index)
         }
     })
 
     // Amounts will need to be changed to be an array of arrays for each badge.
     // For now it's standard for just one.
-    amounts = Array(holders.length).fill(amounts)
+    amounts = Array(users.length).fill(amounts)
 
-    if (holders.length === 1) 
-        holders = holders[0]
+    if (users.length === 1) 
+        users = users[0]
 
     const args = [
-        holders,
+        users,
         ids,
         amounts,
     ]

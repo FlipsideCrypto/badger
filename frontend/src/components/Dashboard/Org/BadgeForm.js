@@ -13,7 +13,7 @@ import { postBadgeRequest, postIPFSImage, postIPFSMetadata } from "@utils/api_re
 import { useCreateBadge } from "@hooks/useContracts";
 
 // TODO: Clean and validate badgeDelegates array
-// TODO: Move all state vars into a reducer
+// TODO: Move all state vars into a reducer?
 const BadgeForm = () => {
     const [ badgeName, setBadgeName ] = useState("");
     const [ badgeDescription, setBadgeDescription ] = useState("");
