@@ -53,7 +53,7 @@ ROOT_URLCONF = 'api.urls'
 
 AUTH_USER_MODEL = "siwe_auth.Wallet"
 
-LOGIN_URL = "/"
+LOGIN_URL = "/api/auth/login"
 
 TEMPLATES = [
     {
