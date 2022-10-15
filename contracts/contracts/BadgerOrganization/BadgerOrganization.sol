@@ -141,8 +141,8 @@ contract BadgerOrganization is
      * @dev If you are minting through a custom contract. Recommended usage is 
      *      to use the `mintBatch` function instead by doing 1 Badge at a time.
      * @param _tos The addresses to mint the badge to.
-     * @param _ids The id of the badge to revoke.
-     * @param _amounts The amount of the badge to revoke.
+     * @param _ids The id of the badge to mint.
+     * @param _amounts The amount of the badge to mint.
      *
      * Requirements:
      * - The arrays must be the same length.
@@ -387,7 +387,7 @@ contract BadgerOrganization is
             , _amount
         );
 
-        emit BadgerForfeited(
+        emit BadgeForfeited(
               badges[_id]
             , _amount
             , _data

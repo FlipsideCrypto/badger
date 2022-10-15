@@ -2,7 +2,7 @@
   "function claimMint(bytes,uint256,uint256,bytes) payable",
   "function depositERC20(uint256,address,uint256)",
   "function depositETH(uint256) payable",
-  "function forfeit(uint256,uint256)",
+  "function forfeit(uint256,uint256,bytes)",
   "function initialize(address,string,string,string,string)",
   "function leaderMint(address,uint256,uint256,bytes)",
   "function leaderMintBatch(address[],uint256,uint256[],bytes)",

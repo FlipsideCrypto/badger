@@ -62,10 +62,17 @@ contract BadgerScout is
     );
 
     /// @dev Event that announces when a Badge is funded.
-    event BadgerForfeited(
+    event BadgeForfeited(
           Badge indexed badge
         , uint256 indexed amount
         , bytes indexed data
+    );
+
+    /// @dev Event that announces when the state of a Delegate changes.
+    event DelegateUpdated(
+          Badge indexed badge
+        , address indexed delegate
+        , bool indexed isDelegate
     );
 
     /// @dev Event that announces when a payment token is deposited for a Badge.
@@ -208,6 +215,12 @@ contract BadgerScout is
                     , _delegates[i]
                 )
             )] = true;
+
+            emit DelegateUpdated(
+                  badge
+                , _delegates[i]
+                , true
+            );
         }
 
         emit BadgeUpdated(badge);
@@ -370,6 +383,8 @@ contract BadgerScout is
             , "BadgerScout::setDelegates: _delegates and _isDelegate arrays must be the same length."
         );
 
+        Badge storage badge = badges[_id];
+
         /// @dev Loop through the delegates and update their status.        
         for (
             uint256 i; 
@@ -382,9 +397,13 @@ contract BadgerScout is
                     , _delegates[i]
                 )
             )] = _isDelegate[i];
-        }
 
-        emit BadgeUpdated(badges[_id]);
+            emit DelegateUpdated(
+                  badge
+                , _delegates[i]
+                , _isDelegate[i]
+            );
+        }
     }
 
     /**
@@ -428,7 +447,11 @@ contract BadgerScout is
                 )
             )] = _isDelegate[i];
 
-            emit BadgeUpdated(badges[id]);
+            emit DelegateUpdated(
+                  badges[id]
+                , _delegates[i]
+                , _isDelegate[i]
+            );
         }
     }
 
