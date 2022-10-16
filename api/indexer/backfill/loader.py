@@ -1,5 +1,8 @@
-from django.contrib.auth import get_user_model
+import requests
 from web3 import Web3
+
+from django.conf import settings
+from django.contrib.auth import get_user_model
 
 from organization.models import Organization
 
@@ -77,33 +80,35 @@ class Loader:
         if organization is None:
             return ("Organization does not exist", event['args'])
 
-        # TODO: Check if the event of this block is the higher than the block that this organization was last updated at
-
         organization_contract = self.get_organization_contract(organization.ethereum_address)
         changed = False
 
-        if not organization.name:
-            organization.name = organization_contract.functions.name().call()
+        if not organization.symbol:
             organization.symbol = organization_contract.functions.symbol().call()
 
-            uri = organization_contract.functions.uri().call()
+            uri = organization_contract.functions.contractURI().call()
             organization.contract_uri_hash = uri.split("/ipfs/")[1]
             changed = True
 
-        if not organization.description or organization.image_hash:
-            # TODO: Set the description from the retrieval of the metadata
-            image_hash = organization_contract.functions.imageHash().call()
-            organization.image_hash = image_hash
-            changed = True
+        if organization.contract_uri_hash and (
+            organization.name == "Loading" 
+            or not organization.description 
+            or not organization.image_hash
+        ):
+            url = f"{settings.PINATA_INDEXER_URL}{organization.contract_uri_hash}"
 
-            # set description
-            # set image_hash
-            # set contract_uri_hash
+            response = requests.get(url)
+            if response.status_code == 200:
+                data = response.json()
+                organization.name = data["name"]
+                organization.description = data["description"]
+                organization.image_hash = data["image"].split("/ipfs/")[1]
+                changed = True
 
         if changed:
             organization.save()
  
-        return ("Need to update details of the organization", event['args'])
+        return ("Organization details updated", event['args'])
 
     def handle_ownership_transferred(self, event, event_responses):
         # Update organization owner in database

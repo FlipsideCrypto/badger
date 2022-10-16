@@ -142,3 +142,4 @@ PROVIDER = os.getenv("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY
 # IPFS settings
 PINATA_API_KEY = os.getenv("API_PINATA_API_KEY")
 PINATA_API_SECRET_KEY = os.getenv("API_PINATA_API_SECRET_KEY")
+PINATA_INDEXER_URL = os.getenv("API_PINATA_INDEXER_URL", "https://badger.mypinata.cloud/ipfs/")

@@ -14,6 +14,7 @@ class Organization(models.Model):
         max_length=50, blank=False, default=None, validators=[validate_ethereum_address])
 
     name = models.CharField(max_length=128, blank=False, default=None)
+    symbol = models.CharField(max_length=52, blank=True, null=True)
     description = models.TextField(max_length=4000, blank=True, null=True)
 
     owner = models.ForeignKey('siwe_auth.Wallet', on_delete=models.CASCADE,

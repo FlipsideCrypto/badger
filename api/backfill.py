@@ -32,6 +32,8 @@ ORGANIZATION_EVENTS = [
 # for every OrganizationCreated, need to create an organization in the database
 # for every OwnershipTransferred, need to update the owner of the organization in the database
 
+# for every OrganizationUpdated, need to update recall the details of the organization in the database
+
 extractor = Extractor()
 transformer = Transformer()
 loader = Loader()

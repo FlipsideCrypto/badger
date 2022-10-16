@@ -69,7 +69,7 @@ const BadgeForm = () => {
         if (response.error) {
             setError('Error creating token URI: ' + response.error);
         }
-        
+         
         badgeRef.current = {
             ...badgeRef.current,
             name: badgeName,
