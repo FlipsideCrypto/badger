@@ -105,7 +105,7 @@ const Badge = () => {
     const onDelegatesUpdate = useCallback(async () => {
         let badgeObj = {...badge}
         if (!badgeObj.delegates) badge.delegates = [];
-
+        
         membersToUpdate.forEach(member => {
             if (selectedAction === "Remove Delegate") {
                 const index = badgeObj.delegates.findIndex(delegate => delegate.ethereum_address === member);
@@ -135,10 +135,10 @@ const Badge = () => {
 
         let tx;
         try {
-            if (setDelegates.isSuccess)
-                tx = await setDelegates.write?.()
-            else if (manageOwnership.isSuccess)
+            if (txMethod === "manageOwnership")
                 tx = await manageOwnership.write?.()
+            else if (txMethod === "setDelegates") 
+                tx = await setDelegates.write?.()
 
             if (tx) {
                 const txReceipt = await tx?.wait();
