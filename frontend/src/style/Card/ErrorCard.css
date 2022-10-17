@@ -1,6 +1,9 @@
 .error__wrapper {
-    position: relative;
-    width: 60%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 40%;
     margin: auto;
 }
 

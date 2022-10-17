@@ -6,7 +6,7 @@ import ErrorCard from "@components/Card/ErrorCard";
 export const ErrorContext = createContext();
 
 const ErrorContextProvider = ({ children }) => {
-    const [ error, setError ] = useState();
+    const [ error, setError ] = useState({ label: "", message: "" });
     const { pathname } = useLocation();
 
     // Clear the error if the path changes.
@@ -17,7 +17,7 @@ const ErrorContextProvider = ({ children }) => {
     return (
         <ErrorContext.Provider value={{ error, setError }}>
             { error &&
-                <ErrorCard message={error} setError={setError} />
+                <ErrorCard label={error.label} message={error.message} />
             }
             {children}
         </ErrorContext.Provider>

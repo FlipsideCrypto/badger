@@ -67,7 +67,10 @@ const BadgeForm = () => {
         // Get the token uri
         const response = await postIPFSMetadata(badgeName, badgeDescription, ipfsImageHash);
         if (response.error) {
-            setError('Error creating token URI: ' + response.error);
+            setError({
+                label: 'Error creating token URI',
+                message: response.error
+            });
         }
         
         badgeRef.current = {
@@ -89,7 +92,10 @@ const BadgeForm = () => {
         setImageUploading(true);
         const response = await postIPFSImage(image)
         if (response.error) {
-            setError('Could not upload image to IPFS: ' + response.error);
+            setError({
+                label: 'Could not upload image to IPFS',
+                message: response.error
+            });
         }
         setImageUploading(false);
         setIpfsImageHash(response.hash)
@@ -121,7 +127,10 @@ const BadgeForm = () => {
             }
         }
         catch (error) {
-            setError('Error creating badge: ' + error);
+            setError({
+                label:'Error creating badge',
+                message: error
+            });
             setTxPending(false);
         }
 

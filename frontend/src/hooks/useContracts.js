@@ -169,7 +169,6 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
         args: args,
         enabled: isTxReady,
         onError(e) {
-            console.log('Error setting delegates:', e)
             error = e
         }
     })
@@ -211,7 +210,6 @@ export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) =
         args: args,
         enabled: isTxReady,
         onError(e) {
-            console.log('Error setting delegates:', e)
             error = e
         }
     })

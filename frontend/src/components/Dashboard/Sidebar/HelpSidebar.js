@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 import { Button } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { postFeedbackRequest } from "@utils/api_requests";
 
 import StatusIndicators from './StatusIndicators/StatusIndicators';
@@ -12,6 +13,7 @@ import "@style/Dashboard/Sidebar/HelpSidebar.css";
 
 const HelpSidebar = () => {
     const [collapsed, setCollapsed] = useState(false);
+    const { setError } = useContext(ErrorContext);
 
     const collapseIcon = collapsed ? "chevron-left" : "chevron-right";
 
@@ -21,10 +23,12 @@ const HelpSidebar = () => {
             liked,
         }
 
-        // TODO: Needs to be updated to support adding error when feedback is not added
         const response = await postFeedbackRequest(feedbackObj);
-        if(response.status === 200) {
-            console.log("Feedback submitted successfully");
+        if(response.status !== 200 || response.status !== 201) {
+            setError({
+                label:"Feedback was not submitted",
+                message: response.error
+            });
         }
     }
 

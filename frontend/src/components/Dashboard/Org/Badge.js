@@ -91,7 +91,10 @@ const Badge = () => {
 
         const response = await putBadgeRolesRequest(badgeObj, orgId)
         if (response.error)
-            setError('Adding members to database failed: ' + response.error);
+            setError({
+                label: 'Adding members to database failed',
+                message: response.error
+            });
         else {
             setBadge(response);
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
@@ -118,7 +121,10 @@ const Badge = () => {
 
         const response = await putBadgeRolesRequest(badgeObj, orgId)
         if (response.error) {
-            setError('Adding delegates to database failed: ' + response.error);        
+            setError({
+                label: 'Adding delegates to database failed',
+                message: response.error
+            });
         }
         else {
             setBadge(response);
@@ -148,7 +154,10 @@ const Badge = () => {
                 txMethod === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
             }
         } catch (error) {
-            setError('Error managing members: ' + error);
+            setError({
+                label: 'Error managing members',
+                message: error
+            });
         }
 
         setTxPending(false);
