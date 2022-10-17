@@ -49,7 +49,7 @@ class Loader:
                 ethereum_address=ethereum_address)
         return User.objects.get(
             ethereum_address=ethereum_address)
-        
+
     def _handle_badge_user_balance_changes(self, badge, user, balance):
         if balance.amount > 0:
             badge.users.add(user)
@@ -106,7 +106,6 @@ class Loader:
                 # Add the user to the badge if not already in it if the balance is > 0
                 # or remove them if the balance is 0
                 self._handle_badge_user_balance_changes(badge, user, balance)
-
 
     def get_organization_contract(self, ethereum_address):
         if ethereum_address not in self.contracts:
@@ -270,7 +269,8 @@ class Loader:
 
         if not badge.name or not badge.description or not badge.image_hash:
             # use the 1155 uri spec to replace id with the token id
-            url = f"{badge.token_uri}".replace("{id}", str(event['args']['id']))
+            url = f"{badge.token_uri}".replace(
+                "{id}", str(event['args']['id']))
 
             if "http" not in url:
                 url = f"{settings.PINATA_INDEXER_URL}{url}"
@@ -283,16 +283,64 @@ class Loader:
                 badge.image_hash = data["image"].split("/ipfs/")[1]
 
                 changed = True
-            
+
                 response = "Badge details updated"
 
         if changed:
             badge.save()
 
         return (response, event['args'])
-    
+
     def handle_delegate_updated(self, event, chained_response):
-        pass
+        # get the address of the organization
+        organization = Organization.objects.get(
+            ethereum_address=event["address"]
+        )
+
+        if organization is None:
+            return ("Organization does not exist", event['args'])
+
+        # get the badge that was updated
+        badge = organization.badges.get(token_id=event['args']['id'])
+
+        if badge is None:
+            return ("Badge does not exist", event['args'])
+
+        # get the user that was updated
+        user = self._handle_users(event["args"]["delegate"])
+
+        if user is None:
+            return ("User does not exist", event['args'])
+
+        # add the user to the badge delegates if the args are true
+        if event['args']['isDelegate']:
+            badge.delegates.add(user)
+        else:
+            badge.delegates.remove(user)
+
+        badge.save()
+
+        return ("Delegate updated", event['args'])
+
+    def handle_uri(self, event, chained_response):
+        # get the address of the organization
+        organization = Organization.objects.get(
+            ethereum_address=event["address"]
+        )
+
+        if organization is None:
+            return ("Organization does not exist", event['args'])
+
+        # get the badge that was updated
+        badge = organization.badges.get(token_id=event['args']['id'])
+
+        if badge is None:
+            return ("Badge does not exist", event['args'])
+
+        badge.token_uri = event['args']['value']
+        badge.save()
+
+        return ("Badge uri updated", event['args'])
 
     def handle_events(self, events):
         event_responses = []
