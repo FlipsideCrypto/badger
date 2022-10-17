@@ -39,7 +39,10 @@ contract BadgerVersions is
     /// @dev Announces when a Version configuration is updated through the protocol Factory.
     event VersionUpdated(
           address indexed implementation
-        , Version indexed version
+        , address indexed owner
+        , bytes32 indexed licenseKey
+        , uint256 amount
+        , bool locked
     );
 
     /// @dev Announces when a new Organization is created through the protocol Factory.
@@ -206,7 +209,10 @@ contract BadgerVersions is
         /// @dev Announce that the version has been updated to index it on the front-end.
         emit VersionUpdated(
               _implementation
-            , versions[_implementation]
+            ,  _owner
+            , _licenseKey
+            , _amount
+            , _locked
         );
     }
 

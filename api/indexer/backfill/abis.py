@@ -64,32 +64,28 @@ FACTORY = [
                 "type": "address"
             },
             {
-                "components": [
-                    {
-                        "internalType": "address",
-                        "name": "owner",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "bytes32",
-                        "name": "licenseKey",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "bool",
-                        "name": "locked",
-                        "type": "bool"
-                    }
-                ],
                 "indexed": True,
-                "internalType": "struct BadgerVersionsInterface.Version",
-                "name": "version",
-                "type": "tuple"
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "indexed": True,
+                "internalType": "bytes32",
+                "name": "licenseKey",
+                "type": "bytes32"
+            },
+            {
+                "indexed": False,
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            },
+            {
+                "indexed": False,
+                "internalType": "bool",
+                "name": "locked",
+                "type": "bool"
             }
         ],
         "name": "VersionUpdated",
