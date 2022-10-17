@@ -65,12 +65,6 @@
         "type": "uint256"
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "uri",
-        "type": "string"
-      },
-      {
         "indexed": true,
         "internalType": "bytes32",
         "name": "paymentKey",

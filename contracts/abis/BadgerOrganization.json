@@ -1,7 +1,7 @@
 [
   "event ApprovalForAll(address indexed,address indexed,bool)",
   "event BadgeForfeited(uint256 indexed,uint256 indexed,bytes indexed)",
-  "event BadgeUpdated(uint256 indexed,uint256 indexed,string,bytes32 indexed,uint256)",
+  "event BadgeUpdated(uint256 indexed,uint256 indexed,bytes32 indexed,uint256)",
   "event DelegateUpdated(uint256 indexed,address indexed,bool indexed)",
   "event Initialized(uint8)",
   "event OrganizationUpdated(string)",

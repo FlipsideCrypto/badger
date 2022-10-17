@@ -4,20 +4,18 @@ import json
 from web3 import Web3
 
 EVENT_TOPICS = [
-    "OrganizationCreated(address indexed,address indexed,address indexed)",
-    "OwnershipTransferred(address indexed,address indexed)",
-    "VersionUpdated(address indexed,tuple(address,bytes32,uint256,bool) indexed)",
-    "ApprovalForAll(address indexed,address indexed,bool)",
-    "BadgeForfeited(tuple(uint256,string,tuple(bytes32,uint256)) indexed,uint256 indexed,bytes indexed)",
-    "BadgeUpdated(tuple(uint256,string,tuple(bytes32,uint256)) indexed)",
-    "DelegateUpdated(tuple(uint256,string,tuple(bytes32,uint256)) indexed,address indexed,bool indexed)",
-    "Initialized(uint8)",
-    "OrganizationUpdated(string)",
-    "OwnershipTransferred(address indexed,address indexed)",
-    "PaymentTokenDeposited(tuple(uint256,string,tuple(bytes32,uint256)) indexed,address indexed,uint256 indexed)",
-    "TransferBatch(address indexed,address indexed,address indexed,uint256[],uint256[])",
-    "TransferSingle(address indexed,address indexed,address indexed,uint256,uint256)",
-    "URI(string,uint256 indexed)",
+    "event OrganizationCreated(address indexed,address indexed,address indexed)",
+    "event OwnershipTransferred(address indexed,address indexed)",
+    "event VersionUpdated(address indexed,address indexed,bytes32 indexed,uint256,bool)",
+    "event BadgeUpdated(uint256 indexed,uint256 indexed,bytes32 indexed,uint256)",
+    "event BadgeForfeited(uint256 indexed,uint256 indexed,bytes indexed)",
+    "event DelegateUpdated(uint256 indexed,address indexed,bool indexed)",
+    "event OrganizationUpdated(string)",
+    "event OwnershipTransferred(address indexed,address indexed)",
+    "event PaymentTokenDeposited(uint256 indexed,address indexed,uint256 indexed)",
+    "event TransferBatch(address indexed,address indexed,address indexed,uint256[],uint256[])",
+    "event TransferSingle(address indexed,address indexed,address indexed,uint256,uint256)",
+    "event URI(string,uint256 indexed)",
 ]
 
 def hex_signature(string):

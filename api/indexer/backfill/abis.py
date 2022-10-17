@@ -491,12 +491,6 @@ ORGANIZATION = [
                 "type": "uint256"
             },
             {
-                "indexed": False,
-                "internalType": "string",
-                "name": "uri",
-                "type": "string"
-            },
-            {
                 "indexed": True,
                 "internalType": "bytes32",
                 "name": "paymentKey",

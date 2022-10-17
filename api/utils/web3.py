@@ -22,10 +22,10 @@ CHAINS = (
 )
 
 EVENTS = [
-    "TransferSingle(address,address,address,uint256,uint256)",
-    "OrganizationCreated(address,address,address)",
-    "OrganizationUpdated()",
-    "BadgeUpdated(uint256)"
+    "TransferSingle(address indexed,address indexed,address indexed,uint256,uint256)",
+    "OrganizationCreated(address indexed,address indexed,address indexed)",
+    "OrganizationUpdated(string)",
+    "BadgeUpdated(uint256 indexed,uint256 indexed,bytes32 indexed,uint256)",
 ]
 
 def get_ens_name(address):

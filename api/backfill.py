@@ -20,7 +20,7 @@ FACTORY_EVENTS = [
 ]
 
 ORGANIZATION_EVENTS = [
-    "event BadgeUpdated(uint256 indexed,uint256 indexed,string,bytes32 indexed,uint256)",
+    "event BadgeUpdated(uint256 indexed,uint256 indexed,bytes32 indexed,uint256)",
     "event BadgeForfeited(uint256 indexed,uint256 indexed,bytes indexed)",
     "event DelegateUpdated(uint256 indexed,address indexed,bool indexed)",
     "event OrganizationUpdated(string)",

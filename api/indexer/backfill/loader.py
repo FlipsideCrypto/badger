@@ -23,17 +23,23 @@ class Loader:
             # Factory events
             "OrganizationCreated": [
                 self.handle_organization_created,
-                self.handle_organization_updated
+            ],
+            "BadgeUpdated": [
+                self.handle_badge_updated
+            ],
+            "DelegateUpdated": [
+                self.handle_delegate_updated
             ],
             "OrganizationUpdated": [self.handle_organization_updated],
             "OwnershipTransferred": [self.handle_ownership_transferred],
+            "PaymentTokenDeposited": [self.handle_payment_token_deposited],
             "TransferSingle": [
-                self.handle_badge_updated,
                 self.handle_transfer_single
             ],
             "TransferBatch": [
                 self.handle_transfer_batch
             ],
+            "URI": [self.handle_uri],
         }
         self.contracts = {}
 
@@ -284,6 +290,9 @@ class Loader:
             badge.save()
 
         return (response, event['args'])
+    
+    def handle_delegate_updated(self, event, chained_response):
+        pass
 
     def handle_events(self, events):
         event_responses = []
