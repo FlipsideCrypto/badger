@@ -291,12 +291,15 @@ class Loader:
         response = None
         for event in events:
             response = None
-            if event['event'] in self.loader_mapping:
-                for handler in self.loader_mapping[event['event']]:
-                    response = handler(event, response)
-                    event_responses.append(response)
+            if 'event' in event:
+                if event['event'] in self.loader_mapping:
+                    for handler in self.loader_mapping[event['event']]:
+                        response = handler(event, response)
+                        event_responses.append(response)
+                else:
+                    event_responses.append(
+                        ("Event not handled", event['event'], event['args']))
             else:
-                event_responses.append(
-                    ("Event not handled", event['event'], event['args']))
+                event_responses.append(("Event not decoded", event))
 
         return event_responses

@@ -458,39 +458,10 @@ ORGANIZATION = [
         "anonymous": False,
         "inputs": [
             {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "config",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "uri",
-                        "type": "string"
-                    },
-                    {
-                        "components": [
-                            {
-                                "internalType": "bytes32",
-                                "name": "paymentKey",
-                                "type": "bytes32"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "amount",
-                                "type": "uint256"
-                            }
-                        ],
-                        "internalType": "struct BadgerScoutInterface.PaymentToken",
-                        "name": "paymentToken",
-                        "type": "tuple"
-                    }
-                ],
                 "indexed": True,
-                "internalType": "struct BadgerScoutInterface.Badge",
-                "name": "badge",
-                "type": "tuple"
+                "internalType": "uint256",
+                "name": "badgeId",
+                "type": "uint256"
             },
             {
                 "indexed": True,
@@ -512,39 +483,34 @@ ORGANIZATION = [
         "anonymous": False,
         "inputs": [
             {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "config",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "uri",
-                        "type": "string"
-                    },
-                    {
-                        "components": [
-                            {
-                                "internalType": "bytes32",
-                                "name": "paymentKey",
-                                "type": "bytes32"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "amount",
-                                "type": "uint256"
-                            }
-                        ],
-                        "internalType": "struct BadgerScoutInterface.PaymentToken",
-                        "name": "paymentToken",
-                        "type": "tuple"
-                    }
-                ],
                 "indexed": True,
-                "internalType": "struct BadgerScoutInterface.Badge",
-                "name": "badge",
-                "type": "tuple"
+                "internalType": "uint256",
+                "name": "badgeId",
+                "type": "uint256"
+            },
+            {
+                "indexed": True,
+                "internalType": "uint256",
+                "name": "config",
+                "type": "uint256"
+            },
+            {
+                "indexed": False,
+                "internalType": "string",
+                "name": "uri",
+                "type": "string"
+            },
+            {
+                "indexed": True,
+                "internalType": "bytes32",
+                "name": "paymentKey",
+                "type": "bytes32"
+            },
+            {
+                "indexed": False,
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
             }
         ],
         "name": "BadgeUpdated",
@@ -554,39 +520,10 @@ ORGANIZATION = [
         "anonymous": False,
         "inputs": [
             {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "config",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "uri",
-                        "type": "string"
-                    },
-                    {
-                        "components": [
-                            {
-                                "internalType": "bytes32",
-                                "name": "paymentKey",
-                                "type": "bytes32"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "amount",
-                                "type": "uint256"
-                            }
-                        ],
-                        "internalType": "struct BadgerScoutInterface.PaymentToken",
-                        "name": "paymentToken",
-                        "type": "tuple"
-                    }
-                ],
                 "indexed": True,
-                "internalType": "struct BadgerScoutInterface.Badge",
-                "name": "badge",
-                "type": "tuple"
+                "internalType": "uint256",
+                "name": "badgeId",
+                "type": "uint256"
             },
             {
                 "indexed": True,
@@ -653,39 +590,10 @@ ORGANIZATION = [
         "anonymous": False,
         "inputs": [
             {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "config",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "uri",
-                        "type": "string"
-                    },
-                    {
-                        "components": [
-                            {
-                                "internalType": "bytes32",
-                                "name": "paymentKey",
-                                "type": "bytes32"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "amount",
-                                "type": "uint256"
-                            }
-                        ],
-                        "internalType": "struct BadgerScoutInterface.PaymentToken",
-                        "name": "paymentToken",
-                        "type": "tuple"
-                    }
-                ],
                 "indexed": True,
-                "internalType": "struct BadgerScoutInterface.Badge",
-                "name": "badge",
-                "type": "tuple"
+                "internalType": "uint256",
+                "name": "badgeId",
+                "type": "uint256"
             },
             {
                 "indexed": True,

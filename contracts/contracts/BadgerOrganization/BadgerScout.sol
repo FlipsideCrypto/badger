@@ -58,26 +58,30 @@ contract BadgerScout is
 
     /// @dev Event that announces when the status of a Badge is updated.
     event BadgeUpdated(
-        Badge indexed badge
+          uint256 indexed badgeId
+        , uint256 indexed config
+        , string uri                     
+        , bytes32 indexed paymentKey
+        , uint256 amount 
     );
 
     /// @dev Event that announces when a Badge is funded.
     event BadgeForfeited(
-          Badge indexed badge
+          uint256 indexed badgeId
         , uint256 indexed amount
         , bytes indexed data
     );
 
     /// @dev Event that announces when the state of a Delegate changes.
     event DelegateUpdated(
-          Badge indexed badge
+          uint256 indexed badgeId
         , address indexed delegate
         , bool indexed isDelegate
     );
 
     /// @dev Event that announces when a payment token is deposited for a Badge.
     event PaymentTokenDeposited(
-          Badge indexed badge
+          uint256 indexed badgeId
         , address indexed payer
         , uint256 indexed amount
     );
@@ -217,13 +221,19 @@ contract BadgerScout is
             )] = true;
 
             emit DelegateUpdated(
-                  badge
+                  _id
                 , _delegates[i]
                 , true
             );
         }
 
-        emit BadgeUpdated(badge);
+        emit BadgeUpdated(
+              _id
+            , badge.config
+            , badge.uri
+            , badge.paymentToken.paymentKey
+            , badge.paymentToken.amount
+        );
     }
 
     /**
@@ -250,7 +260,13 @@ contract BadgerScout is
             , _claimable
         );
 
-        emit BadgeUpdated(badges[_id]);
+        emit BadgeUpdated(
+            _id
+            , badges[_id].config
+            , badges[_id].uri
+            , badges[_id].paymentToken.paymentKey
+            , badges[_id].paymentToken.amount
+        );
     }
 
     /**
@@ -277,7 +293,13 @@ contract BadgerScout is
             , _accountBound
         );
 
-        emit BadgeUpdated(badges[_id]);
+        emit BadgeUpdated(
+              _id
+            , badges[_id].config
+            , badges[_id].uri
+            , badges[_id].paymentToken.paymentKey
+            , badges[_id].paymentToken.amount
+        );
     }
 
     /**
@@ -303,7 +325,13 @@ contract BadgerScout is
             , _signer
         );
     
-        emit BadgeUpdated(badges[_id]);
+        emit BadgeUpdated(
+              _id
+            , badges[_id].config
+            , badges[_id].uri
+            , badges[_id].paymentToken.paymentKey
+            , badges[_id].paymentToken.amount
+        );
     }
 
     /**
@@ -333,7 +361,13 @@ contract BadgerScout is
 
         badge.uri = _uri;
 
-        emit BadgeUpdated(badge);
+        emit BadgeUpdated(
+              _id
+            , badge.config
+            , badge.uri
+            , badge.paymentToken.paymentKey
+            , badge.paymentToken.amount
+        );
     }
 
     /**
@@ -356,7 +390,13 @@ contract BadgerScout is
 
         badge.paymentToken = _paymentToken;
 
-        emit BadgeUpdated(badge);
+        emit BadgeUpdated(
+                _id
+            , badge.config
+            , badge.uri
+            , badge.paymentToken.paymentKey
+            , badge.paymentToken.amount
+        );
     }
 
     /**
@@ -383,8 +423,6 @@ contract BadgerScout is
             , "BadgerScout::setDelegates: _delegates and _isDelegate arrays must be the same length."
         );
 
-        Badge storage badge = badges[_id];
-
         /// @dev Loop through the delegates and update their status.        
         for (
             uint256 i; 
@@ -399,7 +437,7 @@ contract BadgerScout is
             )] = _isDelegate[i];
 
             emit DelegateUpdated(
-                  badge
+                  _id
                 , _delegates[i]
                 , _isDelegate[i]
             );
@@ -448,7 +486,7 @@ contract BadgerScout is
             )] = _isDelegate[i];
 
             emit DelegateUpdated(
-                  badges[id]
+                  id
                 , _delegates[i]
                 , _isDelegate[i]
             );
@@ -629,7 +667,7 @@ contract BadgerScout is
         badgePaymentKeyToFunded[paymentKey] += _amount;
 
         emit PaymentTokenDeposited(
-              badges[_badgeId]
+              _id
             , _from
             , _amount
         );

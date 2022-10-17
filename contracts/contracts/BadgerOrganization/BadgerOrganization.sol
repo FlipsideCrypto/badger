@@ -388,7 +388,7 @@ contract BadgerOrganization is
         );
 
         emit BadgeForfeited(
-              badges[_id]
+              _id
             , _amount
             , _data
         );
