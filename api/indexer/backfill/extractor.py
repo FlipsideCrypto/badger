@@ -13,6 +13,7 @@ class Extractor:
         self.only_latest = [
             "OrganizationUpdated",
             "OwnershipTransferred",
+            "BadgeUpdated",
         ]
 
     def handle_contracts(self, contracts, abi, events, start_block, end_block=None):

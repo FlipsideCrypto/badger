@@ -196,7 +196,7 @@ contract BadgerScout is
 
         /// @dev Set the signer of the Badge.
         _setSigner(
-              _id
+            _id
             , _signer
         );
         
