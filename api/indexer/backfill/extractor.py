@@ -17,13 +17,6 @@ class Extractor:
             "URI",
         ]
 
-        self.complex = [
-            "BadgeUpdated",
-            "BadgeForfeited",
-            "DelegateUpdated",
-            "PaymentTokenDeposited"
-        ]
-
     def handle_contracts(self, contracts, abi, events, start_block, end_block=None):
         _events = []
 
@@ -62,23 +55,10 @@ class Extractor:
 
             # if the event doesnt have a tuple in it use normal get_all_entries, but if the 
             # event has a tuple in it, retrieve the event data with the topic
-            if event['event_name'] in self.complex:
-                print('Ran complex for ', event['event_name'])
-                # use the event signature to get all the events from this contract
-                # "0xeee606ebce70b7433a244f41b4929cb0d7274e17bc07c07a110190ed3f0ee217"
-                # event_signature = Web3.keccak(text=event['event_name']).hex()
-                # get all the events from this contract
-                events_appendage = w3.eth.get_logs({
-                    "address": contract['contract_address'],
-                    "topics": ["0xeee606ebce70b7433a244f41b4929cb0d7274e17bc07c07a110190ed3f0ee217"],
-                    "fromBlock": start_block,
-                    "toBlock": end_block,
-                })
-            else:
-                events_appendage = connected_contract.events[event['event_name']].createFilter(
-                    fromBlock=start_block, 
-                    toBlock=end_block
-                ).get_all_entries()
+            events_appendage = connected_contract.events[event['event_name']].createFilter(
+                fromBlock=start_block, 
+                toBlock=end_block
+            ).get_all_entries()
 
             if len(events_appendage) > 0 and event['event_name'] in self.only_latest:
                 events_appendage = [events_appendage[-1]]

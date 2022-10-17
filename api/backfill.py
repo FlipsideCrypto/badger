@@ -14,9 +14,9 @@ django.setup()
 
 
 FACTORY_EVENTS = [
-    "OrganizationCreated(address indexed,address indexed,address indexed)",
-    # "OwnershipTransferred(address indexed,address indexed)",
-    # "VersionUpdated(address indexed,tuple(address,bytes32,uint256,bool) indexed)",
+    "event OrganizationCreated(address indexed,address indexed,address indexed)",
+    #   "event OwnershipTransferred(address indexed,address indexed)",
+    "event VersionUpdated(address indexed,address indexed,bytes32 indexed,uint256,bool)",
 ]
 
 ORGANIZATION_EVENTS = [
@@ -30,6 +30,8 @@ ORGANIZATION_EVENTS = [
     "event TransferSingle(address indexed,address indexed,address indexed,uint256,uint256)",
     "event URI(string,uint256 indexed)",
 ]
+
+# TODO: Deploy contracts with new version of contracts
 
 extractor = Extractor()
 transformer = Transformer()
