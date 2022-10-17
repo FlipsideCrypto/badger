@@ -64,7 +64,7 @@ const InputListCSV = ({ label, inputList, setInputList }) => {
     }, [csvFile, csvReader, setInputList])
 
     return (
-        <>
+        <div className="form__list">
             <input
                 type="file"
                 accept=".xlsx, .xls, .csv"
@@ -75,6 +75,7 @@ const InputListCSV = ({ label, inputList, setInputList }) => {
 
             {[...Array(inputFieldCount)].map((x, index) => (
                 <Input
+                    className="form__list__address"
                     key={index}
                     label={index === 0 ? labelDOM : ""}
                     value={inputList[index] || ""}
@@ -90,7 +91,7 @@ const InputListCSV = ({ label, inputList, setInputList }) => {
                     onChange={(event) => onInputChange(index, event)}
                 />
             ))} */}
-        </>
+        </div>
     )
 }
 

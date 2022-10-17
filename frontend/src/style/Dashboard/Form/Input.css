@@ -26,6 +26,7 @@
 
 .form__group.input__group label {
     grid-column: 1;
+    color: blue;
 }
 
 .form__group.input__group input {
@@ -40,4 +41,9 @@
 input:disabled {
     background-color: #F0F0F0;
     cursor: not-allowed;
+}
+
+.form__list__address {
+    font-family: 'Roboto Mono', monospace !important;
+    font-weight: 200 !important;
 }
