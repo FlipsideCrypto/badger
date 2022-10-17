@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django_apscheduler',
 
     'badge',
+    'feedback',
     'ipfs',
     'job',
     'organization',

@@ -1,12 +1,17 @@
 .error__wrapper {
-    position: relative;
-    width: 60%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    max-width: 40vw;
     margin: auto;
+    /* moves message to center of screen as icon is 36px */
+    transform: translateX(-36px);
 }
 
 .error__card {
     display: grid;
-    grid-template-columns: 1fr 11fr;
+    grid-template-columns: min-content auto;
     grid-template-rows: auto;
     position: absolute;
     color: #FF0000;
@@ -39,8 +44,6 @@
 }
 
 .error__card__button { 
-    /* width: 24px;
-    height: 24px; */
     width: auto;
     justify-content: center;
     align-content: center;
@@ -53,8 +56,8 @@
 }
 
 .error__card__icon {
-    width: 100%;
     justify-content: center;
+    padding-inline: 10px;
 }
 
 /* shake animation that plays when the error pops up */

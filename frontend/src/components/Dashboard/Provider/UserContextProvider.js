@@ -1,6 +1,7 @@
-import { useState, createContext, useEffect, useCallback } from "react";
+import { useState, createContext, useContext, useEffect, useCallback } from "react";
 import { useNetwork } from "wagmi";
 
+import { ErrorContext } from "./ErrorContextProvider";
 import { getUserRequest } from "@utils/api_requests";
 import { SIWEAuthorize } from "@utils/auth";
 
@@ -10,6 +11,8 @@ const UserContextProvider = ({ children, signer, address }) => {
     const [ userData, setUserData ] = useState();
     const [ isAuthenticating, setIsAuthenticating ] = useState(false);
     const [ authenticationError, setAuthenticationError ] = useState(false);
+    
+    const { setError } = useContext(ErrorContext);
     const { chain } = useNetwork();
 
     // Get user data from backend and set it to userData.
@@ -51,9 +54,12 @@ const UserContextProvider = ({ children, signer, address }) => {
             setAuthenticationError(false);
             setIsAuthenticating(false);
         } else {
-            console.log('Error authenticating', siweResponse.error);
+            setError({
+                label: "Authentication failed",
+                message: siweResponse.error
+            });
         }
-    }, [signer, address, chain?.id, setAuthenticationError, setIsAuthenticating])
+    }, [signer, address, chain?.id, setAuthenticationError, setError, setIsAuthenticating])
 
     // If we have an authentication error and are not currently awaiting a signature
     // for authentication, then attempt to authenticate.
