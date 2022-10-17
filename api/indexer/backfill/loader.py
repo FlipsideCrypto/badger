@@ -4,6 +4,7 @@ from web3 import Web3
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
+from balance.models import Balance, Transaction
 from organization.models import Organization
 
 from .abis import ORGANIZATION as ORGANIZATION_ABI
@@ -14,9 +15,10 @@ w3 = Web3(Web3.WebsocketProvider(ALCHEMY_PROVIDER_URL))
 
 User = get_user_model()
 
+
 class Loader:
     def __init__(self):
-        self.loader_mapping = { 
+        self.loader_mapping = {
             # Factory events
             "OrganizationCreated": [
                 self.handle_organization_created,
@@ -24,11 +26,8 @@ class Loader:
             ],
             "OwnershipTransferred": [self.handle_ownership_transferred],
             # Organization events
-            "OrganizationCreated": [
-                self.handle_organization_created,
-                self.handle_organization_updated
-            ],
             "OrganizationUpdated": [self.handle_organization_updated],
+            "TransferSingle": [self.handle_transfer_single],
         }
         self.contracts = {}
 
@@ -38,11 +37,47 @@ class Loader:
                 ethereum_address=ethereum_address)
         return User.objects.get(
             ethereum_address=ethereum_address)
-    
+
+    def _handle_user_balance(self, i, event, organization, address_field):
+        # get the from user
+        user = self._handle_users(event['args'][address_field])
+
+        # get the balance
+        if event['event'] == "TransferSingle":
+            token_ids = [event['args']['id']]
+            values = [event['args']['value']]
+        else:
+            token_ids = event['args']['ids']
+            values = event['args']['values']
+
+        for i, token_id in enumerate(token_ids):
+            balance, created = Balance.objects.get_or_create(
+                user=user,
+                organization=organization,
+                token_id=token_id
+            )
+
+            # check if transaction is not already in balance
+            transaction, created = Transaction.objects.get_or_create(
+                tx_hash=event['transactionHash'].hex(),
+            )
+
+            if transaction not in balance.transactions.all():
+                # apply the balance change if not a mint from 0x0
+                change = values[i] 
+                if address_field == "from":
+                    change *= - 1
+                    if event['args']['from'] == "0x0000000000000000000000000000000000000000":
+                        change = -0
+
+                balance.transactions.add(transaction)
+                balance.amount += change
+                balance.save()
+
     def get_organization_contract(self, ethereum_address):
         if ethereum_address not in self.contracts:
             self.contracts[ethereum_address] = w3.eth.contract(
-                address=ethereum_address, 
+                address=ethereum_address,
                 abi=ORGANIZATION_ABI
             )
         return self.contracts[ethereum_address]
@@ -60,7 +95,7 @@ class Loader:
                 ethereum_address=event["args"]["organization"]
             )
             response = "Organization already exists"
-        
+
         if created or not organization.owner:
             organization.is_active = True
             organization.chain = "Polygon"
@@ -68,19 +103,25 @@ class Loader:
             organization.save()
 
             response = "Organization management setup"
-            
+
         return (response, event['args'])
 
     def handle_organization_updated(self, event, chained_response):
         # Use the organization that was created in the OrganizationCreated event
-        organization = Organization.objects.get(
-            ethereum_address=chained_response[1]["organization"]
-        )
+        if chained_response is not None:
+            organization = Organization.objects.get(
+                ethereum_address=chained_response[1]["organization"]
+            )
+        else:
+            organization = Organization.objects.get(
+                ethereum_address=event["address"]
+            )
 
         if organization is None:
             return ("Organization does not exist", event['args'])
 
-        organization_contract = self.get_organization_contract(organization.ethereum_address)
+        organization_contract = self.get_organization_contract(
+            organization.ethereum_address)
         changed = False
 
         if not organization.symbol:
@@ -91,8 +132,8 @@ class Loader:
             changed = True
 
         if organization.contract_uri_hash and (
-            organization.name == "Loading" 
-            or not organization.description 
+            organization.name == "Loading"
+            or not organization.description
             or not organization.image_hash
         ):
             url = f"{settings.PINATA_INDEXER_URL}{organization.contract_uri_hash}"
@@ -107,26 +148,73 @@ class Loader:
 
         if changed:
             organization.save()
- 
+
         return ("Organization details updated", event['args'])
 
     def handle_ownership_transferred(self, event, event_responses):
         # Update organization owner in database
         # if not Organization.objects.filter(ethereum_address=event["args"]["organization"]).exists():
-            # return ("Organization does not exist", event['args'])
+        # return ("Organization does not exist", event['args'])
 
-        return ("Need to update the organization owner", event['args'])
+        # get the address of the organization
+        organization = Organization.objects.get(
+            ethereum_address=event["address"]
+        )
+
+        if organization is None:
+            return ("Organization does not exist", event['args'])
+
+        organization.owner = self._handle_users(event["args"]["newOwner"])
+        organization.save()
+
+        return ("Need to update the organization owner", event)
+
+    def handle_transfer_batch(self, event, event_responses):
+        # when we detect a new transfer, update the Balance model for the user
+
+        # get the address of the organization
+        organization = Organization.objects.get(
+            ethereum_address=event["address"]
+        )
+
+        if organization is None:
+            return ("Organization does not exist", event['args'])
+
+        # Update the balance of the `to` and `from` addresses
+        for i in range(len(event['args']['ids'])):
+            self._handle_user_balance(i, event, organization, "from")
+            self._handle_user_balance(i, event, organization, "to")
+
+        return ("Balance updated", event['args'])
+
+    def handle_transfer_single(self, event, event_responses):
+        # when we detect a new transfer, update the Balance model for the user
+
+        # get the address of the organization
+        organization = Organization.objects.get(
+            ethereum_address=event["address"]
+        )
+
+        if organization is None:
+            return ("Organization does not exist", event['args'])
+
+        # Update the balance of the `to` and `from` addresses
+        self._handle_user_balance(0, event, organization, "from")
+        self._handle_user_balance(0, event, organization, "to")
+
+        return ("Balance updated", event['args'])
 
     def handle_events(self, events):
         event_responses = []
 
         response = None
         for event in events:
+            response = None
             if event['event'] in self.loader_mapping:
                 for handler in self.loader_mapping[event['event']]:
                     response = handler(event, response)
                     event_responses.append(response)
             else:
-                event_responses.append(("Event not handled", event['args']))
+                event_responses.append(("Event not handled", event['event'], event['args']))
 
         return event_responses

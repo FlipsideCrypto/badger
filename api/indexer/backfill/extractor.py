@@ -1,11 +1,4 @@
 # This Extractor looks at a smart contract and filters for specific events on specific contracts.
-import sys
-import os
-import django
-
-os.environ['DJANGO_SETTINGS_MODULE'] = 'api.settings'
-django.setup()
-
 from web3 import Web3
 
 from indexer.backfill.config import Config
@@ -17,6 +10,10 @@ w3 = Web3(Web3.WebsocketProvider(ALCHEMY_PROVIDER_URL))
 class Extractor:
     def __init__(self):
         self.contracts = {}
+        self.only_latest = [
+            "OrganizationUpdated",
+            "OwnershipTransferred",
+        ]
 
     def handle_contracts(self, contracts, abi, events, start_block, end_block=None):
         _events = []
@@ -52,10 +49,15 @@ class Extractor:
 
         events = []
         for event in contract['events']:
-            events.append(connected_contract.events[event['event_name']].createFilter(
+            events_appendage = connected_contract.events[event['event_name']].createFilter(
                 fromBlock=start_block, 
                 toBlock=end_block
-            ).get_all_entries())
+            ).get_all_entries()
+
+            if len(events_appendage) > 0 and event['event_name'] in self.only_latest:
+                events_appendage = [events_appendage[-1]]
+
+            events.append(events_appendage)
 
         # squish all the events into one list   
         return events
