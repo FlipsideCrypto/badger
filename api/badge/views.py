@@ -21,7 +21,7 @@ User = get_user_model()
 
 
 class ArtViewSet(viewsets.ViewSet):
-    # permission_classes = [IsAuthenticated] 
+    permission_classes = [IsAuthenticated] 
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
