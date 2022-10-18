@@ -26,7 +26,6 @@
 
 .form__group.input__group label {
     grid-column: 1;
-    color: blue;
 }
 
 .form__group.input__group input {
@@ -38,12 +37,21 @@
     height: 100%;
 } 
 
+.form__group.input__group .form__actions {
+    grid-column: 1/3;
+}
+
 input:disabled {
     background-color: #F0F0F0;
     cursor: not-allowed;
 }
 
+.form__list__address.error {
+    border-color: #FF0000;
+}
+
 .form__list__address {
     font-family: 'Roboto Mono', monospace !important;
     font-weight: 200 !important;
+    /* font-variant-numeric: tabular-nums lining-nums; */
 }

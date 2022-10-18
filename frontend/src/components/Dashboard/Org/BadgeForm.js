@@ -23,6 +23,7 @@ const BadgeForm = () => {
     const [ accountBound, setAccountBound ] = useState(true);
 
     const [ imageUploading, setImageUploading ] = useState(false);
+    const [ areAddressesValid, setAreAddressesValid ] = useState(true);
     const [ txPending, setTxPending ] = useState(false);
     const [ txCalled, setTxCalled ] = useState(false);
 
@@ -48,7 +49,7 @@ const BadgeForm = () => {
     })
 
     const createBadge = useCreateBadge(badgeRef.current);
-    const disabled = !badgeName || !badgeDescription || !ipfsImageHash
+    const disabled = !badgeName || !badgeDescription || !ipfsImageHash || !areAddressesValid;
     
     const actions = [
         {
@@ -228,6 +229,7 @@ const BadgeForm = () => {
                 label={"Delegates"}
                 inputList={badgeDelegates}
                 setInputList={setBadgeDelegates}
+                setAreAddressesValid={setAreAddressesValid}
             />
 
             <ActionBar help={
