@@ -23,6 +23,7 @@ const Badge = () => {
 
     const [ isManage, setIsManage ] = useState(false);
     const [ membersToUpdate, setMembersToUpdate ] = useState([]);
+    const [ areAddressesValid, setAreAddressesValid ] = useState(false);
     const [ selectedAction, setSelectedAction ] = useState("Mint");
     const [ txMethod, setTxMethod ] = useState("manageOwnership");
     const [ txCalled, setTxCalled ] = useState(false);
@@ -190,19 +191,6 @@ const Badge = () => {
             <div id="badge">
                 <div className="center__gutter">
                     <h1>{badge?.name}</h1>
-                    {!isManage && badge?.name &&
-                        <div className="badge__actions">
-                            {/* Analytics page
-                            <button 
-                                className="button__unstyled badge__action" 
-                                onClick={() => { navigate(`/dashboard/organization/${orgId}/badge/${badgeId}/analytics`)}}
-                            >
-                                <FontAwesomeIcon icon={["fal", "fa-chart-simple"]} />
-                                <span>Analytics</span>
-                            </button> 
-                            */}
-                        </div>
-                    }
                 </div>
 
                 {isManage && 
@@ -217,6 +205,7 @@ const Badge = () => {
                             label="Members to update"
                             inputList={membersToUpdate}
                             setInputList={setMembersToUpdate}
+                            setAreAddressesValid={setAreAddressesValid}
                         />
                         <IconButton
                             icon={['fal', 'arrow-right']} 
@@ -224,7 +213,7 @@ const Badge = () => {
                             onClick={() => setTxCalled(true)}
                             style={{margin: "20px 0px 20px auto"}}
                             loading={txPending}
-                            disabled={membersToUpdate.length < 1}
+                            disabled={!areAddressesValid}
                         />
                     </>
                 }
@@ -243,7 +232,7 @@ const Badge = () => {
                         <div style={{margin: 'auto'}}>
                             <IconButton 
                                 icon={['fal', 'arrow-right']} 
-                                text="DISTRIBUTE KEYS" 
+                                text="DISTRIBUTE KEYS"
                                 onClick={() => setIsManage(true)}
                                 style={{textAlign: "center"}}
                             />

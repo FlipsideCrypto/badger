@@ -80,7 +80,7 @@ const HolderTable = ({ badge }) => {
                         <TableRow
                             key={user.ethereum_address +'-'+ index}
                         >
-                            <TableCell component="th" scope="row">
+                            <TableCell component="th" scope="row" className="form__list__address">
                                 {user.ethereum_address}
                             </TableCell>
                             <TableCell component="th" scope="row">
