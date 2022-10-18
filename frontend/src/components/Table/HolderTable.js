@@ -80,11 +80,15 @@ const HolderTable = ({ badge }) => {
                         <TableRow
                             key={user.ethereum_address +'-'+ index}
                         >
-                            <TableCell component="th" scope="row" className="form__list__address">
-                                {user.ethereum_address}
+                            <TableCell component="th" scope="row">
+                                <div className="form__list__address">
+                                    {user.ethereum_address}
+                                </div>
                             </TableCell>
                             <TableCell component="th" scope="row">
-                                {user?.ens_name}
+                                <div>
+                                    {user?.ens_name}
+                                </div>
                             </TableCell>
                             <TableCell>
                                 <div className={`delegate__status__${user?.holder ? 'true' : 'false'}`}>
