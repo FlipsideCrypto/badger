@@ -24,6 +24,7 @@ class ContractListener(models.Model):
     # name of the event that is being tracked for this contract
     event = models.CharField(max_length=50, blank=False, default=None)
     event_abi = models.TextField(blank=False, choices=CONTRACT_TYPE_CHOICES, default=FACTORY)
+    abi = models.TextField(blank=True, default=None)
 
     # cron expression to run every 2 seconds
     cron_expression = models.CharField(max_length=50, default="*/2 * * * * *")

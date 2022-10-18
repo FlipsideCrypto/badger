@@ -1,3 +1,9 @@
+import os
+import django
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'api.settings'
+django.setup()
+
 from indexer.backfill.transformer import Transformer
 from indexer.backfill.loader import Loader
 from indexer.backfill.extractor import Extractor
@@ -5,13 +11,8 @@ from indexer.backfill.abis import (
     FACTORY as FACTORY_ABI,
     ORGANIZATION as ORGANIZATION_ABI,
 )
+from job.models import ContractListener
 from organization.models import Organization
-import os
-import django
-
-os.environ['DJANGO_SETTINGS_MODULE'] = 'api.settings'
-django.setup()
-
 
 FACTORY_EVENTS = [
     "event OrganizationCreated(address indexed,address indexed,address indexed)",
@@ -52,15 +53,21 @@ def etl(CONTRACTS, ABI, CONTRACT_EVENTS, START_BLOCK):
     return event_responses
 
 
+PROVIDERS = {
+    "polygon": "https://polygon-mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
+}
+
 FACTORIES = [
-    ["polygon", "0xeF2FE84D203AcF3eC791f6b7ee3bA5D6493912D4"],
-]
+    [factory.chain, factory.ethereum_address] for factory in ContractListener.objects.filter(event_abi="FACTORY")]
 
 # Handle the factory
 event_responses = etl(FACTORIES, FACTORY_ABI, FACTORY_EVENTS, START_BLOCK)
 
 ORGANIZATIONS = [
-    ["polygon", organization.ethereum_address] for organization in Organization.objects.filter(is_active=True)
+    ["polygon", organization.ethereum_address] for organization in Organization.objects.filter(
+        is_active=True, 
+        updated__gte=django.utils.timezone.now() - django.utils.timezone.timedelta(days=30)
+    )
 ]
 
 # Handle the organizations
