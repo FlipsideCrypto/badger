@@ -20,6 +20,8 @@ User = get_user_model()
 
 
 class ArtViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated] 
+
     def _encode(self, value):
         max_smudge = 8
         smudge = 0
