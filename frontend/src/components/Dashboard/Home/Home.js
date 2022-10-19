@@ -16,7 +16,7 @@ const Home = () => {
         color: 'cyan',
         message: <>
             <p className="announcement__message">
-                Badger is building in the open and did not have a beta phase. These contracts are unaudited. If you have any struggles or feedback, please reach out to <strong>@danner</strong> or <strong>@chance</strong> on [Farcaster](https://www.farcaster.xyz/).
+                Badger is building in the open and did not have a beta phase. These contracts are unaudited. If you have any struggles or feedback, please reach out to <strong>@danner</strong> or <strong>@chance</strong> on <a href="https://www.farcaster.xyz/" target="_blank" rel="noreferrer">Farcaster</a>.
             </p>
         </>,
     }
