@@ -39,8 +39,7 @@ const OrgForm = () => {
     const [ txCalled, setTxCalled ] = useState(false);
     const [ txPending, setTxPending ] = useState(false);
 
-
-    const createContract = useBadgerFactory(orgObj, address, chain?.name)
+    const createContract = useBadgerFactory(txCalled, orgObj, address, chain?.name)
     const badger = useMemo(() => getBadgerAbi(chain?.name), [chain?.name]);
     
     const actions = [

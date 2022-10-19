@@ -48,7 +48,7 @@ const BadgeForm = () => {
         // payment_token: ["paymentKey", 0],
     })
 
-    const createBadge = useCreateBadge(badgeRef.current);
+    const createBadge = useCreateBadge(txCalled, badgeRef.current);
     const disabled = !badgeName || !badgeDescription || !ipfsImageHash || !areAddressesValid;
     
     const actions = [

@@ -78,7 +78,6 @@ const InputListCSV = ({ label, inputList, setInputList, setAreAddressesValid }) 
     // When validated array changes, check if any addresses are invalid.
     useEffect(() => {
         const isAllValid = validatedAddresses.every((address) => address === true);
-        console.log('isValid', isAllValid, validatedAddresses);
         setAreAddressesValid(isAllValid);
     }, [validatedAddresses, setAreAddressesValid])
 
