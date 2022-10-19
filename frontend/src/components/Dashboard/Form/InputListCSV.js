@@ -26,6 +26,7 @@ const InputListCSV = ({ label, inputList, setInputList, setAreAddressesValid }) 
     // Deletes the input field row at the specified index.
     // If the index is the first and only row, just reset the value.
     const onFieldDelete = (index) => {
+        console.log('validated addys', inputList);
         let newInputs = [...inputList];
         if (index === 0 && inputFieldCount === 1) {
             setInputList([]);
@@ -39,6 +40,17 @@ const InputListCSV = ({ label, inputList, setInputList, setAreAddressesValid }) 
             setInputList(newInputs);
             setInputFieldCount(inputFieldCount - 1);
             setValidatedAddresses(newValidated);
+        }
+    }
+
+    // When an input loses focus, validate the address and clear whitespace.
+    const onBlur = (index) => {
+        setFocused(null);
+        if (inputList[index].includes(' ')) {
+            let newInputs = [...inputList];
+            newInputs[index] = newInputs[index].trim();
+            setInputList(newInputs);
+            validateAddress(index, newInputs[index]);
         }
     }
 
@@ -144,7 +156,7 @@ const InputListCSV = ({ label, inputList, setInputList, setAreAddressesValid }) 
                     value={inputList[index] || ""}
                     onChange={(event) => onInputChange(index, event)}
                     onFocus={() => setFocused(index)}
-                    onBlur={() => setFocused(null)}
+                    onBlur={() => onBlur(index)}
                 />
             ))}
         </div>
