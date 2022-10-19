@@ -8,7 +8,7 @@ from badge.models import Badge
 from balance.models import Balance, Transaction
 from organization.models import Organization
 
-from .abis import ORGANIZATION as ORGANIZATION_ABI
+from abis import ORGANIZATION as ORGANIZATION_ABI
 
 ALCHEMY_PROVIDER_URL = "wss://polygon-mainnet.g.alchemy.com/v2/YOf5rgn_gm9hY1UPxUrw1zcocM-Ksjte"
 

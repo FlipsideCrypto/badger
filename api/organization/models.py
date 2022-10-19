@@ -27,6 +27,9 @@ class Organization(models.Model):
     image_hash = models.CharField(max_length=256, blank=True, null=True)
     contract_uri_hash = models.CharField(max_length=256, blank=True, null=True)
 
+    # the last block the listener has processed
+    last_block = models.IntegerField(default=0)
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

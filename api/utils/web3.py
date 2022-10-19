@@ -40,3 +40,6 @@ def verify_signature(signature, message, address):
 
 def hex_signature(string):
     return Web3.keccak(text=string).hex()
+
+def get_abi(contract_name):
+    return settings.ABIS[contract_name]
