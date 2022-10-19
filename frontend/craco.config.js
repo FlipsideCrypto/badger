@@ -1,5 +1,6 @@
 const path = require('path');
 const Dotenv = require('dotenv-webpack');
+const { ProvidePlugin } = require('webpack');
 
 module.exports = {
     webpack: {
@@ -29,6 +30,9 @@ module.exports = {
               path: '../.env',
               safe: true,
               ignoreStub: true,
+            }),
+            new ProvidePlugin({
+                Buffer: ['buffer', 'Buffer']
             })
         ],
         configure: {
@@ -42,6 +46,11 @@ module.exports = {
                 );
               },
             ],
+            resolve: {
+                fallback: {
+                    buffer: require.resolve('buffer')
+                }
+            }
         },
     }
 }
