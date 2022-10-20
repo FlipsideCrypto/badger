@@ -1,14 +1,9 @@
-import os
 import django
-
-os.environ['DJANGO_SETTINGS_MODULE'] = 'api.settings'
-django.setup()
-
 from django.conf import settings
 
-from indexer.backfill.transformer import Transformer
-from indexer.backfill.loader import Loader
-from indexer.backfill.extractor import Extractor
+from .transformer import Transformer
+from .loader import Loader
+from .extractor import Extractor
 from abis import (
     FACTORY as FACTORY_ABI,
     ORGANIZATION as ORGANIZATION_ABI,
