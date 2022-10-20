@@ -17,6 +17,7 @@ class JobConfig(AppConfig):
             stringified_abi = json.dumps(settings.FACTORY_ABI)
 
             ContractListener.objects.get_or_create(
+                is_active=True,
                 chain="Polygon",
                 ethereum_address=settings.FACTORY_ADDRESS,
                 abi=stringified_abi

@@ -3,18 +3,11 @@ from web3 import Web3
 
 from django.conf import settings
 
-# need to get web3.eth.filter to the point where we can pass in an array of addresses and an array of topics.
-# any time we detect one of those events, need to add it to the events array 
+w3 = Web3(Web3.WebsocketProvider(settings.WS_POLYGON_PROVIDER))
 
 class Extractor:
     def __init__(self):
-        self.contracts = {
-            'polygon': {
-                'provider': Web3(
-                    Web3.HTTPProvider("https://polygon-mainnet.g.alchemy.com/v2/YOf5rgn_gm9hY1UPxUrw1zcocM-Ksjte")
-                ),
-            }
-        }
+        self.contracts = {}
         self.only_latest = [
             "OrganizationUpdated",
             "OwnershipTransferred",
@@ -22,72 +15,61 @@ class Extractor:
             "URI",
         ]
 
-    def handle_topics(self, topics):
-        _topics = []
-        for topic in topics:
-            _topics.append(topics[topic])
+    def handle_contracts(self, contracts, abi, events, end_block=None):
+        _events = []
 
-        return _topics
+        if not end_block:
+            end_block = w3.eth.block_number
 
-    def handle_contract(self, network, contract_address, start_block, abi):
-        if network not in self.contracts:
-            self.contracts[network] = {}
+        for contract in contracts:
+            _contract = self.handle_contract(contract[0], contract[1], contract[2], abi, events)
+            _events += self.extract(_contract, end_block)
 
-        self.contracts[network][contract_address] = {
+        return [
+            _events,
+            end_block
+        ]
+
+    def handle_contract(self, network, contract_address, start_block, abi, events):
+        self.contracts[contract_address] = {
+            "network": network,
             "contract_address": contract_address,
             "start_block": start_block,
             "abi": abi,
+            "events": [],
         }
 
-        return self.contracts[network][contract_address]
-
-    def handle_contracts(self, contracts, abi, topics):
-        _contracts = []
-        for contract in contracts:
-            _contracts.append(self.handle_contract(contract[0], contract[1], contract[2], abi))
-
-        _events = self.extract(_contracts, topics)
-
-        return _events
-
-    def extract(self, contracts, topics):
-        # Determine which provider to be using
-        w3_provider = self.contracts["polygon"]["provider"]
-
-        # Filter this contract address for all the top
-        events = w3_provider.eth.filter({
-            "address": [
-                contract["contract_address"] for contract in contracts
-            ],
-            "fromBlock": 0
-        }).get_all_entries()
-
         for event in events:
-            print(event)
+            self.contracts[contract_address]["events"].append(self.handle_event(event))
 
-        # for event in contract['events']:
-        #     print(f"Extracting {event['event_name']} events for {contract['contract_address']}")
+        return self.contracts[contract_address]
 
-        #     # if the event doesnt have a tuple in it use normal get_all_entries, but if the 
-        #     # event has a tuple in it, retrieve the event data with the topic
+    def handle_event(self, event):
+        event_name = event.replace("event ", "").split("(")[0]
 
-        #     events_appendage = w3_provider.eth.filter({
-        #         'fromBlock': contract['start_block'],
-        #         'toBlock': 'latest',
-        #         'address': contract['contract_address'],
-        #         'topics': [event['event_name']]
-        #     }).get_all_entries()
+        return {
+            "event_name": event_name,
+        }
 
-        #     events += events_appendage
+    def extract(self, contract, end_block=None):
+        if "connected_contract" not in self.contracts[contract["contract_address"]]:
+            self.contracts[contract["contract_address"]]["connected_contract"] = w3.eth.contract(
+                address=contract["contract_address"],
+                abi=contract["abi"]
+            )
 
-        #     # events_appendage = connected_contract.events[event['event_name']].createFilter(
-        #     #     fromBlock=event["start_block"]
-        #     # ).get_all_entries()
+        events = []
+        for event in contract['events']:
+            if settings.DEBUG:
+                print(f"Extracting {event['event_name']} events for {contract['contract_address']}")
 
-        #     if len(events_appendage) > 0 and event['event_name'] in self.only_latest:
-        #         events_appendage = [events_appendage[-1]]
+            # if the event doesnt have a tuple in it use normal get_all_entries, but if the 
+            # event has a tuple in it, retrieve the event data with the topic
+            events_appendage = self.contracts[contract['contract_address']]['connected_contract'].events[event['event_name']].createFilter(
+                fromBlock=contract['start_block'],
+                toBlock=end_block
+            ).get_all_entries()
 
-        #     events.append(events_appendage)
+            events.append(events_appendage)
 
-        # squish all the events into one list   
         return events

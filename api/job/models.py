@@ -1,17 +1,13 @@
-import json
-
 from django.db import models
 
 from siwe_auth.models import validate_ethereum_address
 
-from utils.web3 import CHAINS, ETHEREUM
-
-from .abis import get_abis
+from utils.web3 import CHAINS, POLYGON
 
 class ContractListener(models.Model):
     is_active = models.BooleanField(default=False)
 
-    chain = models.CharField(max_length=255, choices=CHAINS, default=ETHEREUM)
+    chain = models.CharField(max_length=255, choices=CHAINS, default=POLYGON)
     ethereum_address = models.CharField(max_length=50, blank=False, default=None, validators=[validate_ethereum_address])
 
     # name of the event that is being tracked for this contract

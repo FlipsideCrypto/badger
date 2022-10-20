@@ -4,41 +4,27 @@ from web3 import Web3
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from badge.models import Badge
 from balance.models import Balance, Transaction
 from organization.models import Organization
 
 from abis import ORGANIZATION as ORGANIZATION_ABI
 
-ALCHEMY_PROVIDER_URL = "wss://polygon-mainnet.g.alchemy.com/v2/YOf5rgn_gm9hY1UPxUrw1zcocM-Ksjte"
-
-w3 = Web3(Web3.WebsocketProvider(ALCHEMY_PROVIDER_URL))
+w3 = Web3(Web3.WebsocketProvider(settings.WS_POLYGON_PROVIDER))
 
 User = get_user_model()
-
 
 class Loader:
     def __init__(self):
         self.loader_mapping = {
             # Factory events
-            "OrganizationCreated": [
-                self.handle_organization_created,
-            ],
-            "BadgeUpdated": [
-                self.handle_badge_updated
-            ],
-            "DelegateUpdated": [
-                self.handle_delegate_updated
-            ],
+            "OrganizationCreated": [self.handle_organization_created],
+            "BadgeUpdated": [self.handle_badge_updated],
+            "DelegateUpdated": [self.handle_delegate_updated],
             "OrganizationUpdated": [self.handle_organization_updated],
             "OwnershipTransferred": [self.handle_ownership_transferred],
             "PaymentTokenDeposited": [self.handle_payment_token_deposited],
-            "TransferSingle": [
-                self.handle_transfer_single
-            ],
-            "TransferBatch": [
-                self.handle_transfer_batch
-            ],
+            "TransferSingle": [self.handle_transfer_single],
+            "TransferBatch": [self.handle_transfer_batch],
             "URI": [self.handle_uri],
         }
         self.contracts = {}
@@ -202,8 +188,6 @@ class Loader:
         pass
 
     def handle_transfer_batch(self, event, chained_response):
-        # when we detect a new transfer, update the Balance model for the user
-
         # get the address of the organization
         organization = Organization.objects.get(
             ethereum_address=event["address"]
@@ -220,8 +204,6 @@ class Loader:
         return ("Balance updated", event['args'])
 
     def handle_transfer_single(self, event, chained_response):
-        # when we detect a new transfer, update the Balance model for the user
-
         # get the address of the organization
         organization = Organization.objects.get(
             ethereum_address=event["address"]
@@ -245,8 +227,10 @@ class Loader:
         if organization is None:
             return ("Organization does not exist", event['args'])
 
+        token_id = event['args']['badgeId'] if 'badgeId' in event['args'] else event['args']['id']
+
         badge, created = organization.badges.get_or_create(
-            token_id=event['args']['id']
+            token_id=token_id
         )
 
         response = "Badge updated"
@@ -254,14 +238,10 @@ class Loader:
         if created or not badge.token_uri:
             badge.is_active = True
 
-            organization_contract = self.get_organization_contract(
-                organization.ethereum_address)
-            badge.token_uri = organization_contract.functions.uri(
-                event['args']['id']).call()
-            badge.account_bound = organization_contract.functions.getAccountBound(
-                event['args']['id']).call()
-            badge.signer_ethereum_address = organization_contract.functions.getSigner(
-                event['args']['id']).call()
+            organization_contract = self.get_organization_contract(organization.ethereum_address)
+            badge.token_uri = organization_contract.functions.uri(token_id).call()
+            badge.account_bound = organization_contract.functions.getAccountBound(token_id).call()
+            badge.signer_ethereum_address = organization_contract.functions.getSigner(token_id).call()
 
             changed = True
 
@@ -269,8 +249,7 @@ class Loader:
 
         if not badge.name or not badge.description or not badge.image_hash:
             # use the 1155 uri spec to replace id with the token id
-            url = f"{badge.token_uri}".replace(
-                "{id}", str(event['args']['id']))
+            url = f"{badge.token_uri}".replace("{id}", str(token_id))
 
             if "http" not in url:
                 url = f"{settings.PINATA_INDEXER_URL}{url}"
@@ -300,8 +279,10 @@ class Loader:
         if organization is None:
             return ("Organization does not exist", event['args'])
 
+        token_id = event['args']['badgeId'] if 'badgeId' in event['args'] else event['args']['id']
+
         # get the badge that was updated
-        badge = organization.badges.get(token_id=event['args']['id'])
+        badge = organization.badges.get(token_id=token_id)
 
         if badge is None:
             return ("Badge does not exist", event['args'])

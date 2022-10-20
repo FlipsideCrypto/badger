@@ -3,13 +3,13 @@ from django.db import models
 from siwe_auth.models import validate_ethereum_address
 
 from badge.models import Badge
-from utils.web3 import CHAINS, ETHEREUM
+from utils.web3 import CHAINS, POLYGON
 
 
 class Organization(models.Model):
     is_active = models.BooleanField(default=False)
 
-    chain = models.CharField(max_length=50, choices=CHAINS, default=ETHEREUM)
+    chain = models.CharField(max_length=50, choices=CHAINS, default=POLYGON)
     ethereum_address = models.CharField(
         max_length=50, blank=False, default=None, validators=[validate_ethereum_address])
 
@@ -34,7 +34,7 @@ class Organization(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.ethereum_address
 
     class Meta:
         ordering = ['-created']
