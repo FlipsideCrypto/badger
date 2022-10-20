@@ -119,6 +119,17 @@ const OrgSidebar = ({ address }) => {
                         <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
                             {orgData?.name}
                         </Link>
+                        <div className="sidebar__header__subtext">
+                            <div>{orgData?.chain}</div>
+                            <a 
+                                className="link-wrapper"
+                                href={`https://polygonscan.com/address/${orgData?.ethereum_address}`}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                {sliceAddress(orgData?.ethereum_address)}
+                            </a>
+                        </div>
                     </div>
 
                     <div className="sidebar__category">

@@ -73,7 +73,7 @@ const BadgeForm = () => {
                 message: response.error
             });
         }
-        
+         
         badgeRef.current = {
             ...badgeRef.current,
             name: badgeName,
