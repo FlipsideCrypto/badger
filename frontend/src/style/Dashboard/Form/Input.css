@@ -54,3 +54,7 @@ input:disabled {
     font-variant-numeric: tabular-nums lining-nums;
     text-transform: uppercase;
 }
+
+.form__list__address {
+    font-family: monospace;
+}
