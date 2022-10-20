@@ -1,5 +1,5 @@
 import { useEffect, useContext, useState, useCallback } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useEnsAvatar, useNetwork, useSwitchNetwork } from "wagmi";
 
 import { useConnectModal } from "@rainbow-me/rainbowkit"
@@ -32,8 +32,8 @@ const OrgSidebar = ({ address }) => {
     const { userData, authenticationError, tryAuthentication } = useContext(UserContext);
     const { orgData } = useContext(OrgContext);
 
-    // kinda hacky way to get our current location.
-    const path = window.location.pathname
+    const { pathname: path } = useLocation();
+    // kinda hacky way to get our current location outside of Route.
     const orgId = path.includes('organization') && !path.includes('organization/new') ? orgData?.id : null;
 
     // Dual purpose connect button. If we're not connected, connect with rainbowkit else if 

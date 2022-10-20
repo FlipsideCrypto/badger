@@ -1,4 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button } from "@mui/material";
 
 import "@style/Dashboard/Header/Header.css";
 
@@ -7,16 +8,18 @@ const Header = ({ back, actions }) => {
 
     return (
         <header className="header" style={{
-            margin: isShowing ? '20px' : '0'
+            marginTop: isShowing ? '20px' : '0',
+            marginBottom: isShowing ? '20px' : '0'
         }}>
             <div className="header__back">
-                {back && <button 
+                {back && <Button 
                     className="button__unstyled" 
                     onClick={back}
+                    sx={{textTransform: 'capitalize'}}
                 >
                     <FontAwesomeIcon icon={['fal', 'chevron-left']} />
                     <span>Back</span>
-                </button>}
+                </Button>}
             </div>
 
             <div className="header__actions">
