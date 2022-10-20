@@ -9,7 +9,7 @@ class JobConfig(AppConfig):
     name = "job"
 
     def ready(self):
-        if os.environ.get('RUN_MAIN'):
+        if os.environ.get('RUN_MAIN') or not settings.DEBUG:
             from .jobs import JobManager
             from .models import ContractListener
 
