@@ -44,7 +44,7 @@ const HelpSidebar = () => {
             </div>
 
             <div className="sidebar__content">
-                <h5>What is a Delegate?</h5>
+                <h5>What is a Manager?</h5>
                 <p>You are defining an Organization. Once this
                     has been created, you can begin to design
                     Badges for your team.</p>
