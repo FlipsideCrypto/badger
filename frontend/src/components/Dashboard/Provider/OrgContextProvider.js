@@ -1,19 +1,14 @@
 import { useState, createContext, useContext, useEffect } from "react"
 import { useLocation } from "react-router-dom";
-import { UserContext } from "./UserContextProvider";
 import { getOrgRequest } from "@utils/api_requests";
+import { UserContext } from "./UserContextProvider";
 
 export const OrgContext = createContext();
 
-// TODO: Would it be better to have orgContext hold all fetched orgData?
-//       And then have a separate context for the current org? 
-//       Or a method to get out an individual org with index?
-//       Will probably need to be able to memoize the orgData to decrease
-//       loading times and reduce api calls.
 const OrgContextProvider = ({ children }) => {
     const [ orgData, setOrgData ] = useState();
+    const { isAuthenticated } = useContext(UserContext);
     const [ currentOrgId, setCurrentOrgId ] = useState();
-    const { authenticationError, setAuthenticationError } = useContext(UserContext);
     const { pathname } = useLocation();
 
     // If we have a currentOrgId and the orgData is not that org's,
@@ -21,30 +16,20 @@ const OrgContextProvider = ({ children }) => {
     useEffect(() => {
         async function getData() {
             let response = await getOrgRequest(currentOrgId);
-
-            if (response.detail === "Authentication credentials were not provided.") {
-                setAuthenticationError(true);
-                setOrgData({});
-            }
-
-            if (response?.id) {
-                setOrgData(response);
-            }
+            if (response?.id) setOrgData(response);
         }
 
         if (
+            isAuthenticated &&
             currentOrgId &&
-            !authenticationError &&
             orgData?.id !== parseInt(currentOrgId)
         ) {
             getData();
         }
-    }, [currentOrgId, orgData, authenticationError, setAuthenticationError])
+    }, [currentOrgId, orgData, isAuthenticated])
 
     // Fetches the appropriate badge based on the current org id in the URL.
     useEffect(() => {
-        // hacky way to get OrgId. TODO: Put sidebars and context providers inside of a 
-        // base "/dashboard" route so that we can use useParams() to get the orgId.
         const path = pathname.split('/');
         const orgId = path.includes('organization') && path[3] !== "new" ? path[3] : null;
 

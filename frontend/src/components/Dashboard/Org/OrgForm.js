@@ -39,8 +39,7 @@ const OrgForm = () => {
     const [ txCalled, setTxCalled ] = useState(false);
     const [ txPending, setTxPending ] = useState(false);
 
-
-    const createContract = useBadgerFactory(orgObj, address, chain?.name)
+    const createContract = useBadgerFactory(txCalled, orgObj, address, chain?.name)
     const badger = useMemo(() => getBadgerAbi(chain?.name), [chain?.name]);
     
     const actions = [
@@ -75,7 +74,10 @@ const OrgForm = () => {
         setImageUploading(true);
         const response = await postIPFSImage(image)
         if (response.error) {
-            setError('Could not upload image to IPFS: ' + response.error);
+            setError({
+                label: 'Could not upload image to IPFS',
+                message: response.error
+            });
         } else {
             setOrgObj({...orgObj, image_hash: response.hash});
         }
@@ -88,7 +90,10 @@ const OrgForm = () => {
 
         const response = await postIPFSMetadata(orgObj.name, orgObj.description, orgObj.image_hash);
         if (response.error) {
-            setError('Error creating Org URI: ' + response.error);
+            setError({
+                label: 'Error creating Org URI',
+                message: response.error
+            });
             setTxCalled(false);
         } else {
             setOrgObj({...orgObj, contract_uri_hash: response.hash});
@@ -115,7 +120,10 @@ const OrgForm = () => {
             setOrgObj({...orgObj, ethereum_address: contractAddress, is_active: true});
         }
         catch (error) {
-            setError('Error creating Org: ' + error);
+            setError({
+                label: 'Error creating Org',
+                message: error
+            });
             setTxPending(false);
         }
     }, [createContract, badger.abi, orgObj, setError]);
@@ -146,7 +154,10 @@ const OrgForm = () => {
             navigate(`/dashboard/organization/${response.id}`);
         }
         else {
-            setError('Could not add org to database: ' + response.error);
+            setError({
+                label: 'Could not add org to database',
+                message: response.error
+            });
         }
 
         setTxPending(false);

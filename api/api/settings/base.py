@@ -7,6 +7,11 @@ from siwe_auth.custom_groups.erc721 import ERC721OwnerManager
 
 load_dotenv()
 
+from abis import (
+    FACTORY,
+    ORGANIZATION,
+) 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,6 +36,8 @@ INSTALLED_APPS = [
     'django_apscheduler',
 
     'badge',
+    'balance',
+    'feedback',
     'ipfs',
     'job',
     'organization',
@@ -138,6 +145,14 @@ CUSTOM_GROUPS = [
 ]  
 PROVIDER = os.getenv("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}")
 
+WS_POLYGON_PROVIDER = os.getenv("POLYGON_PROVIDER", f"wss://polygon-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}")
+
 # IPFS settings
 PINATA_API_KEY = os.getenv("API_PINATA_API_KEY")
 PINATA_API_SECRET_KEY = os.getenv("API_PINATA_API_SECRET_KEY")
+PINATA_INDEXER_URL = os.getenv("API_PINATA_INDEXER_URL", "https://badger.mypinata.cloud/ipfs/")
+
+# ABI settings
+FACTORY_ADDRESS = "0x218B3C623FfB9c5E4DBb9142E6Ca6f6559F1c2D6"
+FACTORY_ABI = FACTORY
+ORGANIZATION_ABI = ORGANIZATION

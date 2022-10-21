@@ -4,23 +4,19 @@ pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
 import { BadgerOrganizationInterface } from "./interfaces/BadgerOrganizationInterface.sol";
-import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import { BadgerScout } from "./BadgerScout.sol";
 
 /// @dev Helpers.
 import { StringsUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
-import { ERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol";
 import { IERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import { SafeERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 /// @dev Supported interfaces.
-import { IERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol";
 import { IERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol";
 import { IERC721ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable.sol";
 
 contract BadgerOrganization is 
       BadgerOrganizationInterface
-    , ERC1155Upgradeable
     , BadgerScout
 {
     using StringsUpgradeable for uint256;
@@ -388,7 +384,7 @@ contract BadgerOrganization is
         );
 
         emit BadgeForfeited(
-              badges[_id]
+              _id
             , _amount
             , _data
         );
@@ -690,30 +686,5 @@ contract BadgerOrganization is
         ) 
     {
         return organizationURI;
-    }
-
-    /**
-     * See {IERC165Upgradeable.supportsInterface}
-     */
-    function supportsInterface(
-        bytes4 _interfaceId
-    )
-        override(
-            ERC1155Upgradeable
-          , ERC1155ReceiverUpgradeable
-        )
-        public
-        virtual
-        view
-        returns (
-            bool
-        )
-    {
-        return (
-               _interfaceId == type(IERC1155Upgradeable).interfaceId 
-            || _interfaceId == type(IERC1155ReceiverUpgradeable).interfaceId
-            || _interfaceId == type(IERC721ReceiverUpgradeable).interfaceId
-            || super.supportsInterface(_interfaceId)
-        );
     }
 }

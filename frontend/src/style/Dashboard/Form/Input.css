@@ -37,7 +37,24 @@
     height: 100%;
 } 
 
+.form__group.input__group .form__actions {
+    grid-column: 1/3;
+}
+
 input:disabled {
     background-color: #F0F0F0;
     cursor: not-allowed;
+}
+
+.form__list__address.error {
+    border-color: #FF0000;
+}
+
+.form__list__address {
+    font-variant-numeric: tabular-nums lining-nums;
+    text-transform: uppercase;
+}
+
+.form__list__address {
+    font-family: monospace;
 }

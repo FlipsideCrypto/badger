@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useAccount } from "wagmi"
 
 import Header from "@components/Dashboard/Header/Header";
 import HolderTable from "@components/Table/HolderTable";
@@ -18,11 +18,13 @@ import "@style/Dashboard/Org/Badge.css";
 const Badge = () => {
     const navigate = useNavigate();
     const { orgId, badgeId } = useParams();
+    const { address } = useAccount();
     const { orgData, setOrgData } = useContext(OrgContext);
     const { setError } = useContext(ErrorContext);
 
     const [ isManage, setIsManage ] = useState(false);
     const [ membersToUpdate, setMembersToUpdate ] = useState([]);
+    const [ areAddressesValid, setAreAddressesValid ] = useState(false);
     const [ selectedAction, setSelectedAction ] = useState("Mint");
     const [ txMethod, setTxMethod ] = useState("manageOwnership");
     const [ txCalled, setTxCalled ] = useState(false);
@@ -30,9 +32,10 @@ const Badge = () => {
     
     const badgeIndex = orgData?.badges?.findIndex(badge => badge.id === parseInt(badgeId));
     const [ badge, setBadge ] = useState(orgData?.badges?.[badgeIndex] || {});
+    const isOwner = orgData?.owner?.ethereum_address === address;
 
     const setDelegates = useSetDelegates(
-        txCalled,
+        txCalled && isOwner,
         orgData?.ethereum_address,          // orgAddress
         badge?.token_id,                    // tokenId array
         membersToUpdate,                    // address array
@@ -53,12 +56,13 @@ const Badge = () => {
         event: () => setIsManage(!isManage)
     }]
 
-    const selectActions = [
+    // Limit actions for Managers.
+    const selectActions = isOwner ? [
         "Mint",
         "Revoke",
-        "Add Delegate",
-        "Remove Delegate"
-    ]
+        "Add Manager",
+        "Remove Manager"
+    ] : ["Mint", "Revoke"]
 
     // When select option changes, set the controlled value and update the
     // method to determine function flow and to send to be further parsed
@@ -91,7 +95,10 @@ const Badge = () => {
 
         const response = await putBadgeRolesRequest(badgeObj, orgId)
         if (response.error)
-            setError('Adding members to database failed: ' + response.error);
+            setError({
+                label: 'Adding members to database failed',
+                message: response.error
+            });
         else {
             setBadge(response);
             setOrgData(orgData => {orgData.badges[badgeIndex] = response; return {...orgData}});
@@ -105,20 +112,23 @@ const Badge = () => {
     const onDelegatesUpdate = useCallback(async () => {
         let badgeObj = {...badge}
         if (!badgeObj.delegates) badge.delegates = [];
-
+        
         membersToUpdate.forEach(member => {
-            if (selectedAction === "Remove Delegate") {
+            if (selectedAction === "Remove Manager") {
                 const index = badgeObj.delegates.findIndex(delegate => delegate.ethereum_address === member);
                 badgeObj.delegates.splice(index, 1);
             }
-            else if (selectedAction === "Add Delegate") {
+            else if (selectedAction === "Add Manager") {
                 badgeObj.delegates.push({ethereum_address: member});
             }
         })
 
         const response = await putBadgeRolesRequest(badgeObj, orgId)
         if (response.error) {
-            setError('Adding delegates to database failed: ' + response.error);        
+            setError({
+                label: 'Adding managers to database failed',
+                message: response.error
+            });
         }
         else {
             setBadge(response);
@@ -135,10 +145,10 @@ const Badge = () => {
 
         let tx;
         try {
-            if (setDelegates.isSuccess)
-                tx = await setDelegates.write?.()
-            else if (manageOwnership.isSuccess)
+            if (txMethod === "manageOwnership")
                 tx = await manageOwnership.write?.()
+            else if (txMethod === "setDelegates") 
+                tx = await setDelegates.write?.()
 
             if (tx) {
                 const txReceipt = await tx?.wait();
@@ -148,7 +158,10 @@ const Badge = () => {
                 txMethod === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
             }
         } catch (error) {
-            setError('Error managing members: ' + error);
+            setError({
+                label: 'Error managing members',
+                message: error
+            });
         }
 
         setTxPending(false);
@@ -181,19 +194,6 @@ const Badge = () => {
             <div id="badge">
                 <div className="center__gutter">
                     <h1>{badge?.name}</h1>
-                    {!isManage && badge?.name &&
-                        <div className="badge__actions">
-                            {/* Analytics page
-                            <button 
-                                className="button__unstyled badge__action" 
-                                onClick={() => { navigate(`/dashboard/organization/${orgId}/badge/${badgeId}/analytics`)}}
-                            >
-                                <FontAwesomeIcon icon={["fal", "fa-chart-simple"]} />
-                                <span>Analytics</span>
-                            </button> 
-                            */}
-                        </div>
-                    }
                 </div>
 
                 {isManage && 
@@ -208,14 +208,15 @@ const Badge = () => {
                             label="Members to update"
                             inputList={membersToUpdate}
                             setInputList={setMembersToUpdate}
+                            setAreAddressesValid={setAreAddressesValid}
                         />
                         <IconButton
                             icon={['fal', 'arrow-right']} 
-                            text="UPDATE MEMBERS" 
+                            text={txMethod === "manageOwnership" ? "UPDATE MEMBERS" : "UPDATE MANAGERS"}
                             onClick={() => setTxCalled(true)}
                             style={{margin: "20px 0px 20px auto"}}
                             loading={txPending}
-                            disabled={membersToUpdate.length < 1}
+                            disabled={!areAddressesValid}
                         />
                     </>
                 }
@@ -234,7 +235,7 @@ const Badge = () => {
                         <div style={{margin: 'auto'}}>
                             <IconButton 
                                 icon={['fal', 'arrow-right']} 
-                                text="DISTRIBUTE KEYS" 
+                                text="DISTRIBUTE KEYS"
                                 onClick={() => setIsManage(true)}
                                 style={{textAlign: "center"}}
                             />

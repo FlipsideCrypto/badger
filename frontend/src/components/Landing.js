@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import IconButton from './Button/IconButton';
+import { HOME_LINKS } from "@static/constants/links";
 
 import logo from "@static/images/badger-logo-headline.png";
 // import key from "../static/images/key.gif";
@@ -41,7 +42,7 @@ const Landing = () => {
                     </div>
 
                     <div className="navbar__links__left">
-                        <a href="https://app.gitbook.com/o/uh3wvRXawCOXvkfIEWJ7/s/QZWCUfgiU4xiUvp0OWx4/">Docs</a>
+                        <a href={ HOME_LINKS.gitbook }>Docs</a>
                     </div>
 
                     <div className="navbar__links__right">

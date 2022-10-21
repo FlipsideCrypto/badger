@@ -1,9 +1,10 @@
 from rest_framework import viewsets
 from rest_framework.permissions import (
     IsAuthenticated,
-    AllowAny,
     IsAdminUser
 )
+from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from siwe_auth.models import Wallet
 
@@ -30,3 +31,7 @@ class WalletViewSet(viewsets.ModelViewSet):
             permission_classes = [CanManageWallet]
 
         return generator(self.permission_classes + permission_classes)
+
+    @action(detail=False, methods=['get'])
+    def authentication_status(self, request):
+        return Response({'address': request.user.ethereum_address})

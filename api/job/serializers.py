@@ -20,8 +20,8 @@ class ContractListenerSerializer(serializers.ModelSerializer):
             'is_active', 
             'chain',
             'ethereum_address', 
-            'event', 
-            'event_abi',
             'abi',
-            'last_block'
+            'last_block',
+            'created',
+            'updated'
         )

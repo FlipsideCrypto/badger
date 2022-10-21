@@ -21,12 +21,12 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard">
-            <UserContextProvider signer={signer} address={address}>
-                <OrgContextProvider>
-                    <OrgSidebar address={address} />
+            <ErrorContextProvider>
+                <UserContextProvider signer={signer} address={address}>
+                    <OrgContextProvider>
+                        <OrgSidebar address={address} />
 
-                    <DashboardContent>
-                        <ErrorContextProvider>
+                        <DashboardContent>
                             <Routes>
                                 <Route path="/" element={ <Home /> } />
                                 <Route path="/organization/new" element={ <OrgForm /> } />
@@ -34,13 +34,12 @@ const Dashboard = () => {
                                 <Route path="/organization/:orgId/badge/new" element={ <BadgeForm /> } />
                                 <Route path="/organization/:orgId/badge/:badgeId" element={ <Badge /> } />
                             </Routes>
-                        </ErrorContextProvider>
-                    </DashboardContent>
+                        </DashboardContent>
 
-                    <HelpSidebar />
-
-                </OrgContextProvider>
-            </UserContextProvider>
+                        <HelpSidebar />
+                    </OrgContextProvider>
+                </UserContextProvider>
+            </ErrorContextProvider>
         </div>
     )
 }

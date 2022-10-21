@@ -36,6 +36,24 @@
     color: #000;
 }
 
+.sidebar .sidebar__header .sidebar__header__subtext {
+    display: grid;
+    width: 100%;
+    grid-template-columns: min-content auto;
+    color: rgba(0, 0, 0, .35);
+    font-size: 14px;
+    font-weight: 700;
+    grid-gap: 16px;
+    margin-top: 8px;
+}
+
+.sidebar .sidebar__header .sidebar__header__subtext a {
+    margin-left: auto;
+    width: 100%;
+    text-align: right;
+    color: rgba(0, 0, 0, .35);
+}
+
 .sidebar__category * {
     margin: 0;
 }
@@ -59,6 +77,7 @@
     display: grid;
     grid-template-columns: 28px auto;
     align-items: center;
+    margin-top: 8px;
 }
 
 .sidebar__organizations .sidebar__organization img { 

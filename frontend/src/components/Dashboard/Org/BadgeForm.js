@@ -12,7 +12,6 @@ import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvide
 import { postBadgeRequest, postIPFSImage, postIPFSMetadata } from "@utils/api_requests";
 import { useCreateBadge } from "@hooks/useContracts";
 
-// TODO: Clean and validate badgeDelegates array
 // TODO: Move all state vars into a reducer?
 const BadgeForm = () => {
     const [ badgeName, setBadgeName ] = useState("");
@@ -23,6 +22,7 @@ const BadgeForm = () => {
     const [ accountBound, setAccountBound ] = useState(true);
 
     const [ imageUploading, setImageUploading ] = useState(false);
+    const [ areAddressesValid, setAreAddressesValid ] = useState(true);
     const [ txPending, setTxPending ] = useState(false);
     const [ txCalled, setTxCalled ] = useState(false);
 
@@ -47,8 +47,8 @@ const BadgeForm = () => {
         // payment_token: ["paymentKey", 0],
     })
 
-    const createBadge = useCreateBadge(badgeRef.current);
-    const disabled = !badgeName || !badgeDescription || !ipfsImageHash
+    const createBadge = useCreateBadge(txCalled, badgeRef.current);
+    const disabled = !badgeName || !badgeDescription || !ipfsImageHash || !areAddressesValid;
     
     const actions = [
         {
@@ -67,9 +67,12 @@ const BadgeForm = () => {
         // Get the token uri
         const response = await postIPFSMetadata(badgeName, badgeDescription, ipfsImageHash);
         if (response.error) {
-            setError('Error creating token URI: ' + response.error);
+            setError({
+                label: 'Error creating token URI',
+                message: response.error
+            });
         }
-        
+         
         badgeRef.current = {
             ...badgeRef.current,
             name: badgeName,
@@ -89,7 +92,10 @@ const BadgeForm = () => {
         setImageUploading(true);
         const response = await postIPFSImage(image)
         if (response.error) {
-            setError('Could not upload image to IPFS: ' + response.error);
+            setError({
+                label: 'Could not upload image to IPFS',
+                message: response.error
+            });
         }
         setImageUploading(false);
         setIpfsImageHash(response.hash)
@@ -121,7 +127,10 @@ const BadgeForm = () => {
             }
         }
         catch (error) {
-            setError('Error creating badge: ' + error);
+            setError({
+                label:'Error creating badge',
+                message: error
+            });
             setTxPending(false);
         }
 
@@ -216,13 +225,14 @@ const BadgeForm = () => {
                 />
 
             <InputListCSV
-                label={"Delegates"}
+                label={"Managers"}
                 inputList={badgeDelegates}
                 setInputList={setBadgeDelegates}
+                setAreAddressesValid={setAreAddressesValid}
             />
 
             <ActionBar help={
-                'After creating a badge, you (or your delegates) can issue badges to team members.'
+                'After creating a badge, you (or your managers) can issue badges to team members.'
             } actions={actions} />
         </div>
     )

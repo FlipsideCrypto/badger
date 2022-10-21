@@ -3,6 +3,38 @@ import { cleanAddresses, getCSRFToken } from "./helpers";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+export async function postFeedbackRequest(feedback) { 
+    let response;
+
+    try {
+        await fetch(`${API_URL}/feedback/`, {
+            method: 'POST',
+            mode: "cors",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            credentials: 'include',
+            body: JSON.stringify(feedback)
+        })
+        .then(res => res.json())
+        .then(data => { 
+            if(!data?.id) throw new Error(
+                data.detail || "Feedback POST request failed"
+            );
+            response = data;
+        })
+        .catch(err => { 
+            throw new Error(err);
+        })
+    }
+    catch(err) { 
+        response = { error: err };
+    }
+
+    return response;
+}
+
 export async function postOrgRequest(org) {
     let response;
 
@@ -19,7 +51,9 @@ export async function postOrgRequest(org) {
         })
         .then(res => res.json())
         .then(data => {
-            if (!data?.id) throw new Error("Org POST request failed");
+            if (!data?.id) throw new Error(
+                data.detail || "Org POST request failed"
+            );
             response = data;
         })
         .catch(err => {
@@ -83,6 +117,10 @@ export async function postBadgeRequest(badge) {
         })
         .then(res => res.json())
         .then(data => {
+            if (!data?.id) throw new Error(
+                data.detail ||
+                "Badge POST request failed"
+            );
             response = data;
         })
         .catch(err => {
@@ -113,6 +151,9 @@ export async function postIPFSImage(image) {
         })
         .then(res => res.json())
         .then(data => {
+            if (!data.hash) throw new Error(
+                data.detail || "IPFS Image POST request failed"
+            );
             response = data
         })
         .catch(error => {
@@ -148,6 +189,9 @@ export async function postIPFSMetadata(name, description, imageHash) {
         })
         .then(res => res.json())
         .then(data => {
+            if (!data.hash) throw new Error(
+                data.detail || "IPFS Metadata POST request failed"
+            );
             response = data
         })
         .catch(error => {
@@ -174,7 +218,9 @@ export async function getUserRequest(address) {
         })
         .then(res => res.json())
         .then(data => {
-            if (data.length < 1) throw new Error("No user data found");
+            if (data.length < 1) throw new Error(
+                data.detail || "No user data found"
+            );
             response = data;
         })
         .catch(err => {
@@ -202,7 +248,9 @@ export async function getOrgRequest(orgId) {
         })
         .then(res => res.json())
         .then(data => {
-            if (data.length < 1) throw new Error("No org data found");
+            if (data.length < 1) throw new Error(
+                data.detail || "No org data found"
+            );
             response = data;
         })
         .catch(err => {
@@ -243,6 +291,10 @@ export async function putBadgeRolesRequest(badge, orgId) {
         })
         .then(res => res.json())
         .then(data => {
+            if (!data?.id) throw new Error(
+                data.detail || "Badge PUT request failed"
+            );
+
             response = data
         })
     }

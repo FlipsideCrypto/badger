@@ -10,6 +10,9 @@ export const csvFileToArray = (file) => {
         return obj;
     });
 
+    if (csvHeader[0].slice(0,2) === "0x") {
+        array.unshift(csvHeader[0].replace(/\r/g,""));
+    }
     return array;
 };
 

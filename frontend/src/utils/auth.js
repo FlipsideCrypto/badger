@@ -49,7 +49,7 @@ export async function SIWEAuthorize (signer, address, chainId) {
     try {
         const nonce = await SIWENonce();
     
-        const statement = `By signing this one-time message, Badger authenticates your address for API permissions and creates a web token tied to your address.\n\nOnce authenticated, your address will always have the permissions required to view all the data related to your address.\n\nDO NOT share your token in any form, as sharing it allows for anyone with it to view and change all your related organizations and badges.`;
+        const statement = `By signing this message, Badger authenticates your address for API permissions and creates a web token tied to your address.\n\nOnce authenticated, your address will always have the permissions required to view all the data related to your address.\n\nDO NOT share your token in any form, as sharing it allows for anyone with it to view and change all your related organizations and badges.`;
     
         const message = new SiweMessage({
             domain: document.location.host,
@@ -71,4 +71,29 @@ export async function SIWEAuthorize (signer, address, chainId) {
     catch (err) {
         return {error: err};
     }
+}
+
+export async function getAuthenticationStatus() {
+    let response;
+    try {
+        await fetch(`${API_URL}/wallets/authentication_status`, {
+            method: "GET",
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+            },
+            credentials: 'include'
+        })
+        .then(res => res.json())
+        .then(data => {
+            response = data;
+        })
+        .catch(err => {
+            throw new Error(err);
+        })
+    }
+    catch (err) {
+        response = {error: err}
+    }
+
+    return response;
 }

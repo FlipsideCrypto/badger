@@ -4,46 +4,35 @@ from web3 import Web3
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from badge.models import Badge
 from balance.models import Balance, Transaction
 from organization.models import Organization
 
-from .abis import ORGANIZATION as ORGANIZATION_ABI
+from abis import ORGANIZATION as ORGANIZATION_ABI
 
-ALCHEMY_PROVIDER_URL = "wss://polygon-mainnet.g.alchemy.com/v2/YOf5rgn_gm9hY1UPxUrw1zcocM-Ksjte"
-
-w3 = Web3(Web3.WebsocketProvider(ALCHEMY_PROVIDER_URL))
+w3 = Web3(Web3.WebsocketProvider(settings.WS_POLYGON_PROVIDER))
 
 User = get_user_model()
-
 
 class Loader:
     def __init__(self):
         self.loader_mapping = {
             # Factory events
-            "OrganizationCreated": [
-                self.handle_organization_created,
-            ],
-            "BadgeUpdated": [
-                self.handle_badge_updated
-            ],
-            "DelegateUpdated": [
-                self.handle_delegate_updated
-            ],
+            "OrganizationCreated": [self.handle_organization_created],
+            "BadgeUpdated": [self.handle_badge_updated],
+            "DelegateUpdated": [self.handle_delegate_updated],
             "OrganizationUpdated": [self.handle_organization_updated],
             "OwnershipTransferred": [self.handle_ownership_transferred],
             "PaymentTokenDeposited": [self.handle_payment_token_deposited],
-            "TransferSingle": [
-                self.handle_transfer_single
-            ],
-            "TransferBatch": [
-                self.handle_transfer_batch
-            ],
+            "TransferSingle": [self.handle_transfer_single],
+            "TransferBatch": [self.handle_transfer_batch],
             "URI": [self.handle_uri],
         }
         self.contracts = {}
 
     def _handle_users(self, ethereum_address):
+        if not Web3.isChecksumAddress(ethereum_address):
+            ethereum_address = Web3.toChecksumAddress(ethereum_address)
+
         if not User.objects.filter(ethereum_address=ethereum_address).exists():
             return User.objects.create_user(
                 ethereum_address=ethereum_address)
@@ -52,8 +41,9 @@ class Loader:
 
     def _handle_badge_user_balance_changes(self, badge, user, balance):
         if balance.amount > 0:
-            badge.users.add(user)
-            badge.save()
+            if user.ethereum_address != "0x0000000000000000000000000000000000000000":
+                badge.users.add(user)
+                badge.save()
         elif user in badge.users.all():
             badge.users.remove(user)
         else:
@@ -108,6 +98,9 @@ class Loader:
                 self._handle_badge_user_balance_changes(badge, user, balance)
 
     def get_organization_contract(self, ethereum_address):
+        if not Web3.isChecksumAddress(ethereum_address):
+            ethereum_address = Web3.toChecksumAddress(ethereum_address)
+
         if ethereum_address not in self.contracts:
             self.contracts[ethereum_address] = w3.eth.contract(
                 address=ethereum_address,
@@ -117,15 +110,19 @@ class Loader:
 
     def handle_organization_created(self, event, chained_response):
         created = False
-        if not Organization.objects.filter(ethereum_address=event["args"]["organization"]).exists():
+
+        organization = event['args']['organization']
+        if not Web3.isChecksumAddress(organization):
+            organization = Web3.toChecksumAddress(organization)
+
+        if not Organization.objects.filter(ethereum_address=organization).exists():
             organization, created = Organization.objects.get_or_create(
-                ethereum_address=event["args"]["organization"],
-                name="Loading"
+                ethereum_address=organization,
             )
             response = "Organization created"
         else:
             organization = Organization.objects.get(
-                ethereum_address=event["args"]["organization"]
+                ethereum_address=organization
             )
             response = "Organization already exists"
 
@@ -141,46 +138,38 @@ class Loader:
 
     def handle_organization_updated(self, event, chained_response):
         # Use the organization that was created in the OrganizationCreated event
+        address = event['address']
         if chained_response is not None:
-            organization = Organization.objects.get(
-                ethereum_address=chained_response[1]["organization"]
-            )
-        else:
-            organization = Organization.objects.get(
-                ethereum_address=event["address"]
-            )
+            address = chained_response[1]["organization"]
+
+        if not Web3.isChecksumAddress(address):
+            address = Web3.toChecksumAddress(address)
+
+        organization, created = Organization.objects.get_or_create(
+            ethereum_address=address
+        )
 
         if organization is None:
             return ("Organization does not exist", event['args'])
 
-        organization_contract = self.get_organization_contract(
-            organization.ethereum_address)
-        changed = False
+        organization_contract = self.get_organization_contract(organization.ethereum_address)
 
-        if not organization.symbol:
-            organization.symbol = organization_contract.functions.symbol().call()
+        organization.symbol = organization_contract.functions.symbol().call()
 
-            uri = organization_contract.functions.contractURI().call()
-            organization.contract_uri_hash = uri.split("/ipfs/")[1]
-            changed = True
+        uri = organization_contract.functions.contractURI().call()
+        organization.contract_uri_hash = uri.split("/ipfs/")[1]
+        organization.save()
 
-        if organization.contract_uri_hash and (
-            organization.name == "Loading"
-            or not organization.description
-            or not organization.image_hash
-        ):
-            url = f"{settings.PINATA_INDEXER_URL}{organization.contract_uri_hash}"
+        url = f"{settings.PINATA_INDEXER_URL}{organization.contract_uri_hash}"
 
-            response = requests.get(url)
-            if response.status_code == 200:
-                data = response.json()
-                organization.name = data["name"]
-                organization.description = data["description"]
-                organization.image_hash = data["image"].split("/ipfs/")[1]
-                changed = True
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            organization.name = data["name"]
+            organization.description = data["description"]
+            organization.image_hash = data["image"].split("/ipfs/")[1]
 
-        if changed:
-            organization.save()
+        organization.save()
 
         return ("Organization details updated", event['args'])
 
@@ -202,8 +191,6 @@ class Loader:
         pass
 
     def handle_transfer_batch(self, event, chained_response):
-        # when we detect a new transfer, update the Balance model for the user
-
         # get the address of the organization
         organization = Organization.objects.get(
             ethereum_address=event["address"]
@@ -220,8 +207,6 @@ class Loader:
         return ("Balance updated", event['args'])
 
     def handle_transfer_single(self, event, chained_response):
-        # when we detect a new transfer, update the Balance model for the user
-
         # get the address of the organization
         organization = Organization.objects.get(
             ethereum_address=event["address"]
@@ -245,8 +230,10 @@ class Loader:
         if organization is None:
             return ("Organization does not exist", event['args'])
 
+        token_id = event['args']['badgeId'] if 'badgeId' in event['args'] else event['args']['id']
+
         badge, created = organization.badges.get_or_create(
-            token_id=event['args']['id']
+            token_id=token_id
         )
 
         response = "Badge updated"
@@ -254,14 +241,10 @@ class Loader:
         if created or not badge.token_uri:
             badge.is_active = True
 
-            organization_contract = self.get_organization_contract(
-                organization.ethereum_address)
-            badge.token_uri = organization_contract.functions.uri(
-                event['args']['id']).call()
-            badge.account_bound = organization_contract.functions.getAccountBound(
-                event['args']['id']).call()
-            badge.signer_ethereum_address = organization_contract.functions.getSigner(
-                event['args']['id']).call()
+            organization_contract = self.get_organization_contract(organization.ethereum_address)
+            badge.token_uri = organization_contract.functions.uri(token_id).call()
+            badge.account_bound = organization_contract.functions.getAccountBound(token_id).call()
+            badge.signer_ethereum_address = organization_contract.functions.getSigner(token_id).call()
 
             changed = True
 
@@ -269,8 +252,7 @@ class Loader:
 
         if not badge.name or not badge.description or not badge.image_hash:
             # use the 1155 uri spec to replace id with the token id
-            url = f"{badge.token_uri}".replace(
-                "{id}", str(event['args']['id']))
+            url = f"{badge.token_uri}".replace("{id}", str(token_id))
 
             if "http" not in url:
                 url = f"{settings.PINATA_INDEXER_URL}{url}"
@@ -300,8 +282,10 @@ class Loader:
         if organization is None:
             return ("Organization does not exist", event['args'])
 
+        token_id = event['args']['badgeId'] if 'badgeId' in event['args'] else event['args']['id']
+
         # get the badge that was updated
-        badge = organization.badges.get(token_id=event['args']['id'])
+        badge = organization.badges.get(token_id=token_id)
 
         if badge is None:
             return ("Badge does not exist", event['args'])
@@ -309,7 +293,7 @@ class Loader:
         # get the user that was updated
         user = self._handle_users(event["args"]["delegate"])
 
-    if user is None:
+        if user is None:
             return ("User does not exist", event['args'])
 
         # add the user to the badge delegates if the args are true

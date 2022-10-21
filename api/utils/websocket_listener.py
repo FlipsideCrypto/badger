@@ -233,7 +233,6 @@ async def main():
 
                 print('sent')
 
-
         while True:
             response = await ws.recv()
             print(response)

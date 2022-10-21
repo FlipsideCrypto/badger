@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { usePrepareContractWrite, useContractWrite } from 'wagmi';
+import { useEffect, useMemo, useState } from "react";
+import { usePrepareContractWrite, useContractWrite, useFeeData } from 'wagmi';
 import { ethers } from "ethers";
 
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
@@ -14,7 +14,7 @@ export function getBadgerAddress(chainName) {
         return address;
     }
     catch {
-        console.log(`Badger contract address not found in .env.`)
+        console.error(`Badger contract address not found in .env.`)
         return null;
     }
 }
@@ -47,8 +47,31 @@ export function getBadgerAbi(chainName) {
     }
 }
 
+// Gets the fees if a transaction is ready and multiplies them by a multiplier
+// to help the transaction underpriced errors commonly being had on polygon.
+export function useFees() {
+    const [fees, setFees] = useState(null);
+    const { data } = useFeeData({
+        watch: false,
+        cacheTime: 5000,
+    });
+
+    useEffect(() => {
+        if (data) {
+            const multiplier = 1.1;
+            const big_mul = ethers.BigNumber.from(Math.floor(multiplier * 100));
+            let suggestedGas = {};
+            suggestedGas.gasPrice = data.gasPrice.mul(big_mul).div(100);
+            setFees(suggestedGas);
+        }
+    }, [data, setFees]);
+
+
+    return fees;
+}
+
 // Creates a new sash contract for an organization.
-export const useBadgerFactory = (orgObj, address, chainName) => {
+export const useBadgerFactory = (isTxReady, orgObj, address, chainName) => {
     const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
 
     const args = [
@@ -61,12 +84,16 @@ export const useBadgerFactory = (orgObj, address, chainName) => {
     ]
     
     let error;
+    const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: Badger.address,
         contractInterface: Badger.abi,
         functionName: "createOrganization",
         args: args,
-        enabled: Boolean(orgObj?.contract_uri_hash),
+        enabled: Boolean(fees && isTxReady && orgObj?.contract_uri_hash),
+        overrides: {
+            gasPrice: fees?.gasPrice,
+        },
         onError(e) {
             console.error('Error creating Org: ', e);
             error = e
@@ -79,7 +106,7 @@ export const useBadgerFactory = (orgObj, address, chainName) => {
 }
 
 // Creates a badge from a cloned sash contract.
-export const useCreateBadge = (badge) => {
+export const useCreateBadge = (isTxReady, badge) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
 
     // This should also clean/check the addresses as well.
@@ -88,7 +115,7 @@ export const useCreateBadge = (badge) => {
             badge.delegates.pop(index)
         }
     })
-
+    
     const args = [
         badge.token_id,
         badge.claimable,
@@ -96,16 +123,20 @@ export const useCreateBadge = (badge) => {
         badge.signer || "",
         badge.token_uri,
         badge.payment_token || [ethers.constants.HashZero, 0],
-        badge.delegates || []
+        badge.delegates || [],
     ]
-
+    
     let error;
+    const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: badge.ethereum_address,
         contractInterface: BadgerOrganization.abi,
         functionName: "setBadge",
         args: args,
-        enabled: Boolean(badge.token_uri),
+        enabled: Boolean(fees && isTxReady && badge.token_uri),
+        overrides: {
+            gasPrice: fees?.gasPrice,
+        },
         onError(e) {
             console.error('Error creating Badge: ', e);
             error = e
@@ -144,8 +175,8 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
         }
     })
 
-    // Amounts will need to be changed to be an array of arrays for each badge.
-    // For now it's standard for just one.
+    // TODO: Amounts will need to be changed to be an array for 
+    // each badge. For now it's standard for just one.
     amounts = Array(users.length).fill(amounts)
 
     if (users.length === 1) 
@@ -162,14 +193,17 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
         args.push("0x")
 
     let error;
+    const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: orgAddress,
         contractInterface: BadgerOrganization.abi,
         functionName: method,
         args: args,
-        enabled: isTxReady,
+        enabled: Boolean(fees && isTxReady),
+        overrides: {
+            gasPrice: fees?.gasPrice,
+        },
         onError(e) {
-            console.log('Error setting delegates:', e)
             error = e
         }
     })
@@ -186,7 +220,7 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
 export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
 
-    const revoke = action === "Remove Delegate" ? true : false
+    const revoke = action === "Remove Manager" ? true : false
     const isDelegateArray = Array(delegates.length).fill(!revoke);
     const method = typeof(ids) === "number" ?  "setDelegates" : "setDelegatesBatch";
 
@@ -204,14 +238,17 @@ export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) =
     ]
 
     let error;
+    const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: orgAddress,
         contractInterface: BadgerOrganization.abi,
         functionName: method,
         args: args,
-        enabled: isTxReady,
+        enabled: Boolean(fees && isTxReady),
+        overrides: {
+            gasPrice: fees?.gasPrice,
+        },
         onError(e) {
-            console.log('Error setting delegates:', e)
             error = e
         }
     })

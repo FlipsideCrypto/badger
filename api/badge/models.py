@@ -5,12 +5,12 @@ from siwe_auth.models import validate_ethereum_address
 class Badge(models.Model):
     is_active = models.BooleanField(default=False)
 
-    name = models.CharField(max_length=128, blank=False, default=None)
-    description = models.TextField(blank=False, default=None)
+    name = models.CharField(max_length=128, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
     token_id = models.PositiveIntegerField(default=0)
-    image_hash = models.CharField(max_length=256, blank=False, default=None)
-    token_uri = models.CharField(max_length=256, blank=False, default=None)
+    image_hash = models.CharField(max_length=256, blank=True, null=True)
+    token_uri = models.CharField(max_length=256, blank=True, null=True)
 
     delegates = models.ManyToManyField('siwe_auth.Wallet', related_name='delegates', blank=True)
     users = models.ManyToManyField('siwe_auth.Wallet', blank=True, null=True)
