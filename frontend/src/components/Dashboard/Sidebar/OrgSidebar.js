@@ -146,10 +146,11 @@ const OrgSidebar = ({ address }) => {
                     {orgId && orgData?.name ?
                         orgData?.badges?.map((badge, index) => (
                             <button 
+                                key={index}
                                 className="button__unstyled"
                                 onClick={() => navigate(`/dashboard/organization/${orgData.id}/badge/${badge.id}`)}
                             >
-                                <div className="sidebar__organization" key={index}>
+                                <div className="sidebar__organization">
                                     <img 
                                         src={IPFS_GATEWAY_URL + badge.image_hash} 
                                         alt="avatar" 
@@ -164,10 +165,11 @@ const OrgSidebar = ({ address }) => {
                     :
                     userData?.organizations?.map((org, index) => (
                         <button 
+                            key={index}
                             className="button__unstyled"
                             onClick={() => navigate(`/dashboard/organization/${org.id}`)}
                         >
-                            <div className="sidebar__organization" key={index}>
+                            <div className="sidebar__organization">
                                 <img 
                                     src={IPFS_GATEWAY_URL + org.image_hash} 
                                     alt="avatar" 

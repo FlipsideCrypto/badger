@@ -16,7 +16,7 @@ const HelpCopy = (path) => {
                     <div className="sidebar__content">
                         <h5>Getting Started</h5>
                         <p>
-                            Click the Create your first Organization card to get started using Badger.
+                            Click the "Create your first Organization" card to get started using Badger.
                         </p>
                     </div>
 
