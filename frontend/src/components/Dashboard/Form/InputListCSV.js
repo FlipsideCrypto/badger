@@ -46,7 +46,7 @@ const InputListCSV = ({ label, inputList, setInputList, setAreAddressesValid }) 
     // When an input loses focus, validate the address and clear whitespace.
     const onBlur = (index) => {
         setFocused(null);
-        if (inputList[index].includes(' ')) {
+        if (inputList[index] && inputList[index].includes(' ')) {
             let newInputs = [...inputList];
             newInputs[index] = newInputs[index].trim();
             setInputList(newInputs);
