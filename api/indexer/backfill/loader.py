@@ -30,6 +30,9 @@ class Loader:
         self.contracts = {}
 
     def _handle_users(self, ethereum_address):
+        if not Web3.isChecksumAddress(ethereum_address):
+            ethereum_address = Web3.toChecksumAddress(ethereum_address)
+
         if not User.objects.filter(ethereum_address=ethereum_address).exists():
             return User.objects.create_user(
                 ethereum_address=ethereum_address)
@@ -38,8 +41,9 @@ class Loader:
 
     def _handle_badge_user_balance_changes(self, badge, user, balance):
         if balance.amount > 0:
-            badge.users.add(user)
-            badge.save()
+            if user.ethereum_address != "0x0000000000000000000000000000000000000000":
+                badge.users.add(user)
+                badge.save()
         elif user in badge.users.all():
             badge.users.remove(user)
         else:
@@ -94,6 +98,9 @@ class Loader:
                 self._handle_badge_user_balance_changes(badge, user, balance)
 
     def get_organization_contract(self, ethereum_address):
+        if not Web3.isChecksumAddress(ethereum_address):
+            ethereum_address = Web3.toChecksumAddress(ethereum_address)
+
         if ethereum_address not in self.contracts:
             self.contracts[ethereum_address] = w3.eth.contract(
                 address=ethereum_address,
@@ -103,15 +110,20 @@ class Loader:
 
     def handle_organization_created(self, event, chained_response):
         created = False
-        if not Organization.objects.filter(ethereum_address=event["args"]["organization"]).exists():
+
+        organization = event['args']['organization']
+        if not Web3.isChecksumAddress(organization):
+            organization = Web3.toChecksumAddress(organization)
+
+        if not Organization.objects.filter(ethereum_address=organization).exists():
             organization, created = Organization.objects.get_or_create(
-                ethereum_address=event["args"]["organization"],
+                ethereum_address=organization,
                 name="Loading"
             )
             response = "Organization created"
         else:
             organization = Organization.objects.get(
-                ethereum_address=event["args"]["organization"]
+                ethereum_address=organization
             )
             response = "Organization already exists"
 
@@ -128,8 +140,13 @@ class Loader:
     def handle_organization_updated(self, event, chained_response):
         # Use the organization that was created in the OrganizationCreated event
         if chained_response is not None:
+            organization = chained_response[1]['organization']
+
+            if not Web3.isChecksumAddress(organization):
+                organization = Web3.toChecksumAddress(organization)
+            
             organization = Organization.objects.get(
-                ethereum_address=chained_response[1]["organization"]
+                ethereum_address=organization
             )
         else:
             organization = Organization.objects.get(
@@ -139,8 +156,7 @@ class Loader:
         if organization is None:
             return ("Organization does not exist", event['args'])
 
-        organization_contract = self.get_organization_contract(
-            organization.ethereum_address)
+        organization_contract = self.get_organization_contract(organization.ethereum_address)
         changed = False
 
         if not organization.symbol:
