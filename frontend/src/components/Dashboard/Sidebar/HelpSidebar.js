@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 
 import { Button } from "@mui/material";
@@ -139,20 +139,18 @@ const HelpSidebar = () => {
     return (
         <div className={collapsed ? "sidebar right collapsed" : "sidebar right"}>
             <div className="sidebar__header">
-                <div>
-                    {pathname !== "/dashboard" && pathname !== "/dashboard/" &&
-                        <Button 
-                            className="button__unstyled" 
-                            onClick={() => { setCollapsed(!collapsed) }} 
-                            sx={{textTransform: 'capitalize'}}
-                        >
-                            <span style={{paddingRight: '8px', color: 'rgba(0,0,0,0.35)'}}>
-                                Help
-                            </span>
-                            <FontAwesomeIcon icon={['fal', collapseIcon]} />
-                        </Button>
-                    }
-                </div>
+                {pathname !== "/dashboard" && pathname !== "/dashboard/" &&
+                    <Button 
+                        className="button__unstyled" 
+                        onClick={() => { setCollapsed(!collapsed) }} 
+                        sx={{textTransform: 'capitalize'}}
+                    >
+                        <span style={{paddingRight: '8px'}}>
+                            Help
+                        </span>
+                        <FontAwesomeIcon icon={['fal', collapseIcon]} />
+                    </Button>
+                }
             </div>
 
             {HelpCopy(pathname)}

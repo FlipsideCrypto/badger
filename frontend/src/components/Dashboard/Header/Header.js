@@ -24,13 +24,14 @@ const Header = ({ back, actions }) => {
 
             <div className="header__actions">
                 {actions && actions.map((action, index) => (
-                    <button 
+                    <Button 
                         className="button__unstyled header__action" 
                         key={index} onClick={action.event}
+                        sx={{textTransform: 'capitalize'}}
                     >
                         <FontAwesomeIcon icon={action.icon} />
                         <span>{action.text}</span>
-                    </button>
+                    </Button>
                 ))}
             </div>
         </header>

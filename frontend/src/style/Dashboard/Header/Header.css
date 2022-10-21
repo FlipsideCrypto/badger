@@ -11,13 +11,19 @@
 
 .header svg {
     margin-right: 10px;
-    color: rgba(0, 0, 0, 0.35);
+    color: inherit;
 }
 
 .header .header__actions { 
     margin-left: auto;
+    color: rgba(0, 0, 0, 0.35);
 }
 
-.header__actions span {
-    color: rgba(0, 0, 0, 0.65);
+.header .header__actions button:hover,
+.header .header__back button:hover {
+    color: rgba(0, 0, 0, 0.65) !important;
 }
+
+/* .header__actions span {
+    color: rgba(0, 0, 0, 0.35);
+} */
