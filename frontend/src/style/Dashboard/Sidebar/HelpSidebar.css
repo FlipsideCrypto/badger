@@ -16,12 +16,27 @@
     display: grid;
 }
 
-.sidebar.right .sidebar__header div { 
-    margin-left: auto;
+.sidebar.right .sidebar__header button,
+.sidebar.right .sidebar__footer button { 
+    color: rgba(0, 0, 0, 0.35);
 }
 
-.sidebar.right .sidebar__header svg { 
-    color:rgba(0, 0, 0, .35);
+.sidebar.right .sidebar__header svg,
+.sidebar.right .sidebar__footer svg { 
+    color: inherit;
+}
+
+.sidebar.right .sidebar__header button:hover,
+.sidebar.right .sidebar__header button:active,
+.sidebar.right .sidebar__header button:focus,
+.sidebar.right .sidebar__footer button:hover,
+.sidebar.right .sidebar__footer button:active,
+.sidebar.right .sidebar__footer button:focus { 
+    color: rgba(0, 0, 0, .65);
+}
+
+.sidebar.right h5 {
+    color: rgba(0, 0, 0, .65);
 }
 
 .sidebar.right p { 
@@ -42,10 +57,6 @@
     margin-right: 20px;
 }
 
-.sidebar.right .sidebar__footer svg { 
-    color:rgba(0, 0, 0, .35);
-}
-
 .sidebar.right.collapsed { 
     width: fit-content;
     padding-right: 30px;
@@ -60,5 +71,5 @@
 .sidebar.right.collapsed .sidebar__content, 
 .sidebar.right.collapsed .sidebar__statuses,
 .sidebar.right.collapsed .sidebar__footer { 
-        display: none; 
+    display: none; 
 }

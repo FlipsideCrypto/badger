@@ -1,5 +1,5 @@
 import { useEffect, useContext, useState, useCallback } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useEnsAvatar, useNetwork, useSwitchNetwork } from "wagmi";
 
 import { useConnectModal } from "@rainbow-me/rainbowkit"
@@ -32,18 +32,9 @@ const OrgSidebar = ({ address }) => {
     const { userData, isAuthenticated, tryAuthentication } = useContext(UserContext);
     const { orgData } = useContext(OrgContext);
 
-    // kinda hacky way to get our current location.
-    const path = window.location.pathname
+    const { pathname: path } = useLocation();
+    // kinda hacky way to get our current location outside of Route.
     const orgId = path.includes('organization') && !path.includes('organization/new') ? orgData?.id : null;
-
-    // Dual purpose connect button. If we're not connected, connect with rainbowkit else if 
-    // we are connected, use it to kick off the SIWE process in event of a cancelled signature.
-    const onConnect = () => {
-        if (!address)
-            openConnectModal();
-        else
-            tryAuthentication();
-    }
 
     // If chain is not in the keys of current badger addresses, then switch network to the 
     // current primary chain. If programmatic network switching does not work, then change 
@@ -55,6 +46,7 @@ const OrgSidebar = ({ address }) => {
         }, [chains, switchNetwork]
     )
 
+    // If wrong network is detected, then prompt a network switch.
     useEffect(() => {
         setIsWrongNetwork(chain?.name !== PRIMARY_PRODUCTION_CHAIN)
 
@@ -68,28 +60,35 @@ const OrgSidebar = ({ address }) => {
     // Opens the connect modal on landing if connection has not already been
     // established in prior session.
     useEffect(() => {
-        if (openConnectModal)
+        if (openConnectModal && !address)
             openConnectModal()
-    }, [openConnectModal])
+    }, [openConnectModal, address])
 
     return (
         <div className="sidebar left">
             {/* Logged out user header */}
-            {!isAuthenticated && !isWrongNetwork &&
-                <button onClick={() => onConnect()} style={{ marginBottom: '20px' }}>
-                    {address ? "Sign In" : "Connect Wallet"}
+            {!address && 
+                <button onClick={() => openConnectModal()} style={{ marginBottom: '20px' }}>
+                    Connect Wallet
                 </button>
             }
 
             {/* Wrong network header */}
-            {isAuthenticated && isWrongNetwork &&
+            {isWrongNetwork && address &&
                 <button onClick={() => onSwitchNetworkRequest()} style={{ marginBottom: '20px' }}>
                     {`Switch to ${PRIMARY_PRODUCTION_CHAIN}`}
                 </button>
             }
 
+            {/* Unauthenticated user header */}
+            {address && !isAuthenticated && !isWrongNetwork &&
+                <button onClick={() => tryAuthentication()} style={{ marginBottom: '20px' }}>
+                    Sign In
+                </button>
+            }
+
             {/* Logged in user header */}
-            {!orgId && isAuthenticated && !isWrongNetwork &&
+            {address && !orgId && isAuthenticated && !isWrongNetwork &&
                 <>
                     <div className="sidebar__header">
                         <img src={ensAvatar || PLACEHOLDER_AVATAR} alt="avatar" />
@@ -146,38 +145,43 @@ const OrgSidebar = ({ address }) => {
                 <div className="sidebar__organizations">
                     {orgId && orgData?.name ?
                         orgData?.badges?.map((badge, index) => (
-                            <div className="sidebar__organization" key={index}>
-                                <img 
-                                    src={IPFS_GATEWAY_URL + badge.image_hash} 
-                                    alt="avatar" 
-                                    onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
-                                />
-                                <button 
-                                    className="button__unstyled"
-                                    onClick={() => navigate(`/dashboard/organization/${orgData.id}/badge/${badge.id}`)}
-                                >
-                                    {badge.name}
-                                </button>
-                            </div>
+                            <button 
+                                className="button__unstyled"
+                                onClick={() => navigate(`/dashboard/organization/${orgData.id}/badge/${badge.id}`)}
+                            >
+                                <div className="sidebar__organization" key={index}>
+                                    <img 
+                                        src={IPFS_GATEWAY_URL + badge.image_hash} 
+                                        alt="avatar" 
+                                        onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
+                                    />
+                                    <div>
+                                        {badge.name}
+                                    </div>
+                                </div>
+                            </button>
                         ))
                     :
                     userData?.organizations?.map((org, index) => (
-                        <div className="sidebar__organization" key={index}>
-                            <img 
-                                src={IPFS_GATEWAY_URL + org.image_hash} 
-                                alt="avatar" 
-                                onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
-                            />
-                            <button 
-                                className="button__unstyled"
-                                onClick={() => navigate(`/dashboard/organization/${org.id}`)}
-                            >
-                                {org.name}
-                            </button>
-                        </div>
+                        <button 
+                            className="button__unstyled"
+                            onClick={() => navigate(`/dashboard/organization/${org.id}`)}
+                        >
+                            <div className="sidebar__organization" key={index}>
+                                <img 
+                                    src={IPFS_GATEWAY_URL + org.image_hash} 
+                                    alt="avatar" 
+                                    onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
+                                />
+                                <div>
+                                    {org.name}
+                                </div>        
+                            </div>
+                        </button>
                 ))}
                 </div>
             }
+
             {/* Logout button */}
             <Logout />
         </div>
