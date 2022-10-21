@@ -21,7 +21,7 @@ export const holderHeadRows = {
         width: "10%"
     },
     delegate: {
-        label: "Delegate",
+        label: "Manager",
         sortable: true,
         method: "",
         align: "center",

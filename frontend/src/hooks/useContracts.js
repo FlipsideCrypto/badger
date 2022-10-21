@@ -220,7 +220,7 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
 export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
 
-    const revoke = action === "Remove Delegate" ? true : false
+    const revoke = action === "Remove Manager" ? true : false
     const isDelegateArray = Array(delegates.length).fill(!revoke);
     const method = typeof(ids) === "number" ?  "setDelegates" : "setDelegatesBatch";
 

@@ -5,20 +5,24 @@ pragma solidity ^0.8.16;
 /// @dev Core dependencies.
 import { BadgerScoutInterface } from "./interfaces/BadgerScoutInterface.sol";
 import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol"; 
+import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import { ERC1155HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
 import { ERC721HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
 
 /// @dev Helpers.
 import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import { ERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol";
 
 /// @dev Supported interfaces.
 import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import { IERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol";
 import { IERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol";
 import { IERC721ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable.sol";
 
 contract BadgerScout is 
       BadgerScoutInterface
     , OwnableUpgradeable
+    , ERC1155Upgradeable
     , ERC1155HolderUpgradeable 
     , ERC721HolderUpgradeable
 { 
@@ -58,26 +62,29 @@ contract BadgerScout is
 
     /// @dev Event that announces when the status of a Badge is updated.
     event BadgeUpdated(
-        Badge indexed badge
+          uint256 indexed badgeId
+        , uint256 indexed config
+        , bytes32 indexed paymentKey
+        , uint256 amount 
     );
 
     /// @dev Event that announces when a Badge is funded.
     event BadgeForfeited(
-          Badge indexed badge
+          uint256 indexed badgeId
         , uint256 indexed amount
         , bytes indexed data
     );
 
     /// @dev Event that announces when the state of a Delegate changes.
     event DelegateUpdated(
-          Badge indexed badge
+          uint256 indexed badgeId
         , address indexed delegate
         , bool indexed isDelegate
     );
 
     /// @dev Event that announces when a payment token is deposited for a Badge.
     event PaymentTokenDeposited(
-          Badge indexed badge
+          uint256 indexed badgeId
         , address indexed payer
         , uint256 indexed amount
     );
@@ -196,11 +203,16 @@ contract BadgerScout is
 
         /// @dev Set the signer of the Badge.
         _setSigner(
-              _id
+            _id
             , _signer
         );
         
-        badge.uri = _uri;
+        /// @dev Set the URI of the Badge.
+        _setBadgeURI(
+              _id
+            , _uri
+        );    
+
         badge.paymentToken = _paymentToken;
 
         /// @dev Update the state of all the delegates.
@@ -217,13 +229,18 @@ contract BadgerScout is
             )] = true;
 
             emit DelegateUpdated(
-                  badge
+                  _id
                 , _delegates[i]
                 , true
             );
         }
 
-        emit BadgeUpdated(badge);
+        emit BadgeUpdated(
+              _id
+            , badge.config
+            , badge.paymentToken.paymentKey
+            , badge.paymentToken.amount
+        );
     }
 
     /**
@@ -250,7 +267,12 @@ contract BadgerScout is
             , _claimable
         );
 
-        emit BadgeUpdated(badges[_id]);
+        emit BadgeUpdated(
+            _id
+            , badges[_id].config
+            , badges[_id].paymentToken.paymentKey
+            , badges[_id].paymentToken.amount
+        );
     }
 
     /**
@@ -277,7 +299,12 @@ contract BadgerScout is
             , _accountBound
         );
 
-        emit BadgeUpdated(badges[_id]);
+        emit BadgeUpdated(
+              _id
+            , badges[_id].config
+            , badges[_id].paymentToken.paymentKey
+            , badges[_id].paymentToken.amount
+        );
     }
 
     /**
@@ -303,7 +330,12 @@ contract BadgerScout is
             , _signer
         );
     
-        emit BadgeUpdated(badges[_id]);
+        emit BadgeUpdated(
+              _id
+            , badges[_id].config
+            , badges[_id].paymentToken.paymentKey
+            , badges[_id].paymentToken.amount
+        );
     }
 
     /**
@@ -329,11 +361,11 @@ contract BadgerScout is
             , "BadgerScout::setBadgeURI: URI must be set."
         );
 
-        Badge storage badge = badges[_id];
-
-        badge.uri = _uri;
-
-        emit BadgeUpdated(badge);
+        /// @dev Set the URI of the Badge.    
+        _setBadgeURI(
+              _id
+            , _uri
+        );
     }
 
     /**
@@ -356,7 +388,12 @@ contract BadgerScout is
 
         badge.paymentToken = _paymentToken;
 
-        emit BadgeUpdated(badge);
+        emit BadgeUpdated(
+                _id
+            , badge.config
+            , badge.paymentToken.paymentKey
+            , badge.paymentToken.amount
+        );
     }
 
     /**
@@ -383,8 +420,6 @@ contract BadgerScout is
             , "BadgerScout::setDelegates: _delegates and _isDelegate arrays must be the same length."
         );
 
-        Badge storage badge = badges[_id];
-
         /// @dev Loop through the delegates and update their status.        
         for (
             uint256 i; 
@@ -399,7 +434,7 @@ contract BadgerScout is
             )] = _isDelegate[i];
 
             emit DelegateUpdated(
-                  badge
+                  _id
                 , _delegates[i]
                 , _isDelegate[i]
             );
@@ -448,7 +483,7 @@ contract BadgerScout is
             )] = _isDelegate[i];
 
             emit DelegateUpdated(
-                  badges[id]
+                  id
                 , _delegates[i]
                 , _isDelegate[i]
             );
@@ -586,8 +621,31 @@ contract BadgerScout is
         internal
         virtual
     {
-        badges[_id].config &= 0x0000000000000000000000000000000000000000000000000000000000000003;
-        badges[_id].config |= uint256(uint160(_signer)) << 2;
+        /// @dev Clear the signer slot.
+        badges[_id].config &= ~(type(uint160).max << 2);
+
+        /// @dev Set the signer slot.
+        badges[_id].config |= (uint256(uint160(_signer)) << 2);
+    }
+
+    /**
+     * @notice Sets the URI for the badge and emits event that URI was updated.
+     * @param _id The ID of the badge.
+     * @param _uri The URI of the badge.
+     */
+    function _setBadgeURI(
+          uint256 _id
+        , string memory _uri
+    )
+        internal
+        virtual
+    {
+        badges[_id].uri = _uri;
+
+        emit URI(
+              _uri
+            , _id
+        );
     }
 
     /**
@@ -629,7 +687,7 @@ contract BadgerScout is
         badgePaymentKeyToFunded[paymentKey] += _amount;
 
         emit PaymentTokenDeposited(
-              badges[_badgeId]
+              _id
             , _from
             , _amount
         );
@@ -877,5 +935,30 @@ contract BadgerScout is
     {
         (bool success, bytes memory returnData) = _to.call{value: _value}(_data);
         require(success, string(returnData));
+    }
+
+    /**
+     * See {IERC165Upgradeable.supportsInterface}
+     */
+    function supportsInterface(
+        bytes4 _interfaceId
+    )
+        override(
+              ERC1155Upgradeable
+            , ERC1155ReceiverUpgradeable
+        )
+        public
+        virtual
+        view
+        returns (
+            bool
+        )
+    {
+        return (
+               _interfaceId == type(IERC1155Upgradeable).interfaceId 
+            || _interfaceId == type(IERC1155ReceiverUpgradeable).interfaceId
+            || _interfaceId == type(IERC721ReceiverUpgradeable).interfaceId
+            || super.supportsInterface(_interfaceId)
+        );
     }
 }

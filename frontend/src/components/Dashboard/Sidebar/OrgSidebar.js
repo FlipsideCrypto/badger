@@ -29,7 +29,7 @@ const OrgSidebar = ({ address }) => {
     const [ isWrongNetwork, setIsWrongNetwork ] = useState(false);
 
     const navigate = useNavigate();
-    const { userData, authenticationError, tryAuthentication } = useContext(UserContext);
+    const { userData, isAuthenticated, tryAuthentication } = useContext(UserContext);
     const { orgData } = useContext(OrgContext);
 
     const { pathname: path } = useLocation();
@@ -75,21 +75,21 @@ const OrgSidebar = ({ address }) => {
     return (
         <div className="sidebar left">
             {/* Logged out user header */}
-            {!orgId && authenticationError && !isWrongNetwork &&
+            {!isAuthenticated && !isWrongNetwork &&
                 <button onClick={() => onConnect()} style={{ marginBottom: '20px' }}>
-                    Connect Wallet
+                    {address ? "Sign In" : "Connect Wallet"}
                 </button>
             }
 
             {/* Wrong network header */}
-            {isWrongNetwork &&
+            {isAuthenticated && isWrongNetwork &&
                 <button onClick={() => onSwitchNetworkRequest()} style={{ marginBottom: '20px' }}>
                     {`Switch to ${PRIMARY_PRODUCTION_CHAIN}`}
                 </button>
             }
 
             {/* Logged in user header */}
-            {address && !orgId && !authenticationError && !isWrongNetwork &&
+            {!orgId && isAuthenticated && !isWrongNetwork &&
                 <>
                     <div className="sidebar__header">
                         <img src={ensAvatar || PLACEHOLDER_AVATAR} alt="avatar" />
@@ -108,7 +108,7 @@ const OrgSidebar = ({ address }) => {
             }
 
             {/* Org level user header */}
-            {orgId && orgData?.name && !isWrongNetwork &&
+            {orgId && orgData?.name && !isWrongNetwork && isAuthenticated &&
                 <>
                     <div className="sidebar__header">
                         <img 
@@ -119,6 +119,17 @@ const OrgSidebar = ({ address }) => {
                         <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
                             {orgData?.name}
                         </Link>
+                        <div className="sidebar__header__subtext">
+                            <div>{orgData?.chain}</div>
+                            <a 
+                                className="link-wrapper"
+                                href={`https://polygonscan.com/address/${orgData?.ethereum_address}`}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                {sliceAddress(orgData?.ethereum_address)}
+                            </a>
+                        </div>
                     </div>
 
                     <div className="sidebar__category">
@@ -131,23 +142,24 @@ const OrgSidebar = ({ address }) => {
             }
 
             {/* List of organizations or badges */}
-            <div className="sidebar__organizations">
-                {orgId && orgData?.name ?
-                    orgData?.badges?.map((badge, index) => (
-                        <div className="sidebar__organization" key={index}>
-                            <img 
-                                src={IPFS_GATEWAY_URL + badge.image_hash} 
-                                alt="avatar" 
-                                onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
-                            />
-                            <button 
-                                className="button__unstyled"
-                                onClick={() => navigate(`/dashboard/organization/${orgData.id}/badge/${badge.id}`)}
-                            >
-                                {badge.name}
-                            </button>
-                        </div>
-                    ))
+            {isAuthenticated &&
+                <div className="sidebar__organizations">
+                    {orgId && orgData?.name ?
+                        orgData?.badges?.map((badge, index) => (
+                            <div className="sidebar__organization" key={index}>
+                                <img 
+                                    src={IPFS_GATEWAY_URL + badge.image_hash} 
+                                    alt="avatar" 
+                                    onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
+                                />
+                                <button 
+                                    className="button__unstyled"
+                                    onClick={() => navigate(`/dashboard/organization/${orgData.id}/badge/${badge.id}`)}
+                                >
+                                    {badge.name}
+                                </button>
+                            </div>
+                        ))
                     :
                     userData?.organizations?.map((org, index) => (
                         <div className="sidebar__organization" key={index}>
@@ -164,7 +176,8 @@ const OrgSidebar = ({ address }) => {
                             </button>
                         </div>
                 ))}
-            </div>
+                </div>
+            }
             {/* Logout button */}
             <Logout />
         </div>
