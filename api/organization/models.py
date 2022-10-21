@@ -13,7 +13,7 @@ class Organization(models.Model):
     ethereum_address = models.CharField(
         max_length=50, blank=False, default=None, validators=[validate_ethereum_address])
 
-    name = models.CharField(max_length=128, blank=False, default=None)
+    name = models.CharField(max_length=128, blank=True, null=True)
     symbol = models.CharField(max_length=52, blank=True, null=True)
     description = models.TextField(max_length=4000, blank=True, null=True)
 
