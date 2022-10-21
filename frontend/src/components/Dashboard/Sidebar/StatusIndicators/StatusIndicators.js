@@ -19,7 +19,7 @@ const StatusIndicators = () => {
             status: userData?.organizations?.length > 0 ? 'can' : 'cannot'
         },
         { 
-            name: 'Can manage Delegates',
+            name: 'Can manage Managers',
             status: userData?.organizations?.[0]?.badges?.length > 0 ? 'can' : 'pending'
         },
         { 

@@ -12,7 +12,6 @@ import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvide
 import { postBadgeRequest, postIPFSImage, postIPFSMetadata } from "@utils/api_requests";
 import { useCreateBadge } from "@hooks/useContracts";
 
-// TODO: Clean and validate badgeDelegates array
 // TODO: Move all state vars into a reducer?
 const BadgeForm = () => {
     const [ badgeName, setBadgeName ] = useState("");
@@ -226,14 +225,14 @@ const BadgeForm = () => {
                 />
 
             <InputListCSV
-                label={"Delegates"}
+                label={"Managers"}
                 inputList={badgeDelegates}
                 setInputList={setBadgeDelegates}
                 setAreAddressesValid={setAreAddressesValid}
             />
 
             <ActionBar help={
-                'After creating a badge, you (or your delegates) can issue badges to team members.'
+                'After creating a badge, you (or your managers) can issue badges to team members.'
             } actions={actions} />
         </div>
     )

@@ -56,12 +56,12 @@ const Badge = () => {
         event: () => setIsManage(!isManage)
     }]
 
-    // Limit actions for delegates.
+    // Limit actions for Managers.
     const selectActions = isOwner ? [
         "Mint",
         "Revoke",
-        "Add Delegate",
-        "Remove Delegate"
+        "Add Manager",
+        "Remove Manager"
     ] : ["Mint", "Revoke"]
 
     // When select option changes, set the controlled value and update the
@@ -114,11 +114,11 @@ const Badge = () => {
         if (!badgeObj.delegates) badge.delegates = [];
         
         membersToUpdate.forEach(member => {
-            if (selectedAction === "Remove Delegate") {
+            if (selectedAction === "Remove Manager") {
                 const index = badgeObj.delegates.findIndex(delegate => delegate.ethereum_address === member);
                 badgeObj.delegates.splice(index, 1);
             }
-            else if (selectedAction === "Add Delegate") {
+            else if (selectedAction === "Add Manager") {
                 badgeObj.delegates.push({ethereum_address: member});
             }
         })
@@ -126,7 +126,7 @@ const Badge = () => {
         const response = await putBadgeRolesRequest(badgeObj, orgId)
         if (response.error) {
             setError({
-                label: 'Adding delegates to database failed',
+                label: 'Adding managers to database failed',
                 message: response.error
             });
         }
@@ -212,7 +212,7 @@ const Badge = () => {
                         />
                         <IconButton
                             icon={['fal', 'arrow-right']} 
-                            text="UPDATE MEMBERS" 
+                            text={txMethod === "manageOwnership" ? "UPDATE MEMBERS" : "UPDATE MANAGERS"}
                             onClick={() => setTxCalled(true)}
                             style={{margin: "20px 0px 20px auto"}}
                             loading={txPending}
