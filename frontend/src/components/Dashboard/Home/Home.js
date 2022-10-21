@@ -73,15 +73,6 @@ const Home = () => {
 
                 <div className="home__cards__column">
                     <Card>
-                        {/* <Link className="link-wrapper home-link" to="/dashboard/organization/new">
-                            <div className="home__card__content">
-                                <FontAwesomeIcon icon={['fal', 'sitemap']} />
-                                <div>
-                                    <h2>Create your first Organization</h2>
-                                    <p>It only takes a few seconds to create your first Organization and be on your way. Badger isn't like your normal tool that takes hours to setup.</p>
-                                </div>
-                            </div>
-                        </Link> */}
                         <button 
                             className="button__unstyled link-wrapper home-link" 
                             onClick={() => navigate("/dashboard/organization/new")} 
