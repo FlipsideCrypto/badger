@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from django_apscheduler.jobstores import DjangoJobStore
@@ -37,9 +39,13 @@ class JobManager:
         # Backfill factories every minute
         # Is running on a minute timer as this is a backfill job and 
         # not a listener job
+
+        minutes = "*/1"
+        if settings.DEBUG:
+            minutes = "*/59"
         scheduler.add_job(
             backfill_factories,
-            trigger=CronTrigger(minute="*/1"),
+            trigger=CronTrigger(minute=minutes),
             id="backfill_factories",
             max_instances=1,
             replace_existing=True,
