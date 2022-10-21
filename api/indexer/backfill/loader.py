@@ -118,7 +118,6 @@ class Loader:
         if not Organization.objects.filter(ethereum_address=organization).exists():
             organization, created = Organization.objects.get_or_create(
                 ethereum_address=organization,
-                name="Loading"
             )
             response = "Organization created"
         else:
@@ -139,50 +138,38 @@ class Loader:
 
     def handle_organization_updated(self, event, chained_response):
         # Use the organization that was created in the OrganizationCreated event
+        address = event['address']
         if chained_response is not None:
-            organization = chained_response[1]['organization']
+            address = chained_response[1]["organization"]
 
-            if not Web3.isChecksumAddress(organization):
-                organization = Web3.toChecksumAddress(organization)
-            
-            organization = Organization.objects.get(
-                ethereum_address=organization
-            )
-        else:
-            organization = Organization.objects.get(
-                ethereum_address=event["address"]
-            )
+        if not Web3.isChecksumAddress(address):
+            address = Web3.toChecksumAddress(address)
+
+        organization, created = Organization.objects.get_or_create(
+            ethereum_address=address
+        )
 
         if organization is None:
             return ("Organization does not exist", event['args'])
 
         organization_contract = self.get_organization_contract(organization.ethereum_address)
-        changed = False
 
-        if not organization.symbol:
-            organization.symbol = organization_contract.functions.symbol().call()
+        organization.symbol = organization_contract.functions.symbol().call()
 
-            uri = organization_contract.functions.contractURI().call()
-            organization.contract_uri_hash = uri.split("/ipfs/")[1]
-            changed = True
+        uri = organization_contract.functions.contractURI().call()
+        organization.contract_uri_hash = uri.split("/ipfs/")[1]
+        organization.save()
 
-        if organization.contract_uri_hash and (
-            organization.name == "Loading"
-            or not organization.description
-            or not organization.image_hash
-        ):
-            url = f"{settings.PINATA_INDEXER_URL}{organization.contract_uri_hash}"
+        url = f"{settings.PINATA_INDEXER_URL}{organization.contract_uri_hash}"
 
-            response = requests.get(url)
-            if response.status_code == 200:
-                data = response.json()
-                organization.name = data["name"]
-                organization.description = data["description"]
-                organization.image_hash = data["image"].split("/ipfs/")[1]
-                changed = True
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            organization.name = data["name"]
+            organization.description = data["description"]
+            organization.image_hash = data["image"].split("/ipfs/")[1]
 
-        if changed:
-            organization.save()
+        organization.save()
 
         return ("Organization details updated", event['args'])
 

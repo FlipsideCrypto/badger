@@ -35,9 +35,12 @@ class Backfill:
         events = self.transformer.handle_events(events)
         event_responses = self.loader.handle_events(events)
 
+        # refresh queryset from database
+        queryset = queryset.model.objects.filter(pk__in=[contract.pk for contract in queryset])
+
         for contract in queryset:
             contract.last_block = last_block
-            contract.save() 
+            contract.save()
 
         if settings.DEBUG:
             for response in event_responses:
