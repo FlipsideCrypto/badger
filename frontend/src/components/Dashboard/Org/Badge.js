@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useAccount } from "wagmi"
 
 import Header from "@components/Dashboard/Header/Header";
 import HolderTable from "@components/Table/HolderTable";
@@ -18,6 +18,7 @@ import "@style/Dashboard/Org/Badge.css";
 const Badge = () => {
     const navigate = useNavigate();
     const { orgId, badgeId } = useParams();
+    const { address } = useAccount();
     const { orgData, setOrgData } = useContext(OrgContext);
     const { setError } = useContext(ErrorContext);
 
@@ -31,9 +32,10 @@ const Badge = () => {
     
     const badgeIndex = orgData?.badges?.findIndex(badge => badge.id === parseInt(badgeId));
     const [ badge, setBadge ] = useState(orgData?.badges?.[badgeIndex] || {});
+    const isOwner = orgData?.owner?.ethereum_address === address;
 
     const setDelegates = useSetDelegates(
-        txCalled,
+        txCalled && isOwner,
         orgData?.ethereum_address,          // orgAddress
         badge?.token_id,                    // tokenId array
         membersToUpdate,                    // address array
@@ -54,12 +56,13 @@ const Badge = () => {
         event: () => setIsManage(!isManage)
     }]
 
-    const selectActions = [
+    // Limit actions for delegates.
+    const selectActions = isOwner ? [
         "Mint",
         "Revoke",
         "Add Delegate",
         "Remove Delegate"
-    ]
+    ] : ["Mint", "Revoke"]
 
     // When select option changes, set the controlled value and update the
     // method to determine function flow and to send to be further parsed
