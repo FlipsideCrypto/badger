@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Card from "@components/Card/Card"
+
 import { HOME_LINKS } from "@static/constants/links";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 
@@ -21,12 +22,6 @@ const Home = () => {
                 Badger is building in the open and did not have a beta phase. These contracts are unaudited. If you have any struggles or feedback, please reach out to <strong>@danner</strong> or <strong>@chance</strong> on <a href="https://www.farcaster.xyz/" target="_blank" rel="noreferrer">Farcaster</a>.
             </p>
         </>,
-    }
-
-    const onEnter = () => {
-        authenticationError ?
-            tryAuthentication()
-            : navigate("/dashboard/organization/new")
     }
 
     return (
@@ -84,7 +79,11 @@ const Home = () => {
                                 </div>
                             </div>
                         </Link> */}
-                        <button className="button__unstyled link-wrapper home-link" onClick={() => onEnter()} style={{ fontWeight: "400" }}>
+                        <button
+                            className="button__unstyled link-wrapper home-link"
+                            onClick={() => navigate("/dashboard/organization/new")}
+                            style={{ fontWeight: "400" }}
+                        >
                             <div className="home__card__content">
                                 <FontAwesomeIcon icon={['fal', 'sitemap']} />
                                 {userData?.organizations?.length > 0 ?
