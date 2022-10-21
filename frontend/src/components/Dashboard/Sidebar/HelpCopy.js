@@ -112,7 +112,7 @@ const HelpCopy = (path) => {
             return (
                 <>
                     <div className="sidebar__content">
-                        <h5></h5>
+
                     </div>
                     <div className="sidebar__statuses">
                         <StatusIndicators statuses={statuses} />

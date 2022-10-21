@@ -1,11 +1,10 @@
 import { useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 
-import { Button } from "@mui/material";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { postFeedbackRequest } from "@utils/api_requests";
+
+import ActionButton from "@components/Button/ActionButton";
 import HelpCopy from "./HelpCopy";
 
 import "@style/Dashboard/Sidebar/Sidebar.css";
@@ -37,16 +36,13 @@ const HelpSidebar = () => {
     return (
         <div className={collapsed ? "sidebar right collapsed" : "sidebar right"}>
             <div className="sidebar__header">
-                <Button 
-                    className="button__unstyled" 
-                    onClick={() => { setCollapsed(!collapsed) }} 
-                    sx={{textTransform: 'capitalize'}}
-                >
-                    <span style={{paddingRight: '8px'}}>
-                        Help
-                    </span>
-                    <FontAwesomeIcon icon={['fal', collapseIcon]} />
-                </Button>
+                <ActionButton 
+                    onClick={() => { setCollapsed(!collapsed) }}
+                    sx={{marginLeft: '-8px !important'}}
+                    beforeText="Help"
+                    icon={['fal', collapseIcon]}
+                    iconStyle={{marginLeft: '8px'}}
+                />
             </div>
 
             {HelpCopy(pathname)}
@@ -54,13 +50,16 @@ const HelpSidebar = () => {
             <div className="sidebar__footer">
                 <p>Do you like this page?</p>
 
-                <Button onClick={() => { onFeedbackSubmission({ liked: true }) }}>
-                    <FontAwesomeIcon icon={['fal', 'thumbs-up']} />
-                </Button>
-
-                <Button onClick={() => { onFeedbackSubmission({ liked: false }) }}>
-                    <FontAwesomeIcon icon={['fal', 'thumbs-down']} />
-                </Button>
+                <ActionButton 
+                    onClick={() => { onFeedbackSubmission({ liked: true }) }}
+                    icon={['fal', 'thumbs-up']}
+                    sx={{minWidth: '36px'}}
+                />
+                <ActionButton 
+                    onClick={() => { onFeedbackSubmission({ liked: false }) }}
+                    icon={['fal', 'thumbs-down']}
+                    sx={{minWidth: '36px'}}
+                />
             </div>
         </div>
     )

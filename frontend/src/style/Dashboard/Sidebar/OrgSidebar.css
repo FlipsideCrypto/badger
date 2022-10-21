@@ -66,15 +66,10 @@
 
 .sidebar__category {
     margin-bottom: 16px;
+    margin-right: 16px;
     display: grid;
     grid-template-columns: 10fr 2fr;
     align-items: center;
-}
-
-.sidebar__category svg {
-    margin-left: auto;
-    color: rgba(0, 0, 0, .35);
-    margin-right: 20px;
 }
 
 .sidebar__organizations button {

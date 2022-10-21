@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useDisconnect } from "wagmi";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "@mui/material"
+import ActionButton from "@components/Button/ActionButton";
 
 import "@style/Dashboard/Sidebar/Logout/Logout.css";
 
@@ -16,14 +15,13 @@ const Logout = () => {
     }
 
     return (
-        <Button 
-            className="logout button__unstyled" 
+        <ActionButton 
+            className="logout" 
             onClick={() => onDisconnect()}
+            afterText="Logout"
             sx={{textTransform: 'capitalize'}}
-        >
-            <FontAwesomeIcon icon={['fal', 'sign-out']} />
-            <span>Logout</span>
-        </Button>
+            icon={['fal', 'sign-out']}
+        />
     )
 }
 

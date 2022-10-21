@@ -3,9 +3,9 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useEnsAvatar, useNetwork, useSwitchNetwork } from "wagmi";
 
 import { useConnectModal } from "@rainbow-me/rainbowkit"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Logout from "./Logout/Logout";
+import ActionButton from "@components/Button/ActionButton";
 
 import { sliceAddress } from "@utils/helpers";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
@@ -99,9 +99,11 @@ const OrgSidebar = ({ address }) => {
 
                     <div className="sidebar__category">
                         <h5>Organizations</h5>
-                        <Link className="link-wrapper" to="/dashboard/organization/new">
-                            <FontAwesomeIcon icon={['fal', 'plus']} />
-                        </Link>
+                        <ActionButton 
+                            onClick={() => navigate("/dashboard/organization/new")}
+                            icon={['fal', 'plus']}
+                            sx={{minWidth: '36px'}}
+                        />
                     </div>
                 </>
             }
@@ -120,7 +122,7 @@ const OrgSidebar = ({ address }) => {
                         </Link>
                         <div className="sidebar__header__subtext">
                             <div>{orgData?.chain}</div>
-                            <a 
+                            <a
                                 className="link-wrapper"
                                 href={`https://polygonscan.com/address/${orgData?.ethereum_address}`}
                                 target="_blank"
@@ -133,9 +135,11 @@ const OrgSidebar = ({ address }) => {
 
                     <div className="sidebar__category">
                         <h5>Badges</h5>
-                        <Link className="link-wrapper" to={`/dashboard/organization/${orgId}/badge/new`}>
-                            <FontAwesomeIcon icon={['fal', 'plus']} />
-                        </Link>
+                        <ActionButton 
+                            onClick={() => navigate(`/dashboard/organization/${orgId}/badge/new`)}
+                            icon={['fal', 'plus']}
+                            sx={{minWidth: '36px'}}
+                        />
                     </div>
                 </>
             }
