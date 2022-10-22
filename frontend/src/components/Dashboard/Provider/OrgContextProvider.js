@@ -1,4 +1,4 @@
-import { useState, createContext, useContext, useEffect } from "react"
+import { useState, createContext, useContext, useEffect, useCallback } from "react"
 import { useLocation } from "react-router-dom";
 import { getOrgRequest } from "@utils/api_requests";
 import { UserContext } from "./UserContextProvider";
@@ -7,28 +7,13 @@ export const OrgContext = createContext();
 
 const OrgContextProvider = ({ children }) => {
     const [ orgData, setOrgData ] = useState();
-    const { isAuthenticated } = useContext(UserContext);
+    const [ orgDataFor, setOrgDataFor ] = useState();
+    const { userData, authenticatedAddress, isAuthenticated } = useContext(UserContext);
     const [ currentOrgId, setCurrentOrgId ] = useState();
     const { pathname } = useLocation();
 
-    // If we have a currentOrgId and the orgData is not that org's,
-    // fetch it and set orgData.
-    useEffect(() => {
-        async function getData() {
-            let response = await getOrgRequest(currentOrgId);
-            if (response?.id) setOrgData(response);
-        }
-
-        if (
-            isAuthenticated &&
-            currentOrgId &&
-            orgData?.id !== parseInt(currentOrgId)
-        ) {
-            getData();
-        }
-    }, [currentOrgId, orgData, isAuthenticated])
-
-    // Fetches the appropriate badge based on the current org id in the URL.
+    // When the path changes, check if the path is for an organization. If so, then
+    // set the current org id to the id of the organization.
     useEffect(() => {
         const path = pathname.split('/');
         const orgId = path.includes('organization') && path[3] !== "new" ? path[3] : null;
@@ -37,6 +22,33 @@ const OrgContextProvider = ({ children }) => {
             setCurrentOrgId(orgId);
         }
     }, [pathname, currentOrgId, setCurrentOrgId])
+
+
+    // If we have a currentOrgId and an authenticated address, parse the 
+    // org data from the user data. If the org data is not owned by the user, 
+    // then parse only the badges that they are a delegate or holder of.
+    useEffect(() => {
+        if (!currentOrgId || !authenticatedAddress) return;
+        
+        let org = userData?.organizations.find(
+            org => org.id === parseInt(currentOrgId)
+        );
+
+        // if the user is not the owner of this org then we need to parse
+        // out the badges they are not a delegate or holder of.
+        if (org && org.owner.ethereum_address !== authenticatedAddress) {
+            // Find the badges in org that are in userData.badges
+            let badges = org.badges.filter(badge => {
+                return userData?.badges.find(
+                    userBadge => userBadge.id === badge.id
+                )
+            })
+
+            org.badges = badges;
+        }
+        setOrgData(org);
+        
+    }, [userData, authenticatedAddress, currentOrgId])
 
     return (
         <OrgContext.Provider value={{ orgData, setOrgData, currentOrgId, setCurrentOrgId }}>
