@@ -111,7 +111,8 @@ const UserContextProvider = ({ children, signer }) => {
     return (
         <UserContext.Provider value={{
             userData, 
-            setUserData, 
+            setUserData,
+            authenticatedAddress,
             isAuthenticated, 
             tryAuthentication,
         }}>
