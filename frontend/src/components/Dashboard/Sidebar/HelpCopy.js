@@ -105,14 +105,16 @@ const HelpCopy = (path) => {
             )
         case pathArray[3] !== 'new': // Org Detail
             statuses = [{
-                name: "",
+                name: "Ready to Create Badges",
                 status: "can"
             }]
 
             return (
                 <>
                     <div className="sidebar__content">
-
+                        <h5>What is a Badge?</h5>
+                        <p>Badges are represented by ERC1155 tokens to designate the credentials and roles of Organization members on chain.</p>
+                        <p>Using Badges, Organizations can easily interoperate with tools such as Guild.xyz.</p>
                     </div>
                     <div className="sidebar__statuses">
                         <StatusIndicators statuses={statuses} />

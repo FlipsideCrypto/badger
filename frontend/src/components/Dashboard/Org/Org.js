@@ -28,7 +28,7 @@ const Org = () => {
             <Header back={() => navigate("/dashboard")} />
 
             <div className="org__container empty">
-                <h1>No keys in the Organization yet!</h1>
+                <h1>No Badges in the Organization yet!</h1>
                 <p>
                     Congrats! You are one step closer to having the keys to your on-chain Organization. 
                     Now you can create and distribute your keys in a matter of seconds.
