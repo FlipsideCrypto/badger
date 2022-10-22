@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Card from "@components/Card/Card"
+
 import { HOME_LINKS } from "@static/constants/links";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
+
+import video from '../../../static/images/tutorial.mp4'
 
 import "@style/Dashboard/Home/Home.css"
 
@@ -25,7 +28,7 @@ const Home = () => {
         <div className="home">
             <div className="home__announcement">
                 <Card className="announcement">
-                    <div className="announcement__status" style={{ 
+                    <div className="announcement__status" style={{
                         backgroundColor: announcement.color
                     }}></div>
                     {announcement.message}
@@ -36,15 +39,9 @@ const Home = () => {
                 <div className="home__cards__column">
                     <Card>
                         <div className="card__video">
-                            <iframe
-                                width="100%"
-                                height="300"
-                                src="https://www.youtube-nocookie.com/embed/C1ofCsq75GY"
-                                title="Live Walkthrough Video"
-                                allow="accelerometer; picture-in-picture"
-                                frameBorder={0}
-                                allowFullScreen={true}
-                            ></iframe>
+                            <video width="100%" controls >
+                                <source src={video} type="video/mp4" />
+                            </video>
                         </div>
                         <div className="home__card__content">
                             <FontAwesomeIcon icon={['fal', 'play']} />
@@ -73,15 +70,6 @@ const Home = () => {
 
                 <div className="home__cards__column">
                     <Card>
-                        {/* <Link className="link-wrapper home-link" to="/dashboard/organization/new">
-                            <div className="home__card__content">
-                                <FontAwesomeIcon icon={['fal', 'sitemap']} />
-                                <div>
-                                    <h2>Create your first Organization</h2>
-                                    <p>It only takes a few seconds to create your first Organization and be on your way. Badger isn't like your normal tool that takes hours to setup.</p>
-                                </div>
-                            </div>
-                        </Link> */}
                         <button 
                             className="button__unstyled link-wrapper home-link" 
                             onClick={() => navigate("/dashboard/organization/new")} 
@@ -89,7 +77,7 @@ const Home = () => {
                         >
                             <div className="home__card__content">
                                 <FontAwesomeIcon icon={['fal', 'sitemap']} />
-                                {userData?.organizations?.length > 0 ? 
+                                {userData?.organizations?.length > 0 ?
                                     <div>
                                         <h2>Manage your Organizations</h2>
                                         <p>The credentials of your Organization are under your full control. Edit, Mint, Revoke, and Manage at will.</p>
@@ -105,8 +93,8 @@ const Home = () => {
                     </Card>
 
                     <Card>
-                        <a className="link-wrapper home-link" 
-                            href={ HOME_LINKS.gitbook } 
+                        <a className="link-wrapper home-link"
+                            href={HOME_LINKS.gitbook}
                             target="_blank" rel="noreferrer"
                         >
                             <div className="home__card__content">
@@ -120,8 +108,8 @@ const Home = () => {
                     </Card>
 
                     <Card>
-                        <a className="link-wrapper home-link" 
-                            href={ HOME_LINKS.github } 
+                        <a className="link-wrapper home-link"
+                            href={HOME_LINKS.github}
                             target="_blank" rel="noreferrer"
                         >
                             <div className="home__card__content">

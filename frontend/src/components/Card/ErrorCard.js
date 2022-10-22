@@ -12,7 +12,7 @@ const ErrorCard = ({ label, message, style }) => {
                     </div>
                     <div className="error__card__message">
                         <span className="error__card__text">
-                            {label + ": " +
+                            {label + " -- " +
                                 (typeof(message) !== "string" ? 
                                 message['message'] || JSON.stringify(message) : 
                                 message)

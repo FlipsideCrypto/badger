@@ -1,28 +1,29 @@
 import { useState, useContext } from "react";
-
-import { Button } from "@mui/material";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useLocation } from "react-router-dom";
 
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { postFeedbackRequest } from "@utils/api_requests";
 
-import StatusIndicators from './StatusIndicators/StatusIndicators';
+import ActionButton from "@components/Button/ActionButton";
+import HelpCopy from "./HelpCopy";
 
 import "@style/Dashboard/Sidebar/Sidebar.css";
 import "@style/Dashboard/Sidebar/HelpSidebar.css";
 
 const HelpSidebar = () => {
-    const [collapsed, setCollapsed] = useState(false);
+    const [ collapsed, setCollapsed ] = useState(false);
     const { setError } = useContext(ErrorContext);
-
+    
+    const { pathname } = useLocation();
+    
     const collapseIcon = collapsed ? "chevron-left" : "chevron-right";
-
+    
     const onFeedbackSubmission = async ({ liked }) => { 
         const feedbackObj = { 
             feedback_url: window.location.href,
             liked,
         }
-
+        
         const response = await postFeedbackRequest(feedbackObj);
         if(response.status !== 200 || response.status !== 201) {
             setError({
@@ -31,43 +32,34 @@ const HelpSidebar = () => {
             });
         }
     }
-
+    
     return (
         <div className={collapsed ? "sidebar right collapsed" : "sidebar right"}>
             <div className="sidebar__header">
-                <h5>Help</h5>
-                <div>
-                    <Button onClick={() => { setCollapsed(!collapsed) }}>
-                        <FontAwesomeIcon icon={['fal', collapseIcon]} />
-                    </Button>
-                </div>
+                <ActionButton 
+                    onClick={() => { setCollapsed(!collapsed) }}
+                    sx={{marginLeft: '-8px !important'}}
+                    beforeText="Help"
+                    icon={['fal', collapseIcon]}
+                    iconStyle={{marginLeft: '8px'}}
+                />
             </div>
 
-            <div className="sidebar__content">
-                <h5>What is a Manager?</h5>
-                <p>You are defining an Organization. Once this
-                    has been created, you can begin to design
-                    Badges for your team.</p>
-
-                <p>Badges are represented by ERC1155 token
-                    ID #s and allow Organizations to easily
-                    interoperate with tools such as Guild.xyz</p>
-            </div>
-
-            <div className="sidebar__statuses">
-                <StatusIndicators />
-            </div>
+            {HelpCopy(pathname)}
 
             <div className="sidebar__footer">
                 <p>Do you like this page?</p>
 
-                <Button onClick={() => { onFeedbackSubmission({ liked: true }) }}>
-                    <FontAwesomeIcon icon={['fal', 'thumbs-up']} />
-                </Button>
-
-                <Button onClick={() => { onFeedbackSubmission({ liked: false }) }}>
-                    <FontAwesomeIcon icon={['fal', 'thumbs-down']} />
-                </Button>
+                <ActionButton 
+                    onClick={() => { onFeedbackSubmission({ liked: true }) }}
+                    icon={['fal', 'thumbs-up']}
+                    sx={{minWidth: '36px'}}
+                />
+                <ActionButton 
+                    onClick={() => { onFeedbackSubmission({ liked: false }) }}
+                    icon={['fal', 'thumbs-down']}
+                    sx={{minWidth: '36px'}}
+                />
             </div>
         </div>
     )

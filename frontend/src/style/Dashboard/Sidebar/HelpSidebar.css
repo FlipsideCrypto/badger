@@ -16,12 +16,13 @@
     display: grid;
 }
 
-.sidebar.right .sidebar__header div { 
-    margin-left: auto;
+.sidebar.right .sidebar__header svg,
+.sidebar.right .sidebar__footer svg { 
+    color: inherit;
 }
 
-.sidebar.right .sidebar__header svg { 
-    color:rgba(0, 0, 0, .35);
+.sidebar.right h5 {
+    color: rgba(0, 0, 0, .65);
 }
 
 .sidebar.right p { 
@@ -42,10 +43,6 @@
     margin-right: 20px;
 }
 
-.sidebar.right .sidebar__footer svg { 
-    color:rgba(0, 0, 0, .35);
-}
-
 .sidebar.right.collapsed { 
     width: fit-content;
     padding-right: 30px;
@@ -60,5 +57,5 @@
 .sidebar.right.collapsed .sidebar__content, 
 .sidebar.right.collapsed .sidebar__statuses,
 .sidebar.right.collapsed .sidebar__footer { 
-        display: none; 
+    display: none; 
 }

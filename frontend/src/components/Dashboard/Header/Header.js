@@ -1,4 +1,4 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ActionButton from "@components/Button/ActionButton";
 
 import "@style/Dashboard/Header/Header.css";
 
@@ -7,27 +7,27 @@ const Header = ({ back, actions }) => {
 
     return (
         <header className="header" style={{
-            margin: isShowing ? '20px' : '0'
+            marginTop: isShowing ? '20px' : '0',
+            marginBottom: isShowing ? '20px' : '0'
         }}>
             <div className="header__back">
-                {back && <button 
-                    className="button__unstyled" 
-                    onClick={back}
-                >
-                    <FontAwesomeIcon icon={['fal', 'chevron-left']} />
-                    <span>Back</span>
-                </button>}
+                {back && 
+                    <ActionButton 
+                        onClick={back}
+                        afterText="Back"
+                        icon={['fal', 'chevron-left']}
+                    />
+                }
             </div>
 
             <div className="header__actions">
                 {actions && actions.map((action, index) => (
-                    <button 
-                        className="button__unstyled header__action" 
-                        key={index} onClick={action.event}
-                    >
-                        <FontAwesomeIcon icon={action.icon} />
-                        <span>{action.text}</span>
-                    </button>
+                    <ActionButton 
+                        key={index} 
+                        onClick={action.event}
+                        icon={action.icon}
+                        afterText={action.text}
+                    />
                 ))}
             </div>
         </header>
