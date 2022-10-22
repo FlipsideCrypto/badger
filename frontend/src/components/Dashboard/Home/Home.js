@@ -57,7 +57,7 @@ const Home = () => {
                         </div>
                     </Card>
 
-                    <Card>
+                    {/* <Card>
                         <div className="home__card__content">
                             <FontAwesomeIcon icon={['fal', 'notes']} />
                             <div>
@@ -65,7 +65,7 @@ const Home = () => {
                                 <p>Designate leaders and members of your organization on-chain. All tools are constructed to be managed directly within a user-friendly dashboard.</p>
                             </div>
                         </div>
-                    </Card>
+                    </Card> */}
                 </div>
 
                 <div className="home__cards__column">
@@ -122,7 +122,7 @@ const Home = () => {
                         </a>
                     </Card>
 
-                    <Card>
+                    {/* <Card>
                         <div className="home__card__content">
                             <FontAwesomeIcon icon={['fal', 'layer-group']} />
                             <div>
@@ -130,7 +130,7 @@ const Home = () => {
                                 <p>Product updates and implementation guides from builders, contributors, and users.</p>
                             </div>
                         </div>
-                    </Card>
+                    </Card> */}
                 </div>
             </div>
         </div>
