@@ -33,6 +33,9 @@ const Badge = () => {
     const badgeIndex = orgData?.badges?.findIndex(badge => badge.id === parseInt(badgeId));
     const [ badge, setBadge ] = useState(orgData?.badges?.[badgeIndex] || {});
     const isOwner = orgData?.owner?.ethereum_address === address;
+    // find if the authenticated address is in one of the delegates.ethereum_address properties
+    const isManager = badge?.delegates?.find(delegate => delegate.ethereum_address === address);
+
 
     const setDelegates = useSetDelegates(
         txCalled && isOwner,
@@ -50,11 +53,11 @@ const Badge = () => {
         1                                   // amount of each token
     );
 
-    const actions = [{
+    const actions = isOwner || isManager ? [{
         text: "Manage",
         icon: ["fal", "fa-person"],
         event: () => setIsManage(!isManage)
-    }]
+    }] : [];
 
     // Limit actions for Managers.
     const selectActions = isOwner ? [
@@ -167,8 +170,6 @@ const Badge = () => {
         setTxPending(false);
     }, [txMethod, setDelegates, manageOwnership, setError, onMembersUpdate, onDelegatesUpdate]);
 
-    // TODO: I don't like this method of mixing the transactions after getting here. This is due
-    //       a refactor that breaks each method out into its own flow.
     // If the transaction has been called, is not pending, and one of the transactions are prepped,
     // run the transaction.
     useEffect(() => {        
@@ -196,7 +197,7 @@ const Badge = () => {
                     <h1>{badge?.name}</h1>
                 </div>
 
-                {isManage && 
+                {isManage && (isOwner || isManager) &&
                     <>
                         <Select 
                             label="Update Type"
@@ -225,7 +226,7 @@ const Badge = () => {
                     <HolderTable badge={badge} />
                 }
 
-                {(!badge?.users || badge?.users?.length < 1) && !isManage && 
+                {(!badge?.users || badge?.users?.length < 1) && (isManager || isOwner) &&
                     <div className="org__container empty">
                         <h1>Your Organization is almost alive, it just needs members!</h1>
                         <p>
