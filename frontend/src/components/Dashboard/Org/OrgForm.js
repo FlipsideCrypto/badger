@@ -9,7 +9,7 @@ import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 
 import { useBadgerFactory } from "@hooks/useContracts";
-import { postOrgRequest, postIPFSImage, postIPFSMetadata } from "@utils/api_requests";
+import { postOrgRequest, postIPFSImage, postIPFSMetadata, getPFPImage } from "@utils/api_requests";
 import { getBadgerAbi } from "@hooks/useContracts";
 
 // TODO: Move orgObj into a reducer. (Should we have a reducer for values that are rendered and 
@@ -41,6 +41,8 @@ const OrgForm = () => {
 
     const createContract = useBadgerFactory(txCalled, orgObj, address, chain?.name)
     const badger = useMemo(() => getBadgerAbi(chain?.name), [chain?.name]);
+
+    let firstCharOfName;
     
     const actions = [
         {
@@ -59,13 +61,18 @@ const OrgForm = () => {
 
     // When name is changed, update orgObj name, and symbol if symbol is not custom.
     const onOrgNameChange = (e) => {
-        if (orgObj.symbol === nameToSymbol(orgObj.name)) {
-            setOrgObj({...orgObj, name: e.target.value, symbol: nameToSymbol(e.target.value)});
-        } else {
-            setOrgObj({...orgObj, name: e.target.value});
+        setOrgObj({...orgObj, name: e.target.value, symbol: nameToSymbol(e.target.value)});
+        if (e.target.value[0] !== firstCharOfName) {
+            firstCharOfName = e.target.value;
+            getGeneratedImage(firstCharOfName);
         }
     }
 
+    const getGeneratedImage = async (char) => {
+        const pfpImage = await getPFPImage(char);
+        setOrgImage(pfpImage);
+    }
+    
     // When image is added, post to IPFS and set orgObj image hash.
     const onImageUpload = async (event) => {
         const image = event.target.files[0]
@@ -175,20 +182,13 @@ const OrgForm = () => {
 
             <h2>Create Organization</h2>
 
+            <h3 style={{marginTop: "30px"}}>General</h3>
             <Input 
                 name="orgName"
                 label="Organization Name" 
                 required={true}
                 value={orgObj.name} 
                 onChange={onOrgNameChange} 
-            />
-
-            <Input
-                name="orgSymbol"
-                label="Organization Symbol"
-                required={true}
-                value={orgObj.symbol}
-                onChange={(e) => setOrgObj({...orgObj, symbol: e.target.value})}
             />
 
             <Input
@@ -199,11 +199,22 @@ const OrgForm = () => {
                 onChange={(e) => setOrgObj({...orgObj, description: e.target.value})}
             />
 
+            <ActionBar
+                help={
+                    `You can only set the on-chain name of your Organization once. 
+                    After creation, you can update the off-chain name and description 
+                    but you cannot change the name of the contract. Please make sure 
+                    you are happy with it before submitting.`
+                }
+                helpStyle={{maxWidth: "840px"}}
+            />
+
+            <h3 style={{marginTop: "30px"}}>Appearance</h3>
             <Input
-                name="Organization Image"
+                name="Custom Image"
                 accept="image/*"
-                label="Organization Image"
-                placeholder="Upload Organization Image"
+                label="Custom Image"
+                placeholder="Upload Custom Organization Image"
                 disabled={true}
                 value={orgImage?.name}
                 append={

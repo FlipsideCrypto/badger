@@ -26,7 +26,6 @@ const InputListCSV = ({ label, inputList, setInputList, setAreAddressesValid }) 
     // Deletes the input field row at the specified index.
     // If the index is the first and only row, just reset the value.
     const onFieldDelete = (index) => {
-        console.log('validated addys', inputList);
         let newInputs = [...inputList];
         if (index === 0 && inputFieldCount === 1) {
             setInputList([]);

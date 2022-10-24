@@ -13,7 +13,7 @@ import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvide
 import { useManageBadgeOwnership, useSetDelegates } from "@hooks/useContracts";
 import { putBadgeRolesRequest } from "@utils/api_requests";
 
-import "@style/Dashboard/Org/Badge.css";
+import "@style/Dashboard/Badge/Badge.css";
 
 const Badge = () => {
     const navigate = useNavigate();

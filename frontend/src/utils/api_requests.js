@@ -304,3 +304,63 @@ export async function putBadgeRolesRequest(badge, orgId) {
 
     return response;
 }
+
+export async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
+    const url = `${API_URL}/art/badge?organization=${orgName}&organization_ethereum_address=${orgAddress}&badge_id=${badgeId}&badge_name=${badgeName}`
+    
+    let response;
+    try {
+        await fetch(url, {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+            },
+            credentials: 'include'
+        })
+        .then(res => res.blob())
+        .then(data => {
+            if (!data) throw new Error(
+                "Badge image could not be created."
+            );
+            response = data
+        })
+        .catch(err => {
+            throw new Error(err);
+        })
+    }
+    catch (err) {
+        response = {error: err}
+    }
+
+    return response
+}
+
+export async function getPFPImage(char) {
+    let response;
+    try {
+        await fetch(`${API_URL}/art/pfp/?char=${char}`, {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+            },
+            credentials: 'include'
+        })
+        .then(res => res.blob())
+        .then(data => {
+            if (!data) throw new Error(
+                "PFP image could not be created."
+            );
+            response = data
+        })
+        .catch(err => {
+            throw new Error(err);
+        })
+    }
+    catch (err) {
+        response = {error: err}
+    }
+
+    return response
+}
