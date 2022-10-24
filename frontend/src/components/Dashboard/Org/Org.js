@@ -28,13 +28,13 @@ const Org = () => {
             <Header back={() => navigate("/dashboard")} />
 
             <div className="org__container empty">
-                <h1>No keys in the Organization yet!</h1>
+                <h1>No Badges in {orgData?.name ? orgData?.name : "the Organization"} yet!</h1>
                 <p>
-                    Congrats! You are one step closer to having the keys to your on-chain Organization. 
-                    Now you can create and distribute your keys in a matter of seconds.
+                    You are one step closer to having the credentials of your on-chain Organization. 
+                    Now you can create and distribute your badges that act as keys throughout the ecosystem in a matter of seconds.
                 </p>
                 <Link className="internal-link" to={`/dashboard/organization/${orgId}/badge/new`}>
-                    <IconButton icon={['fal', 'arrow-right']} text="CREATE" />
+                    <IconButton icon={['fal', 'arrow-right']} text="CREATE BADGE" />
                 </Link>
             </div>
         </>
