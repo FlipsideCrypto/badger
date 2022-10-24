@@ -1,5 +1,6 @@
 import { useState, useRef, useContext, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { ethers } from "ethers";
 
 import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
@@ -16,17 +17,20 @@ import { useCreateBadge } from "@hooks/useContracts";
 
 import "@style/Dashboard/Badge/BadgeForm.css";
 
-// TODO: Move all state vars into a reducer?
+// TODO: Move all badge state vars into a reducer?
+// TODO: There is way too much going on in this one component. Break it up and reduce state usage.
 const BadgeForm = () => {
     const [ badgeName, setBadgeName ] = useState("");
     const [ badgeDescription, setBadgeDescription ] = useState("");
     const [ badgeAttributes, setBadgeAttributes ] = useState([{key: "", value: ""}]);
-    const [ badgeImage, setBadgeImage ] = useState({name: ""});
+    const [ badgeImage, setBadgeImage ] = useState();
+    const [ imagePreview, setImagePreview ] = useState();
     const [ badgeDelegates, setBadgeDelegates ] = useState([]);
     const [ ipfsImageHash, setIpfsImageHash ] = useState("");
     const [ accountBound, setAccountBound ] = useState("Yes");
     const [ claimable, setClaimable ] = useState("No");
     const [ signer, setSigner ] = useState("");
+    const [ signerIsValid, setSignerIsValid ] = useState(true);
 
     const [ imageUploading, setImageUploading ] = useState(false);
     const [ areAddressesValid, setAreAddressesValid ] = useState(true);
@@ -47,15 +51,15 @@ const BadgeForm = () => {
         ethereum_address: orgData?.ethereum_address,
         token_id: orgData?.badges?.length,
         organization: orgData?.id,
-        account_bound: accountBound,
-        claimable: false,
+        account_bound: accountBound === "Yes" ? true : false,
+        claimable: claimable === "Yes" ? true : false,
         is_active: false,
         signer: orgData?.owner?.ethereum_address,
         // payment_token: ["paymentKey", 0],
     })
 
     const createBadge = useCreateBadge(txCalled, badgeRef.current);
-    const disabled = !badgeName || !badgeDescription || !ipfsImageHash || !areAddressesValid;
+    const disabled = !badgeName || !badgeDescription || !ipfsImageHash || !areAddressesValid || !signerIsValid;
     
     const actions = [
         {
@@ -67,6 +71,7 @@ const BadgeForm = () => {
         }
     ]
     
+    // Updates generative image and Name field
     const onNameChange = async (event) => {
         setBadgeName(event.target.value);
         const response = await getBadgeImage(
@@ -75,12 +80,17 @@ const BadgeForm = () => {
             orgData?.badges?.length, 
             event.target.value
         );
-        setBadgeImage(response);
+        setBadgeImage(response)
+
+        URL.revokeObjectURL(imagePreview);
+        setImagePreview(URL.createObjectURL(response));
     }
 
-    const uploadImage = async (image) => {
+    // Pin to IPFS
+    const pinImage = async (image) => {
         setImageUploading(true);
-        const response = await postIPFSImage({name: `gen-${badgeName}`, file: image});
+
+        const response = await postIPFSImage(image);
         if (response.error) {
             setError({
                 label: 'Could not upload image to IPFS',
@@ -88,8 +98,9 @@ const BadgeForm = () => {
             });
         }
         setIpfsImageHash(response.hash);
-        setImageUploading(false);
         badgeRef.current.image_hash = response.hash;
+
+        setImageUploading(false);
     }
 
     // Form submission just gets the final uri hash and sets the token_uri in the badgeObj
@@ -97,7 +108,13 @@ const BadgeForm = () => {
     // As we have to await the transaction to be prepared by wagmi before calling it.
     const onBadgeFormSubmission = async () => {
         // Get the token uri
-        const response = await postIPFSMetadata(badgeName, badgeDescription, ipfsImageHash);
+        const response = await postIPFSMetadata(
+            badgeName, 
+            badgeDescription, 
+            ipfsImageHash, 
+            badgeAttributes
+        );
+
         if (response.error) {
             setError({
                 label: 'Error creating token URI',
@@ -111,26 +128,24 @@ const BadgeForm = () => {
             description: badgeDescription,
             delegates: badgeDelegates,
             token_uri: response.hash,
-            account_bound: accountBound,
         }
         setTxCalled(true);
     }
 
     // Post the badge to the backend for IPFS upload.
-    const onImageUpload = async (image) => {
+    const onCustomImageUpload = async (image) => {
         setBadgeImage(image)
-        
-        setImageUploading(true);
-        const response = await postIPFSImage({name: `gen-${badgeName}`, file: image})
-        if (response.error) {
-            setError({
-                label: 'Could not upload image to IPFS',
-                message: response.error
-            });
-        }
-        setImageUploading(false);
-        setIpfsImageHash(response.hash)
-        badgeRef.current.image_hash = response.hash;
+        URL.revokeObjectURL(imagePreview);
+        setImagePreview(URL.createObjectURL(image));
+        pinImage(image);
+    }
+
+    // When the signer address is not focused, validate the address.
+    const onSignerBlur = (event) => {
+        const address = event.target.value;
+        const isValid = ethers.utils.isAddress(address);
+        if (address && !isValid) setSignerIsValid(false);
+        else setSignerIsValid(true);
     }
 
     // Write to contract
@@ -202,10 +217,18 @@ const BadgeForm = () => {
                 orgData?.badges?.length, 
                 "Badge Name"
             );
+
+            if (response.error) {
+                setError({
+                    label: 'Could not get generated image',
+                    message: response.error
+                });
+            }
             setBadgeImage(response);
+            setImagePreview(URL.createObjectURL(response));
         }
 
-        if (!badgeImage?.image && orgData) {
+        if (orgData && !imagePreview) {
             getPlaceholderImage();
         }
         // Only want to run this once once the OrgData is retrieved.
@@ -227,7 +250,7 @@ const BadgeForm = () => {
                             required={true}
                             value={badgeName}
                             onChange={(event) => onNameChange(event)}
-                            onBlur={() => uploadImage(badgeImage?.image)}
+                            onBlur={() => pinImage(badgeImage)}
                         />
 
                         <Input
@@ -256,7 +279,7 @@ const BadgeForm = () => {
                         <div className="preview__container">
                             <img
                                 className="preview__image"
-                                src={badgeImage?.image}
+                                src={imagePreview}
                                 alt="Badge Preview"
                             />
                         </div>
@@ -264,65 +287,41 @@ const BadgeForm = () => {
                 </div>
             </FormDrawer>
 
-            <div>
-                <FormDrawer label="Appearance" open={false}>
-                    <Input
-                        name="Custom Image"
-                        accept="image/*"
-                        label="Custom Image"
-                        placeholder="Upload Custom Image"
-                        required={true}
-                        disabled={true}
-                        value={badgeImage?.name || ""}
-                        append={
-                            <button
-                                className="button-secondary"
-                                onClick={() => imageInput.current.click()}
-                                style={{width: "100px", padding: "0px"}}
-                            >
-                                {imageUploading ?
-                                    "LOADING..." :
-                                    badgeImage ? 
-                                        "CHANGE" : 
-                                        "UPLOAD"
-                                }
-                            </button>
-                        }
-                    />
-                        <input
-                            id="badge-image"
-                            style={{ display: "none" }}
-                            ref={imageInput}
-                            accept="image/*"
-                            type="file"
-                            onChange={(event) => console.log(event.target.files[0])}
-                            // onChange={(event) => onImageUpload(event.target.files[0])}
-                        />
-                </FormDrawer>
-            </div>
-
             <FormDrawer label="Access" open={false}>
                 <div style={{display: 'grid', gridTemplateColumns: "1fr 1fr", gridColumnGap: "10px"}}>
                     <Select
                         label="Account Bound"
                         options={["Yes", "No"]}
                         value={accountBound}
-                        setValue={setAccountBound}
+                        setValue={(event) => {
+                            setAccountBound(event.target.value);
+                            badgeRef.current.account_bound = event.target.value === "Yes" ? true : false;
+                        }}
                     />
 
                     <Select
                         label="Claimable"
                         options={["Yes", "No"]}
                         value={claimable}
-                        setValue={setClaimable}
+                        setValue={(event) => {
+                            setClaimable(event.target.value);
+                            badgeRef.current.claimable = event.target.value === "Yes" ? true : false;
+                        }}
                     />
                 </div>
 
                 <Input
                     label="Signer"
+                    className={signerIsValid ? 
+                        "form__list__address" : "form__list__address error"
+                    }
                     required={false}
                     value={signer}
-                    onChange={(event) => setSigner(event.target.value)}
+                    onChange={(event) => {
+                        setSigner(event.target.value);
+                        badgeRef.current.signer = event.target.value;
+                    }}
+                    onBlur={onSignerBlur}
                 />
                 <InputListCSV
                     label={"Managers"}
@@ -333,6 +332,39 @@ const BadgeForm = () => {
 
             </FormDrawer>
 
+            <FormDrawer label="Appearance" open={false}>
+                <Input
+                    name="Custom Image"
+                    accept="image/*"
+                    label="Custom Image"
+                    placeholder="Upload Custom Image"
+                    required={false}
+                    disabled={true}
+                    value={badgeImage?.name || ""}
+                    append={
+                        <button
+                            className="button-secondary"
+                            onClick={() => imageInput.current.click()}
+                            style={{width: "100px", padding: "0px"}}
+                        >
+                            {imageUploading ?
+                                "LOADING..." :
+                                badgeImage ? 
+                                    "CHANGE" : 
+                                    "UPLOAD"
+                            }
+                        </button>
+                    }
+                />
+                    <input
+                        id="badge-image"
+                        style={{ display: "none" }}
+                        ref={imageInput}
+                        accept="image/*"
+                        type="file"
+                        onChange={(event) => onCustomImageUpload(event.target.files[0])}
+                    />
+            </FormDrawer>
 
             <ActionBar help={
                 'After creating a badge, you (or your managers) can issue badges to team members.'

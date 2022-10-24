@@ -1,5 +1,5 @@
 import { IPFS_GATEWAY_URL } from "@static/constants/links"
-import { cleanAddresses, getCSRFToken } from "./helpers";
+import { cleanAddresses, getCSRFToken, getFileFromBase64 } from "./helpers";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -167,13 +167,21 @@ export async function postIPFSImage(image) {
     return response;
 }
 
-export async function postIPFSMetadata(name, description, imageHash) {
+export async function postIPFSMetadata(name, description, imageHash, attributes) {
     let response;
 
     const metadata = {
         name: name,
         description: description,
         image: IPFS_GATEWAY_URL + imageHash
+    }
+    if (attributes) {
+        metadata.attributes = attributes.map(attribute => {
+            return {
+                trait_type: attribute.key,
+                value: attribute.value
+            }   
+        });
     }
 
     try {
@@ -318,12 +326,12 @@ export async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
             },
             credentials: 'include'
         })
-        .then(res => res.blob())
+        .then(res => res.json())
         .then(data => {
             if (!data) throw new Error(
                 "Badge image could not be created."
             );
-            response = data
+            response = getFileFromBase64(data.image, `generated_${badgeName.replace(" ", "_")}.svg`);
         })
         .catch(err => {
             throw new Error(err);
@@ -347,7 +355,7 @@ export async function getPFPImage(char) {
             },
             credentials: 'include'
         })
-        .then(res => res.blob())
+        .then(res => res.json())
         .then(data => {
             if (!data) throw new Error(
                 "PFP image could not be created."
