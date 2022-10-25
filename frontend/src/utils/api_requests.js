@@ -331,7 +331,7 @@ export async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
             if (!data) throw new Error(
                 "Badge image could not be created."
             );
-            response = getFileFromBase64(data.image, `generated_${badgeName.replace(" ", "_")}.svg`);
+            response = getFileFromBase64(data.image, `generated_${badgeName.replace(" ", "_")}_${badgeId}.svg`);
         })
         .catch(err => {
             throw new Error(err);
@@ -344,10 +344,10 @@ export async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
     return response
 }
 
-export async function getPFPImage(char) {
+export async function getPFPImage(char, address) {
     let response;
     try {
-        await fetch(`${API_URL}/art/pfp/?char=${char}`, {
+        await fetch(`${API_URL}/art/pfp/?char=${char}&address=${address}`, {
             method: "GET",
             mode: "cors",
             headers: {
@@ -360,7 +360,7 @@ export async function getPFPImage(char) {
             if (!data) throw new Error(
                 "PFP image could not be created."
             );
-            response = data
+            response = getFileFromBase64(data.image, `generated_${char}_${address}.svg`);
         })
         .catch(err => {
             throw new Error(err);

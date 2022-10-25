@@ -168,11 +168,14 @@ const OrgSidebar = ({ address }) => {
 
                     <div className="sidebar__category">
                         <h5>Badges</h5>
-                        <ActionButton 
-                            onClick={() => navigate(`/dashboard/organization/${orgId}/badge/new`)}
-                            icon={['fal', 'plus']}
-                            sx={{minWidth: '36px'}}
-                        />
+                        {/* Hide the new Badge button if the user is not owner of org. */}
+                        {orgData?.owner?.ethereum_address === address &&
+                            <ActionButton 
+                                onClick={() => navigate(`/dashboard/organization/${orgId}/badge/new`)}
+                                icon={['fal', 'plus']}
+                                sx={{minWidth: '36px'}}
+                            />
+                        }
                     </div>
                 </>
             }

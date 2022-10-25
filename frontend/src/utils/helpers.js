@@ -58,14 +58,7 @@ export const getFileFromBase64 = (base64, filename) => {
     var type = base64.substring(5, pos);
     var b64 = base64.substr(pos + 8);
 
-    var imageContent = atob(b64);
+    var imageContent = Buffer.from(b64, 'base64');
 
-    var buffer = new ArrayBuffer(imageContent.length);
-    var view = new Uint8Array(buffer);
-
-    for(var n = 0; n < imageContent.length; n++) {
-        view[n] = imageContent.charCodeAt(n);
-    }
-
-    return new File([buffer], filename, { type: type });
+    return new File([imageContent], filename, { type: type });
 }
