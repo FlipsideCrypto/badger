@@ -9,7 +9,7 @@
 
 .sidebar__fixed__container { 
     height: calc(100vh - 30px);
-    position: fixed;
+    position: sticky;
 }
 
 .sidebar .sidebar__header * { 
@@ -110,4 +110,10 @@
 
 .sidebar .logout svg { 
     margin-right: 10px;
+}
+
+.text-clip {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

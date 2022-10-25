@@ -126,7 +126,7 @@ const OrgSidebar = ({ address }) => {
                                 alt="avatar" 
                                 onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR} 
                             />
-                            <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
+                            <Link className="link-wrapper link-text text-clip" to="/dashboard/" style={{marginTop: "2px"}}>
                                 {userData?.ens_name ? userData.ens_name : sliceAddress(address)}
                             </Link>
                         </div>
@@ -151,7 +151,7 @@ const OrgSidebar = ({ address }) => {
                             alt="avatar" 
                             onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
                         />
-                        <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
+                        <Link className="link-wrapper link-text text-clip" to="/dashboard/" style={{marginTop: "2px"}}>
                             {orgData?.name}
                         </Link>
                         <div className="sidebar__header__subtext">
@@ -173,7 +173,7 @@ const OrgSidebar = ({ address }) => {
                         {orgData?.owner?.ethereum_address === address &&
                             <ActionButton 
                                 onClick={() => navigate(`/dashboard/organization/${orgId}/badge/new`)}
-                                    icon={['fal', 'plus']}
+                                icon={['fal', 'plus']}
                                 sx={{minWidth: '36px'}}
                             />
                             }
@@ -197,7 +197,7 @@ const OrgSidebar = ({ address }) => {
                                             alt="avatar"
                                             onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
                                         />
-                                        <div>
+                                        <div className="text-clip">
                                             {badge.name}
                                         </div>
                                     </div>
@@ -216,7 +216,7 @@ const OrgSidebar = ({ address }) => {
                                             alt="avatar"
                                             onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
                                         />
-                                        <div>
+                                        <div className="text-clip">
                                             {org.name}
                                         </div>
                                     </div>
