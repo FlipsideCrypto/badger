@@ -6,7 +6,7 @@ import {
 
 import TableSortHead from "./TableSortHead";
 import ActionButton from "@components/Button/ActionButton";
-import { compareByProperty, sliceAddress } from "@utils/helpers";
+import { compareByProperty } from "@utils/helpers";
 import { holderHeadRows } from "@static/constants/constants";
 
 import "@style/Table/HolderTable.css";
@@ -88,7 +88,7 @@ const HolderTable = ({ badge }) => {
                                     alignItems: 'center',
                                 }}>
                                     <div className="form__list__address">
-                                        {sliceAddress(user.ethereum_address)}
+                                        {user.ethereum_address}
                                     </div>
                                     <ActionButton
                                         onClick={() => navigator.clipboard.writeText(user.ethereum_address)}
