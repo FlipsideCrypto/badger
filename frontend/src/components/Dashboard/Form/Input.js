@@ -6,6 +6,7 @@ const Input = (props) => {
         required,
         prepend,
         append,
+        placeholder,
         reference
     } = props;
 
@@ -33,7 +34,7 @@ const Input = (props) => {
             {/* if label is component */}
             {typeof label === "object" && label}
 
-            <input {...props} ref={reference?.current} />
+            <input {...props} ref={reference?.current} placeholder={placeholder} />
 
             {append &&
                 <div className="form__append">

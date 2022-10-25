@@ -3,27 +3,11 @@
     grid-template-columns: 1fr 1fr;
 }
 
-.header a,
-.header button,
-.header .button { 
-    color:rgba(0, 0, 0, 0.35) !important;
-}
-
 .header svg {
     margin-right: 10px;
-    color: inherit;
 }
 
 .header .header__actions { 
     margin-left: auto;
     color: rgba(0, 0, 0, 0.35);
 }
-
-.header .header__actions button:hover,
-.header .header__back button:hover {
-    color: rgba(0, 0, 0, 0.65) !important;
-}
-
-/* .header__actions span {
-    color: rgba(0, 0, 0, 0.35);
-} */

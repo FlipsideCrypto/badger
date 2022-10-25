@@ -5,6 +5,7 @@ import {
 } from "@mui/material"
 
 import TableSortHead from "./TableSortHead";
+import ActionButton from "@components/Button/ActionButton";
 import { compareByProperty } from "@utils/helpers";
 import { holderHeadRows } from "@static/constants/constants";
 
@@ -81,8 +82,19 @@ const HolderTable = ({ badge }) => {
                             key={user.ethereum_address +'-'+ index}
                         >
                             <TableCell component="th" scope="row">
-                                <div className="form__list__address">
-                                    {user.ethereum_address}
+                                <div style={{
+                                    display: 'grid', 
+                                    gridTemplateColumns: 'max-content auto',
+                                    alignItems: 'center',
+                                }}>
+                                    <div className="form__list__address">
+                                        {user.ethereum_address}
+                                    </div>
+                                    <ActionButton
+                                        onClick={() => navigator.clipboard.writeText(user.ethereum_address)}
+                                        icon={['fal', 'fa-copy']}
+                                        sx={{minWidth: '32px', marginLeft: '8px'}}
+                                    />
                                 </div>
                             </TableCell>
                             <TableCell component="th" scope="row">

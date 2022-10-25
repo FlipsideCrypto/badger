@@ -1,6 +1,6 @@
 import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import { ethers } from "ethers";
-import { Button } from "@mui/material";
+import ActionButton from "@components/Button/ActionButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Input from "@components/Dashboard/Form/Input";
@@ -26,7 +26,6 @@ const InputListCSV = ({ label, inputList, setInputList, setAreAddressesValid }) 
     // Deletes the input field row at the specified index.
     // If the index is the first and only row, just reset the value.
     const onFieldDelete = (index) => {
-        console.log('validated addys', inputList);
         let newInputs = [...inputList];
         if (index === 0 && inputFieldCount === 1) {
             setInputList([]);
@@ -129,9 +128,11 @@ const InputListCSV = ({ label, inputList, setInputList, setAreAddressesValid }) 
 
     const deleteDOM = (index) => {
         return (
-            <Button onClick={() => onFieldDelete(index)} sx={{minWidth: '40px'}}>
-                <FontAwesomeIcon icon={['fal', 'fa-trash']} style={{color: "#A6A6A6"}}/>
-            </Button>
+            <ActionButton 
+                onClick={() => onFieldDelete(index)} 
+                sx={{minWidth: '40px'}}
+                icon={['fal', 'fa-trash']}
+            />
         )
     }
 

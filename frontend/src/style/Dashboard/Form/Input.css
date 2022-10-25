@@ -10,7 +10,7 @@
 }
 
 .form__group label {
-    font-size: 14px;
+    font-size: 12px;
     margin-bottom: 10px;
     font-weight: 700;
     color: rgba(0,0,0,0.65);
@@ -52,9 +52,5 @@ input:disabled {
 
 .form__list__address {
     font-variant-numeric: tabular-nums lining-nums;
-    text-transform: uppercase;
-}
-
-.form__list__address {
     font-family: monospace;
 }
