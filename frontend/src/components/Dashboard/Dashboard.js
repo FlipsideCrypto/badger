@@ -9,9 +9,9 @@ import OrgSidebar from "@components/Dashboard/Sidebar/OrgSidebar";
 import HelpSidebar from "@components/Dashboard/Sidebar/HelpSidebar";
 import Home from "@components/Dashboard/Home/Home";
 import OrgForm from '@components/Dashboard/Org/OrgForm';
-import BadgeForm from "@components/Dashboard/Org/BadgeForm";
-import Badge from "@components/Dashboard/Org/Badge";
 import Org from "@components/Dashboard/Org/Org";
+import BadgeForm from "@components/Dashboard/Badge/BadgeForm";
+import Badge from "@components/Dashboard/Badge/Badge";
 
 import "@style/Dashboard/Dashboard.css";
 

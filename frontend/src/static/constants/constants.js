@@ -28,3 +28,51 @@ export const holderHeadRows = {
         width: "10%"
     },
 }
+
+export const pfpEmojis = [
+    "😀",
+    "😃",
+    "😄",
+    "😁",
+    "😆",
+    "😅",
+    "🤣",
+    "😂",
+    "🙂",
+    "🙃",
+    "😉",
+    "😊",
+    "😇",
+    "🤩",
+    "😋",
+    "😛",
+    "😜",
+    "🤪",
+    "😝",
+    "🤑",
+    "🤗",
+    "🤭",
+    "🤫",
+    "🤔",
+    "🤐",
+    "🤨",
+    "😐",
+    "😶",
+    "😏",
+    "🙄",
+    "😬",
+    "😌",
+    "🤤",
+    "😴",
+    "🌟",
+    "🚀",
+    "🌙",
+    "👑",
+    "🔥",
+]
+
+export const getRandomEmoji = (address) => {
+    const char = address.charCodeAt(39) + address.charCodeAt(40);
+    const randomIndex = char % pfpEmojis.length;
+    return pfpEmojis[randomIndex];
+}

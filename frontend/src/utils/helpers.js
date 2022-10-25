@@ -52,3 +52,13 @@ export const getCSRFToken = () => {
     }
     return "";
 }
+
+export const getFileFromBase64 = (base64, filename) => {
+    var pos = base64.indexOf(';base64,');
+    var type = base64.substring(5, pos);
+    var b64 = base64.substr(pos + 8);
+
+    var imageContent = Buffer.from(b64, 'base64');
+
+    return new File([imageContent], filename, { type: type });
+}

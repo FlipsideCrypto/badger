@@ -1,14 +1,12 @@
-import { useState, createContext, useContext, useEffect, useCallback } from "react"
+import { useState, createContext, useContext, useEffect } from "react"
 import { useLocation } from "react-router-dom";
-import { getOrgRequest } from "@utils/api_requests";
 import { UserContext } from "./UserContextProvider";
 
 export const OrgContext = createContext();
 
 const OrgContextProvider = ({ children }) => {
     const [ orgData, setOrgData ] = useState();
-    const [ orgDataFor, setOrgDataFor ] = useState();
-    const { userData, authenticatedAddress, isAuthenticated } = useContext(UserContext);
+    const { userData, authenticatedAddress } = useContext(UserContext);
     const [ currentOrgId, setCurrentOrgId ] = useState();
     const { pathname } = useLocation();
 

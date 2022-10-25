@@ -8,9 +8,13 @@ import Logout from "./Logout/Logout";
 import ActionButton from "@components/Button/ActionButton";
 
 import { sliceAddress } from "@utils/helpers";
+import { getPFPImage } from "@utils/api_requests";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
+import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { IPFS_GATEWAY_URL, PLACEHOLDER_AVATAR } from "@static/constants/links";
+
+import { getRandomEmoji } from "@static/constants/constants";
 
 import '@rainbow-me/rainbowkit/styles.css'
 import "@style/Dashboard/Sidebar/Sidebar.css";
@@ -27,8 +31,10 @@ const OrgSidebar = ({ address }) => {
     const { chain } = useNetwork();
     const { chains, switchNetwork } = useSwitchNetwork();
     const [ isWrongNetwork, setIsWrongNetwork ] = useState(false);
+    const [ generatedPFP, setGeneratedPFP ] = useState();
 
     const navigate = useNavigate();
+    const { setError } = useContext(ErrorContext);
     const { userData, isAuthenticated, tryAuthentication } = useContext(UserContext);
     const { orgData } = useContext(OrgContext);
 
@@ -64,6 +70,29 @@ const OrgSidebar = ({ address }) => {
             openConnectModal()
     }, [openConnectModal, address])
 
+    // Get a generated PFP if the user does not have an ENS.
+    // If they do not have an ENS name, get a random emoji to use instead of a character.
+    useEffect(() => {
+        async function getGeneratedPFP() {
+            const seed = userData?.ens_name ? userData?.ens_name : getRandomEmoji(address);
+            const response = await getPFPImage(seed, address);
+            if (response.error) {
+                setError({
+                    label: "Could not get generated PFP",
+                    message: response.error
+                })
+            } else {
+                setGeneratedPFP(URL.createObjectURL(response));
+            }
+        }
+
+        if (isAuthenticated && !ensAvatar) {
+            getGeneratedPFP();
+        }
+    // Only run for ensAvatar or authentication changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ensAvatar, isAuthenticated])
+
     return (
         <div className="sidebar left">
             {/* Logged out user header */}
@@ -91,7 +120,11 @@ const OrgSidebar = ({ address }) => {
             {address && !orgId && isAuthenticated && !isWrongNetwork &&
                 <>
                     <div className="sidebar__header">
-                        <img src={ensAvatar || PLACEHOLDER_AVATAR} alt="avatar" />
+                        <img 
+                            src={ensAvatar || generatedPFP} 
+                            alt="avatar" 
+                            onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR} 
+                        />
                         <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
                             {userData?.ens_name ? userData.ens_name : sliceAddress(address)}
                         </Link>
@@ -135,11 +168,14 @@ const OrgSidebar = ({ address }) => {
 
                     <div className="sidebar__category">
                         <h5>Badges</h5>
-                        <ActionButton 
-                            onClick={() => navigate(`/dashboard/organization/${orgId}/badge/new`)}
-                            icon={['fal', 'plus']}
-                            sx={{minWidth: '36px'}}
-                        />
+                        {/* Hide the new Badge button if the user is not owner of org. */}
+                        {orgData?.owner?.ethereum_address === address &&
+                            <ActionButton 
+                                onClick={() => navigate(`/dashboard/organization/${orgId}/badge/new`)}
+                                icon={['fal', 'plus']}
+                                sx={{minWidth: '36px'}}
+                            />
+                        }
                     </div>
                 </>
             }

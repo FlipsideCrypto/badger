@@ -7,7 +7,7 @@ const Select = ({label, options, value, setValue}) => {
                 <label htmlFor={label}>
                     {label}
                 </label>
-                <select onChange={setValue}>
+                <select onChange={setValue} value={value}>
                     {options.map((option, index) => (
                         <option key={index} value={option}>
                             {option}
