@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { useAccount, useSigner } from "wagmi";
 
@@ -22,32 +23,35 @@ import "@style/Dashboard/Dashboard.css";
 const Dashboard = () => {
     const { data: signer } = useSigner();
     const { address } = useAccount();
+    const [ isMobile, setIsMobile ] = useState(false);
 
     return (
         <>
-            <MobilePreventor />
+            <MobilePreventor isMobile={isMobile} setIsMobile={setIsMobile} />
 
-            <div className="dashboard">
-                <ErrorContextProvider>
-                    <UserContextProvider signer={signer} address={address}>
-                        <OrgContextProvider>
-                            <OrgSidebar address={address} />
+            {!isMobile && 
+                <div className="dashboard">
+                    <ErrorContextProvider>
+                        <UserContextProvider signer={signer} address={address}>
+                            <OrgContextProvider>
+                                <OrgSidebar address={address} />
 
-                            <DashboardContent>
-                                <Routes>
-                                    <Route path="/" element={<Home />} />
-                                    <Route path="/organization/new" element={<OrgForm />} />
-                                    <Route path="/organization/:orgId" element={<Org />} />
-                                    <Route path="/organization/:orgId/badge/new" element={<BadgeForm />} />
-                                    <Route path="/organization/:orgId/badge/:badgeId" element={<Badge />} />
-                                </Routes>
-                            </DashboardContent>
+                                <DashboardContent>
+                                    <Routes>
+                                        <Route path="/" element={<Home />} />
+                                        <Route path="/organization/new" element={<OrgForm />} />
+                                        <Route path="/organization/:orgId" element={<Org />} />
+                                        <Route path="/organization/:orgId/badge/new" element={<BadgeForm />} />
+                                        <Route path="/organization/:orgId/badge/:badgeId" element={<Badge />} />
+                                    </Routes>
+                                </DashboardContent>
 
-                            <HelpSidebar />
-                        </OrgContextProvider>
-                    </UserContextProvider>
-                </ErrorContextProvider>
-            </div>
+                                <HelpSidebar />
+                            </OrgContextProvider>
+                        </UserContextProvider>
+                    </ErrorContextProvider>
+                </div>
+            }
         </>
     )
 }
