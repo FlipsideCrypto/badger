@@ -228,15 +228,15 @@ const Badge = () => {
 
                 {(!badge?.users || badge?.users?.length < 1) && (isManager || isOwner) &&
                     <div className="org__container empty">
-                        <h1>Your Organization is almost alive, it just needs members!</h1>
+                        <h1>You're almost done with setting up the {badge?.name} Badge!</h1>
                         <p>
-                            You've set up your Organization and your Badge. 
-                            Now for the final step of sending the first set of keys to your team members.
+                            With your <strong>{orgData?.name} Organization</strong> and your <strong>{badge.name} Badge</strong> set up, 
+                             the final step is to send this badge to your team members and the credentials will be live.
                         </p>
                         <div style={{margin: 'auto'}}>
                             <IconButton 
                                 icon={['fal', 'arrow-right']} 
-                                text="DISTRIBUTE KEYS"
+                                text="DISTRIBUTE BADGE"
                                 onClick={() => setIsManage(true)}
                                 style={{textAlign: "center"}}
                             />

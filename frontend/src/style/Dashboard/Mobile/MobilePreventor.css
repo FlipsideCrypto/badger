@@ -1,0 +1,20 @@
+.mobile__preventor { 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+    z-index: 999;
+    display: block;
+    background: #fff;
+}
+
+.mobile__preventor .container {
+    min-height: 100%;
+    height: 100%;
+    align-content: center;
+}
+
+.mobile__preventor a { 
+    margin-top: 30px;
+}

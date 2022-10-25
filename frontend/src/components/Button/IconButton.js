@@ -3,10 +3,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import "@style/Button/IconButton.css"
 
-const IconButton = ({ icon, text, style, onClick, disabled, loading}) => {
+const IconButton = ({ 
+    icon, 
+    text, 
+    className,
+    style, 
+    onClick, 
+    disabled, 
+    loading
+}) => {
     return (
         <button 
-            className={loading ? "button button__loading" : "button"}
+            className={loading 
+                ? `button button__loading ${className}` 
+                : `button ${className}`}
             style={style} 
             onClick={onClick} 
             disabled={disabled}

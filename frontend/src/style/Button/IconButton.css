@@ -37,9 +37,11 @@
     color: inherit;
     cursor: default;
 }
+
 .button:disabled .button__icon {
     cursor: default;
 }
+
 .button:disabled:hover .button__icon svg {
     transform: translateX(0px);
 }
@@ -47,6 +49,10 @@
 /* When the button is hovered do a little bump to the icon */
 .button:hover .button__icon svg {
     transform: translateX(2px);
+}
+
+.button.wiggle:hover .button__icon svg {
+    animation: wiggle 0.1s ease-in-out;
 }
 
 .button.button__loading,
@@ -69,15 +75,22 @@
     background: inherit;
 }
 
-@keyframes loading__shimmer {
-    0% {
-      background-position: -500px 0;
-    }
-    100% {
-      background-position: 200px 0; 
-    }
-  }
-
 .button.button__error {
     background: #FF0000;
+}
+
+@keyframes wiggle { 
+    0% { transform: translateX(0px); }
+    50% { transform: translateX(2px); }
+    100% { transform: translateX(0px); }
+}
+
+@keyframes loading__shimmer {
+    0% {
+        background-position: -500px 0;
+    }
+
+    100% {
+        background-position: 200px 0;
+    }
 }

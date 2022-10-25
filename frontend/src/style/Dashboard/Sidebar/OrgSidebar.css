@@ -7,6 +7,11 @@
     bottom: 0px;
 }
 
+.sidebar__fixed__container { 
+    height: calc(100vh - 30px);
+    position: fixed;
+}
+
 .sidebar .sidebar__header * { 
     margin: 0;
 }

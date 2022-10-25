@@ -48,8 +48,8 @@ const OrgSidebar = ({ address }) => {
     const onSwitchNetworkRequest = useCallback(() => {
         const primaryChain = chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)
         switchNetwork?.(primaryChain?.id)
-        
-        }, [chains, switchNetwork]
+
+    }, [chains, switchNetwork]
     )
 
     // If wrong network is detected, then prompt a network switch.
@@ -57,7 +57,7 @@ const OrgSidebar = ({ address }) => {
         setIsWrongNetwork(chain?.name !== PRIMARY_PRODUCTION_CHAIN)
 
         if (
-               chain
+            chain
             && isWrongNetwork
         )
             onSwitchNetworkRequest();
@@ -95,40 +95,41 @@ const OrgSidebar = ({ address }) => {
 
     return (
         <div className="sidebar left">
-            {/* Logged out user header */}
-            {!address && 
-                <button onClick={() => openConnectModal()} style={{ marginBottom: '20px' }}>
-                    Connect Wallet
-                </button>
-            }
+            <div className="sidebar__fixed__container">
+                {/* Logged out user header */}
+                {!address &&
+                    <button onClick={() => openConnectModal()} style={{ marginBottom: '20px' }}>
+                        Connect Wallet
+                    </button>
+                }
 
-            {/* Wrong network header */}
-            {isWrongNetwork && address &&
-                <button onClick={() => onSwitchNetworkRequest()} style={{ marginBottom: '20px' }}>
-                    {`Switch to ${PRIMARY_PRODUCTION_CHAIN}`}
-                </button>
-            }
+                {/* Wrong network header */}
+                {isWrongNetwork && address &&
+                    <button onClick={() => onSwitchNetworkRequest()} style={{ marginBottom: '20px' }}>
+                        {`Switch to ${PRIMARY_PRODUCTION_CHAIN}`}
+                    </button>
+                }
 
-            {/* Unauthenticated user header */}
-            {address && !isAuthenticated && !isWrongNetwork &&
-                <button onClick={() => tryAuthentication()} style={{ marginBottom: '20px' }}>
-                    Sign In
-                </button>
-            }
+                {/* Unauthenticated user header */}
+                {address && !isAuthenticated && !isWrongNetwork &&
+                    <button onClick={() => tryAuthentication()} style={{ marginBottom: '20px' }}>
+                        Sign In
+                    </button>
+                }
 
-            {/* Logged in user header */}
-            {address && !orgId && isAuthenticated && !isWrongNetwork &&
-                <>
-                    <div className="sidebar__header">
-                        <img 
-                            src={ensAvatar || generatedPFP} 
-                            alt="avatar" 
-                            onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR} 
-                        />
-                        <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
-                            {userData?.ens_name ? userData.ens_name : sliceAddress(address)}
-                        </Link>
-                    </div>
+                {/* Logged in user header */}
+                {address && !orgId && isAuthenticated && !isWrongNetwork &&
+                    <>
+                        <div className="sidebar__header">
+                            <img 
+                                src={ensAvatar || generatedPFP} 
+                                alt="avatar" 
+                                onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR} 
+                            />
+                            <Link className="link-wrapper link-text" to="/dashboard/" style={{marginTop: "2px"}}>
+                                {userData?.ens_name ? userData.ens_name : sliceAddress(address)}
+                            </Link>
+                        </div>
 
                     <div className="sidebar__category">
                         <h5>Organizations</h5>
@@ -166,66 +167,67 @@ const OrgSidebar = ({ address }) => {
                         </div>
                     </div>
 
-                    <div className="sidebar__category">
-                        <h5>Badges</h5>
-                        {/* Hide the new Badge button if the user is not owner of org. */}
+                        <div className="sidebar__category">
+                            <h5>Badges</h5>
+                            {/* Hide the new Badge button if the user is not owner of org. */}
                         {orgData?.owner?.ethereum_address === address &&
                             <ActionButton 
                                 onClick={() => navigate(`/dashboard/organization/${orgId}/badge/new`)}
-                                icon={['fal', 'plus']}
+                                    icon={['fal', 'plus']}
                                 sx={{minWidth: '36px'}}
                             />
-                        }
-                    </div>
-                </>
-            }
+                            }
+                        </div>
+                    </>
+                }
 
-            {/* List of organizations or badges */}
-            {isAuthenticated &&
-                <div className="sidebar__organizations">
-                    {orgId && orgData?.name ?
-                        orgData?.badges?.map((badge, index) => (
-                            <button 
-                                key={index}
-                                className="button__unstyled"
-                                onClick={() => navigate(`/dashboard/organization/${orgData.id}/badge/${badge.id}`)}
-                            >
-                                <div className="sidebar__organization">
-                                    <img 
-                                        src={IPFS_GATEWAY_URL + badge.image_hash} 
-                                        alt="avatar" 
-                                        onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
-                                    />
-                                    <div>
-                                        {badge.name}
+                {/* List of organizations or badges */}
+                {isAuthenticated &&
+                    <div className="sidebar__organizations">
+                        {orgId && orgData?.name ?
+                            orgData?.badges?.map((badge, index) => (
+                                <button
+                                    key={index}
+                                    className="button__unstyled"
+                                    onClick={() => navigate(`/dashboard/organization/${orgData.id}/badge/${badge.id}`)}
+                                >
+                                    <div className="sidebar__organization">
+                                        <img
+                                            src={IPFS_GATEWAY_URL + badge.image_hash}
+                                            alt="avatar"
+                                            onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
+                                        />
+                                        <div>
+                                            {badge.name}
+                                        </div>
                                     </div>
-                                </div>
-                            </button>
-                        ))
-                    :
-                    userData?.organizations?.map((org, index) => (
-                        <button 
-                            key={index}
-                            className="button__unstyled"
-                            onClick={() => navigate(`/dashboard/organization/${org.id}`)}
-                        >
-                            <div className="sidebar__organization">
-                                <img 
-                                    src={IPFS_GATEWAY_URL + org.image_hash} 
-                                    alt="avatar" 
-                                    onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
-                                />
-                                <div>
-                                    {org.name}
-                                </div>        
-                            </div>
-                        </button>
-                ))}
-                </div>
-            }
+                                </button>
+                            ))
+                            :
+                            userData?.organizations?.map((org, index) => (
+                                <button
+                                    key={index}
+                                    className="button__unstyled"
+                                    onClick={() => navigate(`/dashboard/organization/${org.id}`)}
+                                >
+                                    <div className="sidebar__organization">
+                                        <img
+                                            src={IPFS_GATEWAY_URL + org.image_hash}
+                                            alt="avatar"
+                                            onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR}
+                                        />
+                                        <div>
+                                            {org.name}
+                                        </div>
+                                    </div>
+                                </button>
+                            ))}
+                    </div>
+                }
 
-            {/* Logout button */}
-            <Logout />
+                {/* Logout button */}
+                <Logout />
+            </div>
         </div>
     )
 }

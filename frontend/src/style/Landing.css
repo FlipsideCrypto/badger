@@ -186,12 +186,12 @@
 
 @media only screen and (max-width: 1028px) {
     .hero .container {
-        min-height: 450px;
+        min-height: 600px;
         padding-top: 120px;
     }
 
-    .hero .container {
-        grid-template-columns: 1fr;
+    .hero .container { 
+        grid-template-columns: 2fr 1fr;
     }
 
     .hero .container .hero__content h1 { 
@@ -210,5 +210,11 @@
 
     .features .container .features__grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media only screen and (max-width: 768px) { 
+    .hero .container {
+        grid-template-columns: 2fr 1fr;
     }
 }
