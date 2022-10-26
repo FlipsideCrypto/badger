@@ -167,7 +167,14 @@ export async function postIPFSImage(image) {
     return response;
 }
 
-export async function postIPFSMetadata(name, description, imageHash, attributes) {
+export async function postIPFSMetadata(props) {
+    const {
+        name,
+        description,
+        imageHash,
+        attributes
+    } = props;
+    
     let response;
 
     const metadata = {
