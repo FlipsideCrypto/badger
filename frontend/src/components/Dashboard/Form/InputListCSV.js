@@ -88,8 +88,12 @@ const InputListCSV = ({ label, inputList, setInputList, setAreAddressesValid }) 
 
     // When validated array changes, check if any addresses are invalid.
     useEffect(() => {
-        const isAllValid = validatedAddresses.every((address) => address === true);
-        setAreAddressesValid(isAllValid);
+        if (validatedAddresses.length > 0) {
+            const isAllValid = validatedAddresses.every((address) => address === true);
+            setAreAddressesValid(isAllValid);
+        } else {
+            setAreAddressesValid(false);
+        }
     }, [validatedAddresses, setAreAddressesValid])
 
     const labelDOM = <>

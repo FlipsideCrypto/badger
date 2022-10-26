@@ -27,7 +27,6 @@ const Badge = () => {
     const [ areAddressesValid, setAreAddressesValid ] = useState(false);
     const [ selectedAction, setSelectedAction ] = useState("Mint");
     const [ txMethod, setTxMethod ] = useState("manageOwnership");
-    const [ txCalled, setTxCalled ] = useState(false);
     const [ txPending, setTxPending ] = useState(false);
     
     const badgeIndex = orgData?.badges?.findIndex(badge => badge.id === parseInt(badgeId));
@@ -36,16 +35,16 @@ const Badge = () => {
     // find if the authenticated address is in one of the delegates.ethereum_address properties
     const isManager = badge?.delegates?.find(delegate => delegate.ethereum_address === address);
 
-
     const setDelegates = useSetDelegates(
-        txCalled && isOwner,
+        isOwner && areAddressesValid && txMethod === "setDelegates",
         orgData?.ethereum_address,          // orgAddress
         badge?.token_id,                    // tokenId array
         membersToUpdate,                    // address array
         selectedAction,                     // mint, revoke, add or remove leaders
     );
+
     const manageOwnership = useManageBadgeOwnership(
-        txCalled,
+        areAddressesValid && txMethod === "manageOwnership",
         orgData?.ethereum_address,          // orgAddress
         badge?.token_id,                    // tokenId array
         membersToUpdate,                    // address array
@@ -143,7 +142,6 @@ const Badge = () => {
 
     // Manage the transaction write and clean up effects.
    const runTransaction = useCallback(async () => {
-        setTxCalled(false);
         setTxPending(true);
 
         let tx;
@@ -170,23 +168,14 @@ const Badge = () => {
         setTxPending(false);
     }, [txMethod, setDelegates, manageOwnership, setError, onMembersUpdate, onDelegatesUpdate]);
 
-    // If the transaction has been called, is not pending, and one of the transactions are prepped,
-    // run the transaction.
-    useEffect(() => {        
-        if (
-            txCalled && 
-            !txPending &&
-            (setDelegates.isSuccess || manageOwnership.isSuccess)
-        ) 
-            runTransaction();
-    }, [setDelegates.isSuccess, manageOwnership.isSuccess, txCalled, txPending, runTransaction])
-
     // Set badge data if orgData has been updated.
     useEffect(() => {
         if (orgData?.badges?.[badgeIndex]) {
             setBadge(orgData?.badges[badgeIndex]);
         }
     }, [orgData, badgeIndex])
+
+    console.log('manage owner', manageOwnership.isSuccess, setDelegates.isSuccess, 'addressesValid', areAddressesValid)
 
     return (
         <>
@@ -214,10 +203,12 @@ const Badge = () => {
                         <IconButton
                             icon={['fal', 'arrow-right']} 
                             text={txMethod === "manageOwnership" ? "UPDATE MEMBERS" : "UPDATE MANAGERS"}
-                            onClick={() => setTxCalled(true)}
+                            onClick={() => runTransaction()}
                             style={{margin: "20px 0px 20px auto"}}
                             loading={txPending}
-                            disabled={!areAddressesValid}
+                            disabled={txMethod === "manageOwnership" ? 
+                                !manageOwnership.isSuccess : !setDelegates.isSuccess
+                            }
                         />
                     </>
                 }
