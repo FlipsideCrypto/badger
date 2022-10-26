@@ -19,10 +19,12 @@ PROPAGATE_EXCEPTIONS = True
 X_FRAME_OPTIONS = "DENY"
 
 CORS_ORIGIN_ALLOW_ALL = True
-CSRF_TRUSTED_ORIGINS = ["https://badger.utc24.io"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://trybadger.com"
+]
 
-CSRF_COOKIE_DOMAIN = ".badger.utc24.io"
-SESSION_COOKIE_DOMAIN = ".badger.utc24.io"
+CSRF_COOKIE_DOMAIN = ".trybadger.com"
+SESSION_COOKIE_DOMAIN = ".trybadger.com"
 
 ALLOWED_HOSTS = ['*']
 
