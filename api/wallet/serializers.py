@@ -2,11 +2,57 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from badge.models import Badge
-from badge.serializers import BadgeSerializer
+from balance.models import Balance
 from organization.models import Organization
+
+from badge.serializers import BadgeUserSerializer
 from organization.serializers import OrganizationSerializer
 
 User = get_user_model()
+
+class WalletBadgeSerializer(serializers.ModelSerializer):
+    def __init__(self, wallet=None, *args, **kwargs):
+        self.wallet = wallet
+
+    id = serializers.IntegerField(read_only=True)
+    delegates = BadgeUserSerializer(many=True, read_only=True)
+    users = BadgeUserSerializer(many=True, read_only=True)
+
+    balance = serializers.SerializerMethodField()
+
+    def get_balance(self, obj):
+        if self.wallet and Balance.objects.filter(
+            organization=obj.organization, 
+            token_id=obj.token_id,
+            user=self.wallet
+        ).exists():
+            return Balance.objects.filter(
+                organization=obj.organization, 
+                token_id=obj.token_id,
+                user=self.wallet
+            ).first().amount
+
+        return 0
+
+    class Meta:
+        model = Badge
+        fields = (
+            'id',
+            'url',
+            'is_active',
+            'name',
+            'description',
+            'token_id',
+            'image_hash',
+            'token_uri',
+            'delegates',
+            'account_bound',
+            'signer_ethereum_address',
+            'users',
+            'balance',
+            'created',
+            'updated'
+        )
 
 class WalletSerializer(serializers.ModelSerializer):
     organizations = serializers.SerializerMethodField(read_only=True)
@@ -56,10 +102,11 @@ class WalletSerializer(serializers.ModelSerializer):
         ).data
 
     def get_badges(self, obj):
-        return BadgeSerializer(
+        return WalletBadgeSerializer(
             self._get_badges(obj), 
             many=True, 
-            context={'request': self.context.get('request')}
+            context={'request': self.context.get('request')},
+            wallet=obj
         ).data
 
     def get_tutorial_state(self, obj):
