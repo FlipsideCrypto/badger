@@ -20,7 +20,9 @@ X_FRAME_OPTIONS = "DENY"
 
 CORS_ORIGIN_ALLOW_ALL = True
 CSRF_TRUSTED_ORIGINS = [
-    "https://trybadger.com"
+    "https://www.trybadger.com",
+    "https://trybadger.com",
+    "https://*.trybadger.com",
 ]
 
 CSRF_COOKIE_DOMAIN = ".trybadger.com"
