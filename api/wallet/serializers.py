@@ -11,8 +11,9 @@ from organization.serializers import OrganizationSerializer
 User = get_user_model()
 
 class WalletBadgeSerializer(serializers.ModelSerializer):
-    def __init__(self, wallet=None, *args, **kwargs):
-        self.wallet = wallet
+    def __init__(self, *args, **kwargs):
+        # get the value of wallet
+        self.wallet = kwargs.pop('wallet', None)
 
     id = serializers.IntegerField(read_only=True)
     delegates = BadgeUserSerializer(many=True, read_only=True)
@@ -102,11 +103,11 @@ class WalletSerializer(serializers.ModelSerializer):
         ).data
 
     def get_badges(self, obj):
+        print('has badges', self._get_badges(obj))
         return WalletBadgeSerializer(
             self._get_badges(obj), 
             many=True, 
             context={'request': self.context.get('request')},
-            wallet=obj
         ).data
 
     def get_tutorial_state(self, obj):

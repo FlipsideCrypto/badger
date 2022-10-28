@@ -22,5 +22,5 @@ router.registry.extend(wallets_router.registry)
 urlpatterns = router.urls + [
     path('admin/', admin.site.urls),
     path("api/auth/", include("siwe_auth.urls")),
-    path('api/auth/get-nonce', get_nonce, name="get-nonce")
+    path('api/auth/get-nonce', get_nonce, name="get-nonce"),
 ]
