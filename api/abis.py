@@ -16,8 +16,6 @@ ORGANIZATION_EVENTS = [
     "event URI(string,uint256 indexed)",
 ]
 
-
-
 FACTORY = [
     {
         "inputs": [
