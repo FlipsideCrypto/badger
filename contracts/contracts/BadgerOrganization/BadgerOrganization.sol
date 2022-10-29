@@ -26,6 +26,7 @@ contract BadgerOrganization is
                               VERSIONING
     //////////////////////////////////////////////////////////////*/
     
+    /// @dev The version of a contract that provides a key index to check against.
     uint256 public version;
 
     /*//////////////////////////////////////////////////////////////
