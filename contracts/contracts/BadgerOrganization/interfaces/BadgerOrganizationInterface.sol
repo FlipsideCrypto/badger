@@ -15,6 +15,7 @@ interface BadgerOrganizationInterface {
      * @param _contractURI The URI for the contract metadata.
      * @param _name The name of the Organization.
      * @param _symbol The symbol of the Organization.
+     * @param _version The version of the Organization.
      */
     function initialize(
           address _owner
@@ -22,6 +23,7 @@ interface BadgerOrganizationInterface {
         , string memory _contractURI
         , string memory _name
         , string memory _symbol
+        , uint256 _version
     )
         external;
 

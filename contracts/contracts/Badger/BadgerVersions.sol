@@ -237,6 +237,7 @@ contract BadgerVersions is
         , string memory _organizationURI
         , string memory _name
         , string memory _symbol
+        , uint256 _version
     )
         internal
         returns (
@@ -265,6 +266,7 @@ contract BadgerVersions is
             , _organizationURI
             , _name
             , _symbol
+            , _version
         );
         
         /// @dev Announce the creation of the Organization.

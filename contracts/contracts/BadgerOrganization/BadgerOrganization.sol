@@ -23,6 +23,12 @@ contract BadgerOrganization is
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     /*//////////////////////////////////////////////////////////////
+                              VERSIONING
+    //////////////////////////////////////////////////////////////*/
+    
+    uint256 public version;
+
+    /*//////////////////////////////////////////////////////////////
                             INITIALIZATION
     //////////////////////////////////////////////////////////////*/
 
@@ -35,7 +41,9 @@ contract BadgerOrganization is
         , string memory _organizationURI
         , string memory _name
         , string memory _symbol
+        , uint256 _version
     )
+        override
         external
         initializer
     { 
@@ -45,6 +53,9 @@ contract BadgerOrganization is
         /// @dev Set the name and symbol of the contract.
         name = _name;
         symbol = _symbol;
+
+        /// @dev Set the version of the contract.
+        version = _version;
 
         /// @dev Initialize the NFT side of the Organization.
         __ERC1155_init(_uri);
