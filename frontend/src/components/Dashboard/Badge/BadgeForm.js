@@ -52,7 +52,7 @@ const BadgeForm = () => {
         {
             text: "CREATE BADGE",
             icon: ["fal", "arrow-right"],
-            disabled: badge.save_state !== "saved",
+            disabled: badge.save_state !== "saved" || !createBadge.isSuccess,
             loading: txPending,
             event: () => createBadgeTx()
         }

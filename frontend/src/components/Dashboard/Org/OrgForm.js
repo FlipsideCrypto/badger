@@ -13,7 +13,7 @@ import { useBadgerFactory } from "@hooks/useContracts";
 import { postOrgRequest, postIPFSImage, postIPFSMetadata, getPFPImage } from "@utils/api_requests";
 import { getBadgerAbi } from "@hooks/useContracts";
 
-// TODO: Move orgObj into a reducer.
+// TODO: Move orgObj into the form reducer.
 const OrgForm = () => {
     const { userData, setUserData } = useContext(UserContext);
     const { setError } = useContext(ErrorContext);
@@ -23,7 +23,6 @@ const OrgForm = () => {
     const navigate = useNavigate();
     const imageInput = useRef();
 
-    // TODO: For editing, get orgId from params and if it exists, fetch and fill org data
     const [ orgObj, setOrgObj ] = useState({
         name: "",
         symbol: "",
@@ -36,21 +35,33 @@ const OrgForm = () => {
     const [ orgImage, setOrgImage ] = useState();
     const [ orgImageHash, setOrgImageHash ] = useState();
     const [ imageUploading, setImageUploading ] = useState(false);
-    const [ txCalled, setTxCalled ] = useState(false);
     const [ txPending, setTxPending ] = useState(false);
+    const [ saveState, setSaveState ] = useState("unsaved");
 
-    const createContract = useBadgerFactory(txCalled, orgObj, address, chain?.name)
+    const createContract = useBadgerFactory(
+        saveState === "saved", 
+        orgObj, 
+        address, 
+        chain?.name
+    )
     const badger = useMemo(() => getBadgerAbi(chain?.name), [chain?.name]);
 
     let firstCharOfName = useRef();
 
     const actions = [
         {
+            text: "SAVE",
+            icon: ["fal", "save"],
+            disabled: !orgObj.name || !orgObj.description || saveState === "saved",
+            loading: saveState === "pending",
+            event: () => onFormSave()
+        },
+        {
             text: "CREATE",
             icon: ["fal", "arrow-right"],
-            loading: txCalled || txPending,
-            disabled: !orgObj.name || !orgObj.symbol || !orgImageHash,
-            event: () => onFormSubmission()
+            loading: txPending,
+            disabled: saveState !== "saved" || !createContract.isSuccess,
+            event: () => createOrgTx()
         }
     ]
 
@@ -82,7 +93,7 @@ const OrgForm = () => {
         }
     }
     
-    // When image is added, post to IPFS and set orgObj image hash.
+    // Pin the org image to IPFS.
     const pinImage = async (image) => {
         setImageUploading(true)
 
@@ -96,26 +107,42 @@ const OrgForm = () => {
             setOrgImageHash(response.hash);
         }
         setImageUploading(false);
+        return response
     }
 
-    // Posts contract uri to IPFS and sets the returned hash to orgObj uri hash.
-    const onFormSubmission = async () => {
-        setTxCalled(true);
+    // Post the IPFS metadata for the org.
+    const pinMetadata = async (imageHash) => {
+        const response = await postIPFSMetadata({
+            name: orgObj.name, 
+            description: orgObj.description, 
+            imageHash: imageHash
+        });
 
-        const response = await postIPFSMetadata(orgObj.name, orgObj.description, orgImageHash);
         if (response.error) {
             setError({
                 label: 'Error creating Org URI',
                 message: response.error
             });
-            setTxCalled(false);
         } else {
             setOrgObj({...orgObj, contract_uri_hash: response.hash, image_hash: orgImageHash});
         }
+        
+        return response;
+    }
+
+    // On save button click, handle all the IPFS pinning and enabled the create button.
+    const onFormSave = async () => {
+        setSaveState("pending");
+        const imageHash = await pinImage(orgImage);
+        const jsonHash = await pinMetadata(imageHash);
+        if (!imageHash.error && !jsonHash.error)
+            setSaveState("saved");
+        else
+            setSaveState("unsaved");
     }
 
     // Awaits a prepared transaction before running it.
-    const createOrgTx = useCallback(async () => {
+    const createOrgTx = async () => {
         setTxPending(true);
         try {
             let tx = await createContract.write?.();
@@ -140,20 +167,7 @@ const OrgForm = () => {
             });
             setTxPending(false);
         }
-    }, [createContract, badger.abi, orgObj, setError]);
-    
-    // Once the transaction is prepared and called, run it.
-    useEffect(() => {
-        if (   
-               createContract.isSuccess
-            && txCalled
-            && !txPending
-            // && !orgObj.ethereum_address
-        ) {
-            setTxCalled(false);
-            createOrgTx();
-        }
-    }, [createContract.isSuccess, txCalled, setTxCalled, txPending, createOrgTx])
+    }
 
     // Post the org Obj to the backend once the contract address is added.
     const postOrg = useCallback(async () => {
@@ -185,6 +199,11 @@ const OrgForm = () => {
         if (orgObj.ethereum_address) 
             postOrg();
     }, [orgObj.ethereum_address, postOrg])
+
+    // If any field changes after saving once, prompt the user to save again.
+    useEffect(() => {
+        setSaveState("unsaved");
+    }, [orgObj.name, orgObj.description, orgImage])
 
     return (
         <div id="new-org">
@@ -220,7 +239,7 @@ const OrgForm = () => {
                 />
             </FormDrawer>
 
-            <FormDrawer label="Appearance" open={false}>
+            <FormDrawer label="Appearance" open={true}>
                 <Input
                     name="Custom Image"
                     accept="image/*"
@@ -249,10 +268,7 @@ const OrgForm = () => {
                         ref={imageInput}
                         accept="image/*"
                         type="file"
-                        onChange={(event) => {
-                            setOrgImage(event.target.files[0]);
-                            pinImage(event.target.files[0]);
-                        }}
+                        onChange={(event) => {setOrgImage(event.target.files[0])}}
                     />
             </FormDrawer>
 
