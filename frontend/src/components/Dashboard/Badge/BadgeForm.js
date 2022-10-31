@@ -38,7 +38,8 @@ const BadgeForm = () => {
         !badge.name || 
         !badge.description || 
         !areAddressesValid || 
-        !signerIsValid;
+        !signerIsValid ||
+        badge.save_state === "saved"
     
     const actions = [
         {
@@ -196,6 +197,18 @@ const BadgeForm = () => {
         // Only want to run this once once the OrgData is retrieved.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [orgData])
+
+    // If any of the IPFS metadata fields change, set saved state to unsaved.
+    // This is to ensure someone does not save, and then change fields before running
+    // the transaction with stale data.
+    useEffect(() => {
+        badgeDispatch({type: "SET", field: "save_state", payload: "unsaved"});
+    }, [
+        badge.name, 
+        badge.description, 
+        badge.attributes,
+        badgeImage
+    ])
 
     return (
         <>

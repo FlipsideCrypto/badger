@@ -17,6 +17,10 @@
 
 .action__bar .action__bar__actions { 
     grid-area: actions;
+    display: grid;
+    grid-auto-flow: column;
+    justify-self: end;
+    grid-column-gap: 16px;
 }
 
 .action__bar .action__bar__actions button { 
