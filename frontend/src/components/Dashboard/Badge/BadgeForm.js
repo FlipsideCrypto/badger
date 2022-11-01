@@ -43,14 +43,14 @@ const BadgeForm = () => {
     
     const actions = [
         {
-            text: "SAVE",
+            text: "Save",
             icon: ["fal", "save"],
             disabled: saveDisabled,
             loading: badge.save_state === "pending",
             event: () => onBadgeFormSave()
         },
         {
-            text: "CREATE BADGE",
+            text: "Create badge",
             icon: ["fal", "arrow-right"],
             disabled: badge.save_state !== "saved" || !createBadge.isSuccess,
             loading: txPending,
@@ -214,14 +214,14 @@ const BadgeForm = () => {
         <>
             <Header back={() => navigate(`/dashboard/organization/${orgData?.id}`)} />
 
-            <h2>Create Badge</h2>
+            <h2 style={{marginLeft: "30px"}}>Create Badge</h2>
 
             <FormDrawer label="General" open={true}>
                 <div style={{display: 'grid', gridTemplateColumns: "10fr 2fr", gridColumnGap: "20px"}}>
                     <div>
                         <Input
                             name="badge-name"
-                            label="Badge Name"
+                            label="Name"
                             placeholder="Name"
                             required={true}
                             value={badge.name}
@@ -231,7 +231,7 @@ const BadgeForm = () => {
 
                         <Input
                             name="badge-description"
-                            label="Badge description"
+                            label="Description"
                             placeholder="Description"
                             required={true}
                             value={badge.description}
@@ -328,13 +328,13 @@ const BadgeForm = () => {
                         <button
                             className="button-secondary"
                             onClick={() => imageInput.current.click()}
-                            style={{width: "100px", padding: "0px"}}
+                            style={{width: "auto"}}
                         >
                             {imageUploading ?
-                                "LOADING..." :
+                                "Loading..." :
                                 badgeImage ? 
-                                    "CHANGE" : 
-                                    "UPLOAD"
+                                    "Change image" : 
+                                    "Upload image"
                             }
                         </button>
                     }
@@ -349,9 +349,13 @@ const BadgeForm = () => {
                     />
             </FormDrawer>
 
-            <ActionBar help={
-                'After creating a badge, you (or your managers) can issue badges to team members.'
-            } actions={actions} />
+            <ActionBar 
+                help={
+                    'After creating a badge, you (or your managers) can issue badges to team members.'
+                } 
+                actions={actions} 
+                style={{marginInline: "30px"}}
+            />
         </>
     )
 }

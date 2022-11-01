@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Card from "@components/Card/Card"
@@ -70,9 +70,9 @@ const Home = () => {
 
                 <div className="home__cards__column">
                     <Card>
-                        <button 
+                        <Link 
                             className="button__unstyled link-wrapper home-link" 
-                            onClick={() => navigate("/dashboard/organization/new")} 
+                            to={"/dashboard/organization/new"}
                             style={{fontWeight: "400"}}
                         >
                             <div className="home__card__content">
@@ -89,7 +89,7 @@ const Home = () => {
                                     </div>
                                 }
                             </div>
-                        </button>
+                        </Link>
                     </Card>
 
                     <Card>

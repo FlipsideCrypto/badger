@@ -217,7 +217,7 @@ const Badge = () => {
                     <HolderTable badge={badge} />
                 }
 
-                {(!badge?.users || badge?.users?.length < 1) && (isManager || isOwner) &&
+                {badge?.users?.length === 0 && badge?.delegates?.length === 0 && (isManager || isOwner) &&
                     <div className="org__container empty">
                         <h1>You're almost done with setting up the {badge?.name} Badge!</h1>
                         <p>

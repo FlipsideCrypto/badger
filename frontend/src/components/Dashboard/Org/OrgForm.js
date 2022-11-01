@@ -50,14 +50,14 @@ const OrgForm = () => {
 
     const actions = [
         {
-            text: "SAVE",
+            text: "Save",
             icon: ["fal", "save"],
             disabled: !orgObj.name || !orgObj.description || saveState === "saved",
             loading: saveState === "pending",
             event: () => onFormSave()
         },
         {
-            text: "CREATE",
+            text: "Create organization",
             icon: ["fal", "arrow-right"],
             loading: txPending,
             disabled: saveState !== "saved" || !createContract.isSuccess,
@@ -209,20 +209,30 @@ const OrgForm = () => {
         <div id="new-org">
             <Header back={() => navigate("/dashboard")} />
 
-            <h2>Create Organization</h2>
+            <h2 style={{marginLeft: "30px"}}>Create Organization</h2>
 
             <FormDrawer label="General" open={true}>
-                <Input 
-                    name="orgName"
-                    label="Organization Name" 
-                    required={true}
-                    value={orgObj.name} 
-                    onChange={onOrgNameChange}
-                />
+                <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gridGap: "20px"}}>
+                    <Input 
+                        name="orgName"
+                        label="Name" 
+                        required={true}
+                        value={orgObj.name} 
+                        onChange={onOrgNameChange}
+                    />
+
+                    <Input 
+                        name="orgSymbol"
+                        label="Symbol" 
+                        required={false}
+                        value={orgObj.symbol} 
+                        onChange={(e) => setOrgObj({...orgObj, symbol: e.target.value})}
+                    />
+                </div>
 
                 <Input
                     name="orgDescription"
-                    label="Organization Description"
+                    label="Description"
                     required={true}
                     value={orgObj.description}
                     onChange={(e) => setOrgObj({...orgObj, description: e.target.value})}
@@ -251,13 +261,13 @@ const OrgForm = () => {
                         <button
                             className="button-secondary"
                             onClick={() => imageInput.current.click()}
-                            style={{width: "100px", padding: "0px"}}
+                            style={{width: "auto"}}
                         >
                             {imageUploading ?
-                                "LOADING..." :
+                                "Loading..." :
                                 orgImage?.name ? 
-                                    "CHANGE" : 
-                                    "UPLOAD"
+                                    "Change image" : 
+                                    "Upload image"
                             }
                         </button>
                     }
@@ -274,7 +284,8 @@ const OrgForm = () => {
 
             <ActionBar 
                 help={"Badge creation occurs after your organization has been established."} 
-                actions={actions} 
+                actions={actions}
+                style={{marginInline: "30px"}}
             />
         </div>
     )
