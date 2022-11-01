@@ -1,0 +1,31 @@
+.MuiPaper-root {
+    border-radius: 10px;
+    padding-inline: 30px;
+}
+
+.MuiAccordion-root {
+    background: #FCFCFF;
+    box-shadow: none;
+    margin: 16px 0px 16px 0px;
+}
+
+.MuiAccordion-root::before {
+    background-color: transparent;
+}
+
+.MuiAccordionSummary-root {
+    height: 64px;
+    padding-inline: 0px;
+    /* padding-inline: 20px; */
+}
+
+.MuiAccordionSummary-root.Mui-expanded {
+    border-bottom: 1px solid #EEEEF6 !important;
+    height: 64px;
+}
+
+.MuiAccordionDetails-root {
+    /* padding-inline: 20px; */
+    padding-top: 20px;
+    padding-bottom: 20px;
+}

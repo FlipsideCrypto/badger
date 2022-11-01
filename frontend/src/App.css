@@ -21,6 +21,7 @@ button {
   outline: none;
   padding: 5px 20px;
   cursor: pointer;
+  border-radius: 5px;
 }
 
 .button__unstyled {
@@ -31,9 +32,27 @@ button {
   all: none;
 }
 
-.button-primary { }
+.button-primary {
+  width: auto;
+  background: #fff;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  color: #000;
+  white-space: nowrap;
+  font-size: 12px;
+  padding-inline: 16px;
+}
 
-.button-secondary {}
+.button-secondary {
+  width: auto;
+  background: #000;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  color: #fff;
+  white-space: nowrap;
+  font-size: 12px;
+  padding-inline: 16px;
+}
 
 .lead { 
   font-size: 18px;

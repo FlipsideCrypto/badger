@@ -8,7 +8,8 @@ const Header = ({ back, actions }) => {
     return (
         <header className="header" style={{
             marginTop: isShowing ? '20px' : '0',
-            marginBottom: isShowing ? '20px' : '0'
+            marginBottom: isShowing ? '20px' : '0',
+            marginInline: "20px",
         }}>
             <div className="header__back">
                 {back && 

@@ -7,7 +7,7 @@ import Input from "@components/Dashboard/Form/Input";
 
 import { csvFileToArray } from "@utils/helpers";
 
-const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesValid }) => {
+const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesValid, style }) => {
     const [ csvFile, setCSVFile ] = useState();
     const [ inputFieldCount, setInputFieldCount ] = useState(1);
     const [ validatedAddresses, setValidatedAddresses ] = useState([]);
@@ -103,7 +103,7 @@ const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesVali
     }, [validatedAddresses, setAreAddressesValid])
 
     const labelDOM = <>
-        <div className="form__actions" style={{
+        <div className="form__actions form__list" style={{
             display: "grid",
             gridTemplateColumns: "max-content auto",
         }}>

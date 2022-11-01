@@ -107,15 +107,12 @@ const InputListKeyValue = (
     return (
         <div className="form__list" {...props}>
             {[...Array(inputFieldCount)].map((x, index) => (
-                <div key={index} style={{
-                    display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: "10px"}}
-                >
+                <div className="form__group__key__value" key={index}>
                     <Input
                         label={index === 0 ? labelDOM : ""}
                         value={inputList?.[index]?.["key"] || ""}
                         placeholder={keyPlaceholder}
                         onChange={(event) => onInputChange(index, event, "key")}
-                        // onFocus={() => setFocused(index, "name")}
                         onBlur={() => onBlur(index, "key")}
                     />
 
@@ -125,7 +122,6 @@ const InputListKeyValue = (
                         value={inputList?.[index]?.["value"] || ""}
                         placeholder={valuePlaceholder}
                         onChange={(event) => onInputChange(index, event, "value")}
-                        // onFocus={() => setFocused(index, "value")}
                         onBlur={() => onBlur(index, "value")}
                     />
                 </div>
