@@ -30,46 +30,51 @@ const OrgForm = () => {
         symbol: "",
         description: "",
         contract_uri_hash: "",
+        image_hash: "",
         owner: "",
         ethereum_address: "",
         chain: chain?.name,
     })
     const [ orgImage, setOrgImage ] = useState();
-    const [ orgImageHash, setOrgImageHash ] = useState();
     const [ imageUploading, setImageUploading ] = useState(false);
     const [ txPending, setTxPending ] = useState(false);
-    const [ saveState, setSaveState ] = useState("unsaved");
+
+    // Is the data valid for the transaction to be prepared.
+    const isDisabled = useMemo(() => {
+        return (
+            !orgObj.name ||
+            !orgObj.symbol ||
+            !orgObj.description ||
+            !orgImage
+        )
+    }, [orgObj, orgImage])
+    
+    // Calculate the IPFS hashes without pinning for the transaction preparation.
+    const { hash: deterministicImageHash } = useIPFSImageHash(orgImage)
+    const { hash: deterministicMetadataHash } = useIPFSMetadataHash({
+        name: orgObj.name, 
+        description: orgObj.description, 
+        image: IPFS_GATEWAY_URL + deterministicImageHash
+    })
 
     const createContract = useBadgerFactory(
-        saveState === "saved", 
-        orgObj, 
+        !isDisabled,
+        orgObj,
+        deterministicImageHash,
+        deterministicMetadataHash,
         address, 
         chain?.name
     )
     const badger = useMemo(() => getBadgerAbi(chain?.name), [chain?.name]);
 
-    const deterministicImageHash = useIPFSImageHash(orgImage)
-    const deterministicMetadataHash = useIPFSMetadataHash({
-        name: orgObj.name, 
-        description: orgObj.description, 
-        image: IPFS_GATEWAY_URL + deterministicImageHash.hash
-    })
-
     let firstCharOfName = useRef();
 
     const actions = [
         {
-            text: "Save",
-            icon: ["fal", "save"],
-            disabled: !orgObj.name || !orgObj.description || saveState === "saved",
-            loading: saveState === "pending",
-            event: () => onFormSave()
-        },
-        {
             text: "Create organization",
             icon: ["fal", "arrow-right"],
             loading: txPending,
-            disabled: saveState !== "saved" || !createContract.isSuccess,
+            disabled: !createContract.isSuccess,
             event: () => createOrgTx()
         }
     ]
@@ -98,7 +103,6 @@ const OrgForm = () => {
             })
         } else {
             setOrgImage(response);
-            pinImage(response);
         }
     }
     
@@ -112,12 +116,11 @@ const OrgForm = () => {
                 label: 'Could not upload image to IPFS',
                 message: response.error
             });
-        } else {
-            setOrgImageHash(response.hash);
+            return;
         }
         setImageUploading(false);
 
-        return response;
+        return response.hash;
     }
 
     // Post the IPFS metadata for the org.
@@ -128,27 +131,18 @@ const OrgForm = () => {
             imageHash: imageHash
         });
 
+        console.log('deterministic', deterministicImageHash, deterministicMetadataHash)
+        console.log('actual', imageHash, response.hash)
+
         if (response.error) {
             setError({
                 label: 'Error creating Org URI',
                 message: response.error
             });
-        } else {
-            setOrgObj({...orgObj, contract_uri_hash: response.hash, image_hash: orgImageHash});
+            return;
         }
         
-        return response;
-    }
-
-    // On save button click, handle all the IPFS pinning and enabled the create button.
-    const onFormSave = async () => {
-        setSaveState("pending");
-        const imageHash = await pinImage(orgImage);
-        const jsonHash = await pinMetadata(imageHash.hash);
-        if (imageHash.hash && jsonHash.hash)
-            setSaveState("saved");
-        else
-            setSaveState("unsaved");
+        return response.hash;
     }
 
     // Awaits a prepared transaction before running it.
@@ -156,19 +150,30 @@ const OrgForm = () => {
         setTxPending(true);
         try {
             let tx = await createContract.write?.();
-            tx = await tx?.wait();
+            // Await the txReceipt, image hash, and metadata hash in parallel.
+            const [txReceipt, imageHash, metadataHash] = await Promise.all([
+                tx?.wait(),
+                pinImage(orgImage),
+                pinMetadata(deterministicImageHash)
+            ])
 
-            if (tx.status !== 1)
+            if (txReceipt.status !== 1)
                 throw new Error(createContract?.error);
             // Decode the transaction receipt to get the contract address from the event.
             const orgCreatedTopic = badger.abi.getEventTopic("OrganizationCreated");
-            const orgCreatedEvent = tx.logs.find((log) => log.topics[0] === orgCreatedTopic);
+            const orgCreatedEvent = txReceipt.logs.find((log) => log.topics[0] === orgCreatedTopic);
             const orgEvent = badger.abi.decodeEventLog("OrganizationCreated", orgCreatedEvent.data, orgCreatedEvent.topics);
             const contractAddress = orgEvent.organization;
 
             // If transaction was confirmed, add is_active and contract address to orgObj.
             // Adding the ethereum address will trigger a useEffect to post to backend.
-            setOrgObj({...orgObj, ethereum_address: contractAddress, is_active: true});
+            setOrgObj({
+                ...orgObj, 
+                ethereum_address: contractAddress, 
+                contract_uri_hash: metadataHash,
+                image_hash: imageHash,
+                is_active: true
+            });
         }
         catch (error) {
             setError({
@@ -209,11 +214,6 @@ const OrgForm = () => {
         if (orgObj.ethereum_address) 
             postOrg();
     }, [orgObj.ethereum_address, postOrg])
-
-    // If any field changes after saving once, prompt the user to save again.
-    useEffect(() => {
-        setSaveState("unsaved");
-    }, [orgObj.name, orgObj.description, orgImage])
 
     return (
         <div id="new-org">

@@ -71,14 +71,14 @@ export function useFees() {
 }
 
 // Creates a new sash contract for an organization.
-export const useBadgerFactory = (isTxReady, orgObj, address, chainName) => {
+export const useBadgerFactory = (isTxReady, orgObj, imageHash, contractHash, address, chainName) => {
     const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
 
     const args = [
         PRIMARY_IMPLEMENTATION,
         address,
-        IPFS_GATEWAY_URL + orgObj.image_hash,
-        IPFS_GATEWAY_URL + orgObj.contract_uri_hash,
+        IPFS_GATEWAY_URL + imageHash,
+        IPFS_GATEWAY_URL + contractHash,
         orgObj.name,
         orgObj.symbol,
     ]
@@ -90,7 +90,7 @@ export const useBadgerFactory = (isTxReady, orgObj, address, chainName) => {
         contractInterface: Badger.abi,
         functionName: "createOrganization",
         args: args,
-        enabled: Boolean(fees && isTxReady && orgObj?.contract_uri_hash),
+        enabled: Boolean(fees && isTxReady),
         overrides: {
             gasPrice: fees?.gasPrice,
         },
