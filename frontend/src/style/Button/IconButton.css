@@ -31,7 +31,7 @@
 
 .button__image {
     position: relative;
-    height: fill-available;
+    height: stretch;
     display: flex;
     color: #fff;
     background: #000;

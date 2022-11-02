@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Card from "@components/Card/Card"
@@ -7,13 +7,12 @@ import Card from "@components/Card/Card"
 import { HOME_LINKS } from "@static/constants/links";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 
-import video from '../../../static/images/tutorial.mp4'
+import video from '../../../static/images/tutorial.mp4';
 
-import "@style/Dashboard/Home/Home.css"
+import "@style/Dashboard/Home/Home.css";
 
 const Home = () => {
     const { userData } = useContext(UserContext);
-    const navigate = useNavigate();
 
     const announcement = {
         color: 'cyan',

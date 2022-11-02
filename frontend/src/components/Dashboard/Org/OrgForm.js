@@ -12,6 +12,8 @@ import FormDrawer from "@components/Dashboard/Form/FormDrawer";
 import { useBadgerFactory } from "@hooks/useContracts";
 import { postOrgRequest, postIPFSImage, postIPFSMetadata, getPFPImage } from "@utils/api_requests";
 import { getBadgerAbi } from "@hooks/useContracts";
+import { useIPFSImageHash, useIPFSMetadataHash } from "@hooks/useIpfsHash";
+import { IPFS_GATEWAY_URL } from "@static/constants/links"
 
 // TODO: Move orgObj into the form reducer.
 const OrgForm = () => {
@@ -45,6 +47,13 @@ const OrgForm = () => {
         chain?.name
     )
     const badger = useMemo(() => getBadgerAbi(chain?.name), [chain?.name]);
+
+    const deterministicImageHash = useIPFSImageHash(orgImage)
+    const deterministicMetadataHash = useIPFSMetadataHash({
+        name: orgObj.name, 
+        description: orgObj.description, 
+        image: IPFS_GATEWAY_URL + deterministicImageHash.hash
+    })
 
     let firstCharOfName = useRef();
 
@@ -85,7 +94,7 @@ const OrgForm = () => {
         if (response.error) {
             setError({
                 label: "Error getting generated Org Image",
-                message: response.error
+                message: response.error``
             })
         } else {
             setOrgImage(response);
@@ -107,7 +116,8 @@ const OrgForm = () => {
             setOrgImageHash(response.hash);
         }
         setImageUploading(false);
-        return response
+
+        return response;
     }
 
     // Post the IPFS metadata for the org.
@@ -134,8 +144,8 @@ const OrgForm = () => {
     const onFormSave = async () => {
         setSaveState("pending");
         const imageHash = await pinImage(orgImage);
-        const jsonHash = await pinMetadata(imageHash);
-        if (!imageHash.error && !jsonHash.error)
+        const jsonHash = await pinMetadata(imageHash.hash);
+        if (imageHash.hash && jsonHash.hash)
             setSaveState("saved");
         else
             setSaveState("unsaved");
