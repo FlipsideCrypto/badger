@@ -36,8 +36,8 @@ const OrgForm = () => {
         chain: chain?.name,
     })
     const [ orgImage, setOrgImage ] = useState();
-    const [ imageUploading, setImageUploading ] = useState(false);
     const [ txPending, setTxPending ] = useState(false);
+    const [ isCustomImage, setIsCustomImage ] = useState(false);
 
     // Is the data valid for the transaction to be prepared.
     const isDisabled = useMemo(() => {
@@ -87,10 +87,19 @@ const OrgForm = () => {
     // When name is changed, update orgObj name, and symbol if symbol is not custom.
     const onOrgNameChange = (e) => {
         setOrgObj({...orgObj, name: e.target.value, symbol: nameToSymbol(e.target.value)});
-        if (e.target.value[0] !== firstCharOfName.current) {
+        if (
+            !isCustomImage &&
+            e.target.value[0] !== firstCharOfName.current
+        ) {
             firstCharOfName.current = e.target.value[0];
             getGeneratedImage(firstCharOfName.current);
         }
+    }
+
+    // Custom image upload.
+    const onCustomImageUpload = (image) => {
+        setIsCustomImage(true);
+        setOrgImage(image);
     }
 
     // Get a generated image for the org.
@@ -108,8 +117,6 @@ const OrgForm = () => {
     
     // Pin the org image to IPFS.
     const pinImage = async (image) => {
-        setImageUploading(true)
-
         const response = await postIPFSImage(image)
         if (response.error) {
             setError({
@@ -118,7 +125,6 @@ const OrgForm = () => {
             });
             return;
         }
-        setImageUploading(false);
 
         return response.hash;
     }
@@ -130,9 +136,6 @@ const OrgForm = () => {
             description: orgObj.description, 
             imageHash: imageHash
         });
-
-        console.log('deterministic', deterministicImageHash, deterministicMetadataHash)
-        console.log('actual', imageHash, response.hash)
 
         if (response.error) {
             setError({
@@ -266,18 +269,16 @@ const OrgForm = () => {
                     label="Custom Image"
                     placeholder="Upload Custom Organization Image"
                     disabled={true}
-                    value={orgImage?.name || ""}
+                    value={isCustomImage && orgImage?.name ? orgImage.name : ""}
                     append={
                         <button
                             className="button-secondary"
                             onClick={() => imageInput.current.click()}
                             style={{width: "auto"}}
                         >
-                            {imageUploading ?
-                                "Loading..." :
-                                orgImage?.name ? 
-                                    "Change image" : 
-                                    "Upload image"
+                            {isCustomImage ?
+                                "Change image" : 
+                                "Upload image"
                             }
                         </button>
                     }
@@ -288,7 +289,7 @@ const OrgForm = () => {
                         ref={imageInput}
                         accept="image/*"
                         type="file"
-                        onChange={(event) => {setOrgImage(event.target.files[0])}}
+                        onChange={(event) => {onCustomImageUpload(event.target.files[0])}}
                     />
             </FormDrawer>
 
