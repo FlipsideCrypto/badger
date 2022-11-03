@@ -1843,6 +1843,65 @@ describe("Badger", function () {
                 "0x"
             )
         })
+        
+        it("claimMint() fail: invalid nonce", async () => { 
+            mnemonic = "test test test test test test test test test test test junk";
+            claimSigner = await ethers.Wallet.fromMnemonic(mnemonic, "m/44'/60'/0'/0/1");
+
+            // set the badge as claimable
+            await childOrganization.connect(owner).setSigner(
+                0,
+                signer1.address
+            )
+
+            const messageHash = ethers.utils.solidityKeccak256(
+                ["address", "uint256", "uint256", "uint256", "bytes"],
+                [
+                    signer1.address,
+                    0,
+                    1,
+                    6,
+                    "0x"
+                ]
+            )
+
+            // sign the message hash
+            const signature = await claimSigner.signMessage(ethers.utils.arrayify(messageHash))
+
+            // set the payment token
+            await childOrganization.connect(owner).setPaymentToken(
+                0,
+                paymentToken20
+            );
+
+            // mint some tokens to the signer
+            await mock20.connect(owner).mint(
+                signer1.address,
+                1000
+            )
+
+            // approve the contract to spend the tokens
+            await mock20.connect(signer1).approve(
+                childOrganization.address,
+                1000
+            )
+
+            // deposit the tokens
+            await childOrganization.connect(signer1).depositERC20(
+                0,
+                mock20.address,
+                1
+            )
+
+            // claim the mint
+            await childOrganization.connect(signer1).claimMint(
+                signature,
+                0,
+                1,
+                6,
+                "0x"
+            ).should.be.revertedWith("BadgerScout::_verifySignature: Invalid nonce.") 
+        })
 
         it("claimMint() fail: invalid signature", async () => {
             mnemonic = "test test test test test test test test test test test junk";

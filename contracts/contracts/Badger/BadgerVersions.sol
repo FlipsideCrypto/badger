@@ -14,8 +14,6 @@ import { BadgerOrganizationInterface } from "../BadgerOrganization/interfaces/Ba
 /// @dev Supported interfaces.
 import { IERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol";
 
-import "hardhat/console.sol";
-
 contract BadgerVersions is
       BadgerVersionsInterface 
     , Ownable
