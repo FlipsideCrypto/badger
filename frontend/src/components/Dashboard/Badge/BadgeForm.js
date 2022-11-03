@@ -55,9 +55,8 @@ const BadgeForm = () => {
 
     const createBadge = useCreateBadge(
        !isDisabled, 
-       badge,
-       orgData?.version,
-       deterministicMetadataHash
+       deterministicMetadataHash, 
+       badge
     );
        
     const actions = [

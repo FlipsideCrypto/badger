@@ -53,9 +53,6 @@ contract BadgerScout is
     /// @dev Tracking the delegates of a Badge.
     mapping(bytes32 => bool) public badgeDelegateKeyToIsDelegate;
 
-    /// @dev Tracking the use of nonces to prevent replay attacks.
-    mapping(address => uint256) public nonces;
-
     /*//////////////////////////////////////////////////////////////
                                 EVENTS
     //////////////////////////////////////////////////////////////*/
@@ -816,24 +813,18 @@ contract BadgerScout is
         address _to,
         uint256 _id,
         uint256 _amount,
-        uint256 _nonce,
         bytes memory _data,
         bytes memory _signature
     )
         internal
+        view
     {
-        require(
-              _nonce == nonces[_to]++
-            , "BadgerScout::_verifySignature: Invalid nonce."
-        );
-
         /// @dev Compile the message that would have been signed.
         bytes32 message = keccak256(
             abi.encodePacked(
                   _to
                 , _id
                 , _amount
-                , _nonce
                 , _data
             )
         );

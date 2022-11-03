@@ -42,7 +42,6 @@ const Badge = () => {
         badge?.token_id,                    // tokenId array
         addressesToUpdate.addresses,        // address array
         selectedAction,                     // mint, revoke, add or remove leaders
-        orgData?.version
     );
 
     const manageOwnership = useManageBadgeOwnership(
@@ -51,8 +50,7 @@ const Badge = () => {
         badge?.token_id,                    // tokenId array
         addressesToUpdate.addresses,        // address array
         selectedAction,                     // mint, revoke, add or remove leaders
-        1,                                  // amount of each token
-        orgData?.version                    // version of the contract
+        1                                   // amount of each token
     );
 
     const actions = isOwner || isManager ? [{

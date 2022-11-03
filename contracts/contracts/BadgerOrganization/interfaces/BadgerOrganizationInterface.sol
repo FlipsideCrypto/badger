@@ -68,7 +68,6 @@ interface BadgerOrganizationInterface {
      * @param _signature The signature that is being used to verify the authenticity of claim.
      * @param _id The id of the badge being claimed.
      * @param _amount The amount of the badge being claimed.
-     * @param _nonce The nonce of the claim for the user.
      * @param _data Any data that is being passed to the mint function.
      * 
      * Requirements:
@@ -79,7 +78,6 @@ interface BadgerOrganizationInterface {
           bytes calldata _signature
         , uint256 _id 
         , uint256 _amount 
-        , uint256 _nonce
         , bytes memory _data
     )
         external
