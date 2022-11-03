@@ -32,6 +32,7 @@ const OrgForm = () => {
         owner: "",
         ethereum_address: "",
         chain: chain?.name,
+        version: '4.0',
     })
     const [ orgImage, setOrgImage ] = useState();
     const [ orgImageHash, setOrgImageHash ] = useState();
@@ -40,7 +41,7 @@ const OrgForm = () => {
     const [ txPending, setTxPending ] = useState(false);
 
     const createContract = useBadgerFactory(txCalled, orgObj, address, chain?.name)
-    const badger = useMemo(() => getBadgerAbi(chain?.name), [chain?.name]);
+    const badger = useMemo(() => getBadgerAbi(chain?.name, orgObj.version), [chain?.name, orgObj.version]);
 
     let firstCharOfName = useRef();
 
