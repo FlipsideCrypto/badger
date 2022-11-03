@@ -2,23 +2,16 @@ import { useState } from "react";
 import { Accordion, AccordionSummary, AccordionDetails} from '@mui/material';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import "@style/Dashboard/Form/FormDrawer.css";
+
 const FormDrawer = ({label, open, children, ...props}) => {
     const [ isOpen, setIsOpen ] = useState(open);
 
     return (
         <Accordion
+            className="form__accordion"
             expanded={isOpen}
             onChange={() => { setIsOpen(!isOpen) }}
-            sx={{
-                width: '100%', 
-                margin: '0px', 
-                padding: '0px', 
-                boxShadow: 'none',
-                marginTop: '20px',
-                '&:before': {
-                    backgroundColor: 'transparent !important',
-                },
-            }}
             {...props}
         >
             <AccordionSummary 
@@ -28,9 +21,9 @@ const FormDrawer = ({label, open, children, ...props}) => {
                             icon={['fal', 'chevron-down']} 
                         />
                     }
-                sx={{padding: '0px', maxHeight: '50px', border: 'none !important'}}
+                // sx={{padding: '0px', maxHeight: '50px', border: 'none !important'}}
             >
-                <h3>{label}</h3>
+                <h4 style={{fontSize: "15px", fontWeight: 700}}>{label}</h4>
             </AccordionSummary>
             <AccordionDetails sx={{padding: '0px'}}>
                 {children}

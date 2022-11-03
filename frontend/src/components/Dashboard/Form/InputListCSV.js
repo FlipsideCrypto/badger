@@ -7,7 +7,7 @@ import Input from "@components/Dashboard/Form/Input";
 
 import { csvFileToArray } from "@utils/helpers";
 
-const InputListCSV = ({ label, inputList, setInputList, setAreAddressesValid }) => {
+const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesValid, style }) => {
     const [ csvFile, setCSVFile ] = useState();
     const [ inputFieldCount, setInputFieldCount ] = useState(1);
     const [ validatedAddresses, setValidatedAddresses ] = useState([]);
@@ -17,39 +17,48 @@ const InputListCSV = ({ label, inputList, setInputList, setAreAddressesValid }) 
 
     // Adds the input field to the state array.
     const onInputChange = (index, event) => {
-        let newInputs = [...inputList];
-        newInputs[index] = event.target.value;
         validateAddress(index, event.target.value);
-        setInputList(newInputs);
+        dispatch({ 
+            type: "UPDATE_ARRAY_INDEX", 
+            field: listKey, 
+            index: index, 
+            payload: event.target.value 
+        });
     }
 
     // Deletes the input field row at the specified index.
     // If the index is the first and only row, just reset the value.
     const onFieldDelete = (index) => {
-        let newInputs = [...inputList];
         if (index === 0 && inputFieldCount === 1) {
-            setInputList([]);
+            dispatch({
+                type: "SET",
+                field: listKey,
+                payload: []
+            })
             setValidatedAddresses([]);
+            return;
         }
-        else {
-            let newValidated = [...validatedAddresses];
-            newInputs.splice(index, 1);
-            newValidated.splice(index, 1);
-            
-            setInputList(newInputs);
-            setInputFieldCount(inputFieldCount - 1);
-            setValidatedAddresses(newValidated);
-        }
+
+        dispatch({
+            type: "DELETE_ARRAY_INDEX",
+            field: listKey,
+            index: index,
+        });
+
+        setInputFieldCount(inputFieldCount - 1);
+        setValidatedAddresses(validatedAddresses.filter((_, i) => i !== index));
     }
 
     // When an input loses focus, validate the address and clear whitespace.
     const onBlur = (index) => {
         setFocused(null);
         if (inputList[index] && inputList[index].includes(' ')) {
-            let newInputs = [...inputList];
-            newInputs[index] = newInputs[index].trim();
-            setInputList(newInputs);
-            validateAddress(index, newInputs[index]);
+            dispatch({
+                type: "UPDATE_ARRAY_INDEX",
+                field: listKey,
+                index: index,
+                payload: inputList[index].trim()
+            })
         }
     }
 
@@ -78,22 +87,23 @@ const InputListCSV = ({ label, inputList, setInputList, setAreAddressesValid }) 
             csvReader.onload = function (event) {
                 const csvOutput = csvFileToArray(event.target.result);
                 setInputFieldCount(csvOutput.length);
-                setInputList(csvOutput);
                 validateAddresses(csvOutput);
+                dispatch({ type: "SET", field: listKey, payload: csvOutput })
             };
 
             csvReader.readAsText(csvFile);
         }
-    }, [csvFile, csvReader, setInputList, validateAddresses])
+    }, [csvFile, csvReader, validateAddresses, dispatch, listKey]);
 
     // When validated array changes, check if any addresses are invalid.
     useEffect(() => {
         const isAllValid = validatedAddresses.every((address) => address === true);
         setAreAddressesValid(isAllValid);
+
     }, [validatedAddresses, setAreAddressesValid])
 
     const labelDOM = <>
-        <div className="form__actions" style={{
+        <div className="form__actions form__list" style={{
             display: "grid",
             gridTemplateColumns: "max-content auto",
         }}>
@@ -153,6 +163,7 @@ const InputListCSV = ({ label, inputList, setInputList, setAreAddressesValid }) 
                     }
                     key={index}
                     label={index === 0 ? labelDOM : ""}
+                    placeholder="0x0000..."
                     append={deleteDOM(index)}
                     value={inputList[index] || ""}
                     onChange={(event) => onInputChange(index, event)}

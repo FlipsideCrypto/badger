@@ -5,9 +5,9 @@ import Help from './Help'
 
 import "@style/Dashboard/Form/ActionBar.css"
 
-const ActionBar = ({ help, actions, helpStyle, actionStyle }) => {
+const ActionBar = ({ help, actions, style, helpStyle, actionStyle }) => {
     return (
-        <div className="action__bar">
+        <div className="action__bar" style={style}>
             {help && <div className="action__bar__help" style={helpStyle}>
                 <Help text={help} />
             </div>}
@@ -15,7 +15,6 @@ const ActionBar = ({ help, actions, helpStyle, actionStyle }) => {
             <div className="action__bar__actions">
                 {actions && actions.map(action => (
                     <div key={action.text} style={actionStyle}>
-                        <p>{action.to}</p>
                         {action.to ?
                             <Link className="internal-link" to={action.to}>
                                 <IconButton 

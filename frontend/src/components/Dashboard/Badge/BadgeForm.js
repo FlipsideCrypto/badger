@@ -1,4 +1,4 @@
-import { useState, useRef, useContext, useEffect, useCallback } from "react";
+import { useState, useRef, useContext, useEffect, useReducer, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 
@@ -11,138 +11,128 @@ import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import InputListKeyValue from "@components/Dashboard/Form/InputListKeyValue";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
+import { FormReducer, initialBadgeForm } from "@components/Dashboard/Form/FormReducer";
 
 import { postBadgeRequest, postIPFSImage, postIPFSMetadata, getBadgeImage } from "@utils/api_requests";
 import { useCreateBadge } from "@hooks/useContracts";
+import { useIPFSImageHash, useIPFSMetadataHash } from "@hooks/useIpfsHash";
 
 import "@style/Dashboard/Badge/BadgeForm.css";
 
-// TODO: Move all badge state vars into a reducer?
-// TODO: There is way too much going on in this one component. Break it up and reduce state usage.
 const BadgeForm = () => {
-    const [ badgeName, setBadgeName ] = useState("");
-    const [ badgeDescription, setBadgeDescription ] = useState("");
-    const [ badgeAttributes, setBadgeAttributes ] = useState([{key: "", value: ""}]);
-    const [ badgeImage, setBadgeImage ] = useState();
-    const [ imagePreview, setImagePreview ] = useState();
-    const [ badgeDelegates, setBadgeDelegates ] = useState([]);
-    const [ ipfsImageHash, setIpfsImageHash ] = useState("");
-    const [ accountBound, setAccountBound ] = useState("Yes");
-    const [ claimable, setClaimable ] = useState("No");
-    const [ signer, setSigner ] = useState("");
-    const [ signerIsValid, setSignerIsValid ] = useState(true);
-
-    const [ imageUploading, setImageUploading ] = useState(false);
-    const [ areAddressesValid, setAreAddressesValid ] = useState(true);
-    const [ txPending, setTxPending ] = useState(false);
-    const [ txCalled, setTxCalled ] = useState(false);
-
     const { orgData, setOrgData } = useContext(OrgContext);
     const { setError } = useContext(ErrorContext);
-
-    const imageInput = useRef();
-    const navigate = useNavigate();
+    const [ badge, badgeDispatch ] = useReducer(FormReducer, initialBadgeForm(orgData));
     
-    let badgeRef = useRef({
-        name: badgeName,
-        description: badgeDescription,
-        delegates: badgeDelegates,
-        image_hash: ipfsImageHash,
-        ethereum_address: orgData?.ethereum_address,
-        token_id: orgData?.badges?.length,
-        organization: orgData?.id,
-        account_bound: accountBound === "Yes" ? true : false,
-        claimable: claimable === "Yes" ? true : false,
-        is_active: false,
-        signer: orgData?.owner?.ethereum_address,
-        // payment_token: ["paymentKey", 0],
-    })
+    const navigate = useNavigate();
+    const imageInput = useRef();
+    
+    const [ badgeImage, setBadgeImage] = useState();
+    const [ badgeImagePreview, setBadgeImagePreview ] = useState();
+    const [ isCustomImage, setIsCustomImage ] = useState(false);
+    const [ areAddressesValid, setAreAddressesValid ] = useState(true);
+    const [ signerIsValid, setSignerIsValid ] = useState(true);
+    const [ txPending, setTxPending ] = useState(false);
+
+    const isDisabled = useMemo(() => {
+        return (
+            !badge.name ||
+            !badge.description ||
+            !areAddressesValid ||
+            !signerIsValid
+        )
+    }, [badge, areAddressesValid, signerIsValid])
+
+    // Determine the IPFS hashes before hand so the transaction can be prepared ASAP
+    // without actively pinning or waiting for the hashes to be returned.
+    const { hash: deterministicImageHash } = useIPFSImageHash(badgeImage);
+    const { hash: deterministicMetadataHash } = useIPFSMetadataHash({
+        name: badge.name,
+        description: badge.description,
+        image: deterministicImageHash,
+        attributes: badge.attributes,
+    });
 
     const createBadge = useCreateBadge(
-        txCalled, 
-        badgeRef.current,
-        orgData?.version
+       !isDisabled, 
+       deterministicMetadataHash, 
+       badge,
+       orgData?.version
     );
-    
-    const disabled = !badgeName || !badgeDescription || !ipfsImageHash || !areAddressesValid || !signerIsValid;
-    
+       
     const actions = [
         {
-            text: "CREATE BADGE",
+            text: "Create badge",
             icon: ["fal", "arrow-right"],
-            disabled: disabled,
+            disabled: !createBadge.isSuccess,
             loading: txPending,
-            event: () => onBadgeFormSubmission()
+            event: () => createBadgeTx()
         }
     ]
     
     // Updates generative image and Name field
     const onNameChange = async (event) => {
-        setBadgeName(event.target.value);
+        badgeDispatch({type: "SET", field: "name", payload: event.target.value});
+        
+        // if custom image is present do not generate an image.
+        if (isCustomImage) return;
+
         const response = await getBadgeImage(
             orgData?.name, 
             orgData?.ethereum_address, 
             orgData?.badges?.length, 
             event.target.value
         );
+        if (response.error) {
+            setError(response.error);
+            return;
+        }
         setBadgeImage(response)
 
-        URL.revokeObjectURL(imagePreview);
-        setImagePreview(URL.createObjectURL(response));
+        URL.revokeObjectURL(badgeImagePreview);
+        setBadgeImagePreview(URL.createObjectURL(response));
     }
 
     // Pin to IPFS
     const pinImage = async (image) => {
-        setImageUploading(true);
-
         const response = await postIPFSImage(image);
         if (response.error) {
             setError({
                 label: 'Could not upload image to IPFS',
                 message: response.error
             });
+            return;
         }
-        setIpfsImageHash(response.hash);
-        badgeRef.current.image_hash = response.hash;
 
-        setImageUploading(false);
+        return response.hash;
     }
 
-    // Form submission just gets the final uri hash and sets the token_uri in the badgeObj
-    // The transaction and rest of the flow is handled within the useEffect and createBadgeTx(),
-    // As we have to await the transaction to be prepared by wagmi before calling it.
-    const onBadgeFormSubmission = async () => {
-        // Get the token uri
-        const response = await postIPFSMetadata(
-            badgeName, 
-            badgeDescription, 
-            ipfsImageHash, 
-            badgeAttributes
-        );
+    // Pin to IPFS
+    const pinMetadata = async (imageHash) => {
+        const response = await postIPFSMetadata({
+            name: badge.name,
+            description: badge.description,
+            imageHash: imageHash,
+            attributes: badge.attributes
+        })
 
         if (response.error) {
             setError({
-                label: 'Error creating token URI',
+                label: 'Could not upload metadata to IPFS',
                 message: response.error
             });
+            return;
         }
-         
-        badgeRef.current = {
-            ...badgeRef.current,
-            name: badgeName,
-            description: badgeDescription,
-            delegates: badgeDelegates,
-            token_uri: response.hash,
-        }
-        setTxCalled(true);
+
+        return response.hash;
     }
 
     // Post the badge to the backend for IPFS upload.
     const onCustomImageUpload = async (image) => {
+        setIsCustomImage(true);
         setBadgeImage(image)
-        URL.revokeObjectURL(imagePreview);
-        setImagePreview(URL.createObjectURL(image));
-        pinImage(image);
+        URL.revokeObjectURL(badgeImagePreview);
+        setBadgeImagePreview(URL.createObjectURL(image));
     }
 
     // When the signer address is not focused, validate the address.
@@ -154,23 +144,33 @@ const BadgeForm = () => {
     }
 
     // Write to contract
-    const createBadgeTx = useCallback(async () => {
+    const createBadgeTx = async () => {
+        setTxPending(true);
         try {
             let tx = await createBadge.write?.();
-            tx = await tx?.wait();
+            // Pin metadata and run transaction in parallel.
+            const [txReceipt, imageHash, metadataHash] = await Promise.all([
+                tx.wait(),
+                pinImage(badgeImage),
+                pinMetadata(deterministicImageHash)
+            ])
 
-            if (tx.status !== 1)
+            if (txReceipt.status !== 1)
                 throw new Error(createBadge.error);
 
             // Post to database
-            const response = await postBadgeRequest(badgeRef.current);
+            const postData = {
+                ...badge, 
+                image_hash: imageHash, 
+                token_uri: metadataHash
+            };
+            const response = await postBadgeRequest(postData);
             // if POST is successful
             if (!response.error) {
                 // Set in orgData context
                 let prev = {...orgData}
                 prev.badges.push(response)
                 setOrgData(prev)
-                badgeRef.current = response;
                 navigate(`/dashboard/organization/${orgData?.id}/badge/${response.id}`);
             }
             else {
@@ -184,33 +184,17 @@ const BadgeForm = () => {
             });
             setTxPending(false);
         }
-
-    }, [createBadge, navigate, orgData, setError, setOrgData]);
-
-    // Run the transaction after it has been prepared by wagmi.
-    // After the transaction is successful, POST badge to is_active,
-    // set the new badge in orgData, and navigate to the badge page.
-    useEffect(() => {
-        if (
-               createBadge.isSuccess
-            && !txPending
-            && txCalled
-        ) {
-            setTxCalled(false);
-            setTxPending(true);
-            createBadgeTx();
-        }
-    }, [createBadge.isSuccess, txPending, txCalled, createBadgeTx])
+    }
 
     // Set the badge when orgData is updated
     useEffect(() => {
-        badgeRef.current = {
-            ...badgeRef.current,
+        const payload = {
             ethereum_address: orgData?.ethereum_address,
             token_id: orgData?.badges?.length,
             organization: orgData?.id,
-            signer: orgData?.owner?.ethereum_address,
         }
+
+        badgeDispatch({type: "SET_MULTIPLE", payload: payload});
     }, [orgData])
 
     // Get the placeholder Badge Image once the component and orgData is mounted.
@@ -230,10 +214,10 @@ const BadgeForm = () => {
                 });
             }
             setBadgeImage(response);
-            setImagePreview(URL.createObjectURL(response));
+            setBadgeImagePreview(URL.createObjectURL(response));
         }
 
-        if (orgData && !imagePreview) {
+        if (orgData && !badgeImagePreview) {
             getPlaceholderImage();
         }
         // Only want to run this once once the OrgData is retrieved.
@@ -244,33 +228,37 @@ const BadgeForm = () => {
         <>
             <Header back={() => navigate(`/dashboard/organization/${orgData?.id}`)} />
 
-            <h2>Create Badge</h2>
+            <h2 style={{marginLeft: "30px"}}>Create Badge</h2>
 
             <FormDrawer label="General" open={true}>
                 <div style={{display: 'grid', gridTemplateColumns: "10fr 2fr", gridColumnGap: "20px"}}>
                     <div>
                         <Input
                             name="badge-name"
-                            label="Badge Name"
+                            label="Name"
+                            placeholder="Name"
                             required={true}
-                            value={badgeName}
+                            value={badge.name}
                             onChange={(event) => onNameChange(event)}
-                            onBlur={() => pinImage(badgeImage)}
                         />
 
                         <Input
                             name="badge-description"
-                            label="Badge description"
+                            label="Description"
+                            placeholder="Description"
                             required={true}
-                            value={badgeDescription}
-                            onChange={(event) => setBadgeDescription(event.target.value)}
+                            value={badge.description}
+                            onChange={(event) => badgeDispatch(
+                                {type: "SET", field: "description", payload: event.target.value}
+                            )}
                         />
 
                         <InputListKeyValue
                             label="Attributes"
                             required={false}
-                            inputList={badgeAttributes}
-                            setInputList={setBadgeAttributes}
+                            inputList={badge.attributes}
+                            listKey={"attributes"}
+                            dispatch={badgeDispatch}
                             keyPlaceholder="Name"
                             valuePlaceholder="Value"
                         />
@@ -284,7 +272,7 @@ const BadgeForm = () => {
                         <div className="preview__container">
                             <img
                                 className="preview__image"
-                                src={imagePreview}
+                                src={badgeImagePreview}
                                 alt="Badge Preview"
                             />
                         </div>
@@ -297,21 +285,23 @@ const BadgeForm = () => {
                     <Select
                         label="Account Bound"
                         options={["Yes", "No"]}
-                        value={accountBound}
-                        setValue={(event) => {
-                            setAccountBound(event.target.value);
-                            badgeRef.current.account_bound = event.target.value === "Yes" ? true : false;
-                        }}
+                        value={badge.account_bound ? "Yes" : "No"}
+                        setValue={(event) => badgeDispatch({
+                            type: "SET", 
+                            field: "account_bound", 
+                            payload: event.target.value === "Yes" ? true : false
+                        })}
                     />
 
                     <Select
                         label="Claimable"
                         options={["Yes", "No"]}
-                        value={claimable}
-                        setValue={(event) => {
-                            setClaimable(event.target.value);
-                            badgeRef.current.claimable = event.target.value === "Yes" ? true : false;
-                        }}
+                        value={badge.claimable ? "Yes" : "No"}
+                        setValue={(event) => badgeDispatch({
+                            type: "SET", 
+                            field: "claimable", 
+                            payload: event.target.value === "Yes" ? true : false
+                        })}
                     />
                 </div>
 
@@ -320,18 +310,19 @@ const BadgeForm = () => {
                     className={signerIsValid ? 
                         "form__list__address" : "form__list__address error"
                     }
+                    placeholder="0x0000..."
                     required={false}
-                    value={signer}
-                    onChange={(event) => {
-                        setSigner(event.target.value);
-                        badgeRef.current.signer = event.target.value;
-                    }}
+                    value={badge.signer}
+                    onChange={(event) => badgeDispatch(
+                        {type: "SET", field: "signer", payload: event.target.value}    
+                    )}
                     onBlur={onSignerBlur}
                 />
                 <InputListCSV
                     label={"Managers"}
-                    inputList={badgeDelegates}
-                    setInputList={setBadgeDelegates}
+                    inputList={badge.delegates}
+                    dispatch={badgeDispatch}
+                    listKey={"delegates"}
                     setAreAddressesValid={setAreAddressesValid}
                 />
 
@@ -345,18 +336,16 @@ const BadgeForm = () => {
                     placeholder="Upload Custom Image"
                     required={false}
                     disabled={true}
-                    value={badgeImage?.name || ""}
+                    value={isCustomImage && badgeImage?.name ? badgeImage.name : ""}
                     append={
                         <button
                             className="button-secondary"
                             onClick={() => imageInput.current.click()}
-                            style={{width: "100px", padding: "0px"}}
+                            style={{width: "auto"}}
                         >
-                            {imageUploading ?
-                                "LOADING..." :
-                                badgeImage ? 
-                                    "CHANGE" : 
-                                    "UPLOAD"
+                            {isCustomImage ?
+                                "Change image" : 
+                                "Upload image"
                             }
                         </button>
                     }
@@ -371,9 +360,13 @@ const BadgeForm = () => {
                     />
             </FormDrawer>
 
-            <ActionBar help={
-                'After creating a badge, you (or your managers) can issue badges to team members.'
-            } actions={actions} />
+            <ActionBar 
+                help={
+                    'After creating a badge, you (or your managers) can issue badges to team members.'
+                } 
+                actions={actions} 
+                style={{marginInline: "30px"}}
+            />
         </>
     )
 }

@@ -188,7 +188,7 @@ const OrgSidebar = ({ address }) => {
                             orgData?.badges?.map((badge, index) => (
                                 <button
                                     key={index}
-                                    className="button__unstyled"
+                                    className="button button__unstyled"
                                     onClick={() => navigate(`/dashboard/organization/${orgData.id}/badge/${badge.id}`)}
                                 >
                                     <div className="sidebar__organization">
@@ -207,7 +207,7 @@ const OrgSidebar = ({ address }) => {
                             userData?.organizations?.map((org, index) => (
                                 <button
                                     key={index}
-                                    className="button__unstyled"
+                                    className="button button__unstyled"
                                     onClick={() => navigate(`/dashboard/organization/${org.id}`)}
                                 >
                                     <div className="sidebar__organization">
