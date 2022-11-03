@@ -61,10 +61,10 @@ const OrgForm = () => {
     const createContract = useBadgerFactory(
         !isDisabled,
         orgObj,
-        deterministicImageHash,
-        deterministicMetadataHash,
         address, 
-        chain?.name
+        chain?.name,
+        deterministicImageHash,
+        deterministicMetadataHash
     )
     const badger = useMemo(() => getBadgerAbi(chain?.name, orgObj.version), [chain?.name, orgObj.version]);
 

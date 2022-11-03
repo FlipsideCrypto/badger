@@ -76,7 +76,7 @@ export function useFees() {
 }
 
 // Creates a new sash contract for an organization.
-export const useBadgerFactory = (isTxReady, orgObj, address, chainName) => {
+export const useBadgerFactory = (isTxReady, orgObj, address, chainName, imageHash, contractHash) => {
     const Badger = orgObj.version && getBadgerAbi(chainName, orgObj?.version)
 
     const args = [
@@ -111,7 +111,7 @@ export const useBadgerFactory = (isTxReady, orgObj, address, chainName) => {
 }
 
 // Creates a badge from a cloned sash contract.
-export const useCreateBadge = (isTxReady, badge, version) => {
+export const useCreateBadge = (isTxReady, badge, version, tokenUri) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(version), [version]);
 
     // This should also clean/check the addresses as well.
