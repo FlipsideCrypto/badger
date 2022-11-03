@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, useCallback } from "react";
+import { useState, useContext, useEffect, useCallback, useReducer } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAccount } from "wagmi"
 
@@ -10,6 +10,7 @@ import Select from "@components/Dashboard/Form/Select";
 
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
+import { FormReducer } from "@components/Dashboard/Form/FormReducer";
 import { useManageBadgeOwnership, useSetDelegates } from "@hooks/useContracts";
 import { putBadgeRolesRequest } from "@utils/api_requests";
 
@@ -23,12 +24,11 @@ const Badge = () => {
     const { setError } = useContext(ErrorContext);
 
     const [ isManage, setIsManage ] = useState(false);
-    const [ membersToUpdate, setMembersToUpdate ] = useState([]);
     const [ areAddressesValid, setAreAddressesValid ] = useState(false);
     const [ selectedAction, setSelectedAction ] = useState("Mint");
     const [ txMethod, setTxMethod ] = useState("manageOwnership");
-    const [ txCalled, setTxCalled ] = useState(false);
     const [ txPending, setTxPending ] = useState(false);
+    const [ addressesToUpdate, dispatchAddresses ] = useReducer(FormReducer, {addresses: []});
     
     const badgeIndex = orgData?.badges?.findIndex(badge => badge.id === parseInt(badgeId));
     const [ badge, setBadge ] = useState(orgData?.badges?.[badgeIndex] || {});
@@ -36,19 +36,19 @@ const Badge = () => {
     // find if the authenticated address is in one of the delegates.ethereum_address properties
     const isManager = badge?.delegates?.find(delegate => delegate.ethereum_address === address);
 
-
     const setDelegates = useSetDelegates(
-        txCalled && isOwner,
+        isOwner && areAddressesValid && txMethod === "setDelegates",
         orgData?.ethereum_address,          // orgAddress
         badge?.token_id,                    // tokenId array
-        membersToUpdate,                    // address array
+        addressesToUpdate.addresses,        // address array
         selectedAction,                     // mint, revoke, add or remove leaders
     );
+
     const manageOwnership = useManageBadgeOwnership(
-        txCalled,
+        areAddressesValid && txMethod === "manageOwnership",
         orgData?.ethereum_address,          // orgAddress
         badge?.token_id,                    // tokenId array
-        membersToUpdate,                    // address array
+        addressesToUpdate.addresses,        // address array
         selectedAction,                     // mint, revoke, add or remove leaders
         1                                   // amount of each token
     );
@@ -86,7 +86,7 @@ const Badge = () => {
         let badgeObj = {...badge}
         if (!badgeObj.users) badge.users = [];
 
-        membersToUpdate.forEach(member => {
+        addressesToUpdate.addresses.forEach(member => {
             if (selectedAction === "Revoke") {
                 const index = badgeObj.users.findIndex(user => user.ethereum_address === member);
                 badgeObj.users.splice(index, 1);
@@ -108,7 +108,7 @@ const Badge = () => {
         }
 
         setTxPending(false);
-    }, [badge, membersToUpdate, selectedAction, orgId, setError, setOrgData, badgeIndex]);
+    }, [badge, addressesToUpdate, selectedAction, orgId, setError, setOrgData, badgeIndex]);
 
     // Update the badge array after the transaction is completed, POST 
     // out to the API, update our orgData context, and reset call transaction flag.
@@ -116,7 +116,7 @@ const Badge = () => {
         let badgeObj = {...badge}
         if (!badgeObj.delegates) badge.delegates = [];
         
-        membersToUpdate.forEach(member => {
+        addressesToUpdate.addresses.forEach(member => {
             if (selectedAction === "Remove Manager") {
                 const index = badgeObj.delegates.findIndex(delegate => delegate.ethereum_address === member);
                 badgeObj.delegates.splice(index, 1);
@@ -139,11 +139,10 @@ const Badge = () => {
         }
 
         setTxPending(false);
-    }, [badge, badgeIndex, membersToUpdate, orgId, selectedAction, setError, setOrgData]);
+    }, [badge, badgeIndex, addressesToUpdate, orgId, selectedAction, setError, setOrgData]);
 
     // Manage the transaction write and clean up effects.
    const runTransaction = useCallback(async () => {
-        setTxCalled(false);
         setTxPending(true);
 
         let tx;
@@ -170,17 +169,6 @@ const Badge = () => {
         setTxPending(false);
     }, [txMethod, setDelegates, manageOwnership, setError, onMembersUpdate, onDelegatesUpdate]);
 
-    // If the transaction has been called, is not pending, and one of the transactions are prepped,
-    // run the transaction.
-    useEffect(() => {        
-        if (
-            txCalled && 
-            !txPending &&
-            (setDelegates.isSuccess || manageOwnership.isSuccess)
-        ) 
-            runTransaction();
-    }, [setDelegates.isSuccess, manageOwnership.isSuccess, txCalled, txPending, runTransaction])
-
     // Set badge data if orgData has been updated.
     useEffect(() => {
         if (orgData?.badges?.[badgeIndex]) {
@@ -206,18 +194,21 @@ const Badge = () => {
                             setValue={onMethodChange}
                         />
                         <InputListCSV
-                            label="Members to update"
-                            inputList={membersToUpdate}
-                            setInputList={setMembersToUpdate}
+                            label="Members to Update"
+                            inputList={addressesToUpdate.addresses}
+                            listKey={"addresses"}
+                            dispatch={dispatchAddresses}
                             setAreAddressesValid={setAreAddressesValid}
                         />
                         <IconButton
                             icon={['fal', 'arrow-right']} 
                             text={txMethod === "manageOwnership" ? "UPDATE MEMBERS" : "UPDATE MANAGERS"}
-                            onClick={() => setTxCalled(true)}
+                            onClick={() => runTransaction()}
                             style={{margin: "20px 0px 20px auto"}}
                             loading={txPending}
-                            disabled={!areAddressesValid}
+                            disabled={txMethod === "manageOwnership" ? 
+                                !manageOwnership.isSuccess : !setDelegates.isSuccess
+                            }
                         />
                     </>
                 }
@@ -226,7 +217,7 @@ const Badge = () => {
                     <HolderTable badge={badge} />
                 }
 
-                {(!badge?.users || badge?.users?.length < 1) && (isManager || isOwner) &&
+                {badge?.users?.length === 0 && badge?.delegates?.length === 0 && (isManager || isOwner) &&
                     <div className="org__container empty">
                         <h1>You're almost done with setting up the {badge?.name} Badge!</h1>
                         <p>

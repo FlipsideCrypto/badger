@@ -15,16 +15,18 @@ const IconButton = ({
     return (
         <button 
             className={loading 
-                ? `button button__loading ${className}` 
-                : `button ${className}`}
+                ? `button__icon button__loading ${className}` 
+                : `button__icon ${className}`}
             style={style} 
             onClick={onClick} 
             disabled={disabled}
         >
-            <span className="button__text">
-                {text}
-            </span>
-            <div className="button__icon">
+            <div className="button__text">
+                <span>
+                    {text}
+                </span>
+            </div>
+            <div className="button__image">
                 <FontAwesomeIcon icon={icon} />
             </div>
         </button>

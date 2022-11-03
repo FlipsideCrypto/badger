@@ -1,81 +1,109 @@
-.button {
+.button__icon {
     padding: 0;
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: 8fr 2fr;
+    font-size: 12px;
     font-weight: 700;
     cursor: pointer;
     transition: .1s all ease-in-out;
+    height: 40px;
+    width: min-content;
+    white-space: nowrap;
+    background: #000;
+    color: #fff;
 }
 
 .button__text {
-    padding-inline: 10px;
+    padding-inline: 16px;
+    color: #000;
+    background: #fff;
+    border-radius: 4px;
     height: 100%;
     display: flex;
     align-items: center;
     transition: .1s all ease-in-out;
 }
 
-.button__icon {
-    border: 1px solid #000;
-    background: #000;
+.button__text span {
+    width: 100%;
+    text-align: center;
+}
+
+.button__image {
+    position: relative;
+    height: stretch;
+    display: flex;
     color: #fff;
-    padding: 5px 10px;
+    background: #000;
+    align-items: center;
     transition: .1s all ease-in-out;
+    padding: 7px 12px 8px 12px;
+    z-index: 5;
 }
 
-.button:hover .button__text,
-.button:active .button__text,
-.button:focus .button__text {
+.button__image svg {
+    height: 16px;
+    width: 16px;
+}
+
+.button__icon:disabled {
+    background: #666666;
+}
+
+.button__icon:hover .button__text,
+.button__icon:active .button__text,
+.button__icon:focus .button__text {
     background: #000;
     color: #fff;
 }
 
-.button:disabled:hover .button__text,
-.button:disabled:active .button__text,
-.button:disabled:focus .button__text {
+.button__icon:disabled .button__text,
+.button__icon:disabled:hover .button__text,
+.button__icon:disabled:active .button__text,
+.button__icon:disabled:focus .button__text {
+    background: #fff;
+    color: #999999;
+    cursor: default;
+}
+
+.button__icon:disabled .button__image {
     background: inherit;
-    color: inherit;
     cursor: default;
 }
 
-.button:disabled .button__icon {
-    cursor: default;
-}
-
-.button:disabled:hover .button__icon svg {
+.button__icon:disabled:hover .button__image svg {
     transform: translateX(0px);
 }
 
 /* When the button is hovered do a little bump to the icon */
-.button:hover .button__icon svg {
+.button__icon:hover .button__image svg {
     transform: translateX(2px);
 }
 
-.button.wiggle:hover .button__icon svg {
+.button__icon.wiggle:hover .button__image svg {
     animation: wiggle 0.1s ease-in-out;
 }
 
-.button.button__loading,
-.button.button__loading:hover,
-.button.button__loading:active,
-.button.button__loading:focus {
+.button__icon.button__loading,
+.button__icon.button__loading:hover,
+.button__icon.button__loading:active,
+.button__icon.button__loading:focus {
     background: #fff;
-    /* background-image: linear-gradient(to right, white 0%, white 50%, #72fec9, #00FF9D 60%, white 70%); */
     background-image: linear-gradient(to right, #fff, #00FF9D, #fff);
     background-repeat: no-repeat;
     background-size: 400px 104px;
     animation: loading__shimmer 3s linear infinite alternate;
 }
 
-.button.button__loading .button__text,
-.button.button__loading:hover .button__text,
-.button.button__loading:active .button__text,
-.button.button__loading:focus .button__text {
+.button__icon.button__loading .button__text,
+.button__icon.button__loading:hover .button__text,
+.button__icon.button__loading:active .button__text,
+.button__icon.button__loading:focus .button__text {
     color: #000;
     background: inherit;
 }
 
-.button.button__error {
+.button__icon.button__error {
     background: #FF0000;
 }
 

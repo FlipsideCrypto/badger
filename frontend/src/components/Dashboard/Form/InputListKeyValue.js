@@ -4,39 +4,61 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ActionButton from "@components/Button/ActionButton";
 import Input from "@components/Dashboard/Form/Input";
 
-const InputListKeyValue = ({ label, inputList, setInputList, keyPlaceholder, valuePlaceholder, ...props }) => {
+const InputListKeyValue = (
+    { 
+        label, 
+        inputList, 
+        listKey, 
+        dispatch, 
+        keyPlaceholder, 
+        valuePlaceholder,
+        ...props 
+    }
+) => {
     const [ inputFieldCount, setInputFieldCount ] = useState(1);
 
     // Adds the input field to the state array.
     const onInputChange = (index, event, keyValue) => {
-        let newInputs = [...inputList];
-        let newInput = { ...newInputs[index] };
-        
-        newInput[keyValue] = event.target.value;
-        newInputs[index] = newInput;
-        setInputList(newInputs);
+        dispatch({ 
+            type: "UPDATE_KEY_VALUE_ARRAY", 
+            field: listKey, 
+            index: index, 
+            key: keyValue,
+            payload: event.target.value 
+        });
     }
 
     // Deletes the input field row at the specified index.
     // If the index is the first and only row, just reset the value.
     const onFieldDelete = (index) => {
-        let newInputs = [...inputList];
         if (index === 0 && inputFieldCount === 1) {
-            setInputList([{key: "", value: ""}]);
+            dispatch({
+                type: "SET",
+                field: listKey,
+                payload: []
+            })
+            return;
         }
-        else {
-            newInputs.splice(index, 1);
-            setInputList(newInputs);
-            setInputFieldCount(inputFieldCount - 1);
-        }
+
+        dispatch({
+            type: "DELETE_FROM_ARRAY",
+            field: listKey,
+            index: index,
+        });
+        setInputFieldCount(inputFieldCount - 1);
     }
 
     // When an input loses focus, clear whitespace.
     const onBlur = (index, keyValue) => {
-        if (inputList[index]?.[keyValue] && inputList[index][keyValue].includes(' ')) {
-            let newInputs = [...inputList];
-            newInputs[index][keyValue] = newInputs[index][keyValue].trim();
-            setInputList(newInputs);
+        const pair = inputList[index][keyValue];
+        if (pair && pair.includes(' ')) {
+            dispatch({ 
+                type: "UPDATE_KEY_VALUE_ARRAY", 
+                field: listKey, 
+                index: index, 
+                key: keyValue,
+                payload: inputList[index][keyValue].trim() 
+            });
         }
     }
 
@@ -85,25 +107,21 @@ const InputListKeyValue = ({ label, inputList, setInputList, keyPlaceholder, val
     return (
         <div className="form__list" {...props}>
             {[...Array(inputFieldCount)].map((x, index) => (
-                <div key={index} style={{
-                    display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: "10px"}}
-                >
+                <div className="form__group__key__value" key={index}>
                     <Input
                         label={index === 0 ? labelDOM : ""}
-                        value={inputList[index]?.["key"] || ""}
+                        value={inputList?.[index]?.["trait_type"] || ""}
                         placeholder={keyPlaceholder}
-                        onChange={(event) => onInputChange(index, event, "key")}
-                        // onFocus={() => setFocused(index, "name")}
-                        onBlur={() => onBlur(index, "name")}
+                        onChange={(event) => onInputChange(index, event, "trait_type")}
+                        onBlur={() => onBlur(index, "trait_type")}
                     />
 
                     <Input
                         label={index === 0 ? actionDOM : ""}
                         append={deleteDOM(index)}
-                        value={inputList[index]?.["value"] || ""}
+                        value={inputList?.[index]?.["value"] || ""}
                         placeholder={valuePlaceholder}
                         onChange={(event) => onInputChange(index, event, "value")}
-                        // onFocus={() => setFocused(index, "value")}
                         onBlur={() => onBlur(index, "value")}
                     />
                 </div>

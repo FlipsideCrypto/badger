@@ -15,8 +15,6 @@ const MobilePreventor = ({isMobile, setIsMobile}) => {
         }
     }, [setIsMobile]);
 
-    console.log('isMobile', isMobile);
-
     // on window resize, check if the window is mobile or not
     window.addEventListener("resize", () => {
         handleResize();

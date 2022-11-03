@@ -58,7 +58,7 @@ const Landing = () => {
                         <p className="lead">Deploy and manage flexible group policies for your team’s decentralized tool stack. </p>
 
                         <Link className="internal-link" to="/dashboard/">
-                            <IconButton icon={['fal', 'arrow-right']} text="Issue Keys" />
+                            <IconButton icon={['fal', 'arrow-right']} text="Issue badges" />
                         </Link>
                     </div>
                 </div>
@@ -87,7 +87,7 @@ const Landing = () => {
                         </div>
 
                         <Link className="internal-link" to="/dashboard/">
-                            <IconButton icon={['fal', 'arrow-right']} text="Create Org Now" style={{
+                            <IconButton icon={['fal', 'arrow-right']} text="Create a badge" style={{
                                 marginLeft: "auto"
                             }} />
                         </Link>

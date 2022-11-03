@@ -3,6 +3,7 @@
     grid-template-columns: auto auto;
     grid-template: 'help actions';
     align-items: center;
+    grid-column-gap: 20px;
 }
 
 .action__bar .action__bar__help { 
@@ -17,6 +18,10 @@
 
 .action__bar .action__bar__actions { 
     grid-area: actions;
+    display: grid;
+    grid-auto-flow: column;
+    justify-self: end;
+    grid-column-gap: 16px;
 }
 
 .action__bar .action__bar__actions button { 

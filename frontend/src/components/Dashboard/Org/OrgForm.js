@@ -12,8 +12,9 @@ import FormDrawer from "@components/Dashboard/Form/FormDrawer";
 import { useBadgerFactory } from "@hooks/useContracts";
 import { postOrgRequest, postIPFSImage, postIPFSMetadata, getPFPImage } from "@utils/api_requests";
 import { getBadgerAbi } from "@hooks/useContracts";
+import { useIPFSImageHash, useIPFSMetadataHash } from "@hooks/useIpfsHash";
 
-// TODO: Move orgObj into a reducer.
+// TODO: Move orgObj into the form reducer.
 const OrgForm = () => {
     const { userData, setUserData } = useContext(UserContext);
     const { setError } = useContext(ErrorContext);
@@ -23,34 +24,58 @@ const OrgForm = () => {
     const navigate = useNavigate();
     const imageInput = useRef();
 
-    // TODO: For editing, get orgId from params and if it exists, fetch and fill org data
     const [ orgObj, setOrgObj ] = useState({
         name: "",
         symbol: "",
         description: "",
         contract_uri_hash: "",
+        image_hash: "",
         owner: "",
         ethereum_address: "",
         chain: chain?.name,
     })
     const [ orgImage, setOrgImage ] = useState();
-    const [ orgImageHash, setOrgImageHash ] = useState();
-    const [ imageUploading, setImageUploading ] = useState(false);
-    const [ txCalled, setTxCalled ] = useState(false);
     const [ txPending, setTxPending ] = useState(false);
+    const [ isCustomImage, setIsCustomImage ] = useState(false);
 
-    const createContract = useBadgerFactory(txCalled, orgObj, address, chain?.name)
+    // Is the data valid for the transaction to be prepared.
+    const isDisabled = useMemo(() => {
+        return (
+            !orgObj.name ||
+            !orgObj.symbol ||
+            !orgObj.description ||
+            !orgImage
+        )
+    }, [orgObj, orgImage])
+    
+    // Determine the IPFS hashes before hand so the transaction can be prepared ASAP
+    // without actively pinning or waiting for the hashes to be returned.
+    const { hash: deterministicImageHash } = useIPFSImageHash(orgImage)
+    const { hash: deterministicMetadataHash } = useIPFSMetadataHash({
+        name: orgObj.name, 
+        description: orgObj.description, 
+        image: deterministicImageHash
+    })
+
+    const createContract = useBadgerFactory(
+        !isDisabled,
+        orgObj,
+        deterministicImageHash,
+        deterministicMetadataHash,
+        address, 
+        chain?.name
+    )
     const badger = useMemo(() => getBadgerAbi(chain?.name), [chain?.name]);
 
     let firstCharOfName = useRef();
 
     const actions = [
         {
-            text: "CREATE",
+            text: "Create organization",
             icon: ["fal", "arrow-right"],
-            loading: txCalled || txPending,
-            disabled: !orgObj.name || !orgObj.symbol || !orgImageHash,
-            event: () => onFormSubmission()
+            loading: txPending,
+            disabled: !createContract.isSuccess,
+            event: () => createOrgTx()
         }
     ]
 
@@ -62,10 +87,19 @@ const OrgForm = () => {
     // When name is changed, update orgObj name, and symbol if symbol is not custom.
     const onOrgNameChange = (e) => {
         setOrgObj({...orgObj, name: e.target.value, symbol: nameToSymbol(e.target.value)});
-        if (e.target.value[0] !== firstCharOfName.current) {
+        if (
+            !isCustomImage &&
+            e.target.value[0] !== firstCharOfName.current
+        ) {
             firstCharOfName.current = e.target.value[0];
             getGeneratedImage(firstCharOfName.current);
         }
+    }
+
+    // Custom image upload.
+    const onCustomImageUpload = (image) => {
+        setIsCustomImage(true);
+        setOrgImage(image);
     }
 
     // Get a generated image for the org.
@@ -74,64 +108,75 @@ const OrgForm = () => {
         if (response.error) {
             setError({
                 label: "Error getting generated Org Image",
-                message: response.error
+                message: response.error``
             })
         } else {
             setOrgImage(response);
-            pinImage(response);
         }
     }
     
-    // When image is added, post to IPFS and set orgObj image hash.
+    // Pin the org image to IPFS.
     const pinImage = async (image) => {
-        setImageUploading(true)
-
         const response = await postIPFSImage(image)
         if (response.error) {
             setError({
                 label: 'Could not upload image to IPFS',
                 message: response.error
             });
-        } else {
-            setOrgImageHash(response.hash);
+            return;
         }
-        setImageUploading(false);
+
+        return response.hash;
     }
 
-    // Posts contract uri to IPFS and sets the returned hash to orgObj uri hash.
-    const onFormSubmission = async () => {
-        setTxCalled(true);
+    // Post the IPFS metadata for the org.
+    const pinMetadata = async (imageHash) => {
+        const response = await postIPFSMetadata({
+            name: orgObj.name, 
+            description: orgObj.description, 
+            imageHash: imageHash
+        });
 
-        const response = await postIPFSMetadata(orgObj.name, orgObj.description, orgImageHash);
         if (response.error) {
             setError({
                 label: 'Error creating Org URI',
                 message: response.error
             });
-            setTxCalled(false);
-        } else {
-            setOrgObj({...orgObj, contract_uri_hash: response.hash, image_hash: orgImageHash});
+            return;
         }
+        
+        return response.hash;
     }
 
     // Awaits a prepared transaction before running it.
-    const createOrgTx = useCallback(async () => {
+    const createOrgTx = async () => {
         setTxPending(true);
         try {
             let tx = await createContract.write?.();
-            tx = await tx?.wait();
+            // Await the txReceipt, image hash, and metadata hash in parallel.
+            const [txReceipt, imageHash, metadataHash] = await Promise.all([
+                tx.wait(),
+                pinImage(orgImage),
+                pinMetadata(deterministicImageHash)
+            ])
 
-            if (tx.status !== 1)
+            if (txReceipt.status !== 1)
                 throw new Error(createContract?.error);
             // Decode the transaction receipt to get the contract address from the event.
             const orgCreatedTopic = badger.abi.getEventTopic("OrganizationCreated");
-            const orgCreatedEvent = tx.logs.find((log) => log.topics[0] === orgCreatedTopic);
+            const orgCreatedEvent = txReceipt.logs.find((log) => log.topics[0] === orgCreatedTopic);
             const orgEvent = badger.abi.decodeEventLog("OrganizationCreated", orgCreatedEvent.data, orgCreatedEvent.topics);
             const contractAddress = orgEvent.organization;
 
             // If transaction was confirmed, add is_active and contract address to orgObj.
             // Adding the ethereum address will trigger a useEffect to post to backend.
-            setOrgObj({...orgObj, ethereum_address: contractAddress, is_active: true});
+            setOrgObj({
+                ...orgObj, 
+                ethereum_address: contractAddress, 
+                contract_uri_hash: metadataHash,
+                image_hash: imageHash,
+                is_active: true
+            });
         }
         catch (error) {
             setError({
@@ -140,20 +185,7 @@ const OrgForm = () => {
             });
             setTxPending(false);
         }
-    }, [createContract, badger.abi, orgObj, setError]);
-    
-    // Once the transaction is prepared and called, run it.
-    useEffect(() => {
-        if (   
-               createContract.isSuccess
-            && txCalled
-            && !txPending
-            // && !orgObj.ethereum_address
-        ) {
-            setTxCalled(false);
-            createOrgTx();
-        }
-    }, [createContract.isSuccess, txCalled, setTxCalled, txPending, createOrgTx])
+    }
 
     // Post the org Obj to the backend once the contract address is added.
     const postOrg = useCallback(async () => {
@@ -190,20 +222,30 @@ const OrgForm = () => {
         <div id="new-org">
             <Header back={() => navigate("/dashboard")} />
 
-            <h2>Create Organization</h2>
+            <h2 style={{marginLeft: "30px"}}>Create Organization</h2>
 
             <FormDrawer label="General" open={true}>
-                <Input 
-                    name="orgName"
-                    label="Organization Name" 
-                    required={true}
-                    value={orgObj.name} 
-                    onChange={onOrgNameChange}
-                />
+                <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gridGap: "20px"}}>
+                    <Input 
+                        name="orgName"
+                        label="Name" 
+                        required={true}
+                        value={orgObj.name} 
+                        onChange={onOrgNameChange}
+                    />
+
+                    <Input 
+                        name="orgSymbol"
+                        label="Symbol" 
+                        required={false}
+                        value={orgObj.symbol} 
+                        onChange={(e) => setOrgObj({...orgObj, symbol: e.target.value})}
+                    />
+                </div>
 
                 <Input
                     name="orgDescription"
-                    label="Organization Description"
+                    label="Description"
                     required={true}
                     value={orgObj.description}
                     onChange={(e) => setOrgObj({...orgObj, description: e.target.value})}
@@ -220,25 +262,23 @@ const OrgForm = () => {
                 />
             </FormDrawer>
 
-            <FormDrawer label="Appearance" open={false}>
+            <FormDrawer label="Appearance" open={true}>
                 <Input
                     name="Custom Image"
                     accept="image/*"
                     label="Custom Image"
                     placeholder="Upload Custom Organization Image"
                     disabled={true}
-                    value={orgImage?.name || ""}
+                    value={isCustomImage && orgImage?.name ? orgImage.name : ""}
                     append={
                         <button
                             className="button-secondary"
                             onClick={() => imageInput.current.click()}
-                            style={{width: "100px", padding: "0px"}}
+                            style={{width: "auto"}}
                         >
-                            {imageUploading ?
-                                "LOADING..." :
-                                orgImage?.name ? 
-                                    "CHANGE" : 
-                                    "UPLOAD"
+                            {isCustomImage ?
+                                "Change image" : 
+                                "Upload image"
                             }
                         </button>
                     }
@@ -249,16 +289,14 @@ const OrgForm = () => {
                         ref={imageInput}
                         accept="image/*"
                         type="file"
-                        onChange={(event) => {
-                            setOrgImage(event.target.files[0]);
-                            pinImage(event.target.files[0]);
-                        }}
+                        onChange={(event) => {onCustomImageUpload(event.target.files[0])}}
                     />
             </FormDrawer>
 
             <ActionBar 
                 help={"Badge creation occurs after your organization has been established."} 
-                actions={actions} 
+                actions={actions}
+                style={{marginInline: "30px"}}
             />
         </div>
     )
