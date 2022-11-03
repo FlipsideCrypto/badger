@@ -1,4 +1,5 @@
 import { IPFS_GATEWAY_URL } from "@static/constants/links"
+import { ethers } from "ethers";
 import { formatAddresses, getCSRFToken, getFileFromBase64 } from "./helpers";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -72,6 +73,7 @@ export async function postBadgeRequest(badge) {
     
     const users = formatAddresses(badge.users);
     const delegates = formatAddresses(badge.delegates);
+    const signer = badge.signer === "" ? "" : ethers.utils.getAddress(badge.signer);
 
     const organization = typeof(badge?.organization) === "string" ? 
           parseInt(badge?.organization) 
@@ -85,7 +87,7 @@ export async function postBadgeRequest(badge) {
         image_hash: badge.image_hash,
         token_uri: badge.token_uri,
         account_bound: badge.account_bound,
-        signer_ethereum_address: "",
+        signer_ethereum_address: signer,
         users: users,
         delegates: delegates,
         organization: organization
