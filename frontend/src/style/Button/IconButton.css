@@ -99,7 +99,6 @@
 .button__icon.button__loading:hover .button__text,
 .button__icon.button__loading:active .button__text,
 .button__icon.button__loading:focus .button__text {
-    border-radius: 0px;
     color: #000;
     background: inherit;
 }

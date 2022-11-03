@@ -111,7 +111,7 @@ const BadgeForm = () => {
         const response = await postIPFSMetadata({
             name: badge.name,
             description: badge.description,
-            image: imageHash,
+            imageHash: imageHash,
             attributes: badge.attributes
         })
 
