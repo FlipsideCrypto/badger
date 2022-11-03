@@ -13,15 +13,17 @@ class JobConfig(AppConfig):
             from .jobs import JobManager
             from .models import ContractListener
 
-            # Make sure that the ContractListener for the primary Factory always exists and is setup
-            stringified_abi = json.dumps(settings.FACTORY_ABI)
-
-            ContractListener.objects.get_or_create(
-                is_active=True,
-                chain="Polygon",
-                ethereum_address=settings.FACTORY_ADDRESS,
-                abi=stringified_abi
-            )
+            # v4.0 Factory Factory
+            for version in settings.VERSIONS:
+                ContractListener.objects.get_or_create(
+                    ethereum_address=settings.FACTORY_ADDRESSES[version],
+                    chain="Polygon",
+                    version=version,
+                    defaults={
+                        'is_active': True,
+                        'abi': json.dumps(settings.FACTORY_ABI[version])
+                    }
+                )
 
             manager = JobManager()
 

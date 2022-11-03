@@ -6,6 +6,8 @@ import { IPFS_GATEWAY_URL } from "@static/constants/links";
 const PRIMARY_IMPLEMENTATION = process.env.REACT_APP_BADGER_IMPLEMENTATION;
 const PRIMARY_PROD_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
 
+// TODO: Set getBadgerAddress to support versions
+
 // Putting the parse into a try catch block to account for missing env var breaking the app.
 export function getBadgerAddress(chainName) {
     try {
@@ -19,23 +21,13 @@ export function getBadgerAddress(chainName) {
     }
 }
 
-// Gets the ABI for sash contracts.
-export function getBadgerOrganizationAbi() {
-    try {
-        const abi = require('@abis/BadgerOrganization.json');
-        return {abi: new ethers.utils.Interface(abi)}
-    }
-    catch (err) {
-        console.error('Error importing BadgerOrganization:', err);
-        return {error: err}
-    }
-}
-
 // Gets the abi and chain specific address for the Badger contract.
-export function getBadgerAbi(chainName) {
+export function getBadgerAbi(chainName, version) {
+    if (version === undefined) return { abi: null, address: null };
+
     try {
-        const abi = require('@abis/Badger.json');
-        const address = getBadgerAddress(chainName);
+        const abi = require(`@abis/${version}_Badger.json`);
+        const address = getBadgerAddress(chainName, version);
         return {
             abi: new ethers.utils.Interface(abi),
             address: address
@@ -43,6 +35,20 @@ export function getBadgerAbi(chainName) {
     }
     catch (err) {
         console.error('Error importing Badger:', err);
+        return {error: err}
+    }
+}
+
+// Gets the ABI for sash contracts.
+export function getBadgerOrganizationAbi(version) {
+    if (version === undefined) return { abi: null, address: null };
+
+    try {
+        const abi = require(`@abis/${version}_BadgerOrganization.json`);
+        return {abi: new ethers.utils.Interface(abi)}
+    }
+    catch (err) {
+        console.error('Error importing BadgerOrganization:', err);
         return {error: err}
     }
 }
@@ -66,13 +72,12 @@ export function useFees() {
         }
     }, [data, setFees]);
 
-
     return fees;
 }
 
 // Creates a new sash contract for an organization.
-export const useBadgerFactory = (isTxReady, orgObj, imageHash, contractHash, address, chainName) => {
-    const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
+export const useBadgerFactory = (isTxReady, orgObj, address, chainName, imageHash, contractHash) => {
+    const Badger = orgObj.version && getBadgerAbi(chainName, orgObj?.version)
 
     const args = [
         PRIMARY_IMPLEMENTATION,
@@ -106,8 +111,8 @@ export const useBadgerFactory = (isTxReady, orgObj, imageHash, contractHash, add
 }
 
 // Creates a badge from a cloned sash contract.
-export const useCreateBadge = (isTxReady, tokenUri, badge) => {
-    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
+export const useCreateBadge = (isTxReady, badge, version, tokenUri) => {
+    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(version), [version]);
 
     // This should also clean/check the addresses as well.
     badge?.delegates?.forEach((delegate, index) => {
@@ -152,8 +157,8 @@ export const useCreateBadge = (isTxReady, tokenUri, badge) => {
     Determines which function to call based on if it is a revoke or a mint,
     if there are multiple badge ids, and if there are multiple holders.
 */
-export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, action, amounts) => {
-    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
+export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, action, amounts, version) => {
+    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(version), [version]);
     
     // Might look a little funky but cleaner than a switch IMO.
     // If revoke is true, then we check if there is just one holder for a single revoke.
@@ -217,8 +222,8 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
     Changes delegates of badge(s) with id(s) from orgAddress. 
     If revoke is true then delegates are removed.
 */
-export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) => {
-    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
+export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action, version) => {
+    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(version), [version]);
 
     const revoke = action === "Remove Manager" ? true : false
     const isDelegateArray = Array(delegates.length).fill(!revoke);

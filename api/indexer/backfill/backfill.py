@@ -19,7 +19,7 @@ class Backfill:
         self.transformer = Transformer()
         self.loader = Loader()
 
-    def etl(self, queryset, abi, contract_events):
+    def etl(self, version, queryset, abi, contract_events):
         contracts = [
             [
                 contract.chain.lower(), 
@@ -33,7 +33,7 @@ class Backfill:
             last_block
         ] = self.extractor.handle_contracts(contracts, abi, contract_events)
         events = self.transformer.handle_events(events)
-        event_responses = self.loader.handle_events(events)
+        event_responses = self.loader.handle_events(events, version)
 
         # refresh queryset from database
         queryset = queryset.model.objects.filter(pk__in=[contract.pk for contract in queryset])
@@ -49,21 +49,30 @@ class Backfill:
         return event_responses
 
     def backfill_factories(self):
-        return self.etl(
-            ContractListener.objects.filter(is_active=True), 
-            FACTORY_ABI, 
-            FACTORY_EVENTS
-        )
-
+        for version in settings.VERSIONS:
+            return self.etl(
+                version,
+                ContractListener.objects.filter(
+                    is_active=True,
+                    version=version
+                ), 
+                FACTORY_ABI[version], 
+                FACTORY_EVENTS[version]
+            )
+        
     def backfill_organizations(self):
-        return self.etl(
-            Organization.objects.filter(
-                is_active=True, 
-                updated__gte=django.utils.timezone.now() - django.utils.timezone.timedelta(days=30)
-            ), 
-            ORGANIZATION_ABI, 
-            ORGANIZATION_EVENTS
-        )
+        for version in settings.VERSIONS:
+            print('running version  ', version)
+            return self.etl(
+                version,
+                Organization.objects.filter(
+                    is_active=True,
+                    version=version, 
+                    updated__gte=django.utils.timezone.now() - django.utils.timezone.timedelta(days=30)
+                ), 
+                ORGANIZATION_ABI[version], 
+                ORGANIZATION_EVENTS[version]
+            )
 
 # if __name__ == '__main__':
 #     backfill = Backfill()
