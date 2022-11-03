@@ -18,7 +18,6 @@ class ContractListenerSerializer(serializers.ModelSerializer):
         model = ContractListener
         fields = (
             'is_active', 
-            'version',
             'chain',
             'ethereum_address', 
             'abi',
