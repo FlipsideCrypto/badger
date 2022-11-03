@@ -100,6 +100,10 @@ describe("Badger", function () {
             assert.equal(await badger.owner(), owner.address);
         });
 
+        it('Should deploy the Organization contract', async () => {
+            assert.equal(await organizationMaster.owner(), owner.address);
+        });
+
         // createOrganization() tests
         it('createOrganization() success', async () => {
             cloneTx = await badger.connect(owner).createOrganization(
@@ -122,15 +126,24 @@ describe("Badger", function () {
             // mint 10 of the mock1155 to signer1
             await mock1155.connect(owner).mint(signer1.address, 0, 10, "0x");
 
-            // set the new version using an 1155 as payment
-            await badger.connect(owner).setVersion(
-                organizationMaster.address,
-                owner.address,
+            // build transaction that fires execTransaction through organizationMaster to 
+            // to use the setVersion transaction on the Factory as it only accepts
+            // direct connections from senders.
+
+            // build the version transaction
+            const setVersionTx = await badger.populateTransaction.setVersion(
                 mock1155.address,
                 0,
                 10,
                 false
             );
+    
+            // Set the version through the Organization implementation :dance:
+            await organizationMaster.connect(owner).execTransaction(
+                badger.address,
+                setVersionTx.data,
+                0,
+            )
 
             transferData = ethers.utils.defaultAbiCoder.encode(
                 ["address"],
@@ -206,95 +219,142 @@ describe("Badger", function () {
     describe('Badger: BadgerVersions.sol', async () => {
         // setVersion() tests
         it('setVersion() success', async () => {
-            await badger.connect(owner).setVersion(
-                organizationMaster.address,
-                owner.address,
+            // build the version transaction
+            const setVersionTx = await badger.populateTransaction.setVersion(
                 "0x0000000000000000000000000000000000000000",
                 0,
                 0,
                 false
             );
+    
+            // Set the version through the Organization implementation :dance:
+            await organizationMaster.connect(owner).execTransaction(
+                badger.address,
+                setVersionTx.data,
+                0,
+            )
         });
 
         it('setVersion() success: exogenous', async () => {
-            await badger.connect(sigSigner).setVersion(
-                "0x0000000000000000000000000000000000000012",
-                sigSigner.address,
+            // Deploy the base Organization
+            const ExogenousBadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
+            exogenousOrganizationMaster = await ExogenousBadgerOrganization.connect(sigSigner).deploy();
+            exogenousOrganizationMaster = await exogenousOrganizationMaster.connect(sigSigner).deployed();
+
+            // build the version transaction
+            const setVersionTx = await badger.populateTransaction.setVersion(
                 "0x0000000000000000000000000000000000000000",
                 0,
                 0,
                 false
             );
+    
+            // Set the version through the Organization implementation :dance:
+            await exogenousOrganizationMaster.connect(sigSigner).execTransaction(
+                badger.address,
+                setVersionTx.data,
+                0,
+            )
 
-            // setting payment token fails
-            await badger.connect(sigSigner).setVersion(
-                "0x0000000000000000000000000000000000000012",
-                sigSigner.address,
+
+            // build the version transaction
+            const resetVersionTx = await badger.populateTransaction.setVersion(
                 "0x0000000000000000000000000000000000000000",
                 1,
                 0,
-                true
+                false
+            );
+    
+            // Set the version through the Organization implementation :dance:
+            await exogenousOrganizationMaster.connect(sigSigner).execTransaction(
+                badger.address,
+                resetVersionTx.data,
+                0,
             ).should.be.rejectedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.");
         });
 
-        it('setVersion() fail: not owner', async () => {
-            await badger.connect(signer1).setVersion(
-                organizationMaster.address,
-                owner.address,
-                "0x0000000000000000000000000000000000000000",
-                0,
-                0,
-                false
-            ).should.be.revertedWith("BadgerVersions::_setVersion: You do not have permission to edit this version.")
-        })
-
         it('setVersion() fail: locked', async () => {
-            await badger.connect(owner).setVersion(
-                organizationMaster.address,
-                owner.address,
+            // build the version transaction
+            const setVersionTx = await badger.populateTransaction.setVersion(
                 "0x0000000000000000000000000000000000000000",
                 0,
                 0,
                 true
             );
+    
+            // Set the version through the Organization implementation :dance:
+            await organizationMaster.connect(owner).execTransaction(
+                badger.address,
+                setVersionTx.data,
+                0,
+            )
 
-            await badger.connect(owner).setVersion(
-                organizationMaster.address,
-                owner.address,
+            // build the version transaction
+            const resetVersionTx = await badger.populateTransaction.setVersion(
                 "0x0000000000000000000000000000000000000000",
                 0,
                 0,
                 false
+            );
+    
+            // Set the version through the Organization implementation :dance:
+            await organizationMaster.connect(owner).execTransaction(
+                badger.address,
+                resetVersionTx.data,
+                0,
             ).should.be.revertedWith("BadgerVersions::_setVersion: Cannot update a locked version.");
         })
 
         it('setVersion() fail: not allowed to set payment token', async () => {
-            await badger.connect(signer1).setVersion(
-                "0x0000000000000000000000000000000000000001",
-                owner.address,
-                "0x0000000000000000000000000000000000000001",
-                0,
-                0,
-                false
-            ).should.be.revertedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.")
+            // Deploy the base Organization
+            const ExogenousBadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
+            exogenousOrganizationMaster = await ExogenousBadgerOrganization.connect(sigSigner).deploy();
+            exogenousOrganizationMaster = await exogenousOrganizationMaster.connect(sigSigner).deployed();
 
-            await badger.connect(signer1).setVersion(
-                "0x0000000000000000000000000000000000000001",
-                owner.address,
+            // build the version transaction
+            let resetVersionTx = await badger.populateTransaction.setVersion(
                 "0x0000000000000000000000000000000000000000",
                 1,
                 0,
                 false
-            ).should.be.revertedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.")
+            );
+    
+            // Set the version through the Organization implementation :dance:
+            await exogenousOrganizationMaster.connect(sigSigner).execTransaction(
+                badger.address,
+                resetVersionTx.data,
+                0,
+            ).should.be.rejectedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.");
 
-            await badger.connect(signer1).setVersion(
-                "0x0000000000000000000000000000000000000001",
-                owner.address,
+            // build the version transaction
+            resetVersionTx = await badger.populateTransaction.setVersion(
                 "0x0000000000000000000000000000000000000000",
                 0,
                 1,
                 false
-            ).should.be.revertedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.")
+            );
+    
+            // Set the version through the Organization implementation :dance:
+            await exogenousOrganizationMaster.connect(sigSigner).execTransaction(
+                badger.address,
+                resetVersionTx.data,
+                0,
+            ).should.be.rejectedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.");
+
+            // build the version transaction
+            resetVersionTx = await badger.populateTransaction.setVersion(
+                "0x0000000000000000000000000000000000000001",
+                0,
+                0,
+                false
+            );
+    
+            // Set the version through the Organization implementation :dance:
+            await exogenousOrganizationMaster.connect(sigSigner).execTransaction(
+                badger.address,
+                resetVersionTx.data,
+                0,
+            ).should.be.rejectedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.");
         })
 
         // getVersionKey() tests
@@ -359,7 +419,6 @@ describe("Badger", function () {
                 ), true
             )
 
-            // Test BadgerInterface
             assert.equal(
                 await badger.supportsInterface(
                     "0x7b366213"
@@ -369,7 +428,7 @@ describe("Badger", function () {
             // Test BadgerVersionsInterface
             assert.equal(
                 await badger.supportsInterface(
-                    "0x52550d16"
+                    "0x452cbf81"
                 ), true
             )
         });
