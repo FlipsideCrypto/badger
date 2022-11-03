@@ -40,9 +40,9 @@ class JobManager:
         # Is running on a minute timer as this is a backfill job and 
         # not a listener job
 
-        minutes = "*/1"
-        # if settings.DEBUG:
-            # minutes = "*/59"
+        minutes = "*/2"
+        if settings.DEBUG:
+            minutes = "*/59"
         scheduler.add_job(
             backfill_factories,
             trigger=CronTrigger(minute=minutes),

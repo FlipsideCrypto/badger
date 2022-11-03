@@ -36,6 +36,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'is_active',
+            'version',
             'chain',
             'name',
             'description',

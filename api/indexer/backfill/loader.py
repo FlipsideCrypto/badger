@@ -118,6 +118,7 @@ class Loader:
         if not Organization.objects.filter(ethereum_address=organization).exists():
             organization, created = Organization.objects.get_or_create(
                 ethereum_address=organization,
+                version=version
             )
             response = "Organization created"
         else:
