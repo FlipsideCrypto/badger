@@ -13,7 +13,6 @@ import { useBadgerFactory } from "@hooks/useContracts";
 import { postOrgRequest, postIPFSImage, postIPFSMetadata, getPFPImage } from "@utils/api_requests";
 import { getBadgerAbi } from "@hooks/useContracts";
 import { useIPFSImageHash, useIPFSMetadataHash } from "@hooks/useIpfsHash";
-import { IPFS_GATEWAY_URL } from "@static/constants/links"
 
 // TODO: Move orgObj into the form reducer.
 const OrgForm = () => {
@@ -49,12 +48,13 @@ const OrgForm = () => {
         )
     }, [orgObj, orgImage])
     
-    // Calculate the IPFS hashes without pinning for the transaction preparation.
+    // Determine the IPFS hashes before hand so the transaction can be prepared ASAP
+    // without actively pinning or waiting for the hashes to be returned.
     const { hash: deterministicImageHash } = useIPFSImageHash(orgImage)
     const { hash: deterministicMetadataHash } = useIPFSMetadataHash({
         name: orgObj.name, 
         description: orgObj.description, 
-        image: IPFS_GATEWAY_URL + deterministicImageHash
+        image: deterministicImageHash
     })
 
     const createContract = useBadgerFactory(
@@ -155,7 +155,7 @@ const OrgForm = () => {
             let tx = await createContract.write?.();
             // Await the txReceipt, image hash, and metadata hash in parallel.
             const [txReceipt, imageHash, metadataHash] = await Promise.all([
-                tx?.wait(),
+                tx.wait(),
                 pinImage(orgImage),
                 pinMetadata(deterministicImageHash)
             ])

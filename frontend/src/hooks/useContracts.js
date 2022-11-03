@@ -106,7 +106,7 @@ export const useBadgerFactory = (isTxReady, orgObj, imageHash, contractHash, add
 }
 
 // Creates a badge from a cloned sash contract.
-export const useCreateBadge = (isTxReady, badge) => {
+export const useCreateBadge = (isTxReady, tokenUri, badge) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
 
     // This should also clean/check the addresses as well.
@@ -120,8 +120,8 @@ export const useCreateBadge = (isTxReady, badge) => {
         badge.token_id,
         badge.claimable,
         badge.account_bound,
-        badge.signer || "",
-        badge.token_uri,
+        badge.signer || badge.ethereum_address, // Cannot have an empty string so we use the org as signer
+        tokenUri,
         badge.payment_token || [ethers.constants.HashZero, 0],
         badge.delegates || [],
     ]
@@ -133,7 +133,7 @@ export const useCreateBadge = (isTxReady, badge) => {
         contractInterface: BadgerOrganization.abi,
         functionName: "setBadge",
         args: args,
-        enabled: Boolean(fees && isTxReady && badge.token_uri),
+        enabled: Boolean(fees && isTxReady),
         overrides: {
             gasPrice: fees?.gasPrice,
         },

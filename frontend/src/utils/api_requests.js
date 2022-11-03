@@ -180,15 +180,11 @@ export async function postIPFSMetadata(props) {
     const metadata = {
         name: name,
         description: description,
-        image: IPFS_GATEWAY_URL + imageHash
+        image: IPFS_GATEWAY_URL + imageHash,
     }
+
     if (attributes) {
-        metadata.attributes = attributes.map(attribute => {
-            return {
-                trait_type: attribute.key,
-                value: attribute.value
-            }   
-        });
+        metadata.attributes = attributes;
     }
 
     try {

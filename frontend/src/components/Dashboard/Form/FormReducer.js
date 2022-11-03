@@ -66,6 +66,5 @@ export const initialBadgeForm = (orgData) => {
         claimable: false,
         signer: "",
         is_active: false,
-        save_state: "unsaved",
     }
 }

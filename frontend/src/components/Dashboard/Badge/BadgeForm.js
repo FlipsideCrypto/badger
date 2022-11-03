@@ -1,4 +1,4 @@
-import { useState, useRef, useContext, useEffect, useCallback, useReducer } from "react";
+import { useState, useRef, useContext, useEffect, useReducer, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 
@@ -15,6 +15,7 @@ import { FormReducer, initialBadgeForm } from "@components/Dashboard/Form/FormRe
 
 import { postBadgeRequest, postIPFSImage, postIPFSMetadata, getBadgeImage } from "@utils/api_requests";
 import { useCreateBadge } from "@hooks/useContracts";
+import { useIPFSImageHash, useIPFSMetadataHash } from "@hooks/useIpfsHash";
 
 import "@style/Dashboard/Badge/BadgeForm.css";
 
@@ -23,36 +24,46 @@ const BadgeForm = () => {
     const { setError } = useContext(ErrorContext);
     const [ badge, badgeDispatch ] = useReducer(FormReducer, initialBadgeForm(orgData));
     
+    const navigate = useNavigate();
+    const imageInput = useRef();
+    
     const [ badgeImage, setBadgeImage] = useState();
     const [ badgeImagePreview, setBadgeImagePreview ] = useState();
-    const [ imageUploading, setImageUploading ] = useState(false);
+    const [ isCustomImage, setIsCustomImage ] = useState(false);
     const [ areAddressesValid, setAreAddressesValid ] = useState(true);
     const [ signerIsValid, setSignerIsValid ] = useState(true);
     const [ txPending, setTxPending ] = useState(false);
 
-    const navigate = useNavigate();
-    const imageInput = useRef();
+    const isDisabled = useMemo(() => {
+        return (
+            !badge.name ||
+            !badge.description ||
+            !areAddressesValid ||
+            !signerIsValid
+        )
+    }, [badge, areAddressesValid, signerIsValid])
 
-    const createBadge = useCreateBadge(badge.saveState === "saved", badge);
-    const saveDisabled = 
-        !badge.name || 
-        !badge.description || 
-        !areAddressesValid || 
-        !signerIsValid ||
-        badge.save_state === "saved"
-    
+    // Determine the IPFS hashes before hand so the transaction can be prepared ASAP
+    // without actively pinning or waiting for the hashes to be returned.
+    const { hash: deterministicImageHash } = useIPFSImageHash(badgeImage);
+    const { hash: deterministicMetadataHash } = useIPFSMetadataHash({
+        name: badge.name,
+        description: badge.description,
+        image: deterministicImageHash,
+        attributes: badge.attributes,
+    });
+
+    const createBadge = useCreateBadge(
+       !isDisabled, 
+       deterministicMetadataHash, 
+       badge
+    );
+       
     const actions = [
-        {
-            text: "Save",
-            icon: ["fal", "save"],
-            disabled: saveDisabled,
-            loading: badge.save_state === "pending",
-            event: () => onBadgeFormSave()
-        },
         {
             text: "Create badge",
             icon: ["fal", "arrow-right"],
-            disabled: badge.save_state !== "saved" || !createBadge.isSuccess,
+            disabled: !createBadge.isSuccess,
             loading: txPending,
             event: () => createBadgeTx()
         }
@@ -62,6 +73,9 @@ const BadgeForm = () => {
     const onNameChange = async (event) => {
         badgeDispatch({type: "SET", field: "name", payload: event.target.value});
         
+        // if custom image is present do not generate an image.
+        if (isCustomImage) return;
+
         const response = await getBadgeImage(
             orgData?.name, 
             orgData?.ethereum_address, 
@@ -80,42 +94,44 @@ const BadgeForm = () => {
 
     // Pin to IPFS
     const pinImage = async (image) => {
-        setImageUploading(true);
-
         const response = await postIPFSImage(image);
         if (response.error) {
             setError({
                 label: 'Could not upload image to IPFS',
                 message: response.error
             });
+            return;
         }
-        badgeDispatch({type: "SET", field: "image_hash", payload: response.hash});
-        setImageUploading(false);
+
+        return response.hash;
     }
 
-    // Save 
-    const onBadgeFormSave = async () => {
-        badgeDispatch({type: "SET", field: "save_state", payload: "pending"});
-        // Get the token uri
-        const response = await postIPFSMetadata(badge);
+    // Pin to IPFS
+    const pinMetadata = async (imageHash) => {
+        const response = await postIPFSMetadata({
+            name: badge.name,
+            description: badge.description,
+            image: imageHash,
+            attributes: badge.attributes
+        })
 
         if (response.error) {
             setError({
-                label: 'Error creating token URI',
+                label: 'Could not upload metadata to IPFS',
                 message: response.error
             });
             return;
         }
 
-        badgeDispatch({type: "SET_MULTIPLE", payload: {'token_uri': response.uri, 'save_state': 'saved'}});
+        return response.hash;
     }
 
     // Post the badge to the backend for IPFS upload.
     const onCustomImageUpload = async (image) => {
+        setIsCustomImage(true);
         setBadgeImage(image)
         URL.revokeObjectURL(badgeImagePreview);
         setBadgeImagePreview(URL.createObjectURL(image));
-        pinImage(image);
     }
 
     // When the signer address is not focused, validate the address.
@@ -127,17 +143,27 @@ const BadgeForm = () => {
     }
 
     // Write to contract
-    const createBadgeTx = useCallback(async () => {
+    const createBadgeTx = async () => {
         setTxPending(true);
         try {
             let tx = await createBadge.write?.();
-            tx = await tx?.wait();
+            // Pin metadata and run transaction in parallel.
+            const [txReceipt, imageHash, metadataHash] = await Promise.all([
+                tx.wait(),
+                pinImage(badgeImage),
+                pinMetadata(deterministicImageHash)
+            ])
 
-            if (tx.status !== 1)
+            if (txReceipt.status !== 1)
                 throw new Error(createBadge.error);
 
             // Post to database
-            const response = await postBadgeRequest(badge);
+            const postData = {
+                ...badge, 
+                image_hash: imageHash, 
+                token_uri: metadataHash
+            };
+            const response = await postBadgeRequest(postData);
             // if POST is successful
             if (!response.error) {
                 // Set in orgData context
@@ -157,8 +183,7 @@ const BadgeForm = () => {
             });
             setTxPending(false);
         }
-
-    }, [createBadge, navigate, orgData, setError, setOrgData, badge]);
+    }
 
     // Set the badge when orgData is updated
     useEffect(() => {
@@ -198,18 +223,6 @@ const BadgeForm = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [orgData])
 
-    // If any of the IPFS metadata fields change, set saved state to unsaved.
-    // This is to ensure someone does not save, and then change fields before running
-    // the transaction with stale data.
-    useEffect(() => {
-        badgeDispatch({type: "SET", field: "save_state", payload: "unsaved"});
-    }, [
-        badge.name, 
-        badge.description, 
-        badge.attributes,
-        badgeImage
-    ])
-
     return (
         <>
             <Header back={() => navigate(`/dashboard/organization/${orgData?.id}`)} />
@@ -226,7 +239,6 @@ const BadgeForm = () => {
                             required={true}
                             value={badge.name}
                             onChange={(event) => onNameChange(event)}
-                            onBlur={() => pinImage(badgeImage)}
                         />
 
                         <Input
@@ -323,18 +335,16 @@ const BadgeForm = () => {
                     placeholder="Upload Custom Image"
                     required={false}
                     disabled={true}
-                    value={badgeImage?.name || ""}
+                    value={isCustomImage && badgeImage?.name ? badgeImage.name : ""}
                     append={
                         <button
                             className="button-secondary"
                             onClick={() => imageInput.current.click()}
                             style={{width: "auto"}}
                         >
-                            {imageUploading ?
-                                "Loading..." :
-                                badgeImage ? 
-                                    "Change image" : 
-                                    "Upload image"
+                            {isCustomImage ?
+                                "Change image" : 
+                                "Upload image"
                             }
                         </button>
                     }

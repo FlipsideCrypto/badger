@@ -110,10 +110,10 @@ const InputListKeyValue = (
                 <div className="form__group__key__value" key={index}>
                     <Input
                         label={index === 0 ? labelDOM : ""}
-                        value={inputList?.[index]?.["key"] || ""}
+                        value={inputList?.[index]?.["trait_type"] || ""}
                         placeholder={keyPlaceholder}
-                        onChange={(event) => onInputChange(index, event, "key")}
-                        onBlur={() => onBlur(index, "key")}
+                        onChange={(event) => onInputChange(index, event, "trait_type")}
+                        onBlur={() => onBlur(index, "trait_type")}
                     />
 
                     <Input
