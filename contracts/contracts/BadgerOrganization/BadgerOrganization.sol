@@ -23,6 +23,27 @@ contract BadgerOrganization is
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     /*//////////////////////////////////////////////////////////////
+                           DEPLOYMENT STATE
+    //////////////////////////////////////////////////////////////*/
+
+    address public deployer;
+
+    /*//////////////////////////////////////////////////////////////
+                              CONSTRUCTOR 
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Locks the implementation Singleton when not deployed through a Factory.
+     * @dev This is a safety mechanism to prevent the implementation from being updated
+     *      in the Factory by an unintended individual. Constructors are not called
+     *      when deployed with an Upgradeable Proxy, so this is the only way to lock
+     *      the implementation Singleton.
+     */
+    constructor() {
+        _transferOwnership(_msgSender());
+    }
+
+    /*//////////////////////////////////////////////////////////////
                             INITIALIZATION
     //////////////////////////////////////////////////////////////*/
 
