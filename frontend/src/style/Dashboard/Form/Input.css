@@ -67,8 +67,6 @@ input:disabled {
     background-color: #F0F0F0;
 }
 
-.form__actions.form__list 
-
 .form__list__address.error {
     border-color: #FF0000;
 }
