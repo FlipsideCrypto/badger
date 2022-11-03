@@ -10,7 +10,6 @@ interface BadgerVersionsInterface {
 
     /// @dev The schema of a version.
     struct Version { 
-        address owner;
         bytes32 licenseKey;
         uint256 amount;
         bool locked;
@@ -24,17 +23,13 @@ interface BadgerVersionsInterface {
      * @notice Allows Badger to control the level of access to specific versions.
      * @dev This enables the ability to have Enterprise versions as well as public versions. None of this
      *      state is immutable as a license model may change in the future. 
-     * @param _implementation The implementation address.
-     * @param _owner The owner of the version.
      * @param _tokenAddress The token address.
      * @param _tokenId The token ID.
      * @param _amount The amount that this user will have to pay.
      * @param _locked Whether or not this version has been made immutable.
      */
     function setVersion(
-          address _implementation 
-        , address _owner
-        , address _tokenAddress
+          address _tokenAddress
         , uint256 _tokenId
         , uint256 _amount
         , bool _locked

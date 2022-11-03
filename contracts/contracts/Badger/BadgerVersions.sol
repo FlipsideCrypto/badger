@@ -14,6 +14,8 @@ import { BadgerOrganizationInterface } from "../BadgerOrganization/interfaces/Ba
 /// @dev Supported interfaces.
 import { IERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol";
 
+import "hardhat/console.sol";
+
 contract BadgerVersions is
       BadgerVersionsInterface 
     , Ownable
@@ -39,7 +41,6 @@ contract BadgerVersions is
     /// @dev Announces when a Version configuration is updated through the protocol Factory.
     event VersionUpdated(
           address indexed implementation
-        , address indexed owner
         , bytes32 indexed licenseKey
         , uint256 amount
         , bool locked
@@ -62,10 +63,9 @@ contract BadgerVersions is
         /// @dev Initialize the foundational version of Badger.
         _setVersion(
               _implementation
-            , _msgSender()
             , keccak256(
                   abi.encodePacked(
-                      address(0)
+                        address(0)
                       , uint256(0)
                   )
               )
@@ -86,9 +86,7 @@ contract BadgerVersions is
      * - If the caller is not the owner, cannot set a Payment Token as they cannot withdraw.
      */    
     function setVersion(
-          address _implementation
-        , address _owner
-        , address _tokenAddress
+          address _tokenAddress
         , uint256 _tokenId
         , uint256 _amount
         , bool _locked
@@ -97,25 +95,9 @@ contract BadgerVersions is
         public
         virtual
     {
-        /// @dev Load the existing Version object.
-        Version memory version = versions[_implementation];
-
-        /// @dev Prevent editing of a version once it has been locked.
-        require(
-              !version.locked
-            , "BadgerVersions::_setVersion: Cannot update a locked version."
-        );
-
-        /// @dev Only the owner can set the version.
-        require(
-                 version.owner == address(0)
-              || version.owner == _msgSender()
-            , "BadgerVersions::_setVersion: You do not have permission to edit this version."
-        );
-
         /// @dev Make sure that no exogenous version controllers can set a payment
         ///      as there is not a mechanism for them to withdraw.
-        if(_msgSender() != owner()) {
+        if(tx.origin != owner()) {
             require(
                      _tokenAddress == address(0)
                   && _tokenId == 0
@@ -124,10 +106,18 @@ contract BadgerVersions is
             );
         }
 
+        /// @dev Load the existing Version object.
+        Version memory version = versions[_msgSender()];
+
+        /// @dev Prevent editing of a version once it has been locked.
+        require(
+              !version.locked
+            , "BadgerVersions::_setVersion: Cannot update a locked version."
+        );
+
         /// @dev Set the version configuration.
         _setVersion(
-              _implementation
-            , _owner
+              _msgSender()
             , keccak256(
                   abi.encodePacked(
                         _tokenAddress
@@ -191,7 +181,6 @@ contract BadgerVersions is
      */
     function _setVersion(
           address _implementation
-        , address _owner
         , bytes32 _licenseKey
         , uint256 _amount
         , bool _locked
@@ -200,8 +189,7 @@ contract BadgerVersions is
     {
         /// @dev Set the version configuration.
         versions[_implementation] = Version({
-              owner: _owner
-            , licenseKey: _licenseKey
+              licenseKey: _licenseKey
             , amount: _amount
             , locked: _locked
         });
@@ -209,7 +197,6 @@ contract BadgerVersions is
         /// @dev Announce that the version has been updated to index it on the front-end.
         emit VersionUpdated(
               _implementation
-            ,  _owner
             , _licenseKey
             , _amount
             , _locked
@@ -293,6 +280,7 @@ contract BadgerVersions is
             bool
         ) 
     {
+        // print the interface id in a human readable form
         return (
                _interfaceId == type(BadgerVersionsInterface).interfaceId
             || _interfaceId == type(IERC1155ReceiverUpgradeable).interfaceId
