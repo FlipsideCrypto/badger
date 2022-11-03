@@ -207,7 +207,8 @@ const Badge = () => {
                             style={{margin: "20px 0px 20px auto"}}
                             loading={txPending}
                             disabled={txMethod === "manageOwnership" ? 
-                                !manageOwnership.isSuccess : !setDelegates.isSuccess
+                                !manageOwnership.isSuccess || !areAddressesValid : 
+                                setDelegates.isSuccess || !areAddressesValid
                             }
                         />
                     </>

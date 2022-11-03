@@ -10,19 +10,20 @@ import { csvFileToArray } from "@utils/helpers";
 const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesValid, style }) => {
     const [ csvFile, setCSVFile ] = useState();
     const [ inputFieldCount, setInputFieldCount ] = useState(1);
-    const [ validatedAddresses, setValidatedAddresses ] = useState([]);
-    const [ focused, setFocused ] = useState(null);
+    const [ isValidatedArray, setIsValidatedArray ] = useState([]);
     const csvInput = useRef();
     const csvReader = useMemo(() => new FileReader(), []);
 
     // Adds the input field to the state array.
     const onInputChange = (index, event) => {
-        validateAddress(index, event.target.value);
+        const address = event.target.value.trim()
+        setAreAddressesValid(false);
+        validateAddress(index, address);
         dispatch({ 
             type: "UPDATE_ARRAY_INDEX", 
             field: listKey, 
             index: index, 
-            payload: event.target.value 
+            payload: address
         });
     }
 
@@ -35,7 +36,7 @@ const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesVali
                 field: listKey,
                 payload: []
             })
-            setValidatedAddresses([]);
+            setIsValidatedArray([]);
             return;
         }
 
@@ -46,30 +47,32 @@ const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesVali
         });
 
         setInputFieldCount(inputFieldCount - 1);
-        setValidatedAddresses(validatedAddresses.filter((_, i) => i !== index));
-    }
-
-    // When an input loses focus, validate the address and clear whitespace.
-    const onBlur = (index) => {
-        setFocused(null);
-        if (inputList[index] && inputList[index].includes(' ')) {
-            dispatch({
-                type: "UPDATE_ARRAY_INDEX",
-                field: listKey,
-                index: index,
-                payload: inputList[index].trim()
-            })
-        }
+        setIsValidatedArray(isValidatedArray.filter((_, i) => i !== index));
     }
 
     // Checks the address validity of a single input and updates the state array.
     const validateAddress = useCallback((index, address) => {
-        const isValid = ethers.utils.isAddress(address);
+        let newValidation = [...isValidatedArray];
 
-        let newValidatedAddresses = [...validatedAddresses];
-        newValidatedAddresses[index] = isValid;
-        setValidatedAddresses(newValidatedAddresses);
-    }, [validatedAddresses, setValidatedAddresses]);
+        // Catch for if someone started inputting an address and deleted it.
+        // Empty fields are allowed and caught by the contract hooks.
+        if (address.length === 0) {
+            newValidation[index] = true;
+            setIsValidatedArray(newValidation);
+            return address;
+        }
+
+        // Catch based on length to save some RPC calls on the isAddress.
+        if (address.length !== 42) {
+            newValidation[index] = false;
+            setIsValidatedArray(newValidation);
+            return address;
+        }
+
+        const isValid = ethers.utils.isAddress(address);
+        newValidation[index] = isValid;
+        setIsValidatedArray(newValidation);
+    }, [isValidatedArray, setIsValidatedArray]);
 
     // Raises an error in field if any addresses in state array are invalid.
     // Used in conjuction with csv upload.
@@ -78,8 +81,10 @@ const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesVali
             return ethers.utils.isAddress(address);
         });
 
-        setValidatedAddresses(validated)
-    }, [setValidatedAddresses])
+        const isAllValid = validated.every((address) => address === true);
+        setAreAddressesValid(isAllValid);
+        setIsValidatedArray(validated)
+    }, [setIsValidatedArray, setAreAddressesValid])
 
     // When CSV file changes, parse the data and validate the addresses.
     useEffect(() => {
@@ -97,10 +102,11 @@ const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesVali
 
     // When validated array changes, check if any addresses are invalid.
     useEffect(() => {
-        const isAllValid = validatedAddresses.every((address) => address === true);
-        setAreAddressesValid(isAllValid);
-
-    }, [validatedAddresses, setAreAddressesValid])
+        if (isValidatedArray.length > 0) {
+            const isAllValid = isValidatedArray.every((address) => address === true);
+            setAreAddressesValid(isAllValid);
+        }
+    }, [isValidatedArray, setAreAddressesValid])
 
     const labelDOM = <>
         <div className="form__actions form__list" style={{
@@ -158,7 +164,7 @@ const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesVali
 
             {[...Array(inputFieldCount)].map((x, index) => (
                 <Input
-                    className={validatedAddresses[index] === false && index !== focused ? 
+                    className={isValidatedArray[index] === false ? 
                         "form__list__address error" : "form__list__address"
                     }
                     key={index}
@@ -167,8 +173,6 @@ const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesVali
                     append={deleteDOM(index)}
                     value={inputList[index] || ""}
                     onChange={(event) => onInputChange(index, event)}
-                    onFocus={() => setFocused(index)}
-                    onBlur={() => onBlur(index)}
                 />
             ))}
         </div>
