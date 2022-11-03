@@ -22,6 +22,7 @@
   "function isApprovedForAll(address,address) view returns (bool)",
   "function isDelegate(uint256,address) view returns (bool)",
   "function name() view returns (string)",
+  "function nonces(address) view returns (uint256)",
   "function onERC1155BatchReceived(address,address,uint256[],uint256[],bytes) returns (bytes4)",
   "function onERC1155Received(address,address,uint256,uint256,bytes) returns (bytes4)",
   "function onERC721Received(address,address,uint256,bytes) returns (bytes4)",

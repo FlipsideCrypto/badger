@@ -153,6 +153,13 @@ PINATA_API_SECRET_KEY = os.getenv("API_PINATA_API_SECRET_KEY")
 PINATA_INDEXER_URL = os.getenv("API_PINATA_INDEXER_URL", "https://badger.mypinata.cloud/ipfs/")
 
 # ABI settings
-FACTORY_ADDRESS = "0x218B3C623FfB9c5E4DBb9142E6Ca6f6559F1c2D6"
+# TODO: Add 5.0 when contract has been deployed
+VERSIONS = ['4.0']
+FACTORY_ADDRESSES = {
+    '4.0': '0x218B3C623FfB9c5E4DBb9142E6Ca6f6559F1c2D6',
+    '5.0': ''
+}
+
+# Dictionary of the version abis
 FACTORY_ABI = FACTORY
 ORGANIZATION_ABI = ORGANIZATION

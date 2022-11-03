@@ -193,6 +193,7 @@ contract BadgerOrganization is
           bytes calldata _signature
         , uint256 _id
         , uint256 _amount       /// @dev Amount of tokens to mint (not spend).
+        , uint256 _nonce
         , bytes memory _data
     ) 
         override
@@ -214,6 +215,7 @@ contract BadgerOrganization is
                   _msgSender()
                 , _id
                 , _amount
+                , _nonce
                 , _data
                 , _signature
             );

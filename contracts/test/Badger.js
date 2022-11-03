@@ -1689,11 +1689,12 @@ describe("Badger", function () {
             )
 
             const messageHash = ethers.utils.solidityKeccak256(
-                ["address", "uint256", "uint256", "bytes"],
+                ["address", "uint256", "uint256", "uint256", "bytes"],
                 [
                     signer1.address,
                     0,
                     1,
+                    0,
                     "0x"
                 ]
             )
@@ -1731,6 +1732,7 @@ describe("Badger", function () {
                 signature,
                 0,
                 1,
+                0,
                 "0x"
             )
         })
@@ -1778,6 +1780,7 @@ describe("Badger", function () {
                 "0x",
                 0,
                 1,
+                0,
                 "0x"
             )
         })
@@ -1793,10 +1796,11 @@ describe("Badger", function () {
             )
 
             const messageHash = ethers.utils.solidityKeccak256(
-                ["address", "uint256", "uint256", "bytes"],
+                ["address", "uint256", "uint256", "uint256", "bytes"],
                 [
                     signer1.address,
                     0,
+                    1,
                     1,
                     "0x"
                 ]
@@ -1835,6 +1839,7 @@ describe("Badger", function () {
                 signature,
                 0,
                 1,
+                1,
                 "0x"
             ).should.be.revertedWith("BadgerScout::_verifySignature: Invalid signature.")
         })
@@ -1864,6 +1869,7 @@ describe("Badger", function () {
                 "0x",
                 1000,
                 1,
+                0,
                 "0x"
             ).should.be.revertedWith("BadgerScout::onlyRealBadge: Can only call this for setup badges.")
         })
@@ -1880,6 +1886,7 @@ describe("Badger", function () {
                 "0x",
                 0,
                 1,
+                0,
                 "0x"
             ).should.be.revertedWith("BadgerOragnization::claimMint: This badge is not claimable.")
         });
@@ -1888,6 +1895,7 @@ describe("Badger", function () {
             // claim the mint
             await childOrganization.connect(sigSigner).claimMint(
                 "0x",
+                0,
                 0,
                 0,
                 "0x"
@@ -1906,6 +1914,7 @@ describe("Badger", function () {
                 "0x",
                 0,
                 1,
+                0,
                 "0x"
             ).should.be.revertedWith("BadgerScout::_verifyFunding: User has not funded the badge.")
         })
