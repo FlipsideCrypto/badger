@@ -13,9 +13,6 @@ class ContractListener(models.Model):
     chain = models.CharField(max_length=255, choices=CHAINS, default=POLYGON)
     ethereum_address = models.CharField(max_length=50, blank=False, default=None, validators=[validate_ethereum_address])
 
-    # name of the event that is being tracked for this contract
-    abi = models.TextField(blank=True, null=True)
-
     # the last block the listener has processed
     last_block = models.IntegerField(default=0)
 

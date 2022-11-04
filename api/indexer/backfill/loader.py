@@ -64,10 +64,12 @@ class Loader:
             values = event['args']['values']
 
         for i, token_id in enumerate(token_ids):
+            badge = organization.badges.get(token_id=token_id)
+
             balance, created = Balance.objects.get_or_create(
-                user=user,
                 organization=organization,
-                token_id=token_id
+                badge=badge,
+                user=user
             )
 
             # check if transaction is not already in balance

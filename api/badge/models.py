@@ -30,5 +30,10 @@ class Badge(models.Model):
         from organization.models import Organization
         return Organization.objects.filter(badges__in=[self]).first()
 
+    @property
+    def balances(self):
+        from balance.models import Balance
+        return Balance.objects.filter(badge=self)
+
     class Meta:
         ordering = ['-created']

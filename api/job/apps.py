@@ -21,7 +21,6 @@ class JobConfig(AppConfig):
                     version=version,
                     defaults={
                         'is_active': True,
-                        'abi': json.dumps(settings.FACTORY_ABI[version])
                     }
                 )
 

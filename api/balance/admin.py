@@ -5,23 +5,23 @@ from .models import Balance
 @admin.register(Balance)
 class BalanceAdmin(admin.ModelAdmin):
     list_display = (
-        'user',
         'organization',
-        'token_id',
+        'badge',
+        'user',
         'amount',
     )
     list_filter = (
-        'user',
         'organization',
-        'token_id',
+        'badge',
+        'user',
     )
     search_fields = (
-        'user',
         'organization',
-        'token_id',
+        'badge',
+        'user',
     )
     ordering = (
-        'user',
         'organization',
-        'token_id',
+        'badge',
+        'user',
     )
