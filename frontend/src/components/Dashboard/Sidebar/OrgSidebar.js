@@ -6,16 +6,13 @@ import { useConnectModal } from "@rainbow-me/rainbowkit"
 
 import Logout from "./Logout/Logout";
 import ActionButton from "@components/Button/ActionButton";
+import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
 
 import { sliceAddress } from "@utils/helpers";
-import { getPFPImage } from "@utils/api_requests";
 import { useEnsProfile } from "@hooks/useEnsProfile";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
-import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
-import { getRandomEmoji } from "@static/constants/constants";
-import ImageErrorFallback from "@static/images/imgerror.svg";
 
 import '@rainbow-me/rainbowkit/styles.css'
 import "@style/Dashboard/Sidebar/Sidebar.css";
@@ -30,10 +27,8 @@ const OrgSidebar = ({ address }) => {
     const { chain } = useNetwork();
     const { chains, switchNetwork } = useSwitchNetwork();
     const [ isWrongNetwork, setIsWrongNetwork ] = useState(false);
-    const [ generatedPFP, setGeneratedPFP ] = useState();
 
     const navigate = useNavigate();
-    const { setError } = useContext(ErrorContext);
     const { userData, isAuthenticated, tryAuthentication } = useContext(UserContext);
     const { orgData } = useContext(OrgContext);
 
@@ -69,28 +64,7 @@ const OrgSidebar = ({ address }) => {
             openConnectModal()
     }, [openConnectModal, address])
 
-    // Get a generated PFP if the user does not have an ENS.
-    // If they do not have an ENS name, get a random emoji to use instead of a character.
-    useEffect(() => {
-        async function getGeneratedPFP() {
-            const seed = ensName ? ensName : getRandomEmoji(address);
-            const response = await getPFPImage(seed, address);
-            if (response.error) {
-                setError({
-                    label: "Could not get generated PFP",
-                    message: response.error
-                })
-            } else {
-                setGeneratedPFP(URL.createObjectURL(response));
-            }
-        }
-
-        if (isAuthenticated && ensFetched && !ensAvatar) {
-            getGeneratedPFP();
-        }
-    // only run once ensFetched or isAuthenticated changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ensFetched, isAuthenticated])
+    console.log('ensName', ensName, ensAvatar, ensFetched)
 
     return (
         <div className="sidebar left">
@@ -120,14 +94,10 @@ const OrgSidebar = ({ address }) => {
                 {address && !orgId && isAuthenticated && !isWrongNetwork &&
                     <>
                         <div className="sidebar__header">
-                            {(ensAvatar) && 
-                                <img 
-                                    className="sidebar__header__image"
-                                    src={ensAvatar} 
-                                    alt="avatar" 
-                                    onError={(e) => e.currentTarget.src = generatedPFP} 
-                                />
-                            }
+                            <ImageLoader 
+                                className="sidebar__header__image"
+                                src={ensAvatar}  
+                            />
                             <Link className="link-wrapper link-text text-clip" to="/dashboard/" style={{marginTop: "2px"}}>
                                 {userData?.ens_name ? userData.ens_name : sliceAddress(address)}
                             </Link>
@@ -148,11 +118,9 @@ const OrgSidebar = ({ address }) => {
             {orgId && orgData?.name && !isWrongNetwork && isAuthenticated &&
                 <>
                     <div className="sidebar__header">
-                        <img 
+                        <ImageLoader 
                             className="sidebar__header__image"
-                            src={IPFS_GATEWAY_URL + orgData.image_hash} 
-                            alt="avatar" 
-                            onError={(e) => e.currentTarget.src = ImageErrorFallback}
+                            src={IPFS_GATEWAY_URL + orgData.image_hash}  
                         />
                         <Link className="link-wrapper link-text text-clip" to="/dashboard/" style={{marginTop: "2px"}}>
                             {orgData?.name}
@@ -195,10 +163,8 @@ const OrgSidebar = ({ address }) => {
                                     onClick={() => navigate(`/dashboard/organization/${orgData.id}/badge/${badge.id}`)}
                                 >
                                     <div className="sidebar__organization">
-                                        <img
+                                        <ImageLoader
                                             src={IPFS_GATEWAY_URL + badge.image_hash}
-                                            alt="avatar"
-                                            onError={(e) => e.currentTarget.src = ImageErrorFallback}
                                         />
                                         <div className="text-clip">
                                             {badge.name}
@@ -214,10 +180,8 @@ const OrgSidebar = ({ address }) => {
                                     onClick={() => navigate(`/dashboard/organization/${org.id}`)}
                                 >
                                     <div className="sidebar__organization">
-                                        <img
+                                        <ImageLoader
                                             src={IPFS_GATEWAY_URL + org.image_hash}
-                                            alt="avatar"
-                                            onError={(e) => e.currentTarget.src = ImageErrorFallback}
                                         />
                                         <div className="text-clip">
                                             {org.name}
