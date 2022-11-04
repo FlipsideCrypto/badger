@@ -149,6 +149,7 @@ const OrgSidebar = ({ address }) => {
                 <>
                     <div className="sidebar__header">
                         <img 
+                            className="sidebar__header__image"
                             src={IPFS_GATEWAY_URL + orgData.image_hash} 
                             alt="avatar" 
                             onError={(e) => e.currentTarget.src = ImageErrorFallback}
