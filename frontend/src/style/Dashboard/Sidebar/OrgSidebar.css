@@ -30,7 +30,7 @@
     margin-bottom: 30px;
 }
 
-.sidebar.left .sidebar__header img { 
+.sidebar.left .sidebar__header .sidebar__header__image { 
     border-radius: 50%;
     height: 24px;
     width: 24px;

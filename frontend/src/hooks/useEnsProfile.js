@@ -6,6 +6,7 @@ const ALCHEMY_API_KEY = process.env.REACT_APP_ALCHEMY_API_KEY;
 export const useEnsProfile = (address) => {
     const [ ensName, setEnsName ] = useState(null);
     const [ ensAvatar, setEnsAvatar ] = useState(null);
+    const [ isFetched, setIsFetched ] = useState(false);
     const provider = useMemo(() => {
         return new ethers.providers.AlchemyProvider("homestead", ALCHEMY_API_KEY);
     }, []);
@@ -18,10 +19,11 @@ export const useEnsProfile = (address) => {
             const avatar = await provider.getAvatar(name);
             setEnsName(name)
             setEnsAvatar(avatar);
+            setIsFetched(true)
         }
 
         getEnsInfo(address);
     }, [address, provider])
 
-    return { ensName, ensAvatar }
+    return { ensName, ensAvatar, isFetched }
 }
