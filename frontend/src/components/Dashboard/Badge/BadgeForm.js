@@ -134,12 +134,24 @@ const BadgeForm = () => {
         setBadgeImagePreview(URL.createObjectURL(image));
     }
 
-    // When the signer address is not focused, validate the address.
-    const onSignerBlur = (event) => {
-        const address = event.target.value;
+    // On signer change check if the signer is valid and if they are checksum the address.
+    const onSignerChange = (event) => {
+        const address = event.target.value.trim();
+        badgeDispatch({type: "SET", field: "signer", payload: address});
+
+        // An empty address is valid as it is caught in the contract hooks.
+        if (address === "") {
+            setSignerIsValid(true);
+            return;
+        }
+        // Save an RPC call if the address is not correct length.
+        if (address.length !== 42) {
+            setSignerIsValid(false);
+            return;
+        }
+
         const isValid = ethers.utils.isAddress(address);
-        if (address && !isValid) setSignerIsValid(false);
-        else setSignerIsValid(true);
+        setSignerIsValid(isValid);
     }
 
     // Write to contract
@@ -312,10 +324,7 @@ const BadgeForm = () => {
                     placeholder="0x0000..."
                     required={false}
                     value={badge.signer}
-                    onChange={(event) => badgeDispatch(
-                        {type: "SET", field: "signer", payload: event.target.value}    
-                    )}
-                    onBlur={onSignerBlur}
+                    onChange={(event) => onSignerChange(event)}
                 />
                 <InputListCSV
                     label={"Managers"}

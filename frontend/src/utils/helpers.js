@@ -1,3 +1,6 @@
+import { ethers } from "ethers";
+
+// Turns a CSV file of addresses into an array.
 export const csvFileToArray = (file) => {
     const csvHeader = file.slice(0, file.indexOf("\n")).split(",");
     const csvRows = file.slice(file.indexOf("\n") + 1).split("\n");
@@ -27,12 +30,14 @@ export const compareByProperty = (property, direction, a, b) => {
     return 0;
 }
 
-export const cleanAddresses = (addresses) => {
-    return addresses.length > 0 ? 
+export const formatAddresses = (addresses) => {
+    return addresses?.length > 0 ? 
         addresses.map(user => {
-            if (user.ethereum_address)
+            if (user.ethereum_address) {
+                user.ethereum_address = ethers.utils.getAddress(user.ethereum_address);
                 return user
-            return {ethereum_address: user}
+            }
+            return {ethereum_address: ethers.utils.getAddress(user)}
         })
         : [];
 }

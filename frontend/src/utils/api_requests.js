@@ -1,5 +1,6 @@
 import { IPFS_GATEWAY_URL } from "@static/constants/links"
-import { cleanAddresses, getCSRFToken, getFileFromBase64 } from "./helpers";
+import { ethers } from "ethers";
+import { formatAddresses, getCSRFToken, getFileFromBase64 } from "./helpers";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -69,22 +70,10 @@ export async function postOrgRequest(org) {
 
 export async function postBadgeRequest(badge) {
     let response;
-    // Have to clean input addresses to match the API
-    const users = badge.users?.length > 0 ? 
-        badge.users.map(user => {
-            if (user.ethereum_address)
-                return user
-            return {ethereum_address: user}
-        })
-        : [];
-
-    const delegates = badge.delegates?.length > 0 ? 
-        badge.delegates.map(delegate => {
-            if (delegate.ethereum_address) 
-                return delegate
-            return {ethereum_address: delegate}
-        })
-        : [];
+    
+    const users = formatAddresses(badge.users);
+    const delegates = formatAddresses(badge.delegates);
+    const signer = badge.signer === "" ? "" : ethers.utils.getAddress(badge.signer);
 
     const organization = typeof(badge?.organization) === "string" ? 
           parseInt(badge?.organization) 
@@ -98,7 +87,7 @@ export async function postBadgeRequest(badge) {
         image_hash: badge.image_hash,
         token_uri: badge.token_uri,
         account_bound: badge.account_bound,
-        signer_ethereum_address: "",
+        signer_ethereum_address: signer,
         users: users,
         delegates: delegates,
         organization: organization
@@ -279,8 +268,8 @@ export async function putBadgeRolesRequest(badge, orgId) {
     let response;
 
     // Have to clean input addresses to match the API
-    const users = cleanAddresses(badge.users);
-    const delegates = cleanAddresses(badge.delegates);
+    const users = formatAddresses(badge.users);
+    const delegates = formatAddresses(badge.delegates);
     const organization = typeof(orgId) === "string" ? parseInt(orgId) : orgId;
 
     const data = {
