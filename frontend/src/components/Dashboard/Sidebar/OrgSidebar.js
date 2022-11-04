@@ -1,6 +1,6 @@
 import { useEffect, useContext, useState, useCallback } from "react";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useEnsAvatar, useNetwork, useSwitchNetwork } from "wagmi";
+import { useNetwork, useSwitchNetwork } from "wagmi";
 
 import { useConnectModal } from "@rainbow-me/rainbowkit"
 
@@ -9,6 +9,7 @@ import ActionButton from "@components/Button/ActionButton";
 
 import { sliceAddress } from "@utils/helpers";
 import { getPFPImage } from "@utils/api_requests";
+import { useEnsProfile } from "@hooks/useEnsProfile";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
@@ -24,10 +25,8 @@ const PRIMARY_PRODUCTION_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
 
 const OrgSidebar = ({ address }) => {
     const { openConnectModal } = useConnectModal();
-    const { data: ensAvatar } = useEnsAvatar({
-        addressOrName: address,
-        chainId: 1
-    });
+    const { ensAvatar } = useEnsProfile(address);
+
     const { chain } = useNetwork();
     const { chains, switchNetwork } = useSwitchNetwork();
     const [ isWrongNetwork, setIsWrongNetwork ] = useState(false);
@@ -122,9 +121,9 @@ const OrgSidebar = ({ address }) => {
                     <>
                         <div className="sidebar__header">
                             <img 
-                                src={ensAvatar || generatedPFP} 
+                                src={ensAvatar} 
                                 alt="avatar" 
-                                onError={(e) => e.currentTarget.src = PLACEHOLDER_AVATAR} 
+                                onError={(e) => e.currentTarget.src = generatedPFP} 
                             />
                             <Link className="link-wrapper link-text text-clip" to="/dashboard/" style={{marginTop: "2px"}}>
                                 {userData?.ens_name ? userData.ens_name : sliceAddress(address)}
