@@ -9,6 +9,7 @@ import Select from "@components/Dashboard/Form/Select";
 import FormDrawer from "@components/Dashboard/Form/FormDrawer";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import InputListKeyValue from "@components/Dashboard/Form/InputListKeyValue";
+import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { FormReducer, initialBadgeForm } from "@components/Dashboard/Form/FormReducer";
@@ -281,7 +282,7 @@ const BadgeForm = () => {
                     <div className="form__group" style={{gridTemplateRows: "min-content"}}>
                         <label className="form__label">Live Badge Preview</label>             
                         <div className="preview__container">
-                            <img
+                            <ImageLoader
                                 className="preview__image"
                                 src={badgeImagePreview}
                                 alt="Badge Preview"

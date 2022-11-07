@@ -5,5 +5,3 @@ export const HOME_LINKS = {
 }
 
 export const IPFS_GATEWAY_URL = "https://badger.mypinata.cloud/ipfs/"
-
-export const PLACEHOLDER_AVATAR = "https://avatars.githubusercontent.com/u/77760087?s=200&v=4"

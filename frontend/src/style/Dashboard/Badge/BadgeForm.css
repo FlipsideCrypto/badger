@@ -1,6 +1,6 @@
 .preview__image {
-    max-width: 250px;
-    max-height: 250px;
+    width: 250px;
+    height: 250px;
     aspect-ratio: 1/1;
     object-fit: contain;
 }

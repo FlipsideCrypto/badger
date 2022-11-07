@@ -96,10 +96,12 @@ const OrgForm = () => {
         }
     }
 
-    // Custom image upload.
-    const onCustomImageUpload = (image) => {
-        setIsCustomImage(true);
-        setOrgImage(image);
+    // Custom image upload. If image gets set to null then get new generative.
+    const onCustomImageUpload = async (image) => {
+        setIsCustomImage(image ? true : false);
+        let customImage = image ? 
+            image : await getPFPImage(firstCharOfName.current);
+        setOrgImage(image ?? customImage);
     }
 
     // Get a generated image for the org.
@@ -117,12 +119,13 @@ const OrgForm = () => {
     
     // Pin the org image to IPFS.
     const pinImage = async (image) => {
-        const response = await postIPFSImage(image)
-        if (response.error) {
+        const response = await postIPFSImage(image);
+
+        if (response?.error) {
             setError({
-                label: 'Could not upload image to IPFS',
+                label: "Error uploading image to IPFS",
                 message: response.error
-            });
+            })
             return;
         }
 
