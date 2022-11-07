@@ -4,11 +4,6 @@ import ImageErrorFallback from "@static/images/imgerror.svg";
 const ImageLoader = ({className, src, alt}) => {
     const [ loaded, setLoaded ] = useState(false);
 
-    const onLoad = () => {
-        console.log('loaded')
-        setLoaded(true);
-    }
-
     const onError = (e) => {
         e.onError = null;
         e.currentTarget.src = ImageErrorFallback;
@@ -23,7 +18,7 @@ const ImageLoader = ({className, src, alt}) => {
                 className={className}
                 src={src}
                 alt={alt || ""}
-                onLoad={onLoad}
+                onLoad={() => setLoaded(true)}
                 onError={(e) => onError(e)}
                 style={loaded ? {} : { display: 'none' }}
             />

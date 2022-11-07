@@ -64,8 +64,6 @@ const OrgSidebar = ({ address }) => {
             openConnectModal()
     }, [openConnectModal, address])
 
-    console.log('ensName', ensName, ensAvatar, ensFetched)
-
     return (
         <div className="sidebar left">
             <div className="sidebar__fixed__container">
@@ -93,15 +91,21 @@ const OrgSidebar = ({ address }) => {
                 {/* Logged in user header */}
                 {address && !orgId && isAuthenticated && !isWrongNetwork &&
                     <>
-                        <div className="sidebar__header">
-                            <ImageLoader 
-                                className="sidebar__header__image"
-                                src={ensAvatar}  
-                            />
-                            <Link className="link-wrapper link-text text-clip" to="/dashboard/" style={{marginTop: "2px"}}>
-                                {userData?.ens_name ? userData.ens_name : sliceAddress(address)}
-                            </Link>
-                        </div>
+                        {ensFetched ? 
+                            <div className="sidebar__header">
+                                <ImageLoader 
+                                    className="sidebar__header__image"
+                                    src={ensAvatar}  
+                                />
+                                <Link className="link-wrapper link-text text-clip" to="/dashboard/" style={{marginTop: "2px"}}>
+                                    {ensName ? ensName : sliceAddress(address)}
+                                </Link>
+                            </div>
+                            :
+                            <button onClick={() => tryAuthentication()} style={{ marginBottom: '20px' }}>
+                                Sign In
+                            </button>
+                        }
 
                     <div className="sidebar__category">
                         <h5>Organizations</h5>
