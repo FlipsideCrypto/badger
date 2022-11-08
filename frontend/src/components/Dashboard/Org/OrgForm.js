@@ -221,6 +221,17 @@ const OrgForm = () => {
             postOrg();
     }, [orgObj.ethereum_address, postOrg])
 
+    // If we have a silent error from preparing the transaction, display it.
+    useEffect(() => {
+        setError(null);
+        if (createContract?.error) {
+            setError({
+                label: 'Error creating Org',
+                message: createContract?.error
+            })
+        }
+    }, [createContract.error, setError])
+
     return (
         <div id="new-org">
             <Header back={() => navigate("/dashboard")} />

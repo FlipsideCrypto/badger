@@ -176,6 +176,23 @@ const Badge = () => {
         }
     }, [orgData, badgeIndex])
 
+    // If we have a silent error from preparing the transaction, display it.
+    useEffect(() => {
+        setError(null)
+        if (manageOwnership?.error && txMethod === "manageOwnership") {
+            setError({
+                label: 'Error managing members',
+                message: manageOwnership?.error
+            })
+        }
+        else if (setDelegates?.error && txMethod === "setDelegates") {
+            setError({
+                label: 'Error setting delegates',
+                message: setDelegates?.error
+            })
+        }
+    }, [manageOwnership.error, setDelegates.error, txMethod, setError])
+
     return (
         <>
             <Header back={() => navigate(`/dashboard`)} actions={actions} />
@@ -208,7 +225,7 @@ const Badge = () => {
                             loading={txPending}
                             disabled={txMethod === "manageOwnership" ? 
                                 !manageOwnership.isSuccess || !areAddressesValid : 
-                                setDelegates.isSuccess || !areAddressesValid
+                                !setDelegates.isSuccess || !areAddressesValid
                             }
                         />
                     </>

@@ -236,6 +236,17 @@ const BadgeForm = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [orgData])
 
+    // If we have a silent error from preparing the transaction, display it.
+    useEffect(() => {
+        setError(null);
+        if (createBadge?.error) {
+            setError({
+                label: 'Error creating Org',
+                message: createBadge?.error
+            })
+        }
+    }, [createBadge.error, setError])
+
     return (
         <>
             <Header back={() => navigate(`/dashboard/organization/${orgData?.id}`)} />

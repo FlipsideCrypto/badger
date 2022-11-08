@@ -73,6 +73,7 @@ export function useFees() {
 // Creates a new sash contract for an organization.
 export const useBadgerFactory = (isTxReady, orgObj, imageHash, contractHash, address, chainName) => {
     const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
+    const [ error, setError ] = useState();
 
     const args = [
         PRIMARY_IMPLEMENTATION,
@@ -83,7 +84,6 @@ export const useBadgerFactory = (isTxReady, orgObj, imageHash, contractHash, add
         orgObj.symbol,
     ]
     
-    let error;
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: Badger.address,
@@ -95,8 +95,9 @@ export const useBadgerFactory = (isTxReady, orgObj, imageHash, contractHash, add
             gasPrice: fees?.gasPrice,
         },
         onError(e) {
-            console.error('Error creating Org: ', e);
-            error = e
+            const err = e?.error?.message || e?.data?.message || e
+            setError(err);
+            console.error('Error creating Org: ', err);
         }
     })
 
@@ -108,6 +109,7 @@ export const useBadgerFactory = (isTxReady, orgObj, imageHash, contractHash, add
 // Creates a badge from a cloned sash contract.
 export const useCreateBadge = (isTxReady, tokenUri, badge) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
+    const [ error, setError ] = useState();
 
     // This should also clean/check the addresses as well.
     badge?.delegates?.forEach((delegate, index) => {
@@ -126,7 +128,6 @@ export const useCreateBadge = (isTxReady, tokenUri, badge) => {
         badge.delegates || [],
     ]
     
-    let error;
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: badge.ethereum_address,
@@ -138,13 +139,13 @@ export const useCreateBadge = (isTxReady, tokenUri, badge) => {
             gasPrice: fees?.gasPrice,
         },
         onError(e) {
-            console.error('Error creating Badge: ', e);
-            error = e
+            const err = e?.error?.message || e?.data?.message || e
+            setError(err);
+            console.error('Error creating Badge: ', err);
         }
     })
 
     const { writeAsync } = useContractWrite(config);
-
     return { write: writeAsync, isSuccess, error };
 }
 
@@ -154,6 +155,7 @@ export const useCreateBadge = (isTxReady, tokenUri, badge) => {
 */
 export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, action, amounts) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
+    const [ error, setError ] = useState();
     
     // Might look a little funky but cleaner than a switch IMO.
     // If revoke is true, then we check if there is just one holder for a single revoke.
@@ -192,7 +194,6 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
     if (!revoke) 
         args.push("0x")
 
-    let error;
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: orgAddress,
@@ -204,7 +205,9 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
             gasPrice: fees?.gasPrice,
         },
         onError(e) {
-            error = e
+            const err = e?.error?.message || e?.data?.message || e
+            setError(err);
+            console.error('Error managing badge ownership: ', err);
         }
     })
 
@@ -219,6 +222,7 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
 */
 export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
+    const [ error, setError ] = useState();
 
     const revoke = action === "Remove Manager" ? true : false
     const isDelegateArray = Array(delegates.length).fill(!revoke);
@@ -237,7 +241,6 @@ export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) =
         isDelegateArray,
     ]
 
-    let error;
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: orgAddress,
@@ -249,7 +252,9 @@ export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) =
             gasPrice: fees?.gasPrice,
         },
         onError(e) {
-            error = e
+            const err = e?.error?.message || e?.data?.message || e
+            setError(err);
+            console.error('Error setting delegates: ', err);
         }
     })
 
