@@ -14,7 +14,7 @@ import HelpSidebar from "@components/Dashboard/Sidebar/HelpSidebar";
 
 import Home from "@components/Dashboard/Home/Home";
 import OrgForm from '@components/Dashboard/Org/OrgForm';
-import Org from "@components/Dashboard/Org/Org";
+import OrgProfile from "@components/Dashboard/Org/OrgProfile";
 import BadgeForm from "@components/Dashboard/Badge/BadgeForm";
 import Badge from "@components/Dashboard/Badge/Badge";
 
@@ -40,7 +40,8 @@ const Dashboard = () => {
                                     <Routes>
                                         <Route path="/" element={<Home />} />
                                         <Route path="/organization/new" element={<OrgForm />} />
-                                        <Route path="/organization/:orgId" element={<Org />} />
+                                        <Route path="/organization/:orgId" element={<OrgProfile />} />
+                                        <Route path="/organization/:orgId/edit" element={<OrgForm isEdit={true} />} />
                                         <Route path="/organization/:orgId/badge/new" element={<BadgeForm />} />
                                         <Route path="/organization/:orgId/badge/:badgeId" element={<Badge />} />
                                     </Routes>

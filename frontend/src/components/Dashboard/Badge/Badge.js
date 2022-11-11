@@ -11,7 +11,7 @@ import Select from "@components/Dashboard/Form/Select";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { FormReducer } from "@components/Dashboard/Form/FormReducer";
-import { useManageBadgeOwnership, useSetDelegates } from "@hooks/useContracts";
+import { useManageBadgeOwnership, useSetDelegates } from "@hooks/contracts/useContracts";
 import { putBadgeRolesRequest } from "@utils/api_requests";
 
 import "@style/Dashboard/Badge/Badge.css";

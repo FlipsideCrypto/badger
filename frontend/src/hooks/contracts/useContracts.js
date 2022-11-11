@@ -1,82 +1,23 @@
-import { useEffect, useMemo, useState } from "react";
-import { usePrepareContractWrite, useContractWrite, useFeeData } from 'wagmi';
+import { useMemo, useState } from "react";
+import { usePrepareContractWrite, useContractWrite } from "wagmi"
 import { ethers } from "ethers";
 
+import { 
+    getPrimaryImplementation,
+    getBadgerOrganizationAbi,
+    getBadgerAbi,
+} from "./contractVersions";
+import useFees from "@hooks/useFees";
+
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
-const PRIMARY_IMPLEMENTATION = process.env.REACT_APP_BADGER_IMPLEMENTATION;
-const PRIMARY_PROD_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
-
-// Putting the parse into a try catch block to account for missing env var breaking the app.
-export function getBadgerAddress(chainName) {
-    try {
-        const BADGER_ADDRESSES = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES);
-        const address = BADGER_ADDRESSES[chainName] ? BADGER_ADDRESSES[chainName] : BADGER_ADDRESSES[PRIMARY_PROD_CHAIN];
-        return address;
-    }
-    catch {
-        console.error(`Badger contract address not found in .env.`)
-        return null;
-    }
-}
-
-// Gets the ABI for sash contracts.
-export function getBadgerOrganizationAbi() {
-    try {
-        const abi = require('@abis/BadgerOrganization.json');
-        return {abi: new ethers.utils.Interface(abi)}
-    }
-    catch (err) {
-        console.error('Error importing BadgerOrganization:', err);
-        return {error: err}
-    }
-}
-
-// Gets the abi and chain specific address for the Badger contract.
-export function getBadgerAbi(chainName) {
-    try {
-        const abi = require('@abis/Badger.json');
-        const address = getBadgerAddress(chainName);
-        return {
-            abi: new ethers.utils.Interface(abi),
-            address: address
-        }
-    }
-    catch (err) {
-        console.error('Error importing Badger:', err);
-        return {error: err}
-    }
-}
-
-// Gets the fees if a transaction is ready and multiplies them by a multiplier
-// to help the transaction underpriced errors commonly being had on polygon.
-export function useFees() {
-    const [fees, setFees] = useState(null);
-    const { data } = useFeeData({
-        watch: false,
-        cacheTime: 5000,
-    });
-
-    useEffect(() => {
-        if (data) {
-            const multiplier = 1.1;
-            const big_mul = ethers.BigNumber.from(Math.floor(multiplier * 100));
-            let suggestedGas = {};
-            suggestedGas.gasPrice = data.gasPrice.mul(big_mul).div(100);
-            setFees(suggestedGas);
-        }
-    }, [data, setFees]);
-
-
-    return fees;
-}
 
 // Creates a new sash contract for an organization.
-export const useBadgerFactory = (isTxReady, orgObj, imageHash, contractHash, address, chainName) => {
+export const useCreateOrg = (isTxReady, orgObj, imageHash, contractHash, address, chainName) => {
     const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
     const [ error, setError ] = useState();
 
     const args = [
-        PRIMARY_IMPLEMENTATION,
+        getPrimaryImplementation(),
         address,
         IPFS_GATEWAY_URL + imageHash,
         IPFS_GATEWAY_URL + contractHash,
@@ -98,6 +39,37 @@ export const useBadgerFactory = (isTxReady, orgObj, imageHash, contractHash, add
             const err = e?.error?.message || e?.data?.message || e
             setError(err);
             console.error('Error creating Org: ', err);
+        }
+    })
+
+    const { writeAsync } = useContractWrite(config);
+
+    return { write: writeAsync, isSuccess, error };
+}
+
+// Edit the contract URI of an organization and update the image, description, and name.
+export const useEditOrg = (isTxReady, contractUriHash) => {
+    const Badger = useMemo(() => getBadgerAbi(), []);
+    const [ error, setError ] = useState();
+
+    const args = [
+        IPFS_GATEWAY_URL + contractUriHash,
+    ]
+    
+    const fees = useFees();
+    const { config, isSuccess } = usePrepareContractWrite({
+        addressOrName: Badger.address,
+        contractInterface: Badger.abi,
+        functionName: "setOrganizationURI",
+        args: args,
+        enabled: Boolean(fees && isTxReady),
+        overrides: {
+            gasPrice: fees?.gasPrice,
+        },
+        onError(e) {
+            const err = e?.error?.message || e?.data?.message || e
+            setError(err);
+            console.error('Error updating Org: ', err);
         }
     })
 
@@ -149,10 +121,8 @@ export const useCreateBadge = (isTxReady, tokenUri, badge) => {
     return { write: writeAsync, isSuccess, error };
 }
 
-/* 
-    Determines which function to call based on if it is a revoke or a mint,
-    if there are multiple badge ids, and if there are multiple holders.
-*/
+// Determines which function to call based on if it is a revoke or a mint,
+// if there are multiple badge ids, and if there are multiple holders.
 export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, action, amounts) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
     const [ error, setError ] = useState();
@@ -216,10 +186,8 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
     return { write: writeAsync, isSuccess, error };
 }
 
-/*
-    Changes delegates of badge(s) with id(s) from orgAddress. 
-    If revoke is true then delegates are removed.
-*/
+// Changes delegates of badge(s) with id(s) from orgAddress. 
+// If revoke is true then delegates are removed.
 export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
     const [ error, setError ] = useState();
@@ -255,6 +223,65 @@ export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) =
             const err = e?.error?.message || e?.data?.message || e
             setError(err);
             console.error('Error setting delegates: ', err);
+        }
+    })
+
+    const { writeAsync } = useContractWrite(config);
+
+    return { write: writeAsync, isSuccess, error };
+}
+
+// Transfer the ownership of an organization to a new address.
+export const useTransferOwnership = (isTxReady, orgAddress, newOwner) => {
+    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
+    const [ error, setError ] = useState();
+
+    const args = [
+        newOwner,
+    ]
+
+    const fees = useFees();
+    const { config, isSuccess } = usePrepareContractWrite({
+        addressOrName: orgAddress,
+        contractInterface: BadgerOrganization.abi,
+        functionName: "transferOwnership",
+        args: args,
+        enabled: Boolean(fees && isTxReady),
+        overrides: {
+            gasPrice: fees?.gasPrice,
+        },
+        onError(e) {
+            const err = e?.error?.message || e?.data?.message || e
+            setError(err);
+            console.error('Error transferring ownership: ', err);
+        }
+    })
+
+    const { writeAsync } = useContractWrite(config);
+
+    return { write: writeAsync, isSuccess, error };
+}
+
+// Transfer the ownership of a badge to a new address.
+// TODO: This should be changed to support the intended functionality of withdrawing all assets from the org.
+export const useRenounceOwnership = (isTxReady, orgAddress) => {
+    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
+    const [ error, setError ] = useState();
+
+    const fees = useFees();
+    const { config, isSuccess } = usePrepareContractWrite({
+        addressOrName: orgAddress,
+        contractInterface: BadgerOrganization.abi,
+        functionName: "renounceOwnership",
+        args: [],
+        enabled: Boolean(fees && isTxReady),
+        overrides: {
+            gasPrice: fees?.gasPrice,
+        },
+        onError(e) {
+            const err = e?.error?.message || e?.data?.message || e
+            setError(err);
+            console.error('Error transferring ownership: ', err);
         }
     })
 

@@ -15,7 +15,7 @@ import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvide
 import { FormReducer, initialBadgeForm } from "@components/Dashboard/Form/FormReducer";
 
 import { postBadgeRequest, postIPFSImage, postIPFSMetadata, getBadgeImage } from "@utils/api_requests";
-import { useCreateBadge } from "@hooks/useContracts";
+import { useCreateBadge } from "@hooks/contracts/useContracts";
 import { useIPFSImageHash, useIPFSMetadataHash } from "@hooks/useIpfsHash";
 
 import "@style/Dashboard/Badge/BadgeForm.css";
