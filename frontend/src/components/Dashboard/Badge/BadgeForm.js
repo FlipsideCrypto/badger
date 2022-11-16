@@ -10,6 +10,7 @@ import FormDrawer from "@components/Dashboard/Form/FormDrawer";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import InputListKeyValue from "@components/Dashboard/Form/InputListKeyValue";
 import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
+import BadgeDangerZone from "@components/Dashboard/Badge/BadgeDangerZone";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
@@ -38,16 +39,6 @@ const BadgeForm = ({isEdit = false}) => {
     const [ signerIsValid, setSignerIsValid ] = useState(true);
     const [ txPending, setTxPending ] = useState(false);
 
-    // Determine the IPFS hashes before hand so the transaction can be prepared ASAP
-    // without actively pinning or waiting for the hashes to be returned.
-    const { hash: deterministicImageHash } = useIPFSImageHash(badgeImage);
-    const { hash: deterministicMetadataHash } = useIPFSMetadataHash({
-        name: badge.name,
-        description: badge.description,
-        image: isCustomImage ? deterministicImageHash : badge.image_hash,
-        attributes: badge.attributes,
-    });
-
     const badgeIndex = useMemo(() => {
         return orgData?.badges?.findIndex(badge => badge.id === badgeId);
     }, [orgData])
@@ -55,6 +46,23 @@ const BadgeForm = ({isEdit = false}) => {
     const badgeData = useMemo(() => {
         return orgData?.badges?.[badgeIndex];
     }, [orgData, badgeIndex])
+
+    // Determine the IPFS hashes before hand so the transaction can be prepared ASAP
+    // without actively pinning or waiting for the hashes to be returned.
+    const { hash: deterministicImageHash } = useIPFSImageHash(badgeImage);
+
+    const hashArgs = isEdit ? {
+        name: badge.name,
+        description: badge.description,
+        image: isCustomImage ? deterministicImageHash : badgeData?.image_hash,
+        attributes: badge.attributes
+    } : {
+        name: badge.name,
+        description: badge.description,
+        image: deterministicImageHash,
+        attributes: badge.attributes
+    }
+    const { hash: deterministicMetadataHash } = useIPFSMetadataHash({ ...hashArgs });
 
     const isDisabled = useMemo(() => {
         return (
@@ -69,7 +77,7 @@ const BadgeForm = ({isEdit = false}) => {
     const setBadge = useSetBadge(
        !isDisabled, 
        orgData.ethereum_address,
-       isCustomImage ? deterministicMetadataHash : badgeData?.token_uri, 
+       badgeImage ? deterministicMetadataHash : badgeData?.token_uri, 
        badge
     );
        
@@ -108,7 +116,7 @@ const BadgeForm = ({isEdit = false}) => {
 
     // Pin to IPFS
     const pinImage = async (image) => {
-        if (!isCustomImage) return badgeData.image_hash
+        if (!isCustomImage && isEdit) return badgeData.image_hash
 
         const response = await postIPFSImage(image);
         if (response.error) {
@@ -179,7 +187,7 @@ const BadgeForm = ({isEdit = false}) => {
             const [txReceipt, imageHash, metadataHash] = await Promise.all([
                 tx.wait(),
                 pinImage(badgeImage),
-                pinMetadata(isCustomImage ? deterministicImageHash : badgeData?.image_hash)
+                pinMetadata(badgeImage ? deterministicImageHash : badgeData?.image_hash)
             ])
 
             if (txReceipt.status !== 1)
@@ -230,20 +238,20 @@ const BadgeForm = ({isEdit = false}) => {
     }
 
     // Set the relevant parent org data in badge state if we are creating a new badge.
-    useEffect(() => {
-        if (!isEdit && !badge.token_id && orgData.ethereum_address) {
-            const payload = {
-                token_id: orgData?.badges?.length,
-                ethereum_address: orgData?.ethereum_address,
-                organization: orgData?.id
-            }
-            badgeDispatch({type: "SET_MULTIPLE", payload: payload});
-        }
-    }, [orgData.ethereum_address])
+    // useEffect(() => {
+    //     if (!isEdit && !badge.token_id && orgData.ethereum_address) {
+    //         const payload = {
+    //             token_id: orgData?.badges?.length,
+    //             ethereum_address: orgData?.ethereum_address,
+    //             organization: orgData?.id
+    //         }
+    //         badgeDispatch({type: "SET_MULTIPLE", payload: payload});
+    //     }
+    // }, [orgData.ethereum_address])
 
     // Set the badge if editing and orgData was not fetched on render.
     useEffect(() => {
-        if (isEdit && orgData.name && !badge.id) {
+        if (orgData.name && !badge.id) {
             const id = badgeId;
             const index = orgData?.badges?.findIndex(b => b.id === id);
             const orgBadge = orgData?.badges?.[index];
@@ -254,9 +262,10 @@ const BadgeForm = ({isEdit = false}) => {
                 token_id: index === -1 ? orgData?.badges?.length : orgBadge.token_id,
                 organization: orgData?.id,
             }
+
             badgeDispatch({type: "SET_MULTIPLE", payload: payload});
         }
-    }, [orgData, badge.id, isEdit])
+    }, [orgData, badge.id])
 
     // Get the placeholder Badge Image once the component and orgData is mounted.
     useEffect(() => {
@@ -298,10 +307,19 @@ const BadgeForm = ({isEdit = false}) => {
 
     return (
         <>
-            <Header back={() => navigate(isEdit ?
-                `/dashboard/organization/${orgData?.id}/badge/${badgeId}` :
-                `/dashboard/organization/${orgData?.id}`
-                )} 
+            <Header 
+                back={() => navigate(isEdit ?
+                    `/dashboard/organization/${orgData?.id}/badge/${badgeId}` :
+                    `/dashboard/organization/${orgData?.id}`
+                )}
+                actions={isEdit ? 
+                    [{
+                        text: "Archive Badge",
+                        icon: ["fal", "archive"],
+                        event: () => onArchive(badgeId)
+                    }]
+                    : []
+                }
             />
 
             <h2 style={{marginLeft: "30px"}}>
@@ -443,6 +461,11 @@ const BadgeForm = ({isEdit = false}) => {
                 actions={actions} 
                 style={{marginInline: "30px"}}
             />
+
+            {/* <hr style={{margin: "30px 20px 30px 20px", backgroundColor: "#EEEEF6", border: "none", height: "1px"}} />
+            {isEdit &&
+                <BadgeDangerZone />
+            } */}
         </>
     )
 }
