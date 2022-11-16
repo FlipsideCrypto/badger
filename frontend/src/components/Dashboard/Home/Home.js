@@ -1,10 +1,12 @@
 import { useContext } from "react"
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 
 import { sliceAddress } from "@utils/helpers";
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
+
+import IconButton from "@components/Button/IconButton";
 
 import Card from "@components/Card/Card"
 import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
@@ -19,7 +21,7 @@ const Home = () => {
 
     return (
         <div className="home">
-            <ActionTitle 
+            <ActionTitle
                 title="Organizations"
                 actions={[
                     {
@@ -30,39 +32,51 @@ const Home = () => {
                     }
                 ]}
             />
-
             <div className="home__cards">
-                {userData?.organizations?.map((org, index) => (
-                    <div
-                        key={index}
-                        onClick={() => navigate(`/dashboard/organization/${org.id}`)}
-                    >
-                        <Card
-                            className="home__card"
+                {userData?.organizations?.length > 0
+                    ? userData?.organizations?.map((org, index) => (
+                        <div
+                            key={index}
+                            onClick={() => navigate(`/dashboard/organization/${org.id}`)}
                         >
-                            <div className="home__card__image" style={{
-                                backgroundImage: `url(${IPFS_GATEWAY_URL + org.image_hash})`,
-                            }} />
-                            <div className="home__card__text">
-                                <div className="home__card__subtext">
-                                    <small><strong><span style={{ marginRight: "10px" }}>
-                                        {org.chain.slice(0, 5)}
-                                    </span> {sliceAddress(org.ethereum_address)}</strong></small>
-                                </div>
+                            <Card
+                                className="home__card"
+                            >
+                                <div className="home__card__image" style={{
+                                    backgroundImage: `url(${IPFS_GATEWAY_URL + org.image_hash})`,
+                                }} />
+                                <div className="home__card__text">
+                                    <div className="home__card__subtext">
+                                        <small><strong><span style={{ marginRight: "10px" }}>
+                                            {org.chain.slice(0, 5)}
+                                        </span> {sliceAddress(org.ethereum_address)}</strong></small>
+                                    </div>
 
-                                <div className="home__card__title">
-                                    <h2>
-                                        <ImageLoader
-                                            className="home__card__view__image"
-                                            src={IPFS_GATEWAY_URL + org.image_hash}
-                                        />
-                                        {org.name}
-                                    </h2>
+                                    <div className="home__card__title">
+                                        <h2>
+                                            <ImageLoader
+                                                className="home__card__view__image"
+                                                src={IPFS_GATEWAY_URL + org.image_hash}
+                                            />
+                                            {org.name}
+                                        </h2>
+                                    </div>
                                 </div>
-                            </div>
-                        </Card>
-                    </div>
-                ))}
+                            </Card>
+                        </div>
+                    ))
+                    : <div className="org__container empty" style={{
+                        gridColumn: "span 3"
+                    }}>
+                        <h1>No Organizations yet!</h1>
+                        <p>
+                            Creating the Badges for your first Organization is easy.
+                            Choose and customize your Organization's name, logo, and description and your organization is live!
+                        </p>
+                        <Link className="internal-link" to={`/dashboard/organization/new`}>
+                            <IconButton icon={['fal', 'arrow-right']} text="CREATE ORGANIZATION" style={{marginTop: "40px"}} />
+                        </Link>
+                    </div>}
             </div>
         </div>
     )

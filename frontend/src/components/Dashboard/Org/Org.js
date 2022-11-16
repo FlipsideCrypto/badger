@@ -50,7 +50,7 @@ const Org = () => {
                             Now you can create and distribute your badges that act as keys throughout the ecosystem in a matter of seconds.
                         </p>
                         <Link className="internal-link" to={`/dashboard/organization/${orgId}/badge/new`}>
-                            <IconButton icon={['fal', 'arrow-right']} text="CREATE BADGE" />
+                            <IconButton icon={['fal', 'arrow-right']} text="CREATE BADGE" style={{marginTop: "40px"}}/>
                         </Link>
                     </div>}
             </div>
