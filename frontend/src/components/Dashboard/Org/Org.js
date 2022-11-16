@@ -19,7 +19,14 @@ const Org = () => {
 
     return (
         <>
-            <Header back={() => navigate("/dashboard")} />
+            <Header 
+                back={() => navigate("/dashboard")} 
+                actions={[{
+                    text: "Settings",
+                    icon: ['fal', 'fa-gear'],
+                    event: () => navigate(`/dashboard/organization/${orgId}/edit`)
+                }]}
+            />
 
             <div className="dashboard__content">
                 <ActionTitle

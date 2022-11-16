@@ -241,7 +241,7 @@ export async function getUserRequest(address) {
 export async function getOrgRequest(orgId) {
     let response;
     try {
-        await fetch(`${API_URL}/organizations/${orgId}`, {
+        await fetch(`${API_URL}/organizations/${orgId}/`, {
             method: "GET",
             mode: "cors",
             headers: {
@@ -310,7 +310,7 @@ export async function putBadgeRolesRequest(badge, orgId) {
 }
 
 export async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
-    const url = `${API_URL}/art/badge?organization=${orgName}&organization_ethereum_address=${orgAddress}&badge_id=${badgeId}&badge_name=${badgeName}`
+    const url = `${API_URL}/art/badge?organization=${orgName}&organization_ethereum_address=${orgAddress}&badge_id=${badgeId}&badge_name=${badgeName}/`
     
     let response;
     try {
@@ -343,7 +343,7 @@ export async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
 export async function getPFPImage(char, address) {
     let response;
     try {
-        await fetch(`${API_URL}/art/pfp/?char=${char}&address=${address}`, {
+        await fetch(`${API_URL}/art/pfp/?char=${char}&address=${address}/`, {
             method: "GET",
             mode: "cors",
             headers: {
@@ -367,4 +367,40 @@ export async function getPFPImage(char, address) {
     }
 
     return response
+}
+
+export async function patchArchive(type, id) {
+    const body = {
+        id: id,
+        is_active: false
+    }
+
+    let response;
+    try {
+        await fetch(`${API_URL}/${type}/${id}/`, {
+            method: "PATCH",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                'X-CSRFToken': getCSRFToken(),
+            },
+            credentials: 'include',
+            body: JSON.stringify(body)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data) throw new Error(
+                `${type} could not be archived.`
+            );
+            response = data;
+        })
+        .catch(err => {
+            throw new Error(err);
+        })
+    }
+    catch (err) {
+        response = {error: err}
+    }
+
+    return response;
 }

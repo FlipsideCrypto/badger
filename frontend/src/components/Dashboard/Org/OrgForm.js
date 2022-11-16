@@ -9,11 +9,11 @@ import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 import FormDrawer from "@components/Dashboard/Form/FormDrawer";
-// import OrgDangerZone from "@components/Dashboard/Org/OrgDangerZone";
+import OrgDangerZone from "@components/Dashboard/Org/OrgDangerZone";
 
 import { initialOrgForm } from "@components/Dashboard/Form/FormReducer";
 import { useCreateOrg, useEditOrg } from "@hooks/contracts/useContracts";
-import { postOrgRequest, postIPFSImage, postIPFSMetadata, getPFPImage } from "@utils/api_requests";
+import { postOrgRequest, postIPFSImage, postIPFSMetadata, getPFPImage, patchArchive } from "@utils/api_requests";
 import { getBadgerAbi } from "@hooks/contracts/contractVersions";
 import { useIPFSImageHash, useIPFSMetadataHash } from "@hooks/useIpfsHash";
 
@@ -377,9 +377,10 @@ const OrgForm = ({isEdit = false}) => {
                 style={{marginInline: "30px"}}
             />
 
-            {/* {isEdit &&
+            <hr style={{margin: "30px 20px 30px 20px", backgroundColor: "#EEEEF6", border: "none", height: "1px"}} />
+            {isEdit &&
                 <OrgDangerZone orgAddress={orgObj?.ethereum_address} />
-            } */}
+            }
         </div>
     )
 }
