@@ -16,7 +16,7 @@ th:first-child {
 
 th:last-child,
 td:last-child {
-    padding-right: 40px !important;
+    padding-right: 20px !important;
 }
 
 th:not(:last-child) {
@@ -25,12 +25,12 @@ th:not(:last-child) {
 
 
 #holder__table {
-    margin-inline: calc(-2 * var(--page-margins));
+    margin-inline: -20px;
 }
 
 .delegate__status__true {
-    background-color: #00FF9D;
-    color: rgb(0,0,0);
+    /* border: 2px solid #00FF9D; */
+    color: #00FF9D;
     border-radius: 50px;
     text-align: center;
     width: 40px;
@@ -39,8 +39,8 @@ th:not(:last-child) {
 }
 
 .delegate__status__false {
-    background-color: #FF0000;
-    color: rgb(255, 255, 255);
+    /* border: 2px solid #FF0000; */
+    color: #FF0000;
     border-radius: 50px;
     text-align: center;
     width: 40px;

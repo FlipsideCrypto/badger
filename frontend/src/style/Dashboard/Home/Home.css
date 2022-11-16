@@ -1,4 +1,6 @@
-.home { }
+.home {
+    margin-inline: 20px;
+}
 
 .home .home__announcement .card {
     padding: 20px;
@@ -8,7 +10,7 @@
     align-items: center;
 }
 
-.home .home__announcement .card .announcement__status { 
+.home .home__announcement .card .announcement__status {
     border-radius: 50%;
     width: 10px;
     height: 10px;
@@ -19,41 +21,51 @@
     line-height: 16px;
 }
 
-.home .home__cards { 
-    margin-top: 20px;
+.home__cards {
     display: grid;
-    gap: 10px;
-    grid-template: 'card1 card2'
-                   'card1 card3'
-                   'card1 card4'
-                   'card5 card6';
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 20px;
 }
 
-.home .home__cards .home__cards__column { 
-    display: grid;
-    grid-template-columns: 1fr;
-    row-gap: 10px;
-}
-
-.home__cards .card__video { 
-    background: #000;
-    margin-bottom: 20px;
-}
-
-.home__cards .card .home__card__content { 
-    display: grid;
-    grid-template-columns: 32px auto;
+.home__cards .card {
+    border-radius: 4px;
+    height: 200px;
     padding: 20px;
+    position: relative;
+    cursor: pointer;
 }
 
-.home__cards .card svg { 
-    margin-top: 10px;
-    color: rgba(0,0,0,.35);
+.home__cards .home__card .home__card__image {
+    background-size: 10000%;
+    background-position: top left;
+    filter: blur(14px);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    border-radius: 4px;
+    filter: blur(25px);
+    width: 100%;
 }
 
-@media only screen and (max-width: 1200px) {
-    .home .home__cards { 
-        grid-template: none;
-        grid-template-columns: 1fr;
-    }
+.home__cards .home__card__text {
+    display: grid;
+    grid-template-rows: 4fr 8fr;
+    height: 100%;
+}
+
+.home__cards .home__card__text .home__card__title {
+    margin-top: auto;
+    display: grid;
+    align-self: center;
+}
+
+.home__cards .home__card__text .home__card__title .home__card__view__image {
+    border-radius: 50%;
+    height: 24px;
+    width: 24px;
+    margin-bottom: -5px;
+    margin-right: 10px;
 }

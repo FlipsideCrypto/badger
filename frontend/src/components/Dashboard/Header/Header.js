@@ -3,14 +3,8 @@ import ActionButton from "@components/Button/ActionButton";
 import "@style/Dashboard/Header/Header.css";
 
 const Header = ({ back, actions }) => {
-    const isShowing = actions?.length > 0 || back;
-
     return (
-        <header className="header" style={{
-            marginTop: isShowing ? '20px' : '0',
-            marginBottom: isShowing ? '20px' : '0',
-            marginInline: "20px",
-        }}>
+        <header className="header">
             <div className="header__back">
                 {back && 
                     <ActionButton 

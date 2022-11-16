@@ -52,19 +52,17 @@ export const initialOrgForm = {
     chain: "",
 }
 
-export const initialBadgeForm = (orgData) => {
-    return {
-        name: "",
-        description: "",
-        attributes: [],
-        delegates: [],
-        image_hash: "",
-        ethereum_address: orgData?.ethereum_address,
-        token_id: orgData?.badges?.length,
-        organization: orgData?.id,
-        account_bound: true,
-        claimable: false,
-        signer: "",
-        is_active: false,
-    }
+export const initialBadgeForm = {
+    name: "",
+    description: "",
+    attributes: [],
+    delegates: [],
+    image_hash: "",
+    ethereum_address: "",
+    token_id: "",
+    organization: "",
+    account_bound: true,
+    claimable: false,
+    signer: "",
+    is_active: false,
 }

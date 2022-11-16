@@ -7,13 +7,12 @@ import {
 import TableSortHead from "./TableSortHead";
 import ActionButton from "@components/Button/ActionButton";
 import { compareByProperty } from "@utils/helpers";
-import { holderHeadRows } from "@static/constants/constants";
 
 import "@style/Table/HolderTable.css";
 
-const HolderTable = ({ badge }) => {
-    const [ headRows, setHeadRows ] = useState(holderHeadRows);
-    const [ sortedList, setSortedList ] = useState(badge.users);
+const ObjectTable = ({ data, heads }) => {
+    const [ headRows, setHeadRows ] = useState(heads);
+    const [ sortedList, setSortedList ] = useState(data);
 
     const onSortChange = (key) => {
         // Get the current sort method and inverse it for chevron display.
@@ -30,35 +29,6 @@ const HolderTable = ({ badge }) => {
         );
         setSortedList(newSortedList);
     }
-    
-    // Combines the user and delegates arrays into one array with a user and delegate boolean property.
-    const combineUsersAndDelegates = (users, delegates) => {
-        let combinedUsers = [];
-        if (users?.length > 0) {
-            users.forEach(user => {
-                combinedUsers.push({ ...user, holder: true })
-            })
-        }
-        if (delegates?.length > 0) {
-            delegates.forEach(delegate => {
-                const index = combinedUsers.findIndex(user => 
-                    user.ethereum_address === delegate.ethereum_address
-                )
-                
-                index === -1 ?
-                    combinedUsers.push({ ...delegate, holder: false, delegate: true })
-                    : combinedUsers[index].delegate = true;
-            })
-        }
-
-        return combinedUsers;
-    }
-
-    // If users changes, update and combine holders and delegates in the sorted list.
-    useEffect(() => {
-        const combinedUsers = combineUsersAndDelegates(badge.users, badge.delegates);
-        setSortedList(combinedUsers);
-    }, [badge.users, badge.delegates])
 
     return (
         <div id="holder__table">
@@ -81,7 +51,7 @@ const HolderTable = ({ badge }) => {
                     </TableHead>
 
                     <TableBody>
-                    {sortedList?.length > 0 && sortedList.map((user, index) => (
+                    {sortedList.map((user, index) => (
                         <TableRow
                             key={user.ethereum_address +'-'+ index}
                         >

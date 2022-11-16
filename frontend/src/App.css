@@ -54,6 +54,19 @@ button {
   padding-inline: 16px;
 }
 
+.button__warning {
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid #FF0000;
+  color: #FF0000 !important;
+}
+
+.button__warning:hover,
+.button__warning:focus {
+  background: #FF0000;
+  color: #fff !important;
+}
+
 .lead { 
   font-size: 18px;
 }
@@ -76,6 +89,11 @@ button {
   font-weight: 700;
   color: rgba(0, 0, 0, .65);
   text-decoration: unset;
+}
+
+.container__background {
+  background: #FCFCFF;
+  border-radius: 10px;
 }
 
 a {

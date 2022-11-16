@@ -3,6 +3,10 @@
     padding-left: var(--page-margins);
 }
 
+.sidebar.right.collapsed { 
+    display: none;
+}
+
 .sidebar.right::after { 
     content: "";
     border-left: 1px solid #E3E0E0;
