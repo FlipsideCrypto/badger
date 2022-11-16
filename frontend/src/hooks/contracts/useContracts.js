@@ -24,6 +24,8 @@ export const useCreateOrg = (isTxReady, orgObj, imageHash, contractHash, address
         orgObj.name,
         orgObj.symbol,
     ]
+
+    console.log('useCotnract::', 'img', imageHash, 'uri', contractHash)
     
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({

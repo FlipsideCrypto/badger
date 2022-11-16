@@ -47,11 +47,19 @@ const OrgForm = ({isEdit = false}) => {
     // Determine the IPFS hashes before hand so the transaction can be prepared ASAP
     // without actively pinning or waiting for the hashes to be returned.
     const { hash: deterministicImageHash } = useIPFSImageHash(orgImage)
-    const { hash: deterministicMetadataHash } = useIPFSMetadataHash({
-        name: orgObj.name, 
-        description: orgObj.description, 
-        image: isCustomImage ? deterministicImageHash : orgObj?.image_hash
-    })
+
+    const hashArgs = isEdit ? {
+        name: orgObj.name,
+        description: orgObj.description,
+        image: isCustomImage ? deterministicImageHash : orgObj?.image_hash,
+        attributes: orgObj.attributes
+    } : {
+        name: orgObj.name,
+        description: orgObj.description,
+        image: deterministicImageHash,
+        attributes: orgObj.attributes
+    }
+    const { hash: deterministicMetadataHash } = useIPFSMetadataHash({ ...hashArgs })
 
     const createContract = useCreateOrg(
         !isDisabled && !isEdit,
@@ -229,10 +237,11 @@ const OrgForm = ({isEdit = false}) => {
                 image_hash: imageHash,
             }
             const response = await postOrg(org);
+
             setOrgObj(response);
             // TODO: Success message!
-
             setTxPending(false);
+            navigate(`/dashboard/organization/${response.id}`);
         }
         catch (error) {
             setError({
