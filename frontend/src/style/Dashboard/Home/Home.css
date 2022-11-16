@@ -36,7 +36,7 @@
 }
 
 .home__cards .home__card .home__card__image {
-    background-size: 1000%;
+    background-size: 10000%;
     background-position: top left;
     filter: blur(14px);
     position: absolute;
