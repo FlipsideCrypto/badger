@@ -9,8 +9,8 @@ import OrgContextProvider from "@components/Dashboard/Provider/OrgContextProvide
 import ErrorContextProvider from "@components/Dashboard/Provider/ErrorContextProvider";
 
 import DashboardContent from "@components/Dashboard/Content/DashboardContent";
-import OrgSidebar from "@components/Dashboard/Sidebar/OrgSidebar";
-import HelpSidebar from "@components/Dashboard/Sidebar/HelpSidebar";
+import ActionBar from "@components/Dashboard/action-bar/ActionBar";
+import HelpSidebar from "@components/Dashboard/action-bar/help/HelpSidebar";
 
 import Home from "@components/Dashboard/Home/Home";
 import OrgForm from '@components/Dashboard/Org/OrgForm';
@@ -23,18 +23,25 @@ import "@style/Dashboard/Dashboard.css";
 const Dashboard = () => {
     const { data: signer } = useSigner();
     const { address } = useAccount();
-    const [ isMobile, setIsMobile ] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    const [collapsed, setCollapsed] = useState(false);
 
     return (
         <>
             <MobilePreventor isMobile={isMobile} setIsMobile={setIsMobile} />
 
-            {!isMobile && 
-                <div className="dashboard">
+            {!isMobile &&
+                <div className={collapsed ? "dashboard collapsed" : "dashboard"}>
                     <ErrorContextProvider>
                         <UserContextProvider signer={signer} address={address}>
                             <OrgContextProvider>
-                                <OrgSidebar address={address} />
+                                <div className="dashboard__contents">
+                                    <ActionBar
+                                        address={address}
+                                        collapsed={collapsed}
+                                        setCollapsed={setCollapsed}
+                                    />
 
                                 <DashboardContent>
                                     <Routes>
@@ -46,8 +53,12 @@ const Dashboard = () => {
                                         <Route path="/organization/:orgId/badge/:badgeId" element={<Badge />} />
                                     </Routes>
                                 </DashboardContent>
+                            </div>
 
-                                <HelpSidebar />
+                                <HelpSidebar
+                                    collapsed={collapsed}
+                                    setCollapsed={setCollapsed}
+                                />
                             </OrgContextProvider>
                         </UserContextProvider>
                     </ErrorContextProvider>
