@@ -10,6 +10,7 @@ import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import Select from "@components/Dashboard/Form/Select";
 import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
 import ActionButton from "@components/Button/ActionButton";
+import ActionTitle from "@components/Dashboard/action-title/ActionTitle";
 
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
@@ -197,8 +198,6 @@ const Badge = () => {
         }
     }, [manageOwnership.error, setDelegates.error, txMethod, setError])
 
-    console.log('badge', badge.holders, badge.delegates)
-
     return (
         <>
             <Header back={() => navigate(`/dashboard`)} actions={actions} />
@@ -259,26 +258,28 @@ const Badge = () => {
                         />
                     </>
                 }
-
-                <div className="header div__header" style={{marginTop: "60px"}}>
-                    <h2 className="dashboard__margin__left">
-                        Badge Holders
-                    </h2>
-                    <div className="header__actions">
-                        <ActionButton
-                            icon={['fal', 'fa-user']}
-                            afterText="Update holders"
-                            onClick={() => setIsManage(true)}
-                        />
-                        <ActionButton
-                            icon={['fal', 'fa-people-roof']}
-                            afterText="Update managers"
-                            onClick={() => {
-                                setSelectedAction("Add Manager");
-                                setIsManage(true)
-                            }}
-                        />
-                    </div>
+                
+                <div style={{marginInline: "20px", marginTop: "20px"}}>
+                    <ActionTitle 
+                        title="Badge Holders"
+                        actions={[
+                            {
+                                className: "home__action-button",
+                                icon: ['fal', 'fa-user'],
+                                afterText: "Update holders",
+                                onClick: () => setIsManage(true)
+                            },
+                            {
+                                className: "home__action-button",
+                                icon: ['fal', 'fa-people-roof'],
+                                afterText: "Update managers",
+                                onClick: () => {
+                                    setSelectedAction("Add Manager")
+                                    setIsManage(true)
+                                }
+                            }
+                        ]}
+                    />
                 </div>
                 <HolderTable badge={badge} />
                 

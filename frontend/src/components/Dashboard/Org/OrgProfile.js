@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import ActionButton from "@components/Button/ActionButton";
+import ActionTitle from "@components/Dashboard/action-title/ActionTitle";
 import Header from "@components/Dashboard/Header/Header";
 // import OrgStats from "@components/Dashboard/Org/OrgStats";
 
@@ -31,17 +31,35 @@ const OrgProfile = () => {
 
             {/* <OrgStats orgData={orgData} /> */}
 
-            <div className="header div__header">
-                <h2 className="dashboard__margin__left">
-                    Organization Badges
-                </h2>
-                <div className="header__actions">
-                    <ActionButton 
-                        icon={['fal', 'plus']}
-                        afterText="Create badge"
-                        onClick={() => navigate(`/dashboard/organization/${orgId}/badge/new`)}
-                    />
-                </div>
+            <div style={{marginInline: "20px"}}>
+                <ActionTitle 
+                    title="Organization Badges"
+                    actions={[
+                        {
+                            className: "home__action-button",
+                            icon: ['fal', 'fa-plus'],
+                            afterText: "Create badge",
+                            onClick: () => navigate(`/dashboard/organization/${orgId}/badge/new`)
+                        },
+                        // {
+                        //     className: "home__action-button",
+                        //     icon: ['fal', 'fa-user'],
+                        //     afterText: "Update holders",
+                        //     onClick: () => {
+                        //         setIsManage(true)
+                        //     }
+                        // },
+                        // {
+                        //     className: "home__action-button",
+                        //     icon: ['fal', 'fa-people-roof'],
+                        //     afterText: "Update managers",
+                        //     onClick: () => {
+                        //         setSelectedAction("Add Manager")
+                        //         setIsManage(true)
+                        //     }
+                        // }
+                    ]}
+                />
             </div>
 
             {/* Badge Table */}
