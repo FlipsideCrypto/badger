@@ -284,11 +284,11 @@ const OrgForm = ({isEdit = false}) => {
     useEffect(() => {
         if (
             orgData?.ethereum_address
-            && !orgObj?.id
+            && orgObj?.id !==  orgId
         ) {
             setOrgObj(orgData)
         }
-    }, [orgData, orgObj?.id, setOrgObj])
+    }, [orgData, orgObj?.id, orgId, setOrgObj])
 
     return (
         <div id="new-org">

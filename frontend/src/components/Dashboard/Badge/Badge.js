@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, useCallback, useReducer } from "react";
+import { useState, useContext, useEffect, useCallback, useReducer, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAccount } from "wagmi"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,7 +9,6 @@ import IconButton from "@components/Button/IconButton";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import Select from "@components/Dashboard/Form/Select";
 import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
-import ActionButton from "@components/Button/ActionButton";
 import ActionTitle from "@components/Dashboard/action-title/ActionTitle";
 
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
@@ -35,7 +34,10 @@ const Badge = () => {
     const [ txPending, setTxPending ] = useState(false);
     const [ addressesToUpdate, dispatchAddresses ] = useReducer(FormReducer, {addresses: []});
     
-    const badgeIndex = orgData?.badges?.findIndex(badge => badge.id === parseInt(badgeId));
+    const badgeIndex = useMemo(() => 
+        orgData?.badges?.findIndex(badge => badge.id === parseInt(badgeId)), [orgData, badgeId]
+    );
+
     const [ badge, setBadge ] = useState(orgData?.badges?.[badgeIndex] || {});
     const isOwner = orgData?.owner?.ethereum_address === address;
     // find if the authenticated address is in one of the delegates.ethereum_address properties
@@ -229,9 +231,35 @@ const Badge = () => {
                         </div>
                     </div>
                 </div>
+                
+                <div style={{marginInline: "20px", marginTop: "20px"}}>
+                    <ActionTitle 
+                        title="Badge Holders"
+                        actions={[
+                            {
+                                className: "home__action-button",
+                                icon: ['fal', 'fa-user'],
+                                afterText: "Update holders",
+                                onClick: () => {
+                                    setSelectedAction("Mint")
+                                    setIsManage(true)
+                                }
+                            },
+                            {
+                                className: "home__action-button",
+                                icon: ['fal', 'fa-people-roof'],
+                                afterText: "Update managers",
+                                onClick: () => {
+                                    setSelectedAction("Add Manager")
+                                    setIsManage(true)
+                                }
+                            }
+                        ]}
+                    />
+                </div>
 
                 {isManage && (isOwner || isManager) &&
-                    <>
+                    <div style={{margin: "20px"}}>
                         <Select 
                             label="Update Type"
                             options={selectActions} 
@@ -239,7 +267,7 @@ const Badge = () => {
                             setValue={onMethodChange}
                         />
                         <InputListCSV
-                            label="Members to Update"
+                            label={selectedAction === "Mint" ? "Members to Update" : "Managers to Update"}
                             inputList={addressesToUpdate.addresses}
                             listKey={"addresses"}
                             dispatch={dispatchAddresses}
@@ -256,31 +284,9 @@ const Badge = () => {
                                 !setDelegates.isSuccess || !areAddressesValid
                             }
                         />
-                    </>
+                    </div>
                 }
-                
-                <div style={{marginInline: "20px", marginTop: "20px"}}>
-                    <ActionTitle 
-                        title="Badge Holders"
-                        actions={[
-                            {
-                                className: "home__action-button",
-                                icon: ['fal', 'fa-user'],
-                                afterText: "Update holders",
-                                onClick: () => setIsManage(true)
-                            },
-                            {
-                                className: "home__action-button",
-                                icon: ['fal', 'fa-people-roof'],
-                                afterText: "Update managers",
-                                onClick: () => {
-                                    setSelectedAction("Add Manager")
-                                    setIsManage(true)
-                                }
-                            }
-                        ]}
-                    />
-                </div>
+
                 <HolderTable badge={badge} />
                 
                 {(badge?.users?.length < 1 || badge?.delegates?.length < 1) &&

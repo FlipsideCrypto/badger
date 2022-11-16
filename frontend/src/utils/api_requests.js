@@ -82,22 +82,20 @@ export async function postBadgeRequest(badge) {
         : badge?.organization;
 
     const badgeData = {
+        ...badge,
         is_active: true,
-        name: badge.name,
-        description: badge.description,
-        token_id: badge.token_id,
-        image_hash: badge.image_hash,
-        token_uri: badge.token_uri,
-        account_bound: badge.account_bound,
         signer_ethereum_address: signer,
         users: users,
         delegates: delegates,
         organization: organization
     }
 
+    const url = badge.url ? badge.url : `${API_URL}/badges/`;
+    const method = badge?.id ? 'PATCH' : 'POST';
+
     try {
-        await fetch(`${API_URL}/badges/`, {
-            method: "POST",
+        await fetch(url, {
+            method: method,
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",

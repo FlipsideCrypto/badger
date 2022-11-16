@@ -51,6 +51,7 @@ const Dashboard = () => {
                                         <Route path="/organization/:orgId/edit" element={<OrgForm isEdit={true} />} />
                                         <Route path="/organization/:orgId/badge/new" element={<BadgeForm />} />
                                         <Route path="/organization/:orgId/badge/:badgeId" element={<Badge />} />
+                                        <Route path="/organization/:orgId/badge/:badgeId/edit" element={<BadgeForm isEdit={true} />} />
                                     </Routes>
                                 </DashboardContent>
                             </div>

@@ -79,7 +79,7 @@ export const useEditOrg = (isTxReady, contractAddress, contractUriHash) => {
 }
 
 // Creates a badge from a cloned sash contract.
-export const useCreateBadge = (isTxReady, tokenUri, badge) => {
+export const useSetBadge = (isTxReady, contractAddress, tokenUri, badge) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
     const [ error, setError ] = useState();
 
@@ -94,15 +94,15 @@ export const useCreateBadge = (isTxReady, tokenUri, badge) => {
         badge.token_id,
         badge.claimable,
         badge.account_bound,
-        badge.signer || badge.ethereum_address, // Cannot have an empty string so we use the org as signer
-        tokenUri,
+        badge.signer || contractAddress, // Cannot have an empty string so we use the org as signer
+        tokenUri || "",
         badge.payment_token || [ethers.constants.HashZero, 0],
         badge.delegates || [],
     ]
     
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
-        addressOrName: badge.ethereum_address,
+        addressOrName: contractAddress,
         contractInterface: BadgerOrganization.abi,
         functionName: "setBadge",
         args: args,

@@ -45,9 +45,9 @@ const Home = () => {
                             }} />
                             <div className="home__card__text">
                                 <div className="home__card__subtext">
-                                    <smalL><strong><span style={{ marginRight: "10px" }}>
+                                    <small><strong><span style={{ marginRight: "10px" }}>
                                         {org.chain.slice(0, 5)}
-                                    </span> {sliceAddress(org.ethereum_address)}</strong></smalL>
+                                    </span> {sliceAddress(org.ethereum_address)}</strong></small>
                                 </div>
 
                                 <div className="home__card__title">
