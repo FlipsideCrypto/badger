@@ -258,10 +258,11 @@ const OrgForm = ({isEdit = false}) => {
         if (!response?.error && response?.id) {
             let newUserData = {...userData};
 
-            if (!newUserData.organizations || newUserData.organizations.length === 0)
+            const index = newUserData.organizations.findIndex((org) => org.id === response.id);
+            if (!newUserData.organizations || index === -1) {
                 newUserData.organizations.push(response);
+            }
             else {
-                const index = newUserData.organizations.findIndex((org) => org.id === response.id);
                 newUserData.organizations[index] = response;
             }
     
