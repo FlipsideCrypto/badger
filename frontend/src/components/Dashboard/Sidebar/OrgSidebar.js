@@ -2,7 +2,7 @@ import { useEffect, useContext, useState, useCallback } from "react";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useNetwork, useSwitchNetwork } from "wagmi";
 
-import { useConnectModal } from "@rainbow-me/rainbowkit"
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 import Logout from "./Logout/Logout";
 import ActionButton from "@components/Button/ActionButton";
@@ -14,7 +14,7 @@ import { UserContext } from "@components/Dashboard/Provider/UserContextProvider"
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
 
-import '@rainbow-me/rainbowkit/styles.css'
+import "@rainbow-me/rainbowkit/styles.css";
 import "@style/Dashboard/Sidebar/Sidebar.css";
 import "@style/Dashboard/Sidebar/OrgSidebar.css";
 

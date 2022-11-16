@@ -11,8 +11,8 @@ const OrgDangerZone = (orgAddress) => {
     const [ newOwner, setNewOwner ] = useState("");
     const [ renounceTarget, setRenounceTarget ] = useState("");
     
-    const transferOwnership = useTransferOwnership(true, orgAddress, newOwner);
-    const renounceOwnership = useRenounceOwnership(true, orgAddress);
+    const transferOwnership = useTransferOwnership(Boolean(orgAddress), orgAddress, newOwner);
+    const renounceOwnership = useRenounceOwnership(Boolean(orgAddress), orgAddress);
 
     const onTransferOwnership = async () => {
         try {

@@ -16,8 +16,6 @@ const OrgStats = (orgData) => {
         currency: 'USD',
     });
 
-    console.log('orgstats', orgStats)
-
     return (
         <div className="org__stats">
             <div className="org__stats__container container__background">

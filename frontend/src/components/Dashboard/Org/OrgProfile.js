@@ -1,15 +1,14 @@
-import { useContext, useEffect } from "react";
-import { useNavigate, Link, useParams } from "react-router-dom";
+import { useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import ActionButton from "@components/Button/ActionButton";
 import Header from "@components/Dashboard/Header/Header";
-import OrgStats from "@components/Dashboard/Org/OrgStats";
+// import OrgStats from "@components/Dashboard/Org/OrgStats";
 
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 
-import "@style/Dashboard/Org/Org.css";
-
+import "@style/Dashboard/Org/OrgProfile.css";
 
 const OrgProfile = () => {
     const { userData, setUserData } = useContext(UserContext);
@@ -30,10 +29,12 @@ const OrgProfile = () => {
         <>
             <Header back={() => navigate("/dashboard")} actions={headerActions} />
 
-            <OrgStats orgData={orgData} />
+            {/* <OrgStats orgData={orgData} /> */}
 
-            <div className="header">
-                <h2>Organization Badges</h2>
+            <div className="header div__header">
+                <h2 className="dashboard__margin__left">
+                    Organization Badges
+                </h2>
                 <div className="header__actions">
                     <ActionButton 
                         icon={['fal', 'plus']}
@@ -45,13 +46,14 @@ const OrgProfile = () => {
 
             {/* Badge Table */}
 
-            <div className="header">
+            {/* <div className="header">
                 <h2>Organization Assets</h2>
-                <div className="header__actions">
+                <div className="header__actions div__actions">
                     <ActionButton
                         icon={['fal', 'fa-money-bill-transfer']}
                         afterText="Deposit"
                         onClick={() => console.log('not set up yet')}
+                        style={{ marginRight: '10px' }}
                     />
 
                     <ActionButton
@@ -60,7 +62,7 @@ const OrgProfile = () => {
                         onClick={() => console.log('not set up yet')}
                     />
                 </div>
-            </div>
+            </div> */}
             { /* Asset Table */}
         </>
     )

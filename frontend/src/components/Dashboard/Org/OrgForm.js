@@ -9,37 +9,38 @@ import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 import FormDrawer from "@components/Dashboard/Form/FormDrawer";
-import OrgDangerZone from "@components/Dashboard/Org/OrgDangerZone";
+// import OrgDangerZone from "@components/Dashboard/Org/OrgDangerZone";
 
+import { initialOrgForm } from "@components/Dashboard/Form/FormReducer";
 import { useCreateOrg, useEditOrg } from "@hooks/contracts/useContracts";
 import { postOrgRequest, postIPFSImage, postIPFSMetadata, getPFPImage } from "@utils/api_requests";
 import { getBadgerAbi } from "@hooks/contracts/contractVersions";
 import { useIPFSImageHash, useIPFSMetadataHash } from "@hooks/useIpfsHash";
 
-const OrgForm = (isEdit) => {
+const OrgForm = ({isEdit = false}) => {
     const { userData, setUserData } = useContext(UserContext);
-    const { orgData, setOrgData } = useContext(OrgContext);
-
+    const { orgData } = useContext(OrgContext);
     const { setError } = useContext(ErrorContext);
-    
+
     const { address } = useAccount();
     const { chain } = useNetwork();
     const { orgId } = useParams();
     const navigate = useNavigate();
     const imageInput = useRef();
     
-    const [ orgObj, setOrgObj ] = useState(orgData)
+    const [ orgObj, setOrgObj ] = useState(initialOrgForm)
     const [ txPending, setTxPending ] = useState(false);
     const [ orgImage, setOrgImage ] = useState();
-    const [ isCustomImage, setIsCustomImage ] = useState(orgData?.image_hash ? true : false);
+    const [ isCustomImage, setIsCustomImage ] = useState();
 
     // Is the data valid for the transaction to be prepared.
+    // If there is no orgImage then determine if the hash already exists.
     const isDisabled = useMemo(() => {
         return (
             !orgObj.name ||
             !orgObj.symbol ||
             !orgObj.description ||
-            !orgImage
+            (!orgImage && !orgObj?.image_hash)
         )
     }, [orgObj, orgImage])
     
@@ -49,7 +50,7 @@ const OrgForm = (isEdit) => {
     const { hash: deterministicMetadataHash } = useIPFSMetadataHash({
         name: orgObj.name, 
         description: orgObj.description, 
-        image: orgObj?.imageHash || deterministicImageHash
+        image: isCustomImage ? deterministicImageHash : orgObj?.image_hash
     })
 
     const createContract = useCreateOrg(
@@ -61,12 +62,9 @@ const OrgForm = (isEdit) => {
         chain?.name
     )
     const updateOrg = useEditOrg(
-        !isDisabled && isEdit,
-        orgObj,
-        deterministicImageHash,
-        deterministicMetadataHash,
-        address,
-        chain?.name
+        !isDisabled && isEdit && orgObj?.ethereum_address,
+        orgObj.ethereum_address,
+        deterministicMetadataHash
     )
     const badger = useMemo(() => getBadgerAbi(chain?.name), [chain?.name]);
 
@@ -75,21 +73,21 @@ const OrgForm = (isEdit) => {
     const actions = isEdit ? 
         [
             {
-                text: "Create organization",
-                icon: ["fal", "arrow-right"],
-                loading: txPending,
-                disabled: !createContract.isSuccess,
-                event: () => createOrgTx()
-            }
-        ]
-        :
-        [
-            {
                 text: "Update organization",
                 icon: ["fal", "arrow-right"],
                 loading: txPending,
                 disabled: !updateOrg.isSuccess,
                 event: () => updateOrgTx()
+            }
+        ]
+        :
+        [
+            {
+                text: "Create organization",
+                icon: ["fal", "arrow-right"],
+                loading: txPending,
+                disabled: !createContract.isSuccess,
+                event: () => createOrgTx()
             }
         ]
 
@@ -123,6 +121,7 @@ const OrgForm = (isEdit) => {
 
     // Get a generated image for the org.
     const getGeneratedImage = async (char) => {
+        if (isEdit) return;
         const response = await getPFPImage(char, address);
         if (response.error) {
             setError({
@@ -193,12 +192,11 @@ const OrgForm = (isEdit) => {
                 ethereum_address: contractAddress, 
                 contract_uri_hash: metadataHash,
                 image_hash: imageHash,
+                chain: chain.name,
+                owner: address,
                 is_active: true
             }
 
-            // If transaction was confirmed, add is_active and contract address to orgObj.
-            // Adding the ethereum address will trigger a useEffect to post to backend.
-            setOrgObj(org);
             const response = await postOrg(org);
             navigate(`/dashboard/organization/${response.id}`);
         }
@@ -218,8 +216,8 @@ const OrgForm = (isEdit) => {
             // Await the txReceipt, image hash, and metadata hash in parallel.
             const [txReceipt, imageHash, metadataHash] = await Promise.all([
                 tx.wait(),
-                pinImage(orgImage),
-                pinMetadata(deterministicImageHash)
+                pinImage(isCustomImage ? orgImage : orgObj.image_hash),
+                pinMetadata(isCustomImage ? deterministicImageHash : orgObj.image_hash)
             ])
 
             if (txReceipt.status !== 1)
@@ -230,8 +228,8 @@ const OrgForm = (isEdit) => {
                 contract_uri_hash: metadataHash,
                 image_hash: imageHash,
             }
-            setOrgObj(org);
-            await postOrg(org);
+            const response = await postOrg(org);
+            setOrgObj(response);
             // TODO: Success message!
 
             setTxPending(false);
@@ -247,14 +245,18 @@ const OrgForm = (isEdit) => {
 
     // Post the org Obj to the backend once the contract address is added.
     const postOrg = useCallback(async (org) => {
+        console.log('org', org)
         const response = await postOrgRequest(org);
+        console.log('org res', response)
         if (!response?.error && response?.id) {
             let newUserData = {...userData};
 
-            if (newUserData.organizations)
+            if (!newUserData.organizations || newUserData.organizations.length === 0)
                 newUserData.organizations.push(response);
-            else
-                newUserData.organizations = [response];
+            else {
+                const index = newUserData.organizations.findIndex((org) => org.id === response.id);
+                newUserData.organizations[index] = response;
+            }
     
             setUserData(newUserData);
         }
@@ -279,11 +281,26 @@ const OrgForm = (isEdit) => {
         }
     }, [updateOrg.error, createContract.error, setError])
 
+    // If directly linking to the edit page, we need to update the state after
+    // fetching if the orgObj id is empty.
+    useEffect(() => {
+        if (
+            orgData?.ethereum_address
+            && !orgObj?.id
+        ) {
+            setOrgObj(orgData)
+        }
+    }, [orgData, orgObj?.id, setOrgObj])
+
     return (
         <div id="new-org">
-            <Header back={() => navigate((isEdit ? `/dashboard/organization/${orgId}` : '/dashboard'))} />
+            <Header back={() => navigate((isEdit ? 
+                    `/dashboard/organization/${orgId}` 
+                    : '/dashboard'
+                ))} 
+            />
 
-            <h2 style={{marginLeft: "30px"}}>
+            <h2 className="dashboard__margin__left">
                 {isEdit ? "Update Organization" : "Create Organization"}
             </h2>
 
@@ -362,9 +379,9 @@ const OrgForm = (isEdit) => {
                 style={{marginInline: "30px"}}
             />
 
-            {isEdit && 
+            {/* {isEdit &&
                 <OrgDangerZone orgAddress={orgObj?.ethereum_address} />
-            }
+            } */}
         </div>
     )
 }

@@ -38,10 +38,12 @@ export async function postFeedbackRequest(feedback) {
 
 export async function postOrgRequest(org) {
     let response;
+    const url = org?.url ? org.url : `${API_URL}/organizations/`;
+    const method = org?.id ? 'PATCH' : 'POST';
 
     try {
-        await fetch(`${API_URL}/organizations/`, {
-            method: "POST",
+        await fetch(url, {
+            method: method,
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
@@ -124,6 +126,8 @@ export async function postBadgeRequest(badge) {
 }
 
 export async function postIPFSImage(image) {
+    // If the image is already a hash, return it.
+    if (typeof(image) === "string") return {hash: image};
     const formData = new FormData();
     formData.append('image', image)
     let response;
@@ -163,6 +167,8 @@ export async function postIPFSMetadata(props) {
         imageHash,
         attributes
     } = props;
+
+    if (!name || !description || !imageHash) return {error: "Missing required fields for IPFS metadata upload"};
     
     let response;
 

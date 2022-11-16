@@ -35,3 +35,7 @@
     height: auto;
     object-fit: cover;
 }
+
+.div__header { 
+    align-items: end;
+}

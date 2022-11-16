@@ -11,7 +11,7 @@ import "@style/Dashboard/Org/Org.css";
 
 const Org = () => {
     const { userData, setUserData } = useContext(UserContext);
-    const { orgData, setOrgData } = useContext(OrgContext);
+    const { orgData } = useContext(OrgContext);
     
     const navigate = useNavigate();
     const { orgId } = useParams();

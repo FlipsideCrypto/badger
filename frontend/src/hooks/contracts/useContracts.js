@@ -48,18 +48,18 @@ export const useCreateOrg = (isTxReady, orgObj, imageHash, contractHash, address
 }
 
 // Edit the contract URI of an organization and update the image, description, and name.
-export const useEditOrg = (isTxReady, contractUriHash) => {
-    const Badger = useMemo(() => getBadgerAbi(), []);
+export const useEditOrg = (isTxReady, contractAddress, contractUriHash) => {
+    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
     const [ error, setError ] = useState();
 
     const args = [
-        IPFS_GATEWAY_URL + contractUriHash,
+        IPFS_GATEWAY_URL + contractUriHash
     ]
     
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
-        addressOrName: Badger.address,
-        contractInterface: Badger.abi,
+        addressOrName: contractAddress,
+        contractInterface: BadgerOrganization.abi,
         functionName: "setOrganizationURI",
         args: args,
         enabled: Boolean(fees && isTxReady),
