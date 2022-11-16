@@ -56,7 +56,6 @@ const Dashboard = () => {
 
                                 <HelpSidebar
                                     collapsed={collapsed}
-                                    setCollapsed={setCollapsed}
                                 />
                             </OrgContextProvider>
                         </UserContextProvider>
