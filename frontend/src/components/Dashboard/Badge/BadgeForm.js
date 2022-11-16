@@ -450,7 +450,7 @@ const BadgeForm = ({isEdit = false}) => {
                     'After creating a badge, you (or your managers) can issue badges to team members.'
                 } 
                 actions={actions} 
-                style={{marginInline: "30px"}}
+                style={{marginInline: "30px", marginBottom: "30px"}}
             />
 
             {/* <hr style={{margin: "30px 20px 30px 20px", backgroundColor: "#EEEEF6", border: "none", height: "1px"}} />

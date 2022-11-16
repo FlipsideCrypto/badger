@@ -14,7 +14,7 @@ export default function useFees() {
 
     useEffect(() => {
         if (data) {
-            const multiplier = 1.1;
+            const multiplier = 1.25;
             const big_mul = ethers.BigNumber.from(Math.floor(multiplier * 100));
             let suggestedGas = {};
             suggestedGas.gasPrice = data.gasPrice.mul(big_mul).div(100);
