@@ -1,6 +1,7 @@
 .action__button {
     color: rgba(0, 0, 0, .35) !important;
     width: fit-content;
+    text-decoration: none;
 }
   
 .action__button:hover,

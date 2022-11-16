@@ -1,6 +1,7 @@
 .header {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    margin-inline: 20px;
 }
 
 .header svg {
