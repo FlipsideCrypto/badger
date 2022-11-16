@@ -1,83 +1,103 @@
 import { useState, useContext, useRef, useEffect, useMemo, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useNetwork, useAccount } from "wagmi";
 
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
+import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
 import FormDrawer from "@components/Dashboard/Form/FormDrawer";
+import OrgDangerZone from "@components/Dashboard/Org/OrgDangerZone";
 
-import { useBadgerFactory } from "@hooks/useContracts";
+import { initialOrgForm } from "@components/Dashboard/Form/FormReducer";
+import { useCreateOrg, useEditOrg } from "@hooks/contracts/useContracts";
 import { postOrgRequest, postIPFSImage, postIPFSMetadata, getPFPImage } from "@utils/api_requests";
-import { getBadgerAbi } from "@hooks/useContracts";
+import { getBadgerAbi } from "@hooks/contracts/contractVersions";
 import { useIPFSImageHash, useIPFSMetadataHash } from "@hooks/useIpfsHash";
 
-// TODO: Move orgObj into the form reducer.
-const OrgForm = () => {
+const OrgForm = ({isEdit = false}) => {
     const { userData, setUserData } = useContext(UserContext);
+    const { orgData } = useContext(OrgContext);
     const { setError } = useContext(ErrorContext);
 
     const { address } = useAccount();
     const { chain } = useNetwork();
+    const { orgId } = useParams();
     const navigate = useNavigate();
     const imageInput = useRef();
-
-    const [ orgObj, setOrgObj ] = useState({
-        name: "",
-        symbol: "",
-        description: "",
-        contract_uri_hash: "",
-        image_hash: "",
-        owner: "",
-        ethereum_address: "",
-        chain: chain?.name,
-    })
-    const [ orgImage, setOrgImage ] = useState();
+    
+    const [ orgObj, setOrgObj ] = useState(initialOrgForm)
     const [ txPending, setTxPending ] = useState(false);
-    const [ isCustomImage, setIsCustomImage ] = useState(false);
+    const [ orgImage, setOrgImage ] = useState();
+    const [ isCustomImage, setIsCustomImage ] = useState();
 
     // Is the data valid for the transaction to be prepared.
+    // If there is no orgImage then determine if the hash already exists.
     const isDisabled = useMemo(() => {
         return (
             !orgObj.name ||
             !orgObj.symbol ||
             !orgObj.description ||
-            !orgImage
+            (!orgImage && !orgObj?.image_hash)
         )
     }, [orgObj, orgImage])
     
     // Determine the IPFS hashes before hand so the transaction can be prepared ASAP
     // without actively pinning or waiting for the hashes to be returned.
     const { hash: deterministicImageHash } = useIPFSImageHash(orgImage)
-    const { hash: deterministicMetadataHash } = useIPFSMetadataHash({
-        name: orgObj.name, 
-        description: orgObj.description, 
-        image: deterministicImageHash
-    })
 
-    const createContract = useBadgerFactory(
-        !isDisabled,
+    const hashArgs = isEdit ? {
+        name: orgObj.name,
+        description: orgObj.description,
+        image: isCustomImage ? deterministicImageHash : orgObj?.image_hash,
+        attributes: orgObj.attributes
+    } : {
+        name: orgObj.name,
+        description: orgObj.description,
+        image: deterministicImageHash,
+        attributes: orgObj.attributes
+    }
+    const { hash: deterministicMetadataHash } = useIPFSMetadataHash({ ...hashArgs })
+
+    const createContract = useCreateOrg(
+        !isDisabled && !isEdit,
         orgObj,
         deterministicImageHash,
         deterministicMetadataHash,
         address, 
         chain?.name
     )
+    const updateOrg = useEditOrg(
+        !isDisabled && isEdit && orgObj?.ethereum_address,
+        orgObj.ethereum_address,
+        deterministicMetadataHash
+    )
     const badger = useMemo(() => getBadgerAbi(chain?.name), [chain?.name]);
 
     let firstCharOfName = useRef();
 
-    const actions = [
-        {
-            text: "Create organization",
-            icon: ["fal", "arrow-right"],
-            loading: txPending,
-            disabled: !createContract.isSuccess,
-            event: () => createOrgTx()
-        }
-    ]
+    const actions = isEdit ? 
+        [
+            {
+                text: "Update organization",
+                icon: ["fal", "arrow-right"],
+                loading: txPending,
+                disabled: !updateOrg.isSuccess,
+                event: () => updateOrgTx()
+            }
+        ]
+        :
+        [
+            {
+                text: "Create organization",
+                icon: ["fal", "arrow-right"],
+                loading: txPending,
+                disabled: !createContract.isSuccess,
+                event: () => createOrgTx()
+            }
+        ]
 
     // Converts an org name to a symbol.
     const nameToSymbol = (name) => {
@@ -98,6 +118,9 @@ const OrgForm = () => {
 
     // Custom image upload. If image gets set to null then get new generative.
     const onCustomImageUpload = async (image) => {
+        // For editing, we have to clear the image_hash to switch to deterministic hashing.
+        setOrgObj({...orgObj, image_hash: null});
+
         setIsCustomImage(image ? true : false);
         let customImage = image ? 
             image : await getPFPImage(firstCharOfName.current);
@@ -106,6 +129,7 @@ const OrgForm = () => {
 
     // Get a generated image for the org.
     const getGeneratedImage = async (char) => {
+        if (isEdit) return;
         const response = await getPFPImage(char, address);
         if (response.error) {
             setError({
@@ -171,15 +195,18 @@ const OrgForm = () => {
             const orgEvent = badger.abi.decodeEventLog("OrganizationCreated", orgCreatedEvent.data, orgCreatedEvent.topics);
             const contractAddress = orgEvent.organization;
 
-            // If transaction was confirmed, add is_active and contract address to orgObj.
-            // Adding the ethereum address will trigger a useEffect to post to backend.
-            setOrgObj({
-                ...orgObj, 
+            const org = {
+                ...orgObj,
                 ethereum_address: contractAddress, 
                 contract_uri_hash: metadataHash,
                 image_hash: imageHash,
+                chain: chain.name,
+                owner: address,
                 is_active: true
-            });
+            }
+
+            const response = await postOrg(org);
+            navigate(`/dashboard/organization/${response.id}`);
         }
         catch (error) {
             setError({
@@ -190,19 +217,55 @@ const OrgForm = () => {
         }
     }
 
+    const updateOrgTx = async () => {
+        setTxPending(true);
+        try {
+            let tx = await updateOrg.write?.();
+            // Await the txReceipt, image hash, and metadata hash in parallel.
+            const [txReceipt, imageHash, metadataHash] = await Promise.all([
+                tx.wait(),
+                pinImage(isCustomImage ? orgImage : orgObj.image_hash),
+                pinMetadata(isCustomImage ? deterministicImageHash : orgObj.image_hash)
+            ])
+
+            if (txReceipt.status !== 1)
+                throw new Error(updateOrg?.error);
+
+            const org = {
+                ...orgObj,
+                contract_uri_hash: metadataHash,
+                image_hash: imageHash,
+            }
+            const response = await postOrg(org);
+
+            setOrgObj(response);
+            // TODO: Success message!
+            setTxPending(false);
+            navigate(`/dashboard/organization/${response.id}`);
+        }
+        catch (error) {
+            setError({
+                label: 'Error updating Org',
+                message: error
+            });
+            setTxPending(false);
+        }
+    }
+
     // Post the org Obj to the backend once the contract address is added.
-    const postOrg = useCallback(async () => {
-        const response = await postOrgRequest(orgObj);
+    const postOrg = useCallback(async (org) => {
+        const response = await postOrgRequest(org);
         if (!response?.error && response?.id) {
             let newUserData = {...userData};
 
-            if (newUserData.organizations)
+            if (!newUserData.organizations || newUserData.organizations.length === 0)
                 newUserData.organizations.push(response);
-            else
-                newUserData.organizations = [response];
+            else {
+                const index = newUserData.organizations.findIndex((org) => org.id === response.id);
+                newUserData.organizations[index] = response;
+            }
     
             setUserData(newUserData);
-            navigate(`/dashboard/organization/${response.id}`);
         }
         else {
             setError({
@@ -211,32 +274,42 @@ const OrgForm = () => {
             });
         }
 
-        setTxPending(false);
-    }, [orgObj, navigate, userData, setUserData, setError]);
-
-    // Upon receiving contract address from transaction event,
-    // POST org to backend and if successful, add to state and navigate to org page.
-    useEffect(() => {
-        if (orgObj.ethereum_address) 
-            postOrg();
-    }, [orgObj.ethereum_address, postOrg])
+        return response;
+    }, [userData, setUserData, setError]);
 
     // If we have a silent error from preparing the transaction, display it.
     useEffect(() => {
         setError(null);
-        if (createContract?.error) {
+        if (createContract?.error || updateOrg?.error) {
             setError({
-                label: 'Error creating Org',
-                message: createContract?.error
+                label: 'Error managing the Org',
+                message: createContract?.error || updateOrg?.error
             })
         }
-    }, [createContract.error, setError])
+    }, [updateOrg.error, createContract.error, setError])
+
+    // If directly linking to the edit page, we need to update the state after
+    // fetching if the orgObj id is empty.
+    useEffect(() => {
+        if (
+            orgData?.ethereum_address
+            && orgObj?.id !==  orgId
+        ) {
+            setOrgObj(orgData)
+        }
+    }, [orgData, orgObj?.id, orgId, setOrgObj])
 
     return (
         <div id="new-org">
-            <Header back={() => navigate("/dashboard")} />
+            <Header back={() => navigate((isEdit ? 
+                    `/dashboard/organization/${orgId}` 
+                    : '/dashboard'
+                ))} 
+            />
 
-            <h2 style={{marginLeft: "30px"}}>Create Organization</h2>
+            <h2 className="dashboard__margin__left">
+                {isEdit ? "Update Organization" : "Create Organization"}
+            </h2>
 
             <FormDrawer label="General" open={true}>
                 <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gridGap: "20px"}}>
@@ -244,7 +317,7 @@ const OrgForm = () => {
                         name="orgName"
                         label="Name" 
                         required={true}
-                        value={orgObj.name} 
+                        value={orgObj?.name || ""} 
                         onChange={onOrgNameChange}
                     />
 
@@ -252,7 +325,7 @@ const OrgForm = () => {
                         name="orgSymbol"
                         label="Symbol" 
                         required={false}
-                        value={orgObj.symbol} 
+                        value={orgObj?.symbol || ""} 
                         onChange={(e) => setOrgObj({...orgObj, symbol: e.target.value})}
                     />
                 </div>
@@ -261,7 +334,7 @@ const OrgForm = () => {
                     name="orgDescription"
                     label="Description"
                     required={true}
-                    value={orgObj.description}
+                    value={orgObj?.description || ""}
                     onChange={(e) => setOrgObj({...orgObj, description: e.target.value})}
                 />
 
@@ -283,7 +356,7 @@ const OrgForm = () => {
                     label="Custom Image"
                     placeholder="Upload Custom Organization Image"
                     disabled={true}
-                    value={isCustomImage && orgImage?.name ? orgImage.name : ""}
+                    value={isCustomImage && orgImage?.name ? orgImage.name : "Choose file..."}
                     append={
                         <button
                             className="button-secondary"
@@ -312,6 +385,11 @@ const OrgForm = () => {
                 actions={actions}
                 style={{marginInline: "30px"}}
             />
+
+            <hr style={{margin: "30px 20px 30px 20px", backgroundColor: "#EEEEF6", border: "none", height: "1px"}} />
+            {isEdit &&
+                <OrgDangerZone orgAddress={orgObj?.ethereum_address} />
+            }
         </div>
     )
 }

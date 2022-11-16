@@ -38,10 +38,12 @@ export async function postFeedbackRequest(feedback) {
 
 export async function postOrgRequest(org) {
     let response;
+    const url = org?.url ? org.url : `${API_URL}/organizations/`;
+    const method = org?.id ? 'PATCH' : 'POST';
 
     try {
-        await fetch(`${API_URL}/organizations/`, {
-            method: "POST",
+        await fetch(url, {
+            method: method,
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
@@ -80,22 +82,20 @@ export async function postBadgeRequest(badge) {
         : badge?.organization;
 
     const badgeData = {
+        ...badge,
         is_active: true,
-        name: badge.name,
-        description: badge.description,
-        token_id: badge.token_id,
-        image_hash: badge.image_hash,
-        token_uri: badge.token_uri,
-        account_bound: badge.account_bound,
         signer_ethereum_address: signer,
         users: users,
         delegates: delegates,
         organization: organization
     }
 
+    const url = badge.url ? badge.url : `${API_URL}/badges/`;
+    const method = badge?.id ? 'PATCH' : 'POST';
+
     try {
-        await fetch(`${API_URL}/badges/`, {
-            method: "POST",
+        await fetch(url, {
+            method: method,
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
@@ -124,6 +124,8 @@ export async function postBadgeRequest(badge) {
 }
 
 export async function postIPFSImage(image) {
+    // If the image is already a hash, return it.
+    if (typeof(image) === "string") return {hash: image};
     const formData = new FormData();
     formData.append('image', image)
     let response;
@@ -163,6 +165,8 @@ export async function postIPFSMetadata(props) {
         imageHash,
         attributes
     } = props;
+
+    if (!name || !description || !imageHash) return {error: "Missing required fields for IPFS metadata upload"};
     
     let response;
 
@@ -237,7 +241,7 @@ export async function getUserRequest(address) {
 export async function getOrgRequest(orgId) {
     let response;
     try {
-        await fetch(`${API_URL}/organizations/${orgId}`, {
+        await fetch(`${API_URL}/organizations/${orgId}/`, {
             method: "GET",
             mode: "cors",
             headers: {
@@ -363,4 +367,40 @@ export async function getPFPImage(char, address) {
     }
 
     return response
+}
+
+export async function patchArchive(type, id) {
+    const body = {
+        id: id,
+        is_active: false
+    }
+
+    let response;
+    try {
+        await fetch(`${API_URL}/${type}/${id}/`, {
+            method: "PATCH",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                'X-CSRFToken': getCSRFToken(),
+            },
+            credentials: 'include',
+            body: JSON.stringify(body)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data) throw new Error(
+                `${type} could not be archived.`
+            );
+            response = data;
+        })
+        .catch(err => {
+            throw new Error(err);
+        })
+    }
+    catch (err) {
+        response = {error: err}
+    }
+
+    return response;
 }

@@ -1,12 +1,13 @@
 import { useState, createContext, useContext, useEffect } from "react"
 import { useLocation } from "react-router-dom";
 import { UserContext } from "./UserContextProvider";
+import { initialOrgForm } from "@components/Dashboard/Form/FormReducer";
 
 export const OrgContext = createContext();
 
 const OrgContextProvider = ({ children }) => {
-    const [ orgData, setOrgData ] = useState();
     const { userData, authenticatedAddress } = useContext(UserContext);
+    const [ orgData, setOrgData ] = useState(initialOrgForm);
     const [ currentOrgId, setCurrentOrgId ] = useState();
     const { pathname } = useLocation();
 
@@ -20,7 +21,6 @@ const OrgContextProvider = ({ children }) => {
             setCurrentOrgId(orgId);
         }
     }, [pathname, currentOrgId, setCurrentOrgId])
-
 
     // If we have a currentOrgId and an authenticated address, parse the 
     // org data from the user data. If the org data is not owned by the user, 
@@ -44,7 +44,10 @@ const OrgContextProvider = ({ children }) => {
 
             org.badges = badges;
         }
-        setOrgData(org);
+
+        if (org) {
+            setOrgData(org);
+        }
         
     }, [userData, authenticatedAddress, currentOrgId])
 

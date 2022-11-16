@@ -38,6 +38,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'is_active',
             'chain',
             'name',
+            'symbol',
             'description',
             'image_hash',
             'contract_uri_hash',
