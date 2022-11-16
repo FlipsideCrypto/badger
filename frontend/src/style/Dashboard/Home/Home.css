@@ -36,8 +36,8 @@
 }
 
 .home__cards .home__card .home__card__image {
-    background-size: 1000%;
-    background-position: center;
+    background-size: 10000%;
+    background-position: top left;
     filter: blur(14px);
     position: absolute;
     top: 0;
@@ -46,12 +46,8 @@
     bottom: 0;
     z-index: -1;
     border-radius: 4px;
-}
-
-.home__cards .home__card__image {
+    filter: blur(25px);
     width: 100%;
-    /* set color to overall color of iamge */
-    filter: blur(15px);
 }
 
 .home__cards .home__card__text {

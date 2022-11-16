@@ -1,3 +1,34 @@
+export const badgeHeadRows = {
+    name: {
+        label: 'Badge',
+        sortable: true,
+        method: "",
+        align: 'left',
+        width: '40%',
+    },
+    holders: {
+        label: 'Holders',
+        sortable: true,
+        method: "",
+        align: 'right',
+        width: '10%',
+    },
+    managers: { 
+        label: 'Managers',
+        sortable: true,
+        method: "",
+        align: 'right',
+        width: '10%',
+    }, 
+    updated: { 
+        label: 'Last Updated',
+        sortable: true,
+        method: "",
+        align: 'right',
+        width: '20%',
+    }
+}
+
 export const holderHeadRows = {
     ethereum_address: {
         label: "Address",
