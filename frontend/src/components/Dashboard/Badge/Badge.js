@@ -289,7 +289,7 @@ const Badge = () => {
 
                 <HolderTable badge={badge} />
                 
-                {(badge?.users?.length < 1 || badge?.delegates?.length < 1) &&
+                {(badge?.users?.length < 1 && badge?.delegates?.length < 1) &&
                     <div className="no__holders">
                         <h3>No holders for this Badge yet!</h3>
                         <p>
