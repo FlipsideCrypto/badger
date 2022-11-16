@@ -75,16 +75,20 @@ export async function SIWEAuthorize (signer, address, chainId) {
 
 export async function getAuthenticationStatus() {
     let response;
+
+    const csrfToken = getCSRFToken();
     try {
         await fetch(`${API_URL}/wallets/authentication_status`, {
             method: "GET",
             headers: {
-                'X-CSRFToken': getCSRFToken(),
+                'X-CSRFToken': csrfToken,
             },
             credentials: 'include'
         })
         .then(res => res.json())
         .then(data => {
+            if (!csrfToken)
+                data = {detail: "Authentication credentials were not provided."};
             response = data;
         })
         .catch(err => {
@@ -92,6 +96,7 @@ export async function getAuthenticationStatus() {
         })
     }
     catch (err) {
+        console.log('err', err)
         response = {error: err}
     }
 
