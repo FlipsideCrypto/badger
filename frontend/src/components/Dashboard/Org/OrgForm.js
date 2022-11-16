@@ -245,9 +245,7 @@ const OrgForm = ({isEdit = false}) => {
 
     // Post the org Obj to the backend once the contract address is added.
     const postOrg = useCallback(async (org) => {
-        console.log('org', org)
         const response = await postOrgRequest(org);
-        console.log('org res', response)
         if (!response?.error && response?.id) {
             let newUserData = {...userData};
 

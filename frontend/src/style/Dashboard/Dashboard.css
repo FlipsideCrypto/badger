@@ -6,7 +6,6 @@
 }
 
 .dashboard p,
-/* .dashboard a, */
 .dashboard h5,
 .dashboard .button {
     font-size: 14px;
@@ -17,10 +16,21 @@
     font-weight: 700;
 }
 
-/* .dashboard a svg {
-    color: rgba(0, 0, 0, .35);
-} */
-
 .dashboard__margin__left {
-    margin-left: 30px;
+    margin-left: 40px;
+}
+
+.div__header { 
+    align-items: center;
+    height: 70px;
+}
+
+.preview__container {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #E3E0E0;
+    border-radius: 8px;
+    aspect-ratio: 1/1;
+    width: max-content;
+    height: max-content;
 }

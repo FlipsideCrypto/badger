@@ -1,18 +1,22 @@
 import { useState, useContext, useEffect, useCallback, useReducer } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAccount } from "wagmi"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Header from "@components/Dashboard/Header/Header";
 import HolderTable from "@components/Table/HolderTable";
 import IconButton from "@components/Button/IconButton";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import Select from "@components/Dashboard/Form/Select";
+import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
+import ActionButton from "@components/Button/ActionButton";
 
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { FormReducer } from "@components/Dashboard/Form/FormReducer";
 import { useManageBadgeOwnership, useSetDelegates } from "@hooks/contracts/useContracts";
 import { putBadgeRolesRequest } from "@utils/api_requests";
+import { IPFS_GATEWAY_URL } from "@static/constants/links";
 
 import "@style/Dashboard/Badge/Badge.css";
 
@@ -54,9 +58,9 @@ const Badge = () => {
     );
 
     const actions = isOwner || isManager ? [{
-        text: "Manage",
-        icon: ["fal", "fa-person"],
-        event: () => setIsManage(!isManage)
+        text: "Settings",
+        icon: ["fal", "fa-gear"],
+        event: () => navigate(`/dashboard/organization/${orgId}/badge/${badgeId}/edit`)
     }] : [];
 
     // Limit actions for Managers.
@@ -193,13 +197,38 @@ const Badge = () => {
         }
     }, [manageOwnership.error, setDelegates.error, txMethod, setError])
 
+    console.log('badge', badge.holders, badge.delegates)
+
     return (
         <>
             <Header back={() => navigate(`/dashboard`)} actions={actions} />
 
             <div id="badge">
-                <div className="center__gutter">
-                    <h1>{badge?.name}</h1>
+                <div className="badge__header container__background">
+                    <div className="preview__container">
+                        <ImageLoader
+                            className="badge__header__image"
+                            src={IPFS_GATEWAY_URL + badge?.image_hash}
+                            alt={badge?.name + 'image'}
+                        />
+                    </div>
+
+                    <div className="badge__header__content">
+                        <div className="badge__title">
+                            <span className="badge__name">{badge?.name}</span>
+                            <div className="badge__title__icons">
+                                {badge?.account_bound && 
+                                    <FontAwesomeIcon icon={["fal", "fa-lock"]} />
+                                }
+                            </div>
+                        </div>
+                        <p className="badge__description">
+                            {badge?.description}
+                        </p>
+                        <div className="indicator__pill">
+                            {`#${badge?.token_id ?? ""}`}
+                        </div>
+                    </div>
                 </div>
 
                 {isManage && (isOwner || isManager) &&
@@ -231,25 +260,36 @@ const Badge = () => {
                     </>
                 }
 
-                {(badge?.users?.length > 0 || badge?.delegates?.length > 0) &&
-                    <HolderTable badge={badge} />
-                }
-
-                {badge?.users?.length === 0 && badge?.delegates?.length === 0 && (isManager || isOwner) &&
-                    <div className="org__container empty">
-                        <h1>You're almost done with setting up the {badge?.name} Badge!</h1>
+                <div className="header div__header" style={{marginTop: "60px"}}>
+                    <h2 className="dashboard__margin__left">
+                        Badge Holders
+                    </h2>
+                    <div className="header__actions">
+                        <ActionButton
+                            icon={['fal', 'fa-user']}
+                            afterText="Update holders"
+                            onClick={() => setIsManage(true)}
+                        />
+                        <ActionButton
+                            icon={['fal', 'fa-people-roof']}
+                            afterText="Update managers"
+                            onClick={() => {
+                                setSelectedAction("Add Manager");
+                                setIsManage(true)
+                            }}
+                        />
+                    </div>
+                </div>
+                <HolderTable badge={badge} />
+                
+                {(badge?.users?.length < 1 || badge?.delegates?.length < 1) &&
+                    <div className="no__holders">
+                        <h3>No holders for this Badge yet!</h3>
                         <p>
-                            With your <strong>{orgData?.name} Organization</strong> and your <strong>{badge.name} Badge</strong> set up, 
-                             the final step is to send this badge to your team members and the credentials will be live.
+                            You've set up your Organization and your Badge. 
+                            Now for the final step of sending the first set 
+                            of keys to your team members.
                         </p>
-                        <div style={{margin: 'auto'}}>
-                            <IconButton 
-                                icon={['fal', 'arrow-right']} 
-                                text="DISTRIBUTE BADGE"
-                                onClick={() => setIsManage(true)}
-                                style={{textAlign: "center"}}
-                            />
-                        </div>
                     </div>
                 }
             </div>

@@ -11,12 +11,12 @@ th {
 }
 
 th:first-child {
-    padding-left: 40px !important;
+    padding-left: 80px !important;
 }
 
 th:last-child,
 td:last-child {
-    padding-right: 40px !important;
+    padding-right: 80px !important;
 }
 
 th:not(:last-child) {

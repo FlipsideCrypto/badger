@@ -28,3 +28,80 @@
     margin-top: 20px; 
     margin-bottom: 20px;
 }
+
+.badge__header {
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    grid-gap: 30px;
+    padding: 20px 40px 20px 40px;
+}
+
+.badge__header .badge__title {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-gap: 16px;
+    align-items: center;
+}
+
+.badge__title .badge__name {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 35px;
+    margin: 0;
+}
+
+.badge__title .badge__title__icons {
+    display: grid;
+    grid-template-columns: repeat(3, min-content);
+    grid-gap: 8px;
+    align-items: baseline;
+}
+
+.badge__title .badge__title__icons svg {
+    width: 14px;
+    height: 16px;
+}
+
+.badge__description {
+    max-width: 50%;
+}
+
+.badge__header__image {
+    width: 140px;
+    height: 140px;
+}
+
+.badge__header__image::after {
+    box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.15);
+    max-width: 140px;
+    max-height: 140px;
+    content: '';
+    display: block;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+.badge__header__content {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 8px;
+}
+
+.indicator__pill {
+    border: 1px solid #E3E0E0;
+    border-radius: 50px;
+    min-width: 40px;
+    text-align: center;
+    width: min-content;
+    font-size: 12px;
+    line-height: 24px;
+    height: 24px;
+    align-self: end;
+}
+
+.no__holders {
+    width: 300px;
+    margin: 30px 0px 30px 40px;
+}

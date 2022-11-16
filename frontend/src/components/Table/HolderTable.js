@@ -34,18 +34,22 @@ const HolderTable = ({ badge }) => {
     // Combines the user and delegates arrays into one array with a user and delegate boolean property.
     const combineUsersAndDelegates = (users, delegates) => {
         let combinedUsers = [];
-        users.forEach(user => {
-            combinedUsers.push({ ...user, holder: true })
-        })
-        delegates.forEach(delegate => {
-            const index = combinedUsers.findIndex(user => 
-                user.ethereum_address === delegate.ethereum_address
-            )
-            
-            index === -1 ?
-                  combinedUsers.push({ ...delegate, holder: false, delegate: true })
-                : combinedUsers[index].delegate = true;
-        })
+        if (users?.length > 0) {
+            users.forEach(user => {
+                combinedUsers.push({ ...user, holder: true })
+            })
+        }
+        if (delegates?.length > 0) {
+            delegates.forEach(delegate => {
+                const index = combinedUsers.findIndex(user => 
+                    user.ethereum_address === delegate.ethereum_address
+                )
+                
+                index === -1 ?
+                    combinedUsers.push({ ...delegate, holder: false, delegate: true })
+                    : combinedUsers[index].delegate = true;
+            })
+        }
 
         return combinedUsers;
     }
@@ -77,7 +81,7 @@ const HolderTable = ({ badge }) => {
                     </TableHead>
 
                     <TableBody>
-                    {sortedList.map((user, index) => (
+                    {sortedList?.length > 0 && sortedList.map((user, index) => (
                         <TableRow
                             key={user.ethereum_address +'-'+ index}
                         >
