@@ -30,3 +30,7 @@
 .dashboard .button { 
     font-weight: 700;
 }
+
+.dashboard__content { 
+    margin-inline: 20px;
+}
