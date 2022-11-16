@@ -275,7 +275,7 @@ const OrgForm = ({isEdit = false}) => {
         }
 
         return response;
-    }, [navigate, userData, setUserData, setError]);
+    }, [userData, setUserData, setError]);
 
     // If we have a silent error from preparing the transaction, display it.
     useEffect(() => {

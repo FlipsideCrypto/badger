@@ -28,7 +28,7 @@ const ActionBar = ({ address, collapsed, setCollapsed }) => {
     const { openConnectModal } = useConnectModal();
     const { ensAvatar, ensName, isFetched: ensFetched } = useEnsProfile(address);
 
-    const { userData, isAuthenticated, tryAuthentication } = useContext(UserContext);
+    const { isAuthenticated, tryAuthentication } = useContext(UserContext);
     const { orgData } = useContext(OrgContext);
 
     const { pathname: path } = useLocation();

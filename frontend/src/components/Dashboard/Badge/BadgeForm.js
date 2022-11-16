@@ -10,7 +10,7 @@ import FormDrawer from "@components/Dashboard/Form/FormDrawer";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import InputListKeyValue from "@components/Dashboard/Form/InputListKeyValue";
 import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
-import BadgeDangerZone from "@components/Dashboard/Badge/BadgeDangerZone";
+// import BadgeDangerZone from "@components/Dashboard/Badge/BadgeDangerZone";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
@@ -41,7 +41,7 @@ const BadgeForm = ({isEdit = false}) => {
 
     const badgeIndex = useMemo(() => {
         return orgData?.badges?.findIndex(badge => badge.id === badgeId);
-    }, [orgData])
+    }, [orgData, badgeId])
 
     const badgeData = useMemo(() => {
         return orgData?.badges?.[badgeIndex];
@@ -72,7 +72,7 @@ const BadgeForm = ({isEdit = false}) => {
             !signerIsValid ||
             (!deterministicImageHash && !badgeData?.image_hash)
         )
-    }, [badge, areAddressesValid, signerIsValid])
+    }, [badge, areAddressesValid, signerIsValid, deterministicImageHash, badgeData?.image_hash])
 
     const setBadge = useSetBadge(
        !isDisabled, 
@@ -252,8 +252,7 @@ const BadgeForm = ({isEdit = false}) => {
     // Set the badge if editing and orgData was not fetched on render.
     useEffect(() => {
         if (orgData.name && !badge.id) {
-            const id = badgeId;
-            const index = orgData?.badges?.findIndex(b => b.id === id);
+            const index = orgData?.badges?.findIndex(b => b.id === badgeId);
             const orgBadge = orgData?.badges?.[index];
 
             const payload = {
@@ -265,7 +264,7 @@ const BadgeForm = ({isEdit = false}) => {
 
             badgeDispatch({type: "SET_MULTIPLE", payload: payload});
         }
-    }, [orgData, badge.id])
+    }, [orgData, badge.id, badgeId])
 
     // Get the placeholder Badge Image once the component and orgData is mounted.
     useEffect(() => {
@@ -312,14 +311,6 @@ const BadgeForm = ({isEdit = false}) => {
                     `/dashboard/organization/${orgData?.id}/badge/${badgeId}` :
                     `/dashboard/organization/${orgData?.id}`
                 )}
-                actions={isEdit ? 
-                    [{
-                        text: "Archive Badge",
-                        icon: ["fal", "archive"],
-                        event: () => onArchive(badgeId)
-                    }]
-                    : []
-                }
             />
 
             <h2 style={{marginLeft: "30px"}}>
