@@ -310,7 +310,7 @@ export async function putBadgeRolesRequest(badge, orgId) {
 }
 
 export async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
-    const url = `${API_URL}/art/badge?organization=${orgName}&organization_ethereum_address=${orgAddress}&badge_id=${badgeId}&badge_name=${badgeName}/`
+    const url = `${API_URL}/art/badge?organization=${orgName}&organization_ethereum_address=${orgAddress}&badge_id=${badgeId}&badge_name=${badgeName}`
     
     let response;
     try {
@@ -343,7 +343,7 @@ export async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
 export async function getPFPImage(char, address) {
     let response;
     try {
-        await fetch(`${API_URL}/art/pfp/?char=${char}&address=${address}/`, {
+        await fetch(`${API_URL}/art/pfp/?char=${char}&address=${address}`, {
             method: "GET",
             mode: "cors",
             headers: {

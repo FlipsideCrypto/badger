@@ -13,7 +13,7 @@ import OrgDangerZone from "@components/Dashboard/Org/OrgDangerZone";
 
 import { initialOrgForm } from "@components/Dashboard/Form/FormReducer";
 import { useCreateOrg, useEditOrg } from "@hooks/contracts/useContracts";
-import { postOrgRequest, postIPFSImage, postIPFSMetadata, getPFPImage, patchArchive } from "@utils/api_requests";
+import { postOrgRequest, postIPFSImage, postIPFSMetadata, getPFPImage } from "@utils/api_requests";
 import { getBadgerAbi } from "@hooks/contracts/contractVersions";
 import { useIPFSImageHash, useIPFSMetadataHash } from "@hooks/useIpfsHash";
 

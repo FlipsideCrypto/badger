@@ -61,15 +61,13 @@ const OrgDangerZone = (orgAddress) => {
     //     }
     // }
 
-    const onArchive = async (orgId) => {
+    const onArchive = async () => {
         const response = await patchArchive("organizations", orgId);
 
         let newUserData = {...userData}
-        console.log('userdata', newUserData)
         const orgIndex = newUserData.organizations.findIndex(org => org.id === orgId);
         
         if (response.error || orgIndex === -1) {
-            console.log('response', response, orgIndex);
             setError({
                 label: 'Could not archive org',
                 message: response?.error ?? response.detail ?? "Org not found"
@@ -77,7 +75,6 @@ const OrgDangerZone = (orgAddress) => {
             return;
         }
 
-        console.log('gets here')
         let newUserDataOrgs = [...newUserData.organizations];
         newUserDataOrgs.splice(orgIndex, 1);
         newUserData.organizations = newUserDataOrgs;
@@ -101,7 +98,7 @@ const OrgDangerZone = (orgAddress) => {
                     <button
                         className="button__warning"
                         style={{justifySelf: "end", alignSelf: "center"}}
-                        onClick={() => onArchive(orgId)}
+                        onClick={() => onArchive()}
                     >
                         Archive Org
                     </button>

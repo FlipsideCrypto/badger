@@ -96,7 +96,6 @@ export async function getAuthenticationStatus() {
         })
     }
     catch (err) {
-        console.log('err', err)
         response = {error: err}
     }
 

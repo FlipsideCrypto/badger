@@ -95,7 +95,7 @@ export const useSetBadge = (isTxReady, contractAddress, tokenUri, badge) => {
         badge.claimable,
         badge.account_bound,
         badge.signer || contractAddress, // Cannot have an empty string so we use the org as signer
-        tokenUri || "",
+        tokenUri || "0x",
         badge.payment_token || [ethers.constants.HashZero, 0],
         badge.delegates || [],
     ]
@@ -106,7 +106,7 @@ export const useSetBadge = (isTxReady, contractAddress, tokenUri, badge) => {
         contractInterface: BadgerOrganization.abi,
         functionName: "setBadge",
         args: args,
-        enabled: Boolean(fees && isTxReady),
+        enabled: Boolean(fees && isTxReady && tokenUri !== "0x"),
         overrides: {
             gasPrice: fees?.gasPrice,
         },
