@@ -8,7 +8,7 @@ import Header from "@components/Dashboard/Header/Header";
 import ActionTitle from "@components/Dashboard/action-title/ActionTitle";
 import BadgeTable from "@components/Table/BadgeTable";
 
-import "@style/Dashboard/Org/Org.css";
+// import "@style/Dashboard/Org/Org.css";
 
 const Org = () => {
     const navigate = useNavigate();
