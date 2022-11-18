@@ -25,21 +25,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
     badges = BadgeSerializer(many=True, read_only=True)
     delegates = OrganizationUserSerializer(many=True, read_only=True)
 
-    # internal cache for active badges
-    _badges = None
-
-    def _get_badges(self, obj):
-        if self._badges is None:
-            self._badges = obj.badges.filter(is_active=True).distinct()
-        return self._badges
-
-    def get_badges(self, obj):
-        return BadgeSerializer(
-            self._get_badges(obj),
-            many=True,
-            context={'request': self.context.get('request')}
-        ).data
-
     # Assign the owner of the organization to the current user
     def create(self, validated_data):
         validated_data['owner'] = self.context['request'].user
