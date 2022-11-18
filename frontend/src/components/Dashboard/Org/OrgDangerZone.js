@@ -1,6 +1,8 @@
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import ActionBar from "@components/Dashboard/Form/ActionBar";
+
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { patchArchive } from "@utils/api_requests";
@@ -84,15 +86,18 @@ const OrgDangerZone = (orgAddress) => {
 
     return (
         <>
-            <h3 style={{marginLeft: "20px"}}>Danger Zone</h3>
+            <h3 style={{marginLeft: "30px"}}>Danger Zone</h3>
 
             <div style={{border: "1px solid #FF0000", borderRadius: '10px', marginBottom: "40px"}}>
-                <div style={{display: "grid", gridTemplateColumns: "auto auto", padding: "20px"}}>
+                <div style={{display: "grid", gridTemplateColumns: "auto auto", padding: "10px 30px 10px 30px"}}>
                     <div className="form__group" style={{marginBottom: "0px"}}>
                         <label>Archive Organization</label>
-                        <span style={{fontSize: "14px", lineHeight: "21px", margin: "0"}}>
-                            Remove this organizations from showing up on the App. <b>NOTE</b>: The Org and Badges will still exist on chain!
-                        </span>
+                        <div style={{color: "rgba(0,0,0,0.35"}}>
+                            <ActionBar help="
+                                Remove this organizations from showing up on the App. 
+                                NOTE: The Org and Badges will still exist on chain!
+                            "/>
+                        </div>
                     </div>
 
                     <button
@@ -100,7 +105,7 @@ const OrgDangerZone = (orgAddress) => {
                         style={{justifySelf: "end", alignSelf: "center"}}
                         onClick={() => onArchive()}
                     >
-                        Archive Org
+                        Archive organization
                     </button>
                 </div>
 

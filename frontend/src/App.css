@@ -59,6 +59,7 @@ button {
   border-radius: 5px;
   border: 1px solid #FF0000;
   color: #FF0000 !important;
+  font-size: 12px;
 }
 
 .button__warning:hover,
