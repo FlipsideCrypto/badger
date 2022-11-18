@@ -1,6 +1,8 @@
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import ActionBar from "@components/Dashboard/Form/ActionBar";
+
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { patchArchive } from "@utils/api_requests";
@@ -19,13 +21,13 @@ const BadgeDangerZone = () => {
     const orgId = parseInt(useParams().orgId);
 
     const onArchive = async () => {
-        const response = await patchArchive("badges", orgId);
+        const response = await patchArchive("badges", badgeId);
 
         let newUserData = {...userData}
         const orgIndex = newUserData.organizations.findIndex(org => org.id === orgId);
         const badgeIndex = newUserData.organizations[orgIndex].badges.findIndex(badge => badge.id === badgeId);
         
-        if (response.error || badgeIndex === -1) {
+        if (response.error || response.detail || badgeIndex === -1) {
             setError({
                 label: 'Could not archive badge',
                 message: response?.error ?? response.detail ?? "Badge not found"
@@ -35,22 +37,22 @@ const BadgeDangerZone = () => {
 
         let newUserDataBadges = [...newUserData.organizations[orgIndex].badges];
         newUserDataBadges.splice(badgeIndex, 1);
-        newUserData.organizations = newUserDataBadges;
+        newUserData.organizations[orgIndex].badges = newUserDataBadges;
         setUserData(newUserData);
-        navigate(`/dashboard/organizations/${orgId}`);
+        navigate(`/dashboard/organization/${orgId}`);
     }
 
     return (
         <>
-            <h3 style={{marginLeft: "20px"}}>Danger Zone</h3>
+            <h3 style={{marginLeft: "30px"}}>Danger Zone</h3>
 
             <div style={{border: "1px solid #FF0000", borderRadius: '10px', marginBottom: "40px"}}>
-                <div style={{display: "grid", gridTemplateColumns: "auto auto", padding: "20px"}}>
+                <div style={{display: "grid", gridTemplateColumns: "auto auto", padding: "10px 30px 10px 30px"}}>
                     <div className="form__group" style={{marginBottom: "0px"}}>
                         <label>Archive Badge</label>
-                        <span style={{fontSize: "14px", lineHeight: "21px", margin: "0"}}>
-                            Remove this badge from the App. <b>NOTE</b>: The Badge will still exist on chain!
-                        </span>
+                        <div style={{color: "rgba(0,0,0,0.35"}}>
+                            <ActionBar help="Remove this badge from the App. NOTE: The Badge will still exist on chain!" />
+                        </div>
                     </div>
 
                     <button
@@ -58,7 +60,7 @@ const BadgeDangerZone = () => {
                         style={{justifySelf: "end", alignSelf: "center"}}
                         onClick={() => onArchive()}
                     >
-                        Archive Badge
+                        Archive badge
                     </button>
                 </div>
             </div>

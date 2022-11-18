@@ -10,7 +10,8 @@ import FormDrawer from "@components/Dashboard/Form/FormDrawer";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import InputListKeyValue from "@components/Dashboard/Form/InputListKeyValue";
 import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
-// import BadgeDangerZone from "@components/Dashboard/Badge/BadgeDangerZone";
+import BadgeDangerZone from "@components/Dashboard/Badge/BadgeDangerZone";
+
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
@@ -453,10 +454,10 @@ const BadgeForm = ({isEdit = false}) => {
                 style={{marginInline: "30px", marginBottom: "30px"}}
             />
 
-            {/* <hr style={{margin: "30px 20px 30px 20px", backgroundColor: "#EEEEF6", border: "none", height: "1px"}} />
+            <hr style={{margin: "30px 20px 30px 20px", backgroundColor: "#EEEEF6", border: "none", height: "1px"}} />
             {isEdit &&
                 <BadgeDangerZone />
-            } */}
+            }
         </>
     )
 }
