@@ -369,6 +369,33 @@ export async function getPFPImage(char, address) {
     return response
 }
 
+// TODO: Remove this once attributes are stored in the API
+export async function getAttributesFromHash(hash) {
+    const url = `${IPFS_GATEWAY_URL}${hash}`;
+
+    let response;
+    try {
+        await fetch(url, {
+            method: "GET",
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data) throw new Error(
+                "Attributes could not be retrieved."
+            );
+            response = data.attributes;
+        })
+        .catch(err => {
+            throw new Error(err);
+        })
+    }
+    catch (err) {
+        response = {error: err}
+    }
+
+    return response;
+}
+
 export async function patchArchive(type, id) {
     const body = {
         id: id,

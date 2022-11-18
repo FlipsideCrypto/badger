@@ -16,7 +16,7 @@ import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { FormReducer, initialBadgeForm } from "@components/Dashboard/Form/FormReducer";
 
-import { postBadgeRequest, postIPFSImage, postIPFSMetadata, getBadgeImage } from "@utils/api_requests";
+import { postBadgeRequest, postIPFSImage, postIPFSMetadata, getBadgeImage, getAttributesFromHash } from "@utils/api_requests";
 import { useSetBadge } from "@hooks/contracts/useContracts";
 import { useIPFSImageHash, useIPFSMetadataHash } from "@hooks/useIpfsHash";
 
@@ -236,6 +236,27 @@ const BadgeForm = ({isEdit = false}) => {
 
         return response;
     }
+
+    // TODO: Remove this once attributes are in the database.
+    // This effect is used to fetch the attributes from the tokenURI of the badge if editing.
+    useEffect(() => {
+        const getAttributes = async (hash) => {
+            const res = await getAttributesFromHash(hash);
+            if (res.error) {
+                setError({
+                    label: "Could not fetch Badge attributes",
+                    message: res.error
+                })
+                return;
+            }
+
+            badgeDispatch({type: "SET", field: "attributes", payload: res});
+        }
+
+        if (isEdit && badgeData?.token_uri) {
+            getAttributes(badgeData.token_uri);
+        }
+    }, [isEdit, badgeData?.token_uri])
 
     // Set the badge if editing and orgData was not fetched on render.
     useEffect(() => {
