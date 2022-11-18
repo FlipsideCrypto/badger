@@ -237,18 +237,6 @@ const BadgeForm = ({isEdit = false}) => {
         return response;
     }
 
-    // Set the relevant parent org data in badge state if we are creating a new badge.
-    // useEffect(() => {
-    //     if (!isEdit && !badge.token_id && orgData.ethereum_address) {
-    //         const payload = {
-    //             token_id: orgData?.badges?.length,
-    //             ethereum_address: orgData?.ethereum_address,
-    //             organization: orgData?.id
-    //         }
-    //         badgeDispatch({type: "SET_MULTIPLE", payload: payload});
-    //     }
-    // }, [orgData.ethereum_address])
-
     // Set the badge if editing and orgData was not fetched on render.
     useEffect(() => {
         if (orgData.name && !badge.id) {
@@ -403,13 +391,16 @@ const BadgeForm = ({isEdit = false}) => {
                     value={badge.signer}
                     onChange={(event) => onSignerChange(event)}
                 />
-                <InputListCSV
-                    label={"Managers"}
-                    inputList={badge.delegates}
-                    dispatch={badgeDispatch}
-                    listKey={"delegates"}
-                    setAreAddressesValid={setAreAddressesValid}
-                />
+                
+                {!isEdit &&
+                    <InputListCSV
+                        label={"Managers"}
+                        inputList={badge.delegates}
+                        dispatch={badgeDispatch}
+                        listKey={"delegates"}
+                        setAreAddressesValid={setAreAddressesValid}
+                    />
+                }
 
             </FormDrawer>
 

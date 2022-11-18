@@ -89,7 +89,12 @@ export const useSetBadge = (isTxReady, contractAddress, tokenUri, badge) => {
             badge.delegates.pop(index)
         }
     })
-    
+
+    // If the delegates are already initialized and in the database,
+    // writing them to the chain again in this method is a waste of gas.
+    if (typeof badge?.delegates?.[0] === "object")
+        badge.delegates = []
+
     const args = [
         badge.token_id,
         badge.claimable,
