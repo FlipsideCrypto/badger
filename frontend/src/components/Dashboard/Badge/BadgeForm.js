@@ -1,10 +1,10 @@
 import { useState, useRef, useContext, useEffect, useReducer, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ethers } from "ethers";
 
 import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";
+import InputAddress from "@components/Dashboard/Form/InputAddress";
 import Select from "@components/Dashboard/Form/Select";
 import FormDrawer from "@components/Dashboard/Form/FormDrawer";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
@@ -156,26 +156,6 @@ const BadgeForm = ({isEdit = false}) => {
         setBadgeImage(image)
         URL.revokeObjectURL(badgeImagePreview);
         setBadgeImagePreview(URL.createObjectURL(image));
-    }
-
-    // On signer change check if the signer is valid and if they are checksum the address.
-    const onSignerChange = (event) => {
-        const address = event.target.value.trim();
-        badgeDispatch({type: "SET", field: "signer", payload: address});
-
-        // An empty address is valid as it is caught in the contract hooks.
-        if (address === "") {
-            setSignerIsValid(true);
-            return;
-        }
-        // Save an RPC call if the address is not correct length.
-        if (address.length !== 42) {
-            setSignerIsValid(false);
-            return;
-        }
-
-        const isValid = ethers.utils.isAddress(address);
-        setSignerIsValid(isValid);
     }
 
     // Write to contract
@@ -402,15 +382,16 @@ const BadgeForm = ({isEdit = false}) => {
                     />
                 </div>
 
-                <Input
+                <InputAddress
                     label="Signer"
-                    className={signerIsValid ? 
-                        "form__list__address" : "form__list__address error"
-                    }
                     placeholder="0x0000..."
                     required={false}
                     value={badge.signer}
-                    onChange={(event) => onSignerChange(event)}
+                    setValue={(value) => badgeDispatch({
+                        type: "SET", field: "signer", payload: value
+                    })}
+                    isValid={signerIsValid}
+                    setIsValid={setSignerIsValid}
                 />
                 
                 {!isEdit &&
