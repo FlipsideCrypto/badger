@@ -77,8 +77,7 @@ const Badge = () => {
     // When select option changes, set the controlled value and update the
     // method to determine function flow and to send to be further parsed
     // into single, bundle, or full bundle methods at the contract level.
-    const onMethodChange = (event) => {
-        const method = event.target.value
+    const onMethodChange = (method) => {
         setSelectedAction(method);
         if (method === "Mint" || method === "Revoke") {
             setTxMethod("manageOwnership");
@@ -241,7 +240,7 @@ const Badge = () => {
                                 icon: ['fal', 'fa-user'],
                                 afterText: "Update holders",
                                 onClick: () => {
-                                    setSelectedAction("Mint")
+                                    onMethodChange("Mint");
                                     setIsManage(true)
                                 }
                             },
@@ -250,7 +249,7 @@ const Badge = () => {
                                 icon: ['fal', 'fa-people-roof'],
                                 afterText: "Update managers",
                                 onClick: () => {
-                                    setSelectedAction("Add Manager")
+                                    onMethodChange("Add Manager");
                                     setIsManage(true)
                                 }
                             }
@@ -264,7 +263,7 @@ const Badge = () => {
                             label="Update Type"
                             options={selectActions} 
                             value={selectedAction}
-                            setValue={onMethodChange}
+                            setValue={(e) => onMethodChange(e.target.value)}
                         />
                         <InputListCSV
                             label={selectedAction === "Mint" ? "Members to Update" : "Managers to Update"}
