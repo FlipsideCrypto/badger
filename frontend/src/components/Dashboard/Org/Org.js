@@ -19,7 +19,6 @@ const Org = () => {
     const { orgId } = useParams();
 
     const isOwner = useMemo(() => {
-        console.log("isOwner", orgData.owner, address)
         return orgData.owner.ethereum_address === address;
     }, [orgData, address])
 
