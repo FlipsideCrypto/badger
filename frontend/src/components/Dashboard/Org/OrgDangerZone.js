@@ -5,7 +5,7 @@ import ActionBar from "@components/Dashboard/Form/ActionBar";
 
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
-import { patchArchive } from "@utils/api_requests";
+import { patchModelType } from "@utils/api_requests";
 
 import { useTransferOwnership } from "@hooks/contracts/useContracts";
 import InputAddress from "@components/Dashboard/Form/InputAddress";
@@ -34,13 +34,25 @@ const OrgDangerZone = ({orgAddress}) => {
     const onTransferOwnership = async () => {
         try {
             const tx = await transferOwnership.write?.();
-            const txReceipt = await tx?.wait();
+            const txReceipt = await tx.wait();
 
             if (txReceipt.status !== 1) {
                 throw new Error(transferOwnership?.error);
             }
-            // post to backend
-            // show a success message
+            const body = {
+                id: orgId,
+                owner: {
+                    ethereum_address: newOwner
+                }
+            }
+            const response = await patchModelType("organizations", body);
+
+            let newUserData = {...userData}
+            const orgIndex = newUserData.organizations.findIndex(org => org.id === orgId);
+            newUserData.organizations[orgIndex] = response;
+            setUserData(newUserData);
+            // TODO: show a success message
+            navigate('/dashboard/');
         }
         catch (error) {
             setError({
@@ -70,7 +82,11 @@ const OrgDangerZone = ({orgAddress}) => {
     // }
 
     const onArchive = async () => {
-        const response = await patchArchive("organizations", orgId);
+        const body = {
+            id: orgId,
+            is_active: false
+        }
+        const response = await patchModelType("organizations", body);
 
         let newUserData = {...userData}
         const orgIndex = newUserData.organizations.findIndex(org => org.id === orgId);
@@ -98,7 +114,7 @@ const OrgDangerZone = ({orgAddress}) => {
                 message: transferOwnership.error
             })
         }
-    }, [transferOwnership.error])
+    }, [setError, transferOwnership.error])
 
     return (
         <>

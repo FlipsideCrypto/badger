@@ -396,15 +396,10 @@ export async function getAttributesFromHash(hash) {
     return response;
 }
 
-export async function patchArchive(type, id) {
-    const body = {
-        id: id,
-        is_active: false
-    }
-
+export async function patchModelType(type, obj) {
     let response;
     try {
-        await fetch(`${API_URL}/${type}/${id}/`, {
+        await fetch(`${API_URL}/${type}/${obj.id}/`, {
             method: "PATCH",
             mode: "cors",
             headers: {
@@ -412,7 +407,7 @@ export async function patchArchive(type, id) {
                 'X-CSRFToken': getCSRFToken(),
             },
             credentials: 'include',
-            body: JSON.stringify(body)
+            body: JSON.stringify(obj)
         })
         .then(res => res.json())
         .then(data => {

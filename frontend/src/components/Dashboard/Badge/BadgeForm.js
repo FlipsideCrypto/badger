@@ -236,7 +236,7 @@ const BadgeForm = ({isEdit = false}) => {
         if (isEdit && badgeData?.token_uri) {
             getAttributes(badgeData.token_uri);
         }
-    }, [isEdit, badgeData?.token_uri])
+    }, [setError, isEdit, badgeData?.token_uri])
 
     // Set the badge if editing and orgData was not fetched on render.
     useEffect(() => {
