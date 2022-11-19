@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ActionButton from "@components/Button/ActionButton";
@@ -15,7 +15,7 @@ const InputListKeyValue = (
         ...props 
     }
 ) => {
-    const [ inputFieldCount, setInputFieldCount ] = useState(1);
+    const [ inputFieldCount, setInputFieldCount ] = useState(inputList?.length > 1 ? inputList.length : 1);
 
     // Adds the input field to the state array.
     const onInputChange = (index, event, keyValue) => {
@@ -103,6 +103,13 @@ const InputListKeyValue = (
             />
         )
     }
+
+    // If the inputList changes outside of this component, update the inputFieldCount.
+    useEffect(() => {
+        if (inputList.length > 1) {
+            setInputFieldCount(inputList.length);
+        }
+    }, [inputList])
 
     return (
         <div className="form__list" {...props}>
