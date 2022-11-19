@@ -39,12 +39,16 @@ const Badge = () => {
     );
 
     const [ badge, setBadge ] = useState(orgData?.badges?.[badgeIndex] || {});
-    const isOwner = orgData?.owner?.ethereum_address === address;
-    // find if the authenticated address is in one of the delegates.ethereum_address properties
-    const isManager = badge?.delegates?.find(delegate => delegate.ethereum_address === address);
+    
+    const isLeader = useMemo(() => {
+        return (
+            orgData?.owner?.ethereum_address === address ||
+            badge?.delegates?.find(delegate => delegate.ethereum_address === address)
+        )
+    }, [orgData, badge, address]);
 
     const setDelegates = useSetDelegates(
-        isOwner && areAddressesValid && txMethod === "setDelegates",
+        isLeader && areAddressesValid && txMethod === "setDelegates",
         orgData?.ethereum_address,          // orgAddress
         badge?.token_id,                    // tokenId array
         addressesToUpdate.addresses,        // address array
@@ -60,19 +64,13 @@ const Badge = () => {
         1                                   // amount of each token
     );
 
-    const actions = isOwner || isManager ? [{
-        text: "Settings",
-        icon: ["fal", "fa-gear"],
-        event: () => navigate(`/dashboard/organization/${orgId}/badge/${badgeId}/edit`)
-    }] : [];
-
     // Limit actions for Managers.
-    const selectActions = isOwner ? [
+    const selectActions = [
         "Mint",
         "Revoke",
         "Add Manager",
         "Remove Manager"
-    ] : ["Mint", "Revoke"]
+    ]
 
     // When select option changes, set the controlled value and update the
     // method to determine function flow and to send to be further parsed
@@ -201,7 +199,16 @@ const Badge = () => {
 
     return (
         <>
-            <Header back={() => navigate(`/dashboard/organization/${orgId}`)} actions={actions} />
+            <Header 
+                back={() => navigate(`/dashboard/organization/${orgId}`)} 
+                actions={isLeader ? 
+                    [{
+                        text: "Settings",
+                        icon: ["fal", "fa-gear"],
+                        event: () => navigate(`/dashboard/organization/${orgId}/badge/${badgeId}/edit`)
+                    }] : []
+                }
+            />
 
             <div id="badge">
                 <div className="badge__header container__background">
@@ -234,8 +241,8 @@ const Badge = () => {
                 <div style={{marginInline: "20px", marginTop: "20px"}}>
                     <ActionTitle 
                         title="Badge Holders"
-                        actions={[
-                            {
+                        actions={isLeader ? 
+                            [{
                                 className: "home__action-button",
                                 icon: ['fal', 'fa-user'],
                                 afterText: "Update holders",
@@ -252,12 +259,12 @@ const Badge = () => {
                                     onMethodChange("Add Manager");
                                     setIsManage(true)
                                 }
-                            }
-                        ]}
+                            }] : []
+                        }
                     />
                 </div>
 
-                {isManage && (isOwner || isManager) &&
+                {isManage && isLeader &&
                     <div style={{margin: "20px"}}>
                         <Select 
                             label="Update Type"
