@@ -33,6 +33,7 @@
 }
 
 .form__group.input__group input {
+    height: 20px;
     grid-column: 1;
 }
 
@@ -72,6 +73,7 @@ input:disabled {
 }
 
 .form__list__address {
+    height: 18px;
     font-variant-numeric: tabular-nums lining-nums;
     font-family: monospace;
 }
