@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import ActionBar from "@components/Dashboard/Form/ActionBar";
@@ -7,8 +7,8 @@ import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvide
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { patchModelType } from "@utils/api_requests";
 
-import { useTransferOwnership } from "@hooks/contracts/useContracts";
-import InputAddress from "@components/Dashboard/Form/InputAddress";
+// import { useTransferOwnership } from "@hooks/contracts/useContracts";
+// import InputAddress from "@components/Dashboard/Form/InputAddress";
 
 // TODO: The renounceOwnership function in the contract does currently not 
 // support the withdrawal of funds to a target address.
@@ -19,48 +19,48 @@ const OrgDangerZone = ({orgAddress}) => {
     const navigate = useNavigate();
     const orgId = parseInt(useParams().orgId);
 
-    const [ newOwner, setNewOwner ] = useState("");
-    const [ newOwnerValid, setNewOwnerValid ] = useState(true);
+    // const [ newOwner, setNewOwner ] = useState("");
+    // const [ newOwnerValid, setNewOwnerValid ] = useState(true);
     // const [ renounceTarget, setRenounceTarget ] = useState("");
     // const [ renounceTargetValid, setRenounceTargetValid ] = useState(true);
     
-    const transferOwnership = useTransferOwnership(
-        orgAddress && newOwnerValid && newOwner !== "",
-        orgAddress,
-        newOwner
-    );
+    // const transferOwnership = useTransferOwnership(
+    //     orgAddress && newOwnerValid && newOwner !== "",
+    //     orgAddress,
+    //     newOwner
+    // );
     // const renounceOwnership = useRenounceOwnership(Boolean(orgAddress), orgAddress);
 
-    const onTransferOwnership = async () => {
-        try {
-            const tx = await transferOwnership.write?.();
-            const txReceipt = await tx.wait();
+    // const onTransferOwnership = async () => {
+    //     try {
+    //         const tx = await transferOwnership.write?.();
+    //         const txReceipt = await tx.wait();
 
-            if (txReceipt.status !== 1) {
-                throw new Error(transferOwnership?.error);
-            }
-            const body = {
-                id: orgId,
-                owner: {
-                    ethereum_address: newOwner
-                }
-            }
-            const response = await patchModelType("organizations", body);
+    //         if (txReceipt.status !== 1) {
+    //             throw new Error(transferOwnership?.error);
+    //         }
+    //         const body = {
+    //             id: orgId,
+    //             owner: {
+    //                 ethereum_address: newOwner
+    //             }
+    //         }
+    //         const response = await patchModelType("organizations", body);
 
-            let newUserData = {...userData}
-            const orgIndex = newUserData.organizations.findIndex(org => org.id === orgId);
-            newUserData.organizations[orgIndex] = response;
-            setUserData(newUserData);
-            // TODO: show a success message
-            navigate('/dashboard/');
-        }
-        catch (error) {
-            setError({
-                label: "Error transferring ownership",
-                message: error
-            })
-        }
-    }
+    //         let newUserData = {...userData}
+    //         const orgIndex = newUserData.organizations.findIndex(org => org.id === orgId);
+    //         newUserData.organizations[orgIndex] = response;
+    //         setUserData(newUserData);
+    //         // TODO: show a success message
+    //         navigate('/dashboard/');
+    //     }
+    //     catch (error) {
+    //         setError({
+    //             label: "Error transferring ownership",
+    //             message: error
+    //         })
+    //     }
+    // }
 
     // const onRenounceOwnership = async () => {
     //     try {
@@ -106,15 +106,15 @@ const OrgDangerZone = ({orgAddress}) => {
         navigate(`/dashboard`);
     }
 
-    useEffect(() => {
-        setError(null);
-        if (transferOwnership.error) {
-            setError({
-                label: "Error transferring ownership",
-                message: transferOwnership.error
-            })
-        }
-    }, [setError, transferOwnership.error])
+    // useEffect(() => {
+    //     setError(null);
+    //     if (transferOwnership.error) {
+    //         setError({
+    //             label: "Error transferring ownership",
+    //             message: transferOwnership.error
+    //         })
+    //     }
+    // }, [setError, transferOwnership.error])
 
     return (
         <>
@@ -143,7 +143,7 @@ const OrgDangerZone = ({orgAddress}) => {
                     </div>
 
 
-                    <InputAddress
+                    {/* <InputAddress
                         name="newOrgOwner"
                         label="Organization Owner"
                         value={newOwner}
@@ -163,7 +163,7 @@ const OrgDangerZone = ({orgAddress}) => {
                     />
                     <ActionBar help="
                         Transfer this organization to another wallet where you have the ability to manage the organization.
-                    " />
+                    " /> */}
                 </div>
 
 

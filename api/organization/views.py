@@ -22,27 +22,3 @@ class OrganizationViewSet(viewsets.ModelViewSet):
             permission_classes += [CanManageOrganization]
 
         return generator(self.permission_classes + permission_classes)
-
-    def _handle_owner_change(self, instance, owner):
-        print('owner', owner)
-        if owner:
-            address = owner.get('ethereum_address', owner)
-            new_owner, _ = Wallet.objects.get_or_create(ethereum_address=address)
-            instance.owner = new_owner
-            instance.save()
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        partial = kwargs.pop('partial', False)
-
-        owner = request.data.get('owner', None)
-
-        # do the normal update
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-
-        self.perform_update(serializer)
-        self._handle_owner_change(instance, owner)
-
-        return Response(serializer.data)
