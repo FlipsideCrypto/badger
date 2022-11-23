@@ -36,8 +36,6 @@
 }
 
 .home__cards .home__card .home__card__image {
-    background-size: 1000%;
-    background-position: top left;
     position: absolute;
     top: 0;
     left: 0;
