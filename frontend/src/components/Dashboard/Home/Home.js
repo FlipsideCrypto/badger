@@ -6,6 +6,8 @@ import { UserContext } from "@components/Dashboard/Provider/UserContextProvider"
 import { sliceAddress } from "@utils/helpers";
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
 
+import { handleImageLoad } from "@hooks/useColor";
+
 import IconButton from "@components/Button/IconButton";
 
 import Card from "@components/Card/Card"
@@ -42,9 +44,8 @@ const Home = () => {
                             <Card
                                 className="home__card"
                             >
-                                <div className="home__card__image" style={{
-                                    backgroundImage: `url(${IPFS_GATEWAY_URL + org.image_hash})`,
-                                }} />
+                                <div className="home__card__image" />
+
                                 <div className="home__card__text">
                                     <div className="home__card__subtext">
                                         <small><strong><span style={{ marginRight: "10px" }}>
@@ -57,6 +58,7 @@ const Home = () => {
                                             <ImageLoader
                                                 className="home__card__view__image"
                                                 src={IPFS_GATEWAY_URL + org.image_hash}
+                                                onLoad={handleImageLoad}
                                             />
                                             {org.name}
                                         </h2>
@@ -74,7 +76,7 @@ const Home = () => {
                             Choose and customize your Organization's name, logo, and description and your organization is live!
                         </p>
                         <Link className="internal-link" to={`/dashboard/organization/new`}>
-                            <IconButton icon={['fal', 'arrow-right']} text="CREATE ORGANIZATION" style={{marginTop: "40px"}} />
+                            <IconButton icon={['fal', 'arrow-right']} text="CREATE ORGANIZATION" style={{ marginTop: "40px" }} />
                         </Link>
                     </div>}
             </div>
