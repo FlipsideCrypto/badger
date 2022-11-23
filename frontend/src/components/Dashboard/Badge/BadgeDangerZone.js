@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
-import { patchArchive } from "@utils/api_requests";
+import { patchModelType } from "@utils/api_requests";
 
 // import { useTransferOwnership, useRenounceOwnership } from "@hooks/contracts/useContracts";
 // import Input from "@components/Dashboard/Form/Input";
@@ -19,7 +19,11 @@ const BadgeDangerZone = () => {
     const orgId = parseInt(useParams().orgId);
 
     const onArchive = async () => {
-        const response = await patchArchive("badges", orgId);
+        const body = {
+            id: orgId,
+            is_active: false
+        }
+        const response = await patchModelType("badges", body);
 
         let newUserData = {...userData}
         const orgIndex = newUserData.organizations.findIndex(org => org.id === orgId);

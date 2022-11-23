@@ -1,5 +1,6 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
+import { useAccount } from "wagmi";
 
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 
@@ -13,32 +14,38 @@ import BadgeTable from "@components/Table/BadgeTable";
 const Org = () => {
     const navigate = useNavigate();
 
+    const { address } = useAccount();
     const { orgData } = useContext(OrgContext);
-    
     const { orgId } = useParams();
+
+    const isOwner = useMemo(() => {
+        return orgData.owner.ethereum_address === address;
+    }, [orgData, address])
 
     return (
         <>
             <Header 
                 back={() => navigate("/dashboard")} 
-                actions={[{
-                    text: "Settings",
-                    icon: ['fal', 'fa-gear'],
-                    event: () => navigate(`/dashboard/organization/${orgId}/edit`)
-                }]}
+                actions={isOwner ? 
+                    [{
+                        text: "Settings",
+                        icon: ['fal', 'fa-gear'],
+                        event: () => navigate(`/dashboard/organization/${orgId}/edit`)
+                    }] : []
+                }
             />
 
             <div className="dashboard__content">
                 <ActionTitle
                     title="Organization Badges"
-                    actions={[
-                        {
+                    actions={isOwner ? 
+                        [{
                             className: "home__action-button",
                             icon: ['fal', 'plus'],
                             onClick: () => navigate(`/dashboard/organization/${orgId}/badge/new`),
                             afterText: "Create badge"
-                        }
-                    ]}
+                        }] : []
+                    }
                 />
 
                 {orgData?.badges?.length > 0
