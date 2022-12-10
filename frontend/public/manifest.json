@@ -1,6 +1,8 @@
 {
   "short_name": "Badger",
   "name": "On-Chain Badge Credentials for Communities",
+  "description": "Scale your organization with composable on-chain team roles with the help of unopinionated ERC-1155s.",
+  "iconPath": "badger-badge-white.png",
   "icons": [
     {
       "src": "badger-favicon.ico",
