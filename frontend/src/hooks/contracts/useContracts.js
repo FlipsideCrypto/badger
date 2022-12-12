@@ -83,28 +83,26 @@ export const useSetBadge = (isTxReady, contractAddress, tokenUri, badge) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
     const [ error, setError ] = useState();
 
+    let badgeObj = badge
+
     // This should also clean/check the addresses as well.
-    badge?.delegates?.forEach((delegate, index) => {
-        if (delegate === "") {
-            badge.delegates.pop(index)
-        }
+    badgeObj?.delegates?.forEach((delegate, index) => {
+        if (typeof delegate === "object")
+        badgeObj.delegates[index] = delegate.ethereum_address
+        if (delegate === "")
+            badgeObj.delegates.pop(index)
     })
 
-    // If the delegates are already initialized and in the database,
-    // writing them to the chain again in this method is a waste of gas.
-    if (typeof badge?.delegates?.[0] === "object")
-        badge.delegates = []
-
     const args = [
-        badge.token_id,
-        badge.claimable,
-        badge.account_bound,
-        badge.signer || contractAddress, // Cannot have an empty string so we use the org as signer
+        badgeObj.token_id,
+        badgeObj.claimable,
+        badgeObj.account_bound,
+        badgeObj.signer || contractAddress, // Cannot have an empty string so we use the org as signer
         tokenUri || "0x",
-        badge.payment_token || [ethers.constants.HashZero, 0],
-        badge.delegates || [],
+        badgeObj.payment_token || [ethers.constants.HashZero, 0],
+        badgeObj.delegates || [],
     ]
-    
+
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: contractAddress,
