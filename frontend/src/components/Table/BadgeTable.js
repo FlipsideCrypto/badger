@@ -74,7 +74,7 @@ const BadgeTable = ({ orgId, badges }) => {
                                     <div style={{
                                         display: "inline-grid",
                                         alignItems: "center",
-                                        gridTemplateColumns: "min-content min-content",
+                                        gridTemplateColumns: "min-content auto",
                                         textDecoration: "none",
                                         fontWeight: "700",
                                         color: "black",
