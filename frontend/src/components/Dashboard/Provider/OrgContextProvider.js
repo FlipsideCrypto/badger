@@ -46,6 +46,8 @@ const OrgContextProvider = ({ children }) => {
         }
 
         if (org) {
+            // filter out the badges that are not active
+            org.badges = org.badges.filter(badge => badge.is_active === true);
             setOrgData(org);
         }
         
