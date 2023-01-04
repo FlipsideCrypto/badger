@@ -244,6 +244,7 @@ class Loader:
             organization_contract = self.get_organization_contract(organization.ethereum_address)
             badge.token_uri = organization_contract.functions.uri(token_id).call()
             badge.account_bound = organization_contract.functions.getAccountBound(token_id).call()
+            badge.claimable = organization_contract.functions.getClaimable(token_id).call()
             badge.signer_ethereum_address = organization_contract.functions.getSigner(token_id).call()
 
             changed = True
