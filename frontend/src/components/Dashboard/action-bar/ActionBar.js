@@ -5,6 +5,7 @@ import { useNetwork, useSwitchNetwork } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit"
 
 import { useEnsProfile } from "@hooks/useEnsProfile";
+import { useAutoConnect } from "@hooks/useAutoConnect";
 import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
 import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
 
@@ -26,6 +27,7 @@ const ActionBar = ({ address, collapsed, setCollapsed }) => {
     const { chains, switchNetwork } = useSwitchNetwork();
 
     const { openConnectModal } = useConnectModal();
+    
     const { ensAvatar, ensName, isFetched: ensFetched } = useEnsProfile(address);
 
     const { isAuthenticated, tryAuthentication } = useContext(UserContext);
@@ -45,6 +47,8 @@ const ActionBar = ({ address, collapsed, setCollapsed }) => {
         const primaryChain = chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)
         switchNetwork?.(primaryChain?.id)
     }, [chains, switchNetwork]);
+
+    useAutoConnect();
 
     // If wrong network is detected, then prompt a network switch.
     useEffect(() => {
