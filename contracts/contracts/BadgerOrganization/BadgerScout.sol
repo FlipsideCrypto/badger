@@ -8,10 +8,12 @@ import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/O
 import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import { ERC1155HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
 import { ERC721HolderUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
+import { ERC2771Recipient } from "@opengsn/contracts/src/ERC2771Recipient.sol";
 
 /// @dev Helpers.
 import { ECDSA } from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import { ERC1155ReceiverUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol";
+import { ContextUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 
 /// @dev Supported interfaces.
 import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
@@ -25,6 +27,7 @@ contract BadgerScout is
     , ERC1155Upgradeable
     , ERC1155HolderUpgradeable 
     , ERC721HolderUpgradeable
+    , ERC2771Recipient
 { 
     using ECDSA for bytes32;
 
@@ -732,6 +735,44 @@ contract BadgerScout is
     /*//////////////////////////////////////////////////////////////
                             INTERNAL GETTERS
     //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Allows the ability for others to cover gas costs for a user.
+     * @return The address of the gas payer.
+     */
+    function _msgSender() 
+        override(
+              ContextUpgradeable
+            , ERC2771Recipient
+        )
+        internal 
+        view 
+        virtual 
+        returns (
+            address
+        ) 
+    {
+        return ERC2771Recipient._msgSender();
+    }
+
+    /**
+     * @notice Returns the data that was appeneded to the message.
+     * @return The data that was appended to the message.
+     */
+    function _msgData() 
+        override(
+              ContextUpgradeable
+            , ERC2771Recipient
+        )
+        internal 
+        view 
+        virtual 
+        returns (
+            bytes calldata
+        ) 
+    {
+        return ERC2771Recipient._msgData();
+    }
 
     /**
      * @notice Confirms that a message sender is calling a Badge that exists 
