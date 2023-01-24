@@ -35,3 +35,40 @@
 
 - normally, it would be advised not to worry about authentication however because it is a key piece of badger and is also being used to handle the result filtering, authentication will have to be handled as the first step of front end integration.
     - we have a custom implementation the odds are low that we will get by without a custom handler.
+
+- the key debt + changes needed:
+    - contexts
+    - errors
+    - buttons
+    - form submissions
+
+- when contexts are changed, all other pages will be broken which means the app will be hard grid locked.
+- will have to start at the home page and work deeper
+
+- right now errors are page specific and will result in significant issues
+- `useSocket.send` is used to transmit data back home
+- to connect with authentication, the login request will still be made through http. we are not connecting people to a user pool
+
+- CHANCE: conquering the world:
+    - fix the project file architecture, it is killing me.
+        - abis
+        - components: ONLY COMPONENTS
+        - pages: ONLY PAGES
+        - hooks
+        - static
+        - style
+        - utils
+        - ...
+
+    - fix the naming conventions everywhere and make things generally readable.
+    - move things where they belong.
+    - delete all providers and HTTP integration endpoints.
+    - plug all data holes with constants.
+    - implement unified `UserContext` that holds their organizations and badges
+    - update home page to uilize `UserContext`
+
+- mason: getting authentication implemented:
+    - use the test framework.
+    - get the badges returnning only to a specific user 
+    - add authentication to all socket connections
+        - authentication should be done at the connection level, not message level
