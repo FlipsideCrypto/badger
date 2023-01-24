@@ -26,6 +26,13 @@ services:
     hostname: badger_db
     ports:
       - '5432:5432'
+  redis:
+    image: redis:6.2.1
+    container_name: badger_redis
+    restart: always
+    hostname: redis
+    ports:
+      - 6379:6379
   # Run the badger server
   web:
     container_name: badger_server
@@ -43,8 +50,10 @@ services:
       - ./api:/code
     depends_on:
       - badger_db
+      - redis
     links:
       - badger_db
+      - redis
   # Run the React frontend
   frontend:
     container_name: badger_frontend
@@ -75,6 +84,10 @@ services:
     env_file:
       - ./.env
     depends_on:
+      - badger_db
+      - redis
       - web
     links:
+      - badger_db
+      - redis
       - web

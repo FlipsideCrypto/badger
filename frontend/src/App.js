@@ -12,6 +12,8 @@ import WalletWrapper from "@components/Wallet/WalletWrapper";
 
 import "./App.css";
 
+import WSTest from "./WSTest"; // TODO: Remove this shit
+
 library.add(fal)
 
 function App() {
@@ -27,6 +29,7 @@ function App() {
                     <Routes>
                         <Route exact path="/" element={<Landing />} />
                         <Route exact path="/dashboard/*" element={<Dashboard />} />
+                        <Route exact path="ws/test" element={<WSTest />} />
                     </Routes>
                 </WalletWrapper>
             </Router>
