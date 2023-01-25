@@ -4,6 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 // import BadgeDangerZone from "@components/Badge/BadgeDangerZone";
 import { ErrorContext, OrgContext, UserContext } from "@contexts";
 
+import { useSetBadge, useIPFSImageHash, useIPFSMetadataHash } from "@hooks";
+
 import {
     FormActionBar, FormDrawer, FormReducer, initialBadgeForm, Input, InputAddress, InputListCSV, InputListKeyValue, Header, ImageLoader, Select
 } from "@components";
@@ -11,8 +13,6 @@ import {
 import {
     postBadgeRequest, postIPFSImage, postIPFSMetadata, getBadgeImage, getAttributesFromHash
 } from "@utils/api_requests";
-import { useSetBadge } from "@hooks/contracts/useContracts";
-import { useIPFSImageHash, useIPFSMetadataHash } from "@hooks/useIpfsHash";
 
 import "@style/Dashboard/Badge/BadgeForm.css";
 

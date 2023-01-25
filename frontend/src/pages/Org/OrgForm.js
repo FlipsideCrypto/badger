@@ -4,9 +4,7 @@ import { useNetwork, useAccount } from "wagmi";
 
 import { ErrorContext, OrgContext, UserContext } from "@contexts";
 
-import { useCreateOrg, useEditOrg } from "@hooks/contracts/useContracts";
-import { getBadgerAbi } from "@hooks/contracts/contractVersions";
-import { useIPFSImageHash, useIPFSMetadataHash } from "@hooks/useIpfsHash";
+import { getBadgerAbi, useCreateOrg, useEditOrg, useIPFSImageHash, useIPFSMetadataHash } from "@hooks";
 
 import { FormActionBar, FormDrawer, initialOrgForm, Input, Header, OrgDangerZone } from "@components"
 

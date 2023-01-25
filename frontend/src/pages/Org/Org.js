@@ -6,8 +6,6 @@ import { OrgContext } from "@contexts";
 
 import { ActionTitle, BadgeTable, IconButton, Header } from "@components";
 
-// import "@style/Dashboard/Org/Org.css";
-
 const Org = () => {
     const navigate = useNavigate();
 

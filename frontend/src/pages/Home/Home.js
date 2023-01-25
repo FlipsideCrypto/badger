@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { UserContext } from "@contexts";
 
-import { handleImageLoad } from "@hooks/useColor";
+import { handleImageLoad } from "@hooks";
 
 import { ActionTitle, Card, IconButton, ImageLoader } from "@components"
 

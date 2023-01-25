@@ -1,20 +1,15 @@
 import { useMemo, useState } from "react";
-import { usePrepareContractWrite, useContractWrite } from "wagmi"
 import { ethers } from "ethers";
+import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
-import { 
-    getPrimaryImplementation,
-    getBadgerOrganizationAbi,
-    getBadgerAbi,
-} from "./contractVersions";
-import useFees from "@hooks/useFees";
+import { getPrimaryImplementation, getBadgerOrganizationAbi, getBadgerAbi, useFees } from "@hooks";
 
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
 
 // Creates a new sash contract for an organization.
-export const useCreateOrg = (isTxReady, orgObj, imageHash, contractHash, address, chainName) => {
+const useCreateOrg = (isTxReady, orgObj, imageHash, contractHash, address, chainName) => {
     const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
-    const [ error, setError ] = useState();
+    const [error, setError] = useState();
 
     const args = [
         getPrimaryImplementation(),
@@ -24,7 +19,7 @@ export const useCreateOrg = (isTxReady, orgObj, imageHash, contractHash, address
         orgObj.name,
         orgObj.symbol,
     ]
-    
+
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: Badger.address,
@@ -48,14 +43,14 @@ export const useCreateOrg = (isTxReady, orgObj, imageHash, contractHash, address
 }
 
 // Edit the contract URI of an organization and update the image, description, and name.
-export const useEditOrg = (isTxReady, contractAddress, contractUriHash) => {
+const useEditOrg = (isTxReady, contractAddress, contractUriHash) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    const [ error, setError ] = useState();
+    const [error, setError] = useState();
 
     const args = [
         IPFS_GATEWAY_URL + contractUriHash
     ]
-    
+
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: contractAddress,
@@ -79,16 +74,16 @@ export const useEditOrg = (isTxReady, contractAddress, contractUriHash) => {
 }
 
 // Creates a badge from a cloned sash contract.
-export const useSetBadge = (isTxReady, contractAddress, tokenUri, badge) => {
+const useSetBadge = (isTxReady, contractAddress, tokenUri, badge) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    const [ error, setError ] = useState();
+    const [error, setError] = useState();
 
     let badgeObj = badge
 
     // This should also clean/check the addresses as well.
     badgeObj?.delegates?.forEach((delegate, index) => {
         if (typeof delegate === "object")
-        badgeObj.delegates[index] = delegate.ethereum_address
+            badgeObj.delegates[index] = delegate.ethereum_address
         if (delegate === "")
             badgeObj.delegates.pop(index)
     })
@@ -126,22 +121,22 @@ export const useSetBadge = (isTxReady, contractAddress, tokenUri, badge) => {
 
 // Determines which function to call based on if it is a revoke or a mint,
 // if there are multiple badge ids, and if there are multiple holders.
-export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, action, amounts) => {
+const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, action, amounts) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    const [ error, setError ] = useState();
-    
+    const [error, setError] = useState();
+
     // Might look a little funky but cleaner than a switch IMO.
     // If revoke is true, then we check if there is just one holder for a single revoke.
     // If ids is a single id, then we call the revoke function with multiple holders.
     // If ids is an array, then we call revoke with multiple different badges.
     // If revoke is false, same checks but for minting instead of revoke
     const revoke = action === "Revoke" ? true : false
-    const method = revoke ? 
-        users.length === 1 ? "revoke" : 
-        typeof(ids) === "number" ? "revokeBatch" : "revokeFullBatch"
+    const method = revoke ?
+        users.length === 1 ? "revoke" :
+            typeof (ids) === "number" ? "revokeBatch" : "revokeFullBatch"
         :
         users.length === 1 ? "leaderMint" :
-        typeof(ids) === "number" ? "leaderMintBatch" : "leaderMintFullBatch"
+            typeof (ids) === "number" ? "leaderMintBatch" : "leaderMintFullBatch"
 
     // This should also clean/check the addresses as well.
     users.forEach((user, index) => {
@@ -154,7 +149,7 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
     // each badge. For now it's standard for just one.
     amounts = Array(users.length).fill(amounts)
 
-    if (users.length === 1) 
+    if (users.length === 1)
         users = users[0]
 
     const args = [
@@ -164,7 +159,7 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
     ]
 
     // Contracts currently have bytes data if it's a mint only, not revoke.
-    if (!revoke) 
+    if (!revoke)
         args.push("0x")
 
     const fees = useFees();
@@ -191,13 +186,13 @@ export const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, actio
 
 // Changes delegates of badge(s) with id(s) from orgAddress. 
 // If revoke is true then delegates are removed.
-export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) => {
+const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    const [ error, setError ] = useState();
+    const [error, setError] = useState();
 
     const revoke = action === "Remove Manager" ? true : false
     const isDelegateArray = Array(delegates.length).fill(!revoke);
-    const method = typeof(ids) === "number" ?  "setDelegates" : "setDelegatesBatch";
+    const method = typeof (ids) === "number" ? "setDelegates" : "setDelegatesBatch";
 
     // This should also clean/check the addresses as well.
     delegates.forEach((delegate, index) => {
@@ -235,9 +230,9 @@ export const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) =
 }
 
 // Transfer the ownership of an organization to a new address.
-export const useTransferOwnership = (isTxReady, orgAddress, newOwner) => {
+const useTransferOwnership = (isTxReady, orgAddress, newOwner) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    const [ error, setError ] = useState();
+    const [error, setError] = useState();
 
     const args = [
         newOwner,
@@ -267,9 +262,9 @@ export const useTransferOwnership = (isTxReady, orgAddress, newOwner) => {
 
 // Transfer the ownership of a badge to a new address.
 // TODO: This should be changed to support the intended functionality of withdrawing all assets from the org.
-export const useRenounceOwnership = (isTxReady, orgAddress) => {
+const useRenounceOwnership = (isTxReady, orgAddress) => {
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    const [ error, setError ] = useState();
+    const [error, setError] = useState();
 
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
@@ -291,4 +286,14 @@ export const useRenounceOwnership = (isTxReady, orgAddress) => {
     const { writeAsync } = useContractWrite(config);
 
     return { write: writeAsync, isSuccess, error };
+}
+
+export {
+    useCreateOrg,
+    useEditOrg,
+    useSetBadge,
+    useManageBadgeOwnership,
+    useSetDelegates,
+    useTransferOwnership,
+    useRenounceOwnership,
 }

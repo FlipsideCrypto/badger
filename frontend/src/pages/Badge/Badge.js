@@ -8,7 +8,7 @@ import { OrgContext, ErrorContext } from "@contexts";
 
 import { ActionTitle, FormReducer, IconButton, InputListCSV, Header, HolderTable, ImageLoader, Select } from "@components";
 
-import { useManageBadgeOwnership, useSetDelegates } from "@hooks/contracts/useContracts";
+import { useManageBadgeOwnership, useSetDelegates } from "@hooks";
 
 import { putBadgeRolesRequest } from "@utils/api_requests";
 

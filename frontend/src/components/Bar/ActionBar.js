@@ -4,13 +4,14 @@ import { useLocation } from 'react-router-dom';
 import { useNetwork, useSwitchNetwork } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit"
 
-import { useEnsProfile } from "@hooks/useEnsProfile";
 import { OrgContext, UserContext } from "@contexts";
+
+import { useENSProfile } from "@hooks";
+
+import { ActionButton, LogoutButton, OrgView, ProfileView } from "@components"
 
 import { sliceAddress } from "@utils/helpers";
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
-
-import { ActionButton, LogoutButton, OrgView, ProfileView } from "@components"
 
 import '@rainbow-me/rainbowkit/styles.css'
 import "@style/Dashboard/ActionBar/ActionBar.css";
@@ -22,7 +23,7 @@ const ActionBar = ({ address, collapsed, setCollapsed }) => {
     const { chains, switchNetwork } = useSwitchNetwork();
 
     const { openConnectModal } = useConnectModal();
-    const { ensAvatar, ensName, isFetched: ensFetched } = useEnsProfile(address);
+    const { ensAvatar, ensName, isFetched: ensFetched } = useENSProfile(address);
 
     const { isAuthenticated, tryAuthentication } = useContext(UserContext);
     const { orgData } = useContext(OrgContext);

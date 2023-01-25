@@ -55,5 +55,6 @@ const handleImageLoad = (el) => {
 }
 
 export {
+    getAverageColor,
     handleImageLoad
 }

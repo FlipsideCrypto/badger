@@ -5,12 +5,12 @@ const PRIMARY_PROD_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
 
 // Gets the Badger implementation to clone based on the version.
 // TODO: Add versioning
-export function getPrimaryImplementation() {
+function getPrimaryImplementation() {
     return PRIMARY_IMPLEMENTATION;
 }
 
 // Putting the parse into a try catch block to account for missing env var breaking the app.
-export function getBadgerAddress(chainName) {
+function getBadgerAddress(chainName) {
     try {
         const BADGER_ADDRESSES = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES);
         const address = BADGER_ADDRESSES[chainName] ? BADGER_ADDRESSES[chainName] : BADGER_ADDRESSES[PRIMARY_PROD_CHAIN];
@@ -24,7 +24,7 @@ export function getBadgerAddress(chainName) {
 
 // Gets the ABI for sash contracts.
 // TODO: Add versioning
-export function getBadgerOrganizationAbi() {
+function getBadgerOrganizationAbi() {
     try {
         const abi = require('@abis/BadgerOrganization.json');
         return {abi: new ethers.utils.Interface(abi)}
@@ -36,7 +36,7 @@ export function getBadgerOrganizationAbi() {
 }
 
 // Gets the abi and chain specific address for the Badger contract.
-export function getBadgerAbi(chainName) {
+function getBadgerAbi(chainName) {
     try {
         const abi = require('@abis/Badger.json');
         const address = getBadgerAddress(chainName);
@@ -49,4 +49,11 @@ export function getBadgerAbi(chainName) {
         console.error('Error importing Badger:', err);
         return {error: err}
     }
+}
+
+export { 
+    getPrimaryImplementation,
+    getBadgerAddress,
+    getBadgerOrganizationAbi,
+    getBadgerAbi
 }

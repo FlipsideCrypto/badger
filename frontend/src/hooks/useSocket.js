@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import ReconnectingWebSocket from 'reconnecting-websocket';
 
-export const useSocket = ({ url }) => {
+const useSocket = ({ url }) => {
     const [connected, setConnected] = useState(false);
     const [objects, setObjects] = useState([]);
 
@@ -85,3 +85,5 @@ export const useSocket = ({ url }) => {
         send
     }
 }
+
+export { useSocket }
