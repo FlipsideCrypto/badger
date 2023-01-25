@@ -1,8 +1,8 @@
-import ActionButton from "@components/Button/ActionButton";
+import { ActionButton } from "@components";
 
 const ActionTitle = ({ title, actions }) => {
     return (
-        <div style={{ 
+        <div style={{
             display: "grid",
             gridTemplateColumns: "auto auto",
             alignItems: "center",

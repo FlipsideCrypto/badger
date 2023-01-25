@@ -5,15 +5,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Header from "@components/Dashboard/Header/Header";
 import HolderTable from "@components/Table/HolderTable";
-import IconButton from "@components/Button/IconButton";
 import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import Select from "@components/Dashboard/Form/Select";
 import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
-import ActionTitle from "@components/Dashboard/action-title/ActionTitle";
+import ActionTitle from "@components/action-title/ActionTitle";
 
-import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
-import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
+import { OrgContext, ErrorContext } from "@contexts";
 import { FormReducer } from "@components/Dashboard/Form/FormReducer";
+
+import { IconButton } from "@components";
+
 import { useManageBadgeOwnership, useSetDelegates } from "@hooks/contracts/useContracts";
 import { putBadgeRolesRequest } from "@utils/api_requests";
 import { IPFS_GATEWAY_URL } from "@static/constants/links";

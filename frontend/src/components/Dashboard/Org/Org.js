@@ -2,11 +2,12 @@ import { useContext, useMemo } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import { useAccount } from "wagmi";
 
-import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
+import { OrgContext } from "@contexts";
 
-import IconButton from "@components/Button/IconButton";
+import {IconButton} from "@components";
+
 import Header from "@components/Dashboard/Header/Header";
-import ActionTitle from "@components/Dashboard/action-title/ActionTitle";
+import ActionTitle from "@components/action-title/ActionTitle";
 import BadgeTable from "@components/Table/BadgeTable";
 
 // import "@style/Dashboard/Org/Org.css";

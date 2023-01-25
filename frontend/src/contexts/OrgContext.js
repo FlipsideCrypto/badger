@@ -1,14 +1,16 @@
 import { useState, createContext, useContext, useEffect } from "react"
 import { useLocation } from "react-router-dom";
-import { UserContext } from "./UserContextProvider";
+
+import { UserContext } from "@contexts";
+
 import { initialOrgForm } from "@components/Dashboard/Form/FormReducer";
 
-export const OrgContext = createContext();
+const OrgContext = createContext();
 
 const OrgContextProvider = ({ children }) => {
     const { userData, authenticatedAddress } = useContext(UserContext);
-    const [ orgData, setOrgData ] = useState(initialOrgForm);
-    const [ currentOrgId, setCurrentOrgId ] = useState();
+    const [orgData, setOrgData] = useState(initialOrgForm);
+    const [currentOrgId, setCurrentOrgId] = useState();
     const { pathname } = useLocation();
 
     // When the path changes, check if the path is for an organization. If so, then
@@ -27,7 +29,7 @@ const OrgContextProvider = ({ children }) => {
     // then parse only the badges that they are a delegate or holder of.
     useEffect(() => {
         if (!currentOrgId || !authenticatedAddress) return;
-        
+
         let org = userData?.organizations.find(
             org => org.id === parseInt(currentOrgId)
         );
@@ -48,7 +50,7 @@ const OrgContextProvider = ({ children }) => {
         if (org) {
             setOrgData(org);
         }
-        
+
     }, [userData, authenticatedAddress, currentOrgId])
 
     return (
@@ -58,4 +60,4 @@ const OrgContextProvider = ({ children }) => {
     )
 }
 
-export default OrgContextProvider;
+export { OrgContext, OrgContextProvider };

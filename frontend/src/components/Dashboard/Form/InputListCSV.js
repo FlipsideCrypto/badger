@@ -1,16 +1,17 @@
 import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import { ethers } from "ethers";
-import ActionButton from "@components/Button/ActionButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Input from "@components/Dashboard/Form/Input";
 
+import { ActionButton } from "@components";
+
 import { csvFileToArray } from "@utils/helpers";
 
 const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesValid, style }) => {
-    const [ csvFile, setCSVFile ] = useState();
-    const [ inputFieldCount, setInputFieldCount ] = useState(1);
-    const [ isValidatedArray, setIsValidatedArray ] = useState([]);
+    const [csvFile, setCSVFile] = useState();
+    const [inputFieldCount, setInputFieldCount] = useState(1);
+    const [isValidatedArray, setIsValidatedArray] = useState([]);
     const csvInput = useRef();
     const csvReader = useMemo(() => new FileReader(), []);
 
@@ -19,10 +20,10 @@ const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesVali
         const address = event.target.value.trim()
         setAreAddressesValid(false);
         validateAddress(index, address);
-        dispatch({ 
-            type: "UPDATE_ARRAY_INDEX", 
-            field: listKey, 
-            index: index, 
+        dispatch({
+            type: "UPDATE_ARRAY_INDEX",
+            field: listKey,
+            index: index,
             payload: address
         });
     }
@@ -125,7 +126,7 @@ const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesVali
                 >
                     <FontAwesomeIcon icon={['fal', 'fa-plus']} style={{
                         marginRight: "10px"
-                    }}/>
+                    }} />
                     <span>Upload CSV</span>
                 </button>
                 <button
@@ -135,7 +136,7 @@ const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesVali
                 >
                     <FontAwesomeIcon icon={['fal', 'fa-plus']} style={{
                         marginRight: "10px"
-                    }}/>
+                    }} />
                     <span>Add Another</span>
                 </button>
             </div>
@@ -144,9 +145,9 @@ const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesVali
 
     const deleteDOM = (index) => {
         return (
-            <ActionButton 
-                onClick={() => onFieldDelete(index)} 
-                sx={{minWidth: '40px'}}
+            <ActionButton
+                onClick={() => onFieldDelete(index)}
+                sx={{ minWidth: '40px' }}
                 icon={['fal', 'fa-trash']}
             />
         )
@@ -164,7 +165,7 @@ const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesVali
 
             {[...Array(inputFieldCount)].map((x, index) => (
                 <Input
-                    className={isValidatedArray[index] === false ? 
+                    className={isValidatedArray[index] === false ?
                         "form__list__address error" : "form__list__address"
                     }
                     key={index}

@@ -1,30 +1,31 @@
 import { useEffect, useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ActionButton from "@components/Button/ActionButton";
 import Input from "@components/Dashboard/Form/Input";
 
+import { ActionButton } from "@components";
+
 const InputListKeyValue = (
-    { 
-        label, 
-        inputList, 
-        listKey, 
-        dispatch, 
-        keyPlaceholder, 
+    {
+        label,
+        inputList,
+        listKey,
+        dispatch,
+        keyPlaceholder,
         valuePlaceholder,
-        ...props 
+        ...props
     }
 ) => {
-    const [ inputFieldCount, setInputFieldCount ] = useState(inputList?.length > 1 ? inputList.length : 1);
+    const [inputFieldCount, setInputFieldCount] = useState(inputList?.length > 1 ? inputList.length : 1);
 
     // Adds the input field to the state array.
     const onInputChange = (index, event, keyValue) => {
-        dispatch({ 
-            type: "UPDATE_KEY_VALUE_ARRAY", 
-            field: listKey, 
-            index: index, 
+        dispatch({
+            type: "UPDATE_KEY_VALUE_ARRAY",
+            field: listKey,
+            index: index,
             key: keyValue,
-            payload: event.target.value 
+            payload: event.target.value
         });
     }
 
@@ -52,12 +53,12 @@ const InputListKeyValue = (
     const onBlur = (index, keyValue) => {
         const pair = inputList[index][keyValue];
         if (pair && pair.includes(' ')) {
-            dispatch({ 
-                type: "UPDATE_KEY_VALUE_ARRAY", 
-                field: listKey, 
-                index: index, 
+            dispatch({
+                type: "UPDATE_KEY_VALUE_ARRAY",
+                field: listKey,
+                index: index,
                 key: keyValue,
-                payload: inputList[index][keyValue].trim() 
+                payload: inputList[index][keyValue].trim()
             });
         }
     }
@@ -79,7 +80,7 @@ const InputListKeyValue = (
             gridTemplateColumns: "max-content auto",
         }}>
             <div></div>
-            <div style={{textAlign: 'right'}}>
+            <div style={{ textAlign: 'right' }}>
                 <button
                     className="button__unstyled"
                     onClick={() => setInputFieldCount(inputFieldCount + 1)}
@@ -87,7 +88,7 @@ const InputListKeyValue = (
                 >
                     <FontAwesomeIcon icon={['fal', 'fa-plus']} style={{
                         marginRight: "10px"
-                    }}/>
+                    }} />
                     <span>Add Attribute</span>
                 </button>
             </div>
@@ -96,9 +97,9 @@ const InputListKeyValue = (
 
     const deleteDOM = (index) => {
         return (
-            <ActionButton 
-                onClick={() => onFieldDelete(index)} 
-                sx={{minWidth: '40px'}}
+            <ActionButton
+                onClick={() => onFieldDelete(index)}
+                sx={{ minWidth: '40px' }}
                 icon={['fal', 'fa-trash']}
             />
         )

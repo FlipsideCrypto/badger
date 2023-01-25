@@ -1,11 +1,11 @@
 import { useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 
-import IconButton from "@components/Button/IconButton";
+import { IconButton } from "@components";
 
 import "@style/Dashboard/Mobile/MobilePreventor.css"
 
-const MobilePreventor = ({isMobile, setIsMobile}) => {
+const MobilePreventor = ({ isMobile, setIsMobile }) => {
 
     const handleResize = useCallback(() => {
         if (window.screen.width < 768) {
@@ -20,7 +20,7 @@ const MobilePreventor = ({isMobile, setIsMobile}) => {
         handleResize();
     })
 
-    useEffect(() => { 
+    useEffect(() => {
         handleResize();
     }, [handleResize])
 
@@ -31,7 +31,7 @@ const MobilePreventor = ({isMobile, setIsMobile}) => {
                     <div className="container">
                         <h1>Management of your Organizations is disabled on mobile devices!</h1>
                         <p>Managing your organization on mobile is quite dangerous. It is not a recommended or supported feature of Badger (yet). Mobile will become accessible when a mobile app with key-generation is launched that allows our team to abstract away the need for wallet knowledge. Coming soon™️.</p>
-        
+
                         {/* Button that goes back to landing page */}
                         <Link className="internal-link" to="/">
                             <IconButton icon={['fal', 'warning']} text="BACK TO SAFETY" className="wiggle" />

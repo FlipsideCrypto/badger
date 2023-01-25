@@ -1,18 +1,17 @@
 import { useContext } from "react"
 import { Link, useNavigate } from "react-router-dom";
 
-import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
+import { UserContext } from "@contexts";
 
 import { sliceAddress } from "@utils/helpers";
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
 
 import { handleImageLoad } from "@hooks/useColor";
 
-import IconButton from "@components/Button/IconButton";
-
-import Card from "@components/Card/Card"
 import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
-import ActionTitle from "@components/Dashboard/action-title/ActionTitle";
+import ActionTitle from "@components/action-title/ActionTitle";
+
+import { Card, IconButton } from "@components"
 
 import "@style/Dashboard/Home/Home.css";
 
@@ -84,4 +83,4 @@ const Home = () => {
     )
 }
 
-export default Home;
+export { Home };

@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
-import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
+import { ErrorContext } from "@components/Provider/ErrorContextProvider";
+import { UserContext } from "@components/Provider/UserContextProvider";
 import { patchModelType } from "@utils/api_requests";
 
 // import { useTransferOwnership, useRenounceOwnership } from "@hooks/contracts/useContracts";

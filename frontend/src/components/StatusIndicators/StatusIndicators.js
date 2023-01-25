@@ -1,7 +1,7 @@
 import "@style/Dashboard/Sidebar/StatusIndicators/StatusIndicators.css";
 
 // can, cannot, pending
-const StatusIndicators = ({statuses}) => {
+const StatusIndicators = ({ statuses }) => {
     return (
         <div className="status__indicators">
             {statuses.map((status, index) => (
@@ -11,7 +11,7 @@ const StatusIndicators = ({statuses}) => {
                 </div>
             ))}
         </div>
-    ) 
+    )
 }
 
-export default StatusIndicators;
+export { StatusIndicators };

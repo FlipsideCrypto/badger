@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import IconButton from "@components/Button/IconButton";
-import Help from './Help'
+import { Help, IconButton } from "@components"
 
 import "@style/Dashboard/Form/ActionBar.css"
 

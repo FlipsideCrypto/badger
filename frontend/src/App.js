@@ -3,13 +3,12 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fal } from '@fortawesome/pro-light-svg-icons'
 
-import { Landing } from '@pages/Landing/Landing';
-
 import { Dashboard, SEO, WalletWrapper } from "@components"
 
-import "./App.css";
+import { Landing } from '@pages/Landing/Landing';
+import WSTest from "@pages/WSTest"; 
 
-import WSTest from "./WSTest"; // TODO: Remove this shit
+import "./App.css";
 
 library.add(fal)
 

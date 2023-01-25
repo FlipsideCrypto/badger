@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import IconButton from '../../components/Button/IconButton';
-import { HOME_LINKS } from "@static/constants/links";
+import { IconButton } from "@components";
 
+import { HOME_LINKS } from "@static/constants/links";
 import logo from "@static/images/badger-logo-headline.png";
-// import key from "../static/images/key.gif";
 
 import "@style/Landing.css";
 

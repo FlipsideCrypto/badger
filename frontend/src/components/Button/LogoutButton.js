@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useDisconnect } from "wagmi";
 
-import ActionButton from "@components/Button/ActionButton";
+import { ActionButton } from "@components";
 
 import "@style/Dashboard/Sidebar/Logout/Logout.css";
 
-const Logout = () => { 
+const LogoutButton = () => {
     const { disconnect } = useDisconnect();
     const navigate = useNavigate();
 
@@ -16,14 +16,14 @@ const Logout = () => {
     }
 
     return (
-        <ActionButton 
-            className="logout" 
+        <ActionButton
+            className="logout"
             onClick={() => onDisconnect()}
             afterText="Logout"
-            sx={{textTransform: 'capitalize'}}
+            sx={{ textTransform: 'capitalize' }}
             icon={['fal', 'sign-out']}
         />
     )
 }
 
-export default Logout;
+export { LogoutButton };

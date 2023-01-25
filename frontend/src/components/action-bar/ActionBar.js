@@ -5,16 +5,12 @@ import { useNetwork, useSwitchNetwork } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit"
 
 import { useEnsProfile } from "@hooks/useEnsProfile";
-import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
-import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
+import { OrgContext, UserContext } from "@contexts";
 
 import { sliceAddress } from "@utils/helpers";
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
 
-import ActionButton from "@components/Button/ActionButton";
-import ProfileView from "./views/ProfileView";
-import OrgView from "./views/OrgView";
-import Logout from "./Logout";
+import { ActionButton, LogoutButton, OrgView, ProfileView } from "@components"
 
 import '@rainbow-me/rainbowkit/styles.css'
 import "@style/Dashboard/ActionBar/ActionBar.css";
@@ -106,7 +102,7 @@ const ActionBar = ({ address, collapsed, setCollapsed }) => {
                 />
 
 
-                {address && <Logout />}
+                {address && <LogoutButton />}
             </div>
         </div >
     )

@@ -1,4 +1,4 @@
-import StatusIndicators from './StatusIndicators/StatusIndicators';
+import { StatusIndicators } from '@components';
 
 const HelpCopy = (path) => {
     const pathArray = path.split('/');
@@ -128,4 +128,4 @@ const HelpCopy = (path) => {
     }
 }
 
-export default HelpCopy;
+export { HelpCopy };

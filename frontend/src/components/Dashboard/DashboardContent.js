@@ -8,4 +8,4 @@ const DashboardContent = ({ children }) => {
     )
 }
 
-export default DashboardContent;
+export { DashboardContent };

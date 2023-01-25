@@ -11,9 +11,7 @@ import InputListCSV from "@components/Dashboard/Form/InputListCSV";
 import InputListKeyValue from "@components/Dashboard/Form/InputListKeyValue";
 import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
 // import BadgeDangerZone from "@components/Dashboard/Badge/BadgeDangerZone";
-import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
-import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
-import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
+import { ErrorContext, OrgContext, UserContext } from "@contexts";
 import { FormReducer, initialBadgeForm } from "@components/Dashboard/Form/FormReducer";
 
 import { postBadgeRequest, postIPFSImage, postIPFSMetadata, getBadgeImage, getAttributesFromHash } from "@utils/api_requests";

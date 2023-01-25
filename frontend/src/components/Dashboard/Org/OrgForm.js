@@ -2,9 +2,8 @@ import { useState, useContext, useRef, useEffect, useMemo, useCallback } from "r
 import { useNavigate, useParams } from "react-router-dom";
 import { useNetwork, useAccount } from "wagmi";
 
-import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
-import { OrgContext } from "@components/Dashboard/Provider/OrgContextProvider";
-import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
+import { ErrorContext, OrgContext, UserContext } from "@contexts";
+
 import Header from "@components/Dashboard/Header/Header";
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 import Input from "@components/Dashboard/Form/Input";

@@ -1,30 +1,31 @@
-import { useState, createContext, useContext, useEffect, useCallback, useMemo } from "react";
+import { createContext, useState, useContext, useEffect, useCallback, useMemo } from "react";
 import { useNetwork } from "wagmi";
 
-import { ErrorContext } from "./ErrorContextProvider";
+import { ErrorContext } from "@contexts";
+
 import { getUserRequest } from "@utils/api_requests";
 import { SIWEAuthorize, getAuthenticationStatus } from "@utils/auth";
 import { sliceAddress } from "@utils/helpers";
 
-export const UserContext = createContext();
+const UserContext = createContext();
 
 const UserContextProvider = ({ children, signer }) => {
-    const [ userData, setUserData ] = useState(null);
-    const [ authenticatedAddress, setAuthenticatedAddress ] = useState(null);
-    const [ isAuthenticating, setIsAuthenticating ] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [authenticatedAddress, setAuthenticatedAddress] = useState(null);
+    const [isAuthenticating, setIsAuthenticating] = useState(false);
     const { setError } = useContext(ErrorContext);
     const { chain } = useNetwork();
 
     const isAuthenticated = useMemo(() => {
         return signer?._address ? authenticatedAddress === signer._address : false;
     }, [signer, authenticatedAddress]);
-    
+
     // Clear any prior authentication token and prompt a signature to authenticate.
     const tryAuthentication = useCallback(async () => {
         document.cookie = 'csrftoken=; Path=/; Expires=Sat, 01 Jan 2000 00:00:001 GMT;';
         const siweResponse = await SIWEAuthorize(signer, signer._address, chain?.id);
 
-        if(siweResponse.success) {
+        if (siweResponse.success) {
             setAuthenticatedAddress(signer._address);
         } else {
             setError({
@@ -69,7 +70,7 @@ const UserContextProvider = ({ children, signer }) => {
         }
         else if (response?.address !== signer._address) {
             setError({
-                label: 'Account was changed', 
+                label: 'Account was changed',
                 message: 'Please sign in or switch back to ' + sliceAddress(response?.address) + '.'
             });
         }
@@ -79,7 +80,7 @@ const UserContextProvider = ({ children, signer }) => {
         }
         setIsAuthenticating(false)
     }, [signer, tryAuthentication, setIsAuthenticating, setError]);
-    
+
     // Upon signing in or a new account being detected, we first determine if the user
     // is already authenticated, or if the authentication is for another wallet.
     // If the current user is not the authenticated user according to state, and we're
@@ -100,7 +101,7 @@ const UserContextProvider = ({ children, signer }) => {
         if (!signer) return;
 
         if (
-               signer._address !== userData?.ethereum_address
+            signer._address !== userData?.ethereum_address
             && signer._address === authenticatedAddress
         ) {
             getUserData();
@@ -110,10 +111,10 @@ const UserContextProvider = ({ children, signer }) => {
 
     return (
         <UserContext.Provider value={{
-            userData, 
+            userData,
             setUserData,
             authenticatedAddress,
-            isAuthenticated, 
+            isAuthenticated,
             tryAuthentication,
         }}>
             {children}
@@ -121,4 +122,4 @@ const UserContextProvider = ({ children, signer }) => {
     )
 }
 
-export default UserContextProvider;
+export { UserContext, UserContextProvider };

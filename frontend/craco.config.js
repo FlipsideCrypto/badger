@@ -19,6 +19,7 @@ module.exports = {
         ignoreWarnings: [/Failed to parse source map/],
         alias: {
             '@components': path.resolve(__dirname, 'src/components/'),
+            '@contexts': path.resolve(__dirname, 'src/contexts/'),
             '@pages': path.resolve(__dirname, 'src/pages/'),
             '@static': path.resolve(__dirname, 'src/static/'),
             '@style': path.resolve(__dirname, 'src/style/'),

@@ -1,12 +1,12 @@
 import { createContext, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import ErrorCard from "@components/Card/ErrorCard";
 
+import { ErrorCard } from "@components";
 
-export const ErrorContext = createContext();
+const ErrorContext = createContext();
 
 const ErrorContextProvider = ({ children }) => {
-    const [ error, setError ] = useState({ label: "", message: "" });
+    const [error, setError] = useState({ label: "", message: "" });
     const { pathname } = useLocation();
 
     // Clear the error if the path changes.
@@ -16,7 +16,7 @@ const ErrorContextProvider = ({ children }) => {
 
     return (
         <ErrorContext.Provider value={{ error, setError }}>
-            { error &&
+            {error &&
                 <ErrorCard label={error.label} message={error.message} />
             }
             {children}
@@ -24,4 +24,4 @@ const ErrorContextProvider = ({ children }) => {
     )
 }
 
-export default ErrorContextProvider;
+export { ErrorContext, ErrorContextProvider };

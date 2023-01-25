@@ -1,4 +1,4 @@
-import { useSocket } from './hooks/useSocket';
+import { useSocket } from '../hooks/useSocket';
 
 const WSTest = () => {
     const url = 'ws://localhost:8000/ws/badge/'; 

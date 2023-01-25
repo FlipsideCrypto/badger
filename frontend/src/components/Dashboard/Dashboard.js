@@ -4,19 +4,18 @@ import { useAccount, useSigner } from "wagmi";
 
 import MobilePreventor from "@components/Dashboard/Mobile/MobilePreventor";
 
-import UserContextProvider from "@components/Dashboard/Provider/UserContextProvider";
-import OrgContextProvider from "@components/Dashboard/Provider/OrgContextProvider";
-import ErrorContextProvider from "@components/Dashboard/Provider/ErrorContextProvider";
+import { ErrorContextProvider, OrgContextProvider, UserContextProvider } from "@contexts" 
 
-import DashboardContent from "@components/Dashboard/Content/DashboardContent";
-import ActionBar from "@components/Dashboard/action-bar/ActionBar";
-import HelpSidebar from "@components/Dashboard/action-bar/help/HelpSidebar";
+import ActionBar from "@components/action-bar/ActionBar";
 
-import Home from "@components/Dashboard/Home/Home";
 import OrgForm from '@components/Dashboard/Org/OrgForm';
 import Org from "@components/Dashboard/Org/Org";
 import BadgeForm from "@components/Dashboard/Badge/BadgeForm";
 import Badge from "@components/Dashboard/Badge/Badge";
+
+import { DashboardContent, HelpSidebar } from "@components";
+
+import { Home } from "@pages";
 
 import "@style/Dashboard/Dashboard.css";
 

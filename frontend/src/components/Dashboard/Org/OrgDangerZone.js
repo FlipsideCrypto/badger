@@ -3,8 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import ActionBar from "@components/Dashboard/Form/ActionBar";
 
-import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
-import { UserContext } from "@components/Dashboard/Provider/UserContextProvider";
+import { ErrorContext, UserContext } from "@contexts";
 import { patchModelType } from "@utils/api_requests";
 
 // import { useTransferOwnership } from "@hooks/contracts/useContracts";

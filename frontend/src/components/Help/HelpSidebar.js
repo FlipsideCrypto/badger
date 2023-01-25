@@ -1,11 +1,10 @@
 import { useContext } from "react";
 import { useLocation } from "react-router-dom";
 
-import { ErrorContext } from "@components/Dashboard/Provider/ErrorContextProvider";
-import { postFeedbackRequest } from "@utils/api_requests";
+import { ErrorContext } from "@contexts";
+import { ActionButton, HelpCopy } from "@components"
 
-import ActionButton from "@components/Button/ActionButton";
-import HelpCopy from "./HelpCopy";
+import { postFeedbackRequest } from "@utils/api_requests";
 
 import "@style/Dashboard/Sidebar/Sidebar.css";
 import "@style/Dashboard/Sidebar/HelpSidebar.css";
@@ -61,4 +60,4 @@ const HelpSidebar = ({ collapsed }) => {
     )
 }
 
-export default HelpSidebar;
+export { HelpSidebar };
