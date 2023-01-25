@@ -6,8 +6,6 @@ import { SEO, WalletWrapper } from "@components"
 
 import { Dashboard, Landing } from "@pages"
 
-import WSTest from "@pages/WSTest"; 
-
 import "@style/App.css"
 
 library.add(fal)
@@ -21,13 +19,14 @@ function App() {
             <SEO title={title} description={description} />
 
             <Router>
-                <WalletWrapper>
-                    <Routes>
-                        <Route exact path="/" element={<Landing />} />
-                        <Route exact path="/dashboard/*" element={<Dashboard />} />
-                        <Route exact path="ws/test" element={<WSTest />} />
-                    </Routes>
-                </WalletWrapper>
+                <Routes>
+                    <Route exact path="/" element={<Landing />} />
+                    <Route exact path="/dashboard/*" element={
+                        <WalletWrapper>
+                            <Dashboard />
+                        </WalletWrapper>
+                    } />
+                </Routes>
             </Router>
         </div>
     );

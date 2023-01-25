@@ -1,18 +1,26 @@
 import { createContext, useState, useContext, useEffect, useCallback, useMemo } from "react";
 import { useNetwork } from "wagmi";
 
-import { ErrorContext } from "@contexts";
+import { BadgeContext, ErrorContext, OrgContext } from "@contexts";
 
 import { getAuthenticationStatus, getUserRequest, SIWEAuthorize, sliceAddress } from "@utils";
+
+const AUTH_ERRORS = [
+    "Authentication credentials were not provided.",
+    "You do not have permission to perform this action.",
+    "Not found."
+]
 
 const UserContext = createContext();
 
 const UserContextProvider = ({ children, signer }) => {
+    const { chain } = useNetwork();
+
+    const { organizations } = useContext(OrgContext)
+    const { badges } = useContext(BadgeContext)
+
     const [userData, setUserData] = useState(null);
     const [authenticatedAddress, setAuthenticatedAddress] = useState(null);
-    const [isAuthenticating, setIsAuthenticating] = useState(false);
-    const { setError } = useContext(ErrorContext);
-    const { chain } = useNetwork();
 
     const isAuthenticated = useMemo(() => {
         return signer?._address ? authenticatedAddress === signer._address : false;
@@ -25,77 +33,69 @@ const UserContextProvider = ({ children, signer }) => {
 
         if (siweResponse.success) {
             setAuthenticatedAddress(signer._address);
-        } else {
-            setError({
-                label: "Authentication failed",
-                message: siweResponse.error
-            });
         }
-    }, [signer, chain?.id, setError]);
+    }, [signer, chain?.id]);
 
     // Fetch the user data from the backend.
     const getUserData = useCallback(async () => {
+        // TODO: If this is ran before setError is loaded, does this error out?
+
         let response = await getUserRequest(signer._address);
 
         if (!response?.error) {
             setUserData(response);
             setError(null);
+            return;
         }
-        else {
-            setError({
-                label: 'Could not get user data',
-                message: response.error
-            });
-        }
-    }, [signer, setError])
+    }, [signer])
 
-    // Fetch API data for what wallet our authentication token is tied to.
-    // If the end point returns an error regarding authentication, then authenticate.
-    // If the wallet is not the same as the signer, then we set an error asking to login again.
-    // If the auth token is tied to the current address, then remove the error.
-    const getAuthStatus = useCallback(async () => {
-        setIsAuthenticating(true);
-        const authErrors = [
-            "Authentication credentials were not provided.",
-            "You do not have permission to perform this action.",
-            "Not found.",
-        ]
-
-        const response = await getAuthenticationStatus(signer._address);
-
-        if (authErrors.includes(response?.detail)) {
-            tryAuthentication();
-        }
-        else if (response?.address !== signer._address) {
-            setError({
-                label: 'Account was changed',
-                message: 'Please sign in or switch back to ' + sliceAddress(response?.address) + '.'
-            });
-        }
-        else {
-            setAuthenticatedAddress(response.address);
-            setError(null);
-        }
-        setIsAuthenticating(false)
-    }, [signer, tryAuthentication, setIsAuthenticating, setError]);
-
+    // TODO: Put it out with fire!
     // Upon signing in or a new account being detected, we first determine if the user
     // is already authenticated, or if the authentication is for another wallet.
     // If the current user is not the authenticated user according to state, and we're
     // not currently authenticating, check auth token for what address it is for.
     useEffect(() => {
-        if (!signer || isAuthenticating) return;
+        let isAuthenticating = false;
 
-        if (signer._address !== authenticatedAddress) {
-            getAuthStatus(signer);
-        } else {
-            setError(null);
+        const getAuthStatus = async () => {
+            // Clear any prior error.
+            // setError(null);
+
+            // Confirm the call is ready to make.
+            if (!signer || isAuthenticating) return;
+
+            // Prevent multiple calls from being made.
+            isAuthenticating = true;
+
+            // Make the call to the backend.
+            const response = await getAuthenticationStatus(signer._address);
+
+            // TODO: Improve the response handling.
+
+            // TODO: What is going on here?
+            if (AUTH_ERRORS.includes(response?.detail)) {
+                tryAuthentication();
+            } else if (response?.address !== signer._address) {
+                // setError({
+                //     label: 'Account was changed',
+                //     message: 'Please sign in or switch back to ' + sliceAddress(response?.address) + '.'
+                // });
+            } else {
+                setAuthenticatedAddress(response.address);
+                // setError(null);
+            }
+
+            // Allow calls to be made again.
+            isAuthenticating = false;
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [signer, authenticatedAddress, getAuthStatus]);
+
+        // Check the auth status anytime the signer.
+        getAuthStatus(signer);
+    }, [signer]);
 
     // If the user is authenticated and we don't have their data, fetch it.
     useEffect(() => {
+        // TODO: What we need, just clean up
         if (!signer) return;
 
         if (
@@ -104,11 +104,12 @@ const UserContextProvider = ({ children, signer }) => {
         ) {
             getUserData();
         }
-
     }, [signer, userData, authenticatedAddress, getUserData]);
 
     return (
         <UserContext.Provider value={{
+            organizations,
+            badges,
             userData,
             setUserData,
             authenticatedAddress,

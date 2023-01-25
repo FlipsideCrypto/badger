@@ -7,7 +7,6 @@ export { Dashboard } from './Dashboard/Dashboard';
 export { Checkbox, Input, InputAddress, InputListCSV, InputListKeyValue, Select, Switch, FormDrawer, FormReducer, initialBadgeForm, initialOrgForm } from './Form';
 export { Header } from './Header/Header';
 export { Help, HelpCopy, HelpSidebar } from './Help';
-export { MobilePreventor } from './Mobile/MobilePreventor';
 export { OrgStats } from './Org/OrgStats';
 export { SEO } from './SEO/SEO';
 export { StatusIndicators } from './StatusIndicators/StatusIndicators';
