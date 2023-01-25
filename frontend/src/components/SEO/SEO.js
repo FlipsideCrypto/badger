@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 
-const Meta = ({ title, description }) => {
+const SEO = ({ title, description }) => {
     return (
         <Helmet>
             <title>{title}</title>
@@ -14,4 +14,4 @@ const Meta = ({ title, description }) => {
     )
 }
 
-export default Meta;
+export { SEO };

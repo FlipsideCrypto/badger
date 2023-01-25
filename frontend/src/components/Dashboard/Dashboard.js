@@ -43,18 +43,18 @@ const Dashboard = () => {
                                         setCollapsed={setCollapsed}
                                     />
 
-                                <DashboardContent>
-                                    <Routes>
-                                        <Route path="/" element={<Home />} />
-                                        <Route path="/organization/new" element={<OrgForm />} />
-                                        <Route path="/organization/:orgId" element={<Org />} />
-                                        <Route path="/organization/:orgId/edit" element={<OrgForm isEdit={true} />} />
-                                        <Route path="/organization/:orgId/badge/new" element={<BadgeForm />} />
-                                        <Route path="/organization/:orgId/badge/:badgeId" element={<Badge />} />
-                                        <Route path="/organization/:orgId/badge/:badgeId/edit" element={<BadgeForm isEdit={true} />} />
-                                    </Routes>
-                                </DashboardContent>
-                            </div>
+                                    <DashboardContent>
+                                        <Routes>
+                                            <Route path="/" element={<Home />} />
+                                            <Route path="/organization/new" element={<OrgForm />} />
+                                            <Route path="/organization/:orgId" element={<Org />} />
+                                            <Route path="/organization/:orgId/edit" element={<OrgForm isEdit={true} />} />
+                                            <Route path="/organization/:orgId/badge/new" element={<BadgeForm />} />
+                                            <Route path="/organization/:orgId/badge/:badgeId" element={<Badge />} />
+                                            <Route path="/organization/:orgId/badge/:badgeId/edit" element={<BadgeForm isEdit={true} />} />
+                                        </Routes>
+                                    </DashboardContent>
+                                </div>
 
                                 <HelpSidebar
                                     collapsed={collapsed}
@@ -68,4 +68,4 @@ const Dashboard = () => {
     )
 }
 
-export default Dashboard;
+export { Dashboard };

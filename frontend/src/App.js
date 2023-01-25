@@ -3,12 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fal } from '@fortawesome/pro-light-svg-icons'
 
-import Meta from '@components/seo/Meta';
+import { Landing } from '@pages/Landing/Landing';
 
-import Landing from '@components/Landing';
-
-import Dashboard from '@components/Dashboard/Dashboard';
-import WalletWrapper from "@components/Wallet/WalletWrapper";
+import { Dashboard, SEO, WalletWrapper } from "@components"
 
 import "./App.css";
 
@@ -16,13 +13,13 @@ import WSTest from "./WSTest"; // TODO: Remove this shit
 
 library.add(fal)
 
-function App() {
-    const title = "BADGER | The Web3 Organization Key Solution";
-    const description = "Level up the access-controls of your on-chain organization and enjoy the benefits of a Web3 focused key solution."
+const title = "BADGER | The Web3 Organization Key Solution";
+const description = "Level up the access-controls of your on-chain organization and enjoy the benefits of a Web3 focused key solution."
 
+function App() {
     return (
         <div className="App">
-            <Meta title={title} description={description} />
+            <SEO title={title} description={description} />
 
             <Router>
                 <WalletWrapper>
