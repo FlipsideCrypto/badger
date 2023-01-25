@@ -26,6 +26,7 @@ class SerializerRepresentationMixin:
 class ConnectedMixin:
     async def connect(self, *args, **kwargs):
         await super().connect(*args, **kwargs)
+        print('connected to ', self.scope['user'])
         await self.send_json({
             'action': 'connected',
         })

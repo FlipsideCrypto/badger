@@ -9,7 +9,7 @@ class BadgeConsumer(ManagedModelMixin):
     queryset = Badge.objects.all()
     serializer_class = BadgeSerializer
 
-    permissions = (permissions.AllowAny,)
+    permissions = (permissions.IsAuthenticated,)
 
     @model_observer(Badge)
     async def model_change(self, message, observer=None, **kwargs):

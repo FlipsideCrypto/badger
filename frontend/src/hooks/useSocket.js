@@ -2,8 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import ReconnectingWebSocket from 'reconnecting-websocket';
 
-// import { IMessageEvent } from "websocket";
-
 export const useSocket = ({ url }) => {
     const [connected, setConnected] = useState(false);
     const [objects, setObjects] = useState([]);
