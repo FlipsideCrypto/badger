@@ -4,9 +4,10 @@ import {
     TableContainer, TableCell, TableBody
 } from "@mui/material"
 
-import TableSortHead from "./TableSortHead";
-import { ActionButton } from "@components";
+import { ActionButton, TableSortHead } from "@components";
+
 import { compareByProperty } from "@utils/helpers";
+
 import { holderHeadRows } from "@static/constants/constants";
 
 import "@style/Table/HolderTable.css";
@@ -125,4 +126,4 @@ const HolderTable = ({ badge }) => {
     )
 }
 
-export default HolderTable;
+export { HolderTable };

@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
-
-import { ActionButton } from "@components"
+import { ActionButton, ImageLoader } from "@components"
 
 const OrgView = ({
     orgData,

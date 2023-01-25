@@ -3,15 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { UserContext } from "@contexts";
 
-import { sliceAddress } from "@utils/helpers";
-import { IPFS_GATEWAY_URL } from "@static/constants/links";
-
 import { handleImageLoad } from "@hooks/useColor";
 
-import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
-import ActionTitle from "@components/action-title/ActionTitle";
+import { ActionTitle, Card, IconButton, ImageLoader } from "@components"
 
-import { Card, IconButton } from "@components"
+import { sliceAddress } from "@utils/helpers";
+
+import { IPFS_GATEWAY_URL } from "@static/constants/links";
 
 import "@style/Dashboard/Home/Home.css";
 

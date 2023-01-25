@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import ImageLoader from "@components/Dashboard/Utils/ImageLoader";
+import { ImageLoader } from "@components";
 
 const ProfileView = ({
     ensAvatar,

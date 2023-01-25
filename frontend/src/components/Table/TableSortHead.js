@@ -30,4 +30,4 @@ const TableSortHead = ({ id, label, sortMethod, onSortChange, align, width }) =>
     )
 }
 
-export default TableSortHead;
+export { TableSortHead };

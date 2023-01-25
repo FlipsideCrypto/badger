@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 
 import { UserContext } from "@contexts";
 
-import { initialOrgForm } from "@components/Dashboard/Form/FormReducer";
+import { initialOrgForm } from "@components";
 
 const OrgContext = createContext();
 

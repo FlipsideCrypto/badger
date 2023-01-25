@@ -3,9 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fal } from '@fortawesome/pro-light-svg-icons'
 
-import { Dashboard, SEO, WalletWrapper } from "@components"
+import { SEO, WalletWrapper } from "@components"
 
-import { Landing } from '@pages/Landing/Landing';
+import { Dashboard, Landing } from "@pages"
+
 import WSTest from "@pages/WSTest"; 
 
 import "./App.css";

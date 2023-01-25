@@ -5,10 +5,11 @@ import {
     TableContainer, TableCell, TableBody
 } from "@mui/material"
 
-import { IPFS_GATEWAY_URL } from "@static/constants/links";
+import { TableSortHead } from "@components";
 
-import TableSortHead from "./TableSortHead";
 import { compareByProperty } from "@utils/helpers";
+
+import { IPFS_GATEWAY_URL } from "@static/constants/links";
 import { badgeHeadRows } from "@static/constants/constants";
 
 import "@style/Table/HolderTable.css";
@@ -110,4 +111,4 @@ const BadgeTable = ({ orgId, badges }) => {
     )
 }
 
-export default BadgeTable;
+export { BadgeTable };
