@@ -4,7 +4,7 @@ import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
 import { getPrimaryImplementation, getBadgerOrganizationAbi, getBadgerAbi, useFees } from "@hooks";
 
-import { IPFS_GATEWAY_URL } from "@static/constants/links";
+import { IPFS_GATEWAY_URL } from "@static";
 
 // Creates a new sash contract for an organization.
 const useCreateOrg = (isTxReady, orgObj, imageHash, contractHash, address, chainName) => {

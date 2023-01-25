@@ -9,7 +9,7 @@ import { ActionTitle, Card, IconButton, ImageLoader } from "@components"
 
 import { sliceAddress } from "@utils";
 
-import { IPFS_GATEWAY_URL } from "@static/constants/links";
+import { IPFS_GATEWAY_URL } from "@static";
 
 import "@style/Dashboard/Home/Home.css";
 

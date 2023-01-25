@@ -12,7 +12,7 @@ import { useManageBadgeOwnership, useSetDelegates } from "@hooks";
 
 import { putBadgeRolesRequest } from "@utils";
 
-import { IPFS_GATEWAY_URL } from "@static/constants/links";
+import { IPFS_GATEWAY_URL } from "@static";
 
 import "@style/Dashboard/Badge/Badge.css";
 

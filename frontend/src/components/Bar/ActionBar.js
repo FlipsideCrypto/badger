@@ -11,7 +11,8 @@ import { useENSProfile } from "@hooks";
 import { ActionButton, LogoutButton, OrgView, ProfileView } from "@components"
 
 import { sliceAddress } from "@utils";
-import { IPFS_GATEWAY_URL } from "@static/constants/links";
+
+import { IPFS_GATEWAY_URL } from "@static";
 
 import '@rainbow-me/rainbowkit/styles.css'
 import "@style/Dashboard/ActionBar/ActionBar.css";

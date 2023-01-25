@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-import ImageErrorFallback from "@static/images/imgerror.svg";
-import { IPFS_GATEWAY_URL } from "@static/constants/links";
+import { IPFS_GATEWAY_URL, ImageErrorFallback } from "@static";
 
 const ImageLoader = ({
     className,

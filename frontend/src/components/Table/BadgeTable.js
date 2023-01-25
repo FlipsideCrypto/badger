@@ -9,8 +9,7 @@ import { TableSortHead } from "@components";
 
 import { compareByProperty } from "@utils";
 
-import { IPFS_GATEWAY_URL } from "@static/constants/links";
-import { badgeHeadRows } from "@static/constants/constants";
+import { badgeHeadRows, IPFS_GATEWAY_URL } from "@static";
 
 import "@style/Table/HolderTable.css";
 

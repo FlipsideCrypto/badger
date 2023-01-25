@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 
 import { getPFPImage } from "@utils";
 
-import { getRandomEmoji } from "@static/constants/constants";
+import { getRandomEmoji } from "@static";
 
 const ALCHEMY_API_KEY = process.env.REACT_APP_ALCHEMY_API_KEY;
 

@@ -8,7 +8,7 @@ import { ActionButton, TableSortHead } from "@components";
 
 import { compareByProperty } from "@utils";
 
-import { holderHeadRows } from "@static/constants/constants";
+import { holderHeadRows } from "@static";
 
 import "@style/Table/HolderTable.css";
 

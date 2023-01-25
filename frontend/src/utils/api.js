@@ -1,6 +1,8 @@
-import { IPFS_GATEWAY_URL } from "@static/constants/links"
 import { ethers } from "ethers";
-import { formatAddresses, getCSRFToken, getFileFromBase64 } from "./helpers";
+
+import { formatAddresses, getCSRFToken, getFileFromBase64 } from "@utils";
+
+import { IPFS_GATEWAY_URL } from "@static"
 
 const API_URL = process.env.REACT_APP_API_URL;
 

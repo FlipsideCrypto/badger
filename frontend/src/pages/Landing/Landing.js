@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IconButton } from "@components";
 
-import { HOME_LINKS } from "@static/constants/links";
+import { HOME_LINKS } from "@static";
 
-import logo from "@static/images/badger-logo-headline.png";
+import { logo } from "@static";
 
 import "@style/Landing.css";
 

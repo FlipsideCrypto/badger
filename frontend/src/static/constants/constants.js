@@ -1,4 +1,4 @@
-export const badgeHeadRows = {
+const badgeHeadRows = {
     name: {
         label: 'Badge',
         sortable: true,
@@ -29,7 +29,7 @@ export const badgeHeadRows = {
     }
 }
 
-export const holderHeadRows = {
+const holderHeadRows = {
     ethereum_address: {
         label: "Address",
         sortable: true,
@@ -60,7 +60,7 @@ export const holderHeadRows = {
     },
 }
 
-export const pfpEmojis = [
+const pfpEmojis = [
     "😀",
     "😃",
     "😄",
@@ -102,8 +102,15 @@ export const pfpEmojis = [
     "🔥",
 ]
 
-export const getRandomEmoji = (address) => {
+const getRandomEmoji = (address) => {
     const char = address.charCodeAt(39) + address.charCodeAt(40);
     const randomIndex = char % pfpEmojis.length;
     return pfpEmojis[randomIndex];
+}
+
+export { 
+    badgeHeadRows,
+    holderHeadRows,
+    pfpEmojis,
+    getRandomEmoji
 }

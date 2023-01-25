@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { IPFS_GATEWAY_URL } from "@static/constants/links"
+import { IPFS_GATEWAY_URL } from "@static"
 
 const Hash = require("ipfs-only-hash");
 
