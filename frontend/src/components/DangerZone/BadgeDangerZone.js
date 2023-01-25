@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { ErrorContext, UserContext } from "@contexts";
 
-import { patchModelType } from "@utils/api_requests";
+import { patchModelType } from "@utils";
 
 // import { useTransferOwnership, useRenounceOwnership } from "@hooks/contracts/useContracts";
 // import Input from "@components/Form/Input";

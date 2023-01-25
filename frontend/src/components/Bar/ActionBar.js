@@ -10,7 +10,7 @@ import { useENSProfile } from "@hooks";
 
 import { ActionButton, LogoutButton, OrgView, ProfileView } from "@components"
 
-import { sliceAddress } from "@utils/helpers";
+import { sliceAddress } from "@utils";
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
 
 import '@rainbow-me/rainbowkit/styles.css'

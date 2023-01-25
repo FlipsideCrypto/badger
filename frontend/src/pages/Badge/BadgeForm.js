@@ -12,7 +12,7 @@ import {
 
 import {
     postBadgeRequest, postIPFSImage, postIPFSMetadata, getBadgeImage, getAttributesFromHash
-} from "@utils/api_requests";
+} from "@utils";
 
 import "@style/Dashboard/Badge/BadgeForm.css";
 

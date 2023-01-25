@@ -5,7 +5,8 @@ import {
 } from "@mui/material"
 
 import { ActionButton, TableSortHead } from "@components";
-import { compareByProperty } from "@utils/helpers";
+
+import { compareByProperty } from "@utils";
 
 import "@style/Table/HolderTable.css";
 

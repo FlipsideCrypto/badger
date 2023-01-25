@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { ActionButton, Input } from "@components";
 
-import { csvFileToArray } from "@utils/helpers";
+import { csvFileToArray } from "@utils";
 
 const InputListCSV = ({ label, inputList, listKey, dispatch, setAreAddressesValid, style }) => {
     const [csvFile, setCSVFile] = useState();

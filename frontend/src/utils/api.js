@@ -4,7 +4,7 @@ import { formatAddresses, getCSRFToken, getFileFromBase64 } from "./helpers";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-export async function postFeedbackRequest(feedback) { 
+async function postFeedbackRequest(feedback) { 
     let response;
 
     try {
@@ -36,7 +36,7 @@ export async function postFeedbackRequest(feedback) {
     return response;
 }
 
-export async function postOrgRequest(org) {
+async function postOrgRequest(org) {
     let response;
     const url = org?.url ? org.url : `${API_URL}/organizations/`;
     const method = org?.id ? 'PATCH' : 'POST';
@@ -70,7 +70,7 @@ export async function postOrgRequest(org) {
     return response;
 }
 
-export async function postBadgeRequest(badge) {
+async function postBadgeRequest(badge) {
     let response;
     
     const users = formatAddresses(badge.users);
@@ -123,7 +123,7 @@ export async function postBadgeRequest(badge) {
     return response;
 }
 
-export async function postIPFSImage(image) {
+async function postIPFSImage(image) {
     // If the image is already a hash, return it.
     if (typeof(image) === "string") return {hash: image};
     const formData = new FormData();
@@ -158,7 +158,7 @@ export async function postIPFSImage(image) {
     return response;
 }
 
-export async function postIPFSMetadata(props) {
+async function postIPFSMetadata(props) {
     const {
         name,
         description,
@@ -209,7 +209,7 @@ export async function postIPFSMetadata(props) {
     return response;
 }
 
-export async function getUserRequest(address) {
+async function getUserRequest(address) {
     let response;
     try {
         await fetch(`${API_URL}/wallets/${address}/`, {
@@ -238,7 +238,7 @@ export async function getUserRequest(address) {
     return response;
 }
 
-export async function getOrgRequest(orgId) {
+async function getOrgRequest(orgId) {
     let response;
     try {
         await fetch(`${API_URL}/organizations/${orgId}/`, {
@@ -268,7 +268,7 @@ export async function getOrgRequest(orgId) {
     return response
 }
 
-export async function putBadgeRolesRequest(badge, orgId) {
+async function putBadgeRolesRequest(badge, orgId) {
     let response;
 
     // Have to clean input addresses to match the API
@@ -309,7 +309,7 @@ export async function putBadgeRolesRequest(badge, orgId) {
     return response;
 }
 
-export async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
+async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
     const url = `${API_URL}/art/badge?organization=${orgName}&organization_ethereum_address=${orgAddress}&badge_id=${badgeId}&badge_name=${badgeName}`
     
     let response;
@@ -340,7 +340,7 @@ export async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
     return response
 }
 
-export async function getPFPImage(char, address) {
+async function getPFPImage(char, address) {
     let response;
     try {
         await fetch(`${API_URL}/art/pfp/?char=${char}&address=${address}`, {
@@ -370,7 +370,7 @@ export async function getPFPImage(char, address) {
 }
 
 // TODO: Remove this once attributes are stored in the API
-export async function getAttributesFromHash(hash) {
+async function getAttributesFromHash(hash) {
     const url = `${IPFS_GATEWAY_URL}${hash}`;
 
     let response;
@@ -396,7 +396,7 @@ export async function getAttributesFromHash(hash) {
     return response;
 }
 
-export async function patchModelType(type, obj) {
+async function patchModelType(type, obj) {
     let response;
     try {
         await fetch(`${API_URL}/${type}/${obj.id}/`, {
@@ -425,4 +425,19 @@ export async function patchModelType(type, obj) {
     }
 
     return response;
+}
+
+export { 
+    postFeedbackRequest,
+    postOrgRequest,
+    postBadgeRequest,
+    postIPFSImage,
+    postIPFSMetadata,
+    getUserRequest,
+    getOrgRequest,
+    putBadgeRolesRequest,
+    getBadgeImage,
+    getPFPImage,
+    getAttributesFromHash,
+    patchModelType,
 }

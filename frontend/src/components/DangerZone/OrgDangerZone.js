@@ -5,7 +5,7 @@ import { ErrorContext, UserContext } from "@contexts";
 
 import { FormActionBar } from "@components"
 
-import { patchModelType } from "@utils/api_requests";
+import { patchModelType } from "@utils";
 
 // import { useTransferOwnership } from "@hooks/contracts/useContracts";
 // import InputAddress from "@components/Form/InputAddress";

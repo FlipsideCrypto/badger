@@ -6,7 +6,7 @@ import {
 
 import { ActionButton, TableSortHead } from "@components";
 
-import { compareByProperty } from "@utils/helpers";
+import { compareByProperty } from "@utils";
 
 import { holderHeadRows } from "@static/constants/constants";
 

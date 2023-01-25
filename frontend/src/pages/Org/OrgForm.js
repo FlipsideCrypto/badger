@@ -8,7 +8,7 @@ import { getBadgerAbi, useCreateOrg, useEditOrg, useIPFSImageHash, useIPFSMetada
 
 import { FormActionBar, FormDrawer, initialOrgForm, Input, Header, OrgDangerZone } from "@components"
 
-import { postOrgRequest, postIPFSImage, postIPFSMetadata, getPFPImage } from "@utils/api_requests";
+import { postOrgRequest, postIPFSImage, postIPFSMetadata, getPFPImage } from "@utils";
 
 const OrgForm = ({ isEdit = false }) => {
     const { userData, setUserData } = useContext(UserContext);

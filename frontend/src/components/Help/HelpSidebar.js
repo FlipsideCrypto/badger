@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import { ErrorContext } from "@contexts";
 import { ActionButton, HelpCopy } from "@components"
 
-import { postFeedbackRequest } from "@utils/api_requests";
+import { postFeedbackRequest } from "@utils";
 
 import "@style/Dashboard/Sidebar/Sidebar.css";
 import "@style/Dashboard/Sidebar/HelpSidebar.css";

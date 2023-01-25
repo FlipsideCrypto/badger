@@ -3,9 +3,7 @@ import { useNetwork } from "wagmi";
 
 import { ErrorContext } from "@contexts";
 
-import { getUserRequest } from "@utils/api_requests";
-import { SIWEAuthorize, getAuthenticationStatus } from "@utils/auth";
-import { sliceAddress } from "@utils/helpers";
+import { getAuthenticationStatus, getUserRequest, SIWEAuthorize, sliceAddress } from "@utils";
 
 const UserContext = createContext();
 

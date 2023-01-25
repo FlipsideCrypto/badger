@@ -3,7 +3,7 @@ import { getCSRFToken } from "./helpers";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-export async function SIWELogin(message, signature) {
+async function SIWELogin(message, signature) {
     let response;
 
     await fetch(`${API_URL}/api/auth/login`, {
@@ -26,7 +26,7 @@ export async function SIWELogin(message, signature) {
     return response;
 };
 
-export async function SIWENonce() {
+async function SIWENonce() {
     const url = `${API_URL}/api/auth/get-nonce`
     let response;
 
@@ -45,7 +45,7 @@ export async function SIWENonce() {
     return response;
 };
 
-export async function SIWEAuthorize (signer, address, chainId) {
+async function SIWEAuthorize (signer, address, chainId) {
     try {
         const nonce = await SIWENonce();
     
@@ -73,7 +73,7 @@ export async function SIWEAuthorize (signer, address, chainId) {
     }
 }
 
-export async function getAuthenticationStatus() {
+async function getAuthenticationStatus() {
     let response;
 
     const csrfToken = getCSRFToken();
@@ -100,4 +100,11 @@ export async function getAuthenticationStatus() {
     }
 
     return response;
+}
+
+export { 
+    SIWELogin,
+    SIWENonce,
+    SIWEAuthorize,
+    getAuthenticationStatus,
 }

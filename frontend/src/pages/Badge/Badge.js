@@ -10,7 +10,7 @@ import { ActionTitle, FormReducer, IconButton, InputListCSV, Header, HolderTable
 
 import { useManageBadgeOwnership, useSetDelegates } from "@hooks";
 
-import { putBadgeRolesRequest } from "@utils/api_requests";
+import { putBadgeRolesRequest } from "@utils";
 
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
 

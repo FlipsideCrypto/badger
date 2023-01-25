@@ -7,7 +7,7 @@ import {
 
 import { TableSortHead } from "@components";
 
-import { compareByProperty } from "@utils/helpers";
+import { compareByProperty } from "@utils";
 
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
 import { badgeHeadRows } from "@static/constants/constants";

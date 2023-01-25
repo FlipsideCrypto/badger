@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { ethers } from "ethers";
 
-import { getPFPImage } from "@utils/api_requests";
+import { getPFPImage } from "@utils";
 
 import { getRandomEmoji } from "@static/constants/constants";
 

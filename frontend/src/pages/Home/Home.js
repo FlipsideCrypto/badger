@@ -7,7 +7,7 @@ import { handleImageLoad } from "@hooks";
 
 import { ActionTitle, Card, IconButton, ImageLoader } from "@components"
 
-import { sliceAddress } from "@utils/helpers";
+import { sliceAddress } from "@utils";
 
 import { IPFS_GATEWAY_URL } from "@static/constants/links";
 
