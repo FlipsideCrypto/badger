@@ -7,7 +7,7 @@ import { HOME_LINKS } from "@static";
 
 import { logo } from "@static";
 
-import "@style/Landing.css";
+import "@style/pages/Landing.css";
 
 const Landing = () => {
     const features = [

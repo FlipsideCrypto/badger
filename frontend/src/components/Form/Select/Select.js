@@ -1,4 +1,4 @@
-import "@style/Dashboard/Form/Select.css";
+import "@style/Form/Select.css";
 
 const Select = ({ label, options, value, setValue }) => {
     return (

@@ -1,4 +1,4 @@
-import "@style/Dashboard/Form/Checkbox.css"
+import "@style/Form/Checkbox.css"
 
 const Checkbox = ({ checked, setChecked, label, disabled }) => {
     return (

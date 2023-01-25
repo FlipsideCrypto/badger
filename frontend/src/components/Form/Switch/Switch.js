@@ -1,4 +1,4 @@
-import "@style/Dashboard/Form/Switch.css";
+import "@style/Form/Switch.css";
 
 const Switch = ({ checked, setChecked, label, disabled }) => {
   return (

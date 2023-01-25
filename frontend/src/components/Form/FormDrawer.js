@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import "@style/Dashboard/Form/FormDrawer.css";
+import "@style/Form/FormDrawer.css";
 
 const FormDrawer = ({ label, open, children, ...props }) => {
     const [isOpen, setIsOpen] = useState(open);

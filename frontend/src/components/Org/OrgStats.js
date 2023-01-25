@@ -1,4 +1,4 @@
-import "@style/Dashboard/Org/OrgStats.css";
+import "@style/Org/OrgStats.css";
 
 // TODO: Pull the stats from somewhere
 const OrgStats = (orgData) => {

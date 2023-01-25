@@ -14,7 +14,7 @@ import { putBadgeRolesRequest } from "@utils";
 
 import { IPFS_GATEWAY_URL } from "@static";
 
-import "@style/Dashboard/Badge/Badge.css";
+import "@style/pages/Badge.css";
 
 const Badge = () => {
     const navigate = useNavigate();

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import { IconButton } from "@components";
 
-import "@style/Dashboard/Mobile/MobilePreventor.css"
+import "@style/Mobile/MobilePreventor.css"
 
 const MobilePreventor = ({ isMobile, setIsMobile }) => {
     const handleResize = useCallback(() => {

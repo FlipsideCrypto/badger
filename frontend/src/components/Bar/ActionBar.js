@@ -15,7 +15,7 @@ import { sliceAddress } from "@utils";
 import { IPFS_GATEWAY_URL } from "@static";
 
 import '@rainbow-me/rainbowkit/styles.css'
-import "@style/Dashboard/ActionBar/ActionBar.css";
+import "@style/Bar/ActionBar.css";
 
 const PRIMARY_PRODUCTION_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
 

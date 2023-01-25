@@ -1,6 +1,6 @@
 import { ActionButton } from "@components";
 
-import "@style/Dashboard/Header/Header.css";
+import "@style/Header/Header.css";
 
 const Header = ({ back, actions }) => {
     return (

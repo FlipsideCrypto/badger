@@ -3,7 +3,7 @@ import { useDisconnect } from "wagmi";
 
 import { ActionButton } from "@components";
 
-import "@style/Dashboard/Sidebar/Logout/Logout.css";
+import "@style/Button/LogoutButton.css";
 
 const LogoutButton = () => {
     const { disconnect } = useDisconnect();

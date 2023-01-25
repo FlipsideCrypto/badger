@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { Help, IconButton } from "@components"
 
-import "@style/Dashboard/Form/ActionBar.css"
+import "@style/Bar/ActionBar.css"
 
 const FormActionBar = ({ help, actions, style, helpStyle, actionStyle }) => {
     return (

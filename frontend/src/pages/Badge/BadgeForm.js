@@ -14,7 +14,7 @@ import {
     postBadgeRequest, postIPFSImage, postIPFSMetadata, getBadgeImage, getAttributesFromHash
 } from "@utils";
 
-import "@style/Dashboard/Badge/BadgeForm.css";
+import "@style/pages/BadgeForm.css";
 
 const BadgeForm = ({ isEdit = false }) => {
     const { userData, setUserData } = useContext(UserContext);

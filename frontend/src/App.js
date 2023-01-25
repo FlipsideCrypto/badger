@@ -8,7 +8,7 @@ import { Dashboard, Landing } from "@pages"
 
 import WSTest from "@pages/WSTest"; 
 
-import "./App.css";
+import "@style/App.css"
 
 library.add(fal)
 

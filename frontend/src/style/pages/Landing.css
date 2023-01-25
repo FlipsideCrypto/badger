@@ -78,7 +78,7 @@
 
 .hero::after { 
     content: "";
-    background-image: url(../static/images/key.gif);
+    background-image: url(../../static/images/key.gif);
     background-repeat: no-repeat;
     background-size: auto 65%;
     background-position: center;
@@ -135,7 +135,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('../static/images/blob.png');
+    background-image: url(../../static/images/blob.png);
     background-size: contain;
     background-position: bottom left;
     background-size: 80%;

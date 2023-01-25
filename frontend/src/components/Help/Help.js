@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import "@style/Dashboard/Form/Help.css"
+import "@style/Help/Help.css"
 
 const Help = ({ text }) => {
     return (

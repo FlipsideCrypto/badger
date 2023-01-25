@@ -1,4 +1,4 @@
-import "@style/Dashboard/Sidebar/StatusIndicators/StatusIndicators.css";
+import "@style/StatusIndicators/StatusIndicators.css";
 
 // can, cannot, pending
 const StatusIndicators = ({ statuses }) => {

@@ -6,8 +6,8 @@ import { ActionButton, HelpCopy } from "@components"
 
 import { postFeedbackRequest } from "@utils";
 
-import "@style/Dashboard/Sidebar/Sidebar.css";
-import "@style/Dashboard/Sidebar/HelpSidebar.css";
+import "@style/Sidebar/Sidebar.css";
+import "@style/Sidebar/HelpSidebar.css";
 
 const HelpSidebar = ({ collapsed }) => {
     const { setError } = useContext(ErrorContext);

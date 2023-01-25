@@ -1,4 +1,4 @@
-import "@style/Dashboard/Form/Input.css"
+import "@style/Form/Input.css"
 
 const Input = (props) => {
     const {

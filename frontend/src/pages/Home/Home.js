@@ -11,7 +11,7 @@ import { sliceAddress } from "@utils";
 
 import { IPFS_GATEWAY_URL } from "@static";
 
-import "@style/Dashboard/Home/Home.css";
+import "@style/pages/Home.css";
 
 const Home = () => {
     const navigate = useNavigate();
