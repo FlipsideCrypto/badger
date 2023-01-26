@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext, useEffect, useCallback } from "react";
 import { useAccount, useNetwork, useSigner } from "wagmi";
 
 import { BadgeContext, OrgContext } from "@contexts";
@@ -12,9 +12,9 @@ const UserContext = createContext();
 
 const UserContextProvider = ({ children }) => {
     const { chain } = useNetwork();
-    const { address } = useAccount({ onConnect });
-
     const { signer } = useSigner();
+
+    const { address } = useAccount();
 
     const { organizations } = useContext(OrgContext);
     const { badges } = useContext(BadgeContext);
@@ -23,18 +23,14 @@ const UserContextProvider = ({ children }) => {
 
     const isAuthenticated = signer?._address ? authenticatedAddress === signer._address : false;
 
-    const onConnect = ({ address, connector, isReconnected }) => {
-        console.log('Switched account to', { address, connector, isReconnected })
-    }
-
     useEffect(() => {
-        const tryAuthentication = async () => {
+        const tryAuthentication = async ({ address, chainId, signer }) => {
             // Clear any prior authentication token and prompt a signature to authenticate.
             // TODO: This should not be here.
             // document.cookie = 'csrftoken=; Path=/; Expires=Sat, 01 Jan 2000 00:00:001 GMT;';
 
             // Make the call to the backend.
-            const { message } = await getAuthenticationMessage(address, chain?.id);
+            const { message } = await getAuthenticationMessage(address, chainId);
 
             const signature = await signer.signMessage(message.prepareMessage());
 
@@ -42,15 +38,13 @@ const UserContextProvider = ({ children }) => {
 
             // TODO: Doing nothing with this response? how is that possible?
 
-            setAuthenticatedAddress(signer._address);
+            setAuthenticatedAddress(address);
         };
 
-        if (!signer) return
+        if (!address || !chain || !signer) return;
 
-        // TODO: Handle account state
-
-        tryAuthentication()
-    }, [address, signer, chain])
+        tryAuthentication({ address, chainId: chain.chainId, signer });
+    }, [address, chain, signer])
 
     return (
         <UserContext.Provider value={{
