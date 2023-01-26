@@ -8,13 +8,13 @@ const csvFileToArray = (file) => {
     const array = csvRows.map(i => {
         const values = i.split(",");
         const obj = csvHeader.reduce((object, header, index) => {
-            return values[index].replace(/\r/g,"");
+            return values[index].replace(/\r/g, "");
         }, {});
         return obj;
     });
 
-    if (csvHeader[0].slice(0,2) === "0x") {
-        array.unshift(csvHeader[0].replace(/\r/g,""));
+    if (csvHeader[0].slice(0, 2) === "0x") {
+        array.unshift(csvHeader[0].replace(/\r/g, ""));
     }
     return array;
 };
@@ -31,13 +31,13 @@ const compareByProperty = (property, direction, a, b) => {
 }
 
 const formatAddresses = (addresses) => {
-    return addresses?.length > 0 ? 
+    return addresses?.length > 0 ?
         addresses.map(user => {
             if (user.ethereum_address) {
                 user.ethereum_address = ethers.utils.getAddress(user.ethereum_address);
                 return user
             }
-            return {ethereum_address: ethers.utils.getAddress(user)}
+            return { ethereum_address: ethers.utils.getAddress(user) }
         })
         : [];
 }
@@ -46,14 +46,14 @@ const getCSRFToken = () => {
     let name = "csrftoken=";
     let decodedCookie = decodeURIComponent(document.cookie);
     let ca = decodedCookie.split(';');
-    for(let i = 0; i <ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) === 0) {
-        return c.substring(name.length, c.length);
-      }
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
     }
     return "";
 }
@@ -68,7 +68,7 @@ const getFileFromBase64 = (base64, filename) => {
     return new File([imageContent], filename, { type: type });
 }
 
-export { 
+export {
     csvFileToArray,
     sliceAddress,
     compareByProperty,

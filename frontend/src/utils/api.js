@@ -6,6 +6,8 @@ import { IPFS_GATEWAY_URL } from "@static"
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+
+
 async function postFeedbackRequest(feedback) { 
     let response;
 

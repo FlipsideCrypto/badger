@@ -8,8 +8,6 @@ import { ActionBar, Dashboard as DashboardContent, HelpSidebar } from "@componen
 
 import { Badge, BadgeForm, Home, Org, OrgForm } from "@pages";
 
-import WSTest from "@pages/WSTest";
-
 import "@style/Dashboard/Dashboard.css";
 
 const Dashboard = () => {
@@ -34,7 +32,6 @@ const Dashboard = () => {
                                 <DashboardContent>
                                     <Routes>
                                         <Route path="/" element={<Home />} />
-                                        <Route exact path="ws/test" element={<WSTest />} />
                                         <Route path="/organization/new" element={<OrgForm />} />
                                         <Route path="/organization/:orgId" element={<Org />} />
                                         <Route path="/organization/:orgId/edit" element={<OrgForm isEdit={true} />} />

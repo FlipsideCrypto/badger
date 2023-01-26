@@ -11,7 +11,7 @@ const OrgContextProvider = ({ children }) => {
         connected,
         data: organizations,
         send
-    } = useSocket({ url: 'ws://localhost:8000/ws/organization' })
+    } = useSocket({ url: 'ws://localhost:8000/ws/organization/' })
 
     return (
         <OrgContext.Provider value={{

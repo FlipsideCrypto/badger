@@ -14,9 +14,9 @@ export {
 } from './api'
 
 export { 
-    SIWELogin,
-    SIWENonce,
-    SIWEAuthorize,
+    getAuthentication,
+    getNonce,
+    getAuthenticationSignature,
     getAuthenticationStatus,
 } from './auth'
 

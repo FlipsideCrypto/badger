@@ -2,12 +2,11 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
 
-from .mixins import SerializerRepresentationMixin
+from api.mixins import SerializerRepresentationMixin
 
 from .models import Badge
 
 User = get_user_model()
-
 
 class BadgeUserSerializer(
     SerializerRepresentationMixin,

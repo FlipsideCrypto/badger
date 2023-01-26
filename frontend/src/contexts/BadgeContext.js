@@ -7,14 +7,14 @@ const BadgeContext = createContext();
 const BadgeContextProvider = ({ children }) => {
     const {
         connected,
-        data: orgs,
+        data: badges,
         send
-    } = useSocket({ url: 'ws://localhost:8000/ws/badge' })
+    } = useSocket({ url: 'ws://localhost:8000/ws/badge/' })
 
     return (
         <BadgeContext.Provider value={{
             connected,
-            orgs,
+            badges,
             send
         }}>
             {children}
