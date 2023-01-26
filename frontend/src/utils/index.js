@@ -16,7 +16,7 @@ export {
 export { 
     getAuthentication,
     getNonce,
-    getAuthenticationSignature,
+    getAuthenticationMessage,
     getAuthenticationStatus,
 } from './auth'
 

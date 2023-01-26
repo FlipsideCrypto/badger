@@ -18,7 +18,7 @@ async function getNonce() {
     throw new Error(ERRORS["API_NONCE_FAILED"]);
 };
 
-async function getAuthenticationSignature(signer, address, chainId) {
+async function getAuthenticationMessage(address, chainId) {
     try {
         const nonce = await getNonce();
 
@@ -35,9 +35,7 @@ async function getAuthenticationSignature(signer, address, chainId) {
             nonce: nonce.nonce,
         });
 
-        const signature = await signer.signMessage(message.prepareMessage());
-
-        return { message, signature };
+        return { message };
     } catch (e) {
         throw new Error(ERRORS["SIGNATURE_REJECTED"]);
     }
@@ -85,6 +83,6 @@ async function getAuthenticationStatus() {
 export {
     getNonce,
     getAuthentication,
-    getAuthenticationSignature,
+    getAuthenticationMessage,
     getAuthenticationStatus,
 }

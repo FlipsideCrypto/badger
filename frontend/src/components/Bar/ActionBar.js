@@ -2,7 +2,7 @@ import { useEffect, useContext, useState, useCallback } from "react";
 import { useLocation } from 'react-router-dom';
 
 import { useNetwork, useSwitchNetwork } from "wagmi";
-import { useConnectModal } from "@rainbow-me/rainbowkit"
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 import { OrgContext, UserContext } from "@contexts";
 

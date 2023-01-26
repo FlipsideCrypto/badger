@@ -1,50 +1,63 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { useNetwork } from "wagmi";
+import { useAccount, useNetwork, useSigner } from "wagmi";
 
 import { BadgeContext, OrgContext } from "@contexts";
 
-import { getAuthentication, getAuthenticationSignature } from "@utils";
-
-const AUTH_ERRORS = [
-    "Authentication credentials were not provided.",
-    "You do not have permission to perform this action.",
-    "Not found."
-]
+import { getAuthentication, getAuthenticationMessage } from "@utils";
 
 const UserContext = createContext();
 
-const UserContextProvider = ({ children, signer }) => {
-    const { chain } = useNetwork();
+// TODO: Prompt signature just once on page load, but only if there is not an existing
+//       authentication token for the connected signer. (I think this is what getAuthenticationStatus() was being used for)
 
-    // const { organizations } = useContext(OrgContext);
+const UserContextProvider = ({ children }) => {
+    const { chain } = useNetwork();
+    const { address } = useAccount({ onConnect });
+
+    const { signer } = useSigner();
+
+    const { organizations } = useContext(OrgContext);
     const { badges } = useContext(BadgeContext);
 
     const [authenticatedAddress, setAuthenticatedAddress] = useState(null);
 
     const isAuthenticated = signer?._address ? authenticatedAddress === signer._address : false;
 
-    const tryAuthentication = async () => {
-        // Clear any prior authentication token and prompt a signature to authenticate.
-        // TODO: This should not be here.
-        // document.cookie = 'csrftoken=; Path=/; Expires=Sat, 01 Jan 2000 00:00:001 GMT;';
+    const onConnect = ({ address, connector, isReconnected }) => {
+        console.log('Switched account to', { address, connector, isReconnected })
+    }
 
-        // Make the call to the backend.
-        const { message, signature } = await getAuthenticationSignature(signer, signer._address, chain?.id);
+    useEffect(() => {
+        const tryAuthentication = async () => {
+            // Clear any prior authentication token and prompt a signature to authenticate.
+            // TODO: This should not be here.
+            // document.cookie = 'csrftoken=; Path=/; Expires=Sat, 01 Jan 2000 00:00:001 GMT;';
 
-        const response = await getAuthentication(message, signature);
+            // Make the call to the backend.
+            const { message } = await getAuthenticationMessage(address, chain?.id);
 
-        // TODO: Doing nothing with this response? how is that possible?
+            const signature = await signer.signMessage(message.prepareMessage());
 
-        setAuthenticatedAddress(signer._address);
-    };
+            const response = await getAuthentication(message, signature);
+
+            // TODO: Doing nothing with this response? how is that possible?
+
+            setAuthenticatedAddress(signer._address);
+        };
+
+        if (!signer) return
+
+        // TODO: Handle account state
+
+        tryAuthentication()
+    }, [address, signer, chain])
 
     return (
         <UserContext.Provider value={{
             isAuthenticated,
             authenticatedAddress,
-            // organizations,
-            badges,
-            tryAuthentication
+            organizations,
+            badges
         }}>
             {children}
         </UserContext.Provider>

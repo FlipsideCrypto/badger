@@ -24,7 +24,7 @@ const Dashboard = () => {
         <>
             <ErrorContextProvider>
                 <OrgContextProvider>
-                    <UserContextProvider signer={signer} address={address}>
+                    <UserContextProvider>
                         <div className={collapsed ? "dashboard collapsed" : "dashboard"}>
                             <div className="dashboard__contents">
                                 <ActionBar address={address} collapsed={collapsed} setCollapsed={setCollapsed} />
