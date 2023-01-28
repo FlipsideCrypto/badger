@@ -1,44 +1,46 @@
+import { useContext } from "react";
 import { Link } from 'react-router-dom';
+
+import { UserContext } from "@contexts"
 
 import { ActionButton, ImageLoader } from "@components"
 
-const OrgView = ({
-    orgData,
-    ipfs,
-    sliceAddress
-}) => {
+import { sliceAddress } from "@utils";
+
+import { IPFS_GATEWAY_URL } from "@static";
+
+// TODO: Finish refactoring this and then go do ProfileView
+
+const OrgView = ({ orgId }) => {
+    const { organizations } = useContext(UserContext);
+
+    const org = organizations && organizations.find(org => String(org.id) === orgId);
+
     return (
         <div className="action_bar__header">
-            <ImageLoader
-                className="action_bar__header__image"
-                src={ipfs + orgData.image_hash}
-            />
+            <ImageLoader className="action_bar__header__image" src={IPFS_GATEWAY_URL + org.image_hash} />
 
             <div>
                 <Link
                     className="link-wrapper link-text text-clip"
                     to="/dashboard/"
                     style={{ marginTop: "2px", marginRight: "40px", marginBlock: "auto" }}>
-                    {orgData?.name}
+                    {org.name}
                 </Link>
 
                 <div className="action_bar__header__subtext">
                     <small>
-                        <div>{orgData?.chain.slice(0, 5)}</div>
+                        <div>{org.chain}</div>
 
-                        <a
-                            className="link-wrapper"
-                            href={`https://polygonscan.com/address/${orgData?.ethereum_address}`}
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            <strong>{sliceAddress(orgData?.ethereum_address)}</strong>
+                        <a target="_blank" rel="noreferrer" className="link-wrapper"
+                            href={`https://polygonscan.com/address/${org.ethereum_address}`}>
+                            <strong>{sliceAddress(org?.ethereum_address)}</strong>
                         </a>
                     </small>
 
                     <ActionButton
                         icon={['fal', 'clipboard']}
-                        onClick={() => navigator.clipboard.writeText(orgData?.ethereum_address)}
+                        onClick={() => navigator.clipboard.writeText(org?.ethereum_address)}
                         style={{ marginLeft: "10px" }}
                         sx={{ minWidth: '36px' }}
                     />

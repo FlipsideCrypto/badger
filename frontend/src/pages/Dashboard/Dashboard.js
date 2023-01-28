@@ -1,5 +1,6 @@
-import { useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
+import { useNetwork, useSwitchNetwork } from "wagmi";
 
 import { UserContext } from "@contexts"
 
@@ -9,10 +10,30 @@ import { Badge, BadgeForm, Home, Org, OrgForm } from "@pages";
 
 import "@style/Dashboard/Dashboard.css";
 
+const PRIMARY_PRODUCTION_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
+
 const Dashboard = () => {
-    const [collapsed, setCollapsed] = useState(false);
+    const { chain } = useNetwork();
+    const { chains, switchNetwork } = useSwitchNetwork();
 
     const { isAuthenticated, isConnected, isLoaded } = useContext(UserContext);
+
+    const [collapsed, setCollapsed] = useState(false);
+
+    const [isWrongNetwork, setIsWrongNetwork] = useState(false);
+
+    const onSwitchNetworkRequest = useCallback(() => {
+        const primaryChain = chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)
+        switchNetwork?.(primaryChain?.id)
+    }, [chains, switchNetwork]);
+
+    // If wrong network is detected, then prompt a network switch.
+    useEffect(() => {
+        setIsWrongNetwork(chain?.name !== PRIMARY_PRODUCTION_CHAIN)
+
+        if (isWrongNetwork && chain)
+            onSwitchNetworkRequest();
+    }, [chain, isWrongNetwork, onSwitchNetworkRequest]);
 
     return (
         <div className={collapsed ? "dashboard collapsed" : "dashboard"}>
@@ -41,12 +62,12 @@ const Dashboard = () => {
                 {isLoaded && <DashboardContent>
                     <Routes>
                         <Route path="/" element={<Home />} />
-                        <Route path="/organization/new" element={<OrgForm />} />
-                        <Route path="/organization/:orgId" element={<Org />} />
-                        <Route path="/organization/:orgId/edit" element={<OrgForm isEdit={true} />} />
-                        <Route path="/organization/:orgId/badge/new" element={<BadgeForm />} />
-                        <Route path="/organization/:orgId/badge/:badgeId" element={<Badge />} />
-                        <Route path="/organization/:orgId/badge/:badgeId/edit" element={<BadgeForm isEdit={true} />} />
+                        <Route path="/organization/new/" element={<OrgForm />} />
+                        <Route path="/organization/:orgId/" element={<Org />} />
+                        <Route path="/organization/:orgId/edit/" element={<OrgForm isEdit={true} />} />
+                        <Route path="/organization/:orgId/badge/new/" element={<BadgeForm />} />
+                        <Route path="/organization/:orgId/badge/:badgeId/" element={<Badge />} />
+                        <Route path="/organization/:orgId/badge/:badgeId/edit/" element={<BadgeForm isEdit={true} />} />
                     </Routes>
                 </DashboardContent>}
             </div>
