@@ -26,7 +26,17 @@ class SerializerRepresentationMixin:
 class ConnectedMixin:
     async def connect(self, *args, **kwargs):
         await super().connect(*args, **kwargs)
+
+        if self.scope['user'].is_anonymous:
+            await self.send_json({
+                'action': 'disconnected',
+                'message': 'You must be logged in to connect.'
+            })
+            await self.close()
+            return
+
         print('connected to ', self.scope['user'])
+
         await self.send_json({
             'action': 'connected',
         })

@@ -1,60 +1,49 @@
-import { useContext, useMemo } from "react";
-import { useNavigate, Link, useParams } from "react-router-dom";
-import { useAccount } from "wagmi";
+import { useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { OrgContext } from "@contexts";
+import { UserContext } from "@contexts";
 
-import { ActionTitle, BadgeTable, IconButton, Header } from "@components";
+import { ActionTitle, BadgeTable, Empty, Header } from "@components";
 
 const Org = () => {
     const navigate = useNavigate();
 
-    const { address } = useAccount();
-    const { orgData } = useContext(OrgContext);
     const { orgId } = useParams();
 
-    const isOwner = useMemo(() => {
-        return orgData.owner.ethereum_address === address;
-    }, [orgData, address])
+    const { authenticatedAddress, organizations } = useContext(UserContext);
+
+    const org = organizations && organizations.find(org => String(org.id) === orgId);
+
+    const isOwner = org && org.owner.ethereum_address === authenticatedAddress;
+
+    const headerActions = isOwner && [{
+        text: "Settings",
+        icon: ['fal', 'fa-gear'],
+        onClick: () => navigate(`/dashboard/organization/${orgId}/edit/`)
+    }];
+
+    const titleActions = isOwner && [{
+        text: "Create Badge",
+        icon: ['fal', 'plus'],
+        onClick: () => navigate(`/dashboard/organization/${orgId}/badge/new/`)
+    }];
 
     return (
         <>
-            <Header
-                back={() => navigate("/dashboard")}
-                actions={isOwner ?
-                    [{
-                        text: "Settings",
-                        icon: ['fal', 'fa-gear'],
-                        event: () => navigate(`/dashboard/organization/${orgId}/edit`)
-                    }] : []
-                }
-            />
+            <Header back={() => navigate("/dashboard/")} actions={headerActions} />
 
             <div className="dashboard__content">
-                <ActionTitle
-                    title="Organization Badges"
-                    actions={isOwner ?
-                        [{
-                            className: "home__action-button",
-                            icon: ['fal', 'plus'],
-                            onClick: () => navigate(`/dashboard/organization/${orgId}/badge/new`),
-                            afterText: "Create badge"
-                        }] : []
-                    }
-                />
+                <ActionTitle title="Organization Badges" actions={titleActions} />
 
-                {orgData?.badges?.length > 0
-                    ? <BadgeTable orgId={orgData?.id} badges={orgData?.badges} />
-                    : <div className="org__container empty">
-                        <h1>No Badges in {orgData?.name ? orgData?.name : "the Organization"} yet!</h1>
-                        <p>
-                            You are one step closer to having the credentials of your on-chain Organization.
-                            Now you can create and distribute your badges that act as keys throughout the ecosystem in a matter of seconds.
-                        </p>
-                        <Link className="internal-link" to={`/dashboard/organization/${orgId}/badge/new`}>
-                            <IconButton icon={['fal', 'arrow-right']} text="CREATE BADGE" style={{ marginTop: "40px" }} />
-                        </Link>
-                    </div>}
+                {org && org.badges.length === 0 && <Empty
+                    title="No Badges in the Organization yet!"
+                    body="You are one step closer to having the credentials of your on-chain Organization.
+                    Now you can create and distribute your badges that act as keys throughout the ecosystem in a matter of seconds."
+                    button="CREATE BADGE"
+                    url={`/dashboard/organization/${orgId}/badge/new/`}
+                />}
+
+                {org && org.badges.length > 0 && <BadgeTable orgId={org?.id} badges={org?.badges} />}
             </div>
         </>
     )

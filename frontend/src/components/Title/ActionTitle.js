@@ -9,7 +9,7 @@ const ActionTitle = ({ title, actions }) => {
         }}>
             <h2>{title}</h2>
 
-            <div style={{
+            {actions && <div style={{
                 display: "flex",
                 justifyContent: "flex-end",
             }}>
@@ -19,10 +19,10 @@ const ActionTitle = ({ title, actions }) => {
                         className={action.className}
                         onClick={action.onClick}
                         icon={action.icon}
-                        afterText={action.afterText}
+                        afterText={action.text || action.afterText}
                     />
                 ))}
-            </div>
+            </div>}
         </div>
     )
 

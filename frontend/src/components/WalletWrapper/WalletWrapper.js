@@ -13,7 +13,7 @@ const WalletWrapper = ({ children }) => {
   );
 
   const { connectors } = getDefaultWallets({
-    appName: 'My RainbowKit App',
+    appName: 'Badger',
     chains
   });
 

@@ -2,13 +2,15 @@ import { useEffect, useMemo, useState } from 'react';
 
 import ReconnectingWebSocket from 'reconnecting-websocket';
 
-const useSocket = ({ url }) => {
+const useSocket = ({ enabled, url }) => {
     const [connected, setConnected] = useState(false);
-    const [objects, setObjects] = useState([]);
+    const [objects, setObjects] = useState(null);
 
     const client = useMemo(() => {
+        if(!enabled) return null;
+
         return new ReconnectingWebSocket(url);
-    }, [url]);
+    }, [enabled, url]);
 
     const callbacks = useMemo(() => ({}), []);
 
@@ -64,6 +66,8 @@ const useSocket = ({ url }) => {
     }
 
     useEffect(() => {
+        if (!enabled) return;
+
         client.onopen = () => {
             client.send(JSON.stringify({
                 action: 'list',
@@ -77,7 +81,7 @@ const useSocket = ({ url }) => {
 
             handleAction(message);
         }
-    }, []);
+    }, [enabled]);
 
     return {
         connected,

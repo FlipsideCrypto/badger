@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fal } from '@fortawesome/pro-light-svg-icons'
 
+import { ErrorContextProvider, OrgContextProvider, UserContextProvider } from "@contexts"
+
 import { SEO, WalletWrapper } from "@components"
 
 import { Dashboard, Landing } from "@pages"
@@ -23,7 +25,13 @@ function App() {
                     <Route exact path="/" element={<Landing />} />
                     <Route exact path="/dashboard/*" element={
                         <WalletWrapper>
-                            <Dashboard />
+                            <ErrorContextProvider>
+                                <OrgContextProvider>
+                                    <UserContextProvider>
+                                        <Dashboard />
+                                    </UserContextProvider>
+                                </OrgContextProvider>
+                            </ErrorContextProvider>
                         </WalletWrapper>
                     } />
                 </Routes>

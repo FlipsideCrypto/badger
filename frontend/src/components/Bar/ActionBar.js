@@ -1,14 +1,13 @@
 import { useEffect, useContext, useState, useCallback } from "react";
 import { useLocation } from 'react-router-dom';
 
-import { useNetwork, useSwitchNetwork } from "wagmi";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 
 import { OrgContext, UserContext } from "@contexts";
 
 import { useENSProfile } from "@hooks";
 
-import { ActionButton, LogoutButton, OrgView, ProfileView } from "@components"
+import { ActionButton, ConnectButton, LogoutButton, OrgView, ProfileView } from "@components"
 
 import { sliceAddress } from "@utils";
 
@@ -19,14 +18,14 @@ import "@style/Bar/ActionBar.css";
 
 const PRIMARY_PRODUCTION_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
 
-const ActionBar = ({ address, collapsed, setCollapsed }) => {
+const ActionBar = ({ collapsed, setCollapsed }) => {
     const { chain } = useNetwork();
     const { chains, switchNetwork } = useSwitchNetwork();
 
-    const { openConnectModal } = useConnectModal();
-    const { ensAvatar, ensName, isFetched: ensFetched } = useENSProfile(address);
+    const { authenticatedAddress, isAuthenticated, tryAuthentication } = useContext(UserContext);
 
-    const { isAuthenticated, tryAuthentication } = useContext(UserContext);
+    const { ensAvatar, ensName, isFetched: ensFetched } = useENSProfile(authenticatedAddress);
+
     const { orgData } = useContext(OrgContext);
 
     const { pathname: path } = useLocation();
@@ -52,40 +51,20 @@ const ActionBar = ({ address, collapsed, setCollapsed }) => {
             onSwitchNetworkRequest();
     }, [chain, isWrongNetwork, onSwitchNetworkRequest]);
 
-    // Opens the connect modal on landing if connection has not already been
-    // established in prior session.
-    useEffect(() => {
-        if (openConnectModal && !address)
-            openConnectModal()
-    }, [openConnectModal, address])
-
     return (
         <div className="action_bar">
             <div className="action_bar__view">
-                {!address
-                    ? <button onClick={openConnectModal}>
-                        Connect Wallet
-                    </button>
-                    : isWrongNetwork ?
-                        <button onClick={onSwitchNetworkRequest}>
-                            {`Switch to ${PRIMARY_PRODUCTION_CHAIN}`}
-                        </button>
-                        : !isAuthenticated || !ensFetched ?
-                            <button onClick={tryAuthentication}>
-                                Sign In
-                            </button>
-                            : !orgId || !orgData?.name ? <ProfileView
-                                ensAvatar={ensAvatar}
-                                ensName={ensName}
-                                address={sliceAddress(address)}
-                            />
-                                : <OrgView
-                                    orgData={orgData}
-                                    ipfs={IPFS_GATEWAY_URL}
-                                    sliceAddress={sliceAddress}
-                                />
-
-                }
+                {!isAuthenticated ?
+                    <ConnectButton /> :
+                    !orgId || !orgData?.name ? <ProfileView
+                        ensAvatar={ensAvatar}
+                        ensName={ensName}
+                        address={sliceAddress(authenticatedAddress)}
+                    /> : <OrgView
+                        orgData={orgData}
+                        ipfs={IPFS_GATEWAY_URL}
+                        sliceAddress={sliceAddress}
+                    />}
             </div>
 
             <div className="action_bar__actions">
@@ -104,7 +83,7 @@ const ActionBar = ({ address, collapsed, setCollapsed }) => {
                 />
 
 
-                {address && <LogoutButton />}
+                {isAuthenticated && authenticatedAddress && <LogoutButton />}
             </div>
         </div >
     )

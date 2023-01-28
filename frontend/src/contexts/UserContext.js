@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect, useCallback } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useAccount, useNetwork, useSigner } from "wagmi";
 
 import { BadgeContext, OrgContext } from "@contexts";
@@ -7,51 +7,51 @@ import { getAuthentication, getAuthenticationMessage } from "@utils";
 
 const UserContext = createContext();
 
-// TODO: Prompt signature just once on page load, but only if there is not an existing
-//       authentication token for the connected signer. (I think this is what getAuthenticationStatus() was being used for)
+const getAuthenticatedAddress = () => {
+    return document.cookie.split(';').find(c => c.includes('authenticatedAddress'))?.split('=')[1];
+}
 
 const UserContextProvider = ({ children }) => {
     const { chain } = useNetwork();
-    const { signer } = useSigner();
+    const { data: signer } = useSigner();
 
-    const { address } = useAccount();
+    const { address, isConnected } = useAccount();
 
     const { organizations } = useContext(OrgContext);
     const { badges } = useContext(BadgeContext);
 
-    const [authenticatedAddress, setAuthenticatedAddress] = useState(null);
+    const [authenticatedAddress, setAuthenticatedAddress] = useState(getAuthenticatedAddress());
 
-    const isAuthenticated = signer?._address ? authenticatedAddress === signer._address : false;
+    const isAuthenticated = isConnected && address === authenticatedAddress;
+
+    const isLoaded = organizations && badges;
 
     useEffect(() => {
-        const tryAuthentication = async ({ address, chainId, signer }) => {
-            // Clear any prior authentication token and prompt a signature to authenticate.
-            // TODO: This should not be here.
-            // document.cookie = 'csrftoken=; Path=/; Expires=Sat, 01 Jan 2000 00:00:001 GMT;';
-
-            // Make the call to the backend.
-            const { message } = await getAuthenticationMessage(address, chainId);
+        const tryAuthentication = async ({ chainId, signer }) => {
+            const { message } = await getAuthenticationMessage(signer._address, chainId);
 
             const signature = await signer.signMessage(message.prepareMessage());
 
             const response = await getAuthentication(message, signature);
 
-            // TODO: Doing nothing with this response? how is that possible?
+            if (!response.success) return
 
-            setAuthenticatedAddress(address);
+            setAuthenticatedAddress(signer._address);
         };
 
-        if (!address || !chain || !signer) return;
+        if (!signer || !chain || isAuthenticated) return;
 
-        tryAuthentication({ address, chainId: chain.chainId, signer });
-    }, [address, chain, signer])
+        tryAuthentication({ chainId: chain.id, signer });
+    }, [signer, chain])
 
     return (
         <UserContext.Provider value={{
-            isAuthenticated,
             authenticatedAddress,
             organizations,
-            badges
+            badges,
+            isConnected,
+            isAuthenticated,
+            isLoaded
         }}>
             {children}
         </UserContext.Provider>

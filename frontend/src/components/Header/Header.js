@@ -15,16 +15,16 @@ const Header = ({ back, actions }) => {
                 }
             </div>
 
-            <div className="header__actions">
-                {actions && actions.map((action, index) => (
+            {actions && <div className="header__actions">
+                {actions.map((action, index) => (
                     <ActionButton
                         key={index}
-                        onClick={action.event}
+                        onClick={action.event || action.onClick}
                         icon={action.icon}
                         afterText={action.text}
                     />
                 ))}
-            </div>
+            </div>}
         </header>
     );
 }

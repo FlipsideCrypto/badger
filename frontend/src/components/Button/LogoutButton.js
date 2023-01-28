@@ -10,9 +10,10 @@ const LogoutButton = () => {
     const navigate = useNavigate();
 
     const onDisconnect = () => {
-        disconnect();
         document.cookie = 'csrftoken=; Path=/; Expires=Sat, 01 Jan 2000 00:00:001 GMT;';
-        navigate("/");
+        document.cookie = 'authenticatedAddress=; Path=/; Expires=Sat, 01 Jan 2000 00:00:001 GMT;';
+
+        disconnect({ onSuccess: () => { navigate("/dashboard/") } });
     }
 
     return (
