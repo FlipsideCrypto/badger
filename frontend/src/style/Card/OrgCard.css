@@ -6,18 +6,6 @@
     cursor: pointer;
 }
 
-.home__cards .card .home__card__image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    border-radius: 4px;
-    width: 100%;
-    filter: brightness(1.75);
-}
-
 .home__cards .card .text {
     display: grid;
     grid-template-rows: auto 4fr;
@@ -33,14 +21,13 @@
 
 .home__cards .card .text .title {
     margin-top: auto;
-    display: grid;
-    align-self: center;
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
 }
 
 .home__cards .card .text .title .viewImage {
     border-radius: 50%;
     height: 24px;
     width: 24px;
-    margin-bottom: -5px;
-    margin-right: 10px;
 }
