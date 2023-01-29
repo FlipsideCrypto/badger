@@ -21,8 +21,10 @@ const Badge = () => {
 
     const { authenticatedAddress, organizations } = useUser()
 
-    const [isDrawerCollapsed, setIsDrawerCollapsed] = useState(false);
-    const [action, setAction] = useState("Mint");
+    const [drawer, setDrawer] = useState({
+        collapsed: true,
+        action: "Mint"
+    });
 
     const org = organizations && organizations.find(org => String(org.id) === orgId);
     const badge = org?.badges?.find(badge => String(badge.id) === badgeId);
@@ -43,8 +45,10 @@ const Badge = () => {
         icon: ['fal', 'fa-user'],
         text: "Update holders",
         onClick: () => {
-            setAction("Mint");
-            setIsDrawerCollapsed(selectActions.slice(0, 2).includes(action) ? !isDrawerCollapsed : true)
+            setDrawer({
+                collapsed: selectActions.slice(0, 2).includes(drawer.action) ? !drawer.collapsed : false,
+                action: "Mint"
+            })
         }
     },
     {
@@ -52,8 +56,10 @@ const Badge = () => {
         icon: ['fal', 'fa-people-roof'],
         text: "Update managers",
         onClick: () => {
-            setAction("Add Manager");
-            setIsDrawerCollapsed(selectActions.slice(2, 4).includes(action) ? !isDrawerCollapsed : true)
+            setDrawer({
+                collapsed: selectActions.slice(2, 4).includes(drawer.action) ? !drawer.collapsed : false,
+                action: "Add Manager"
+            })
         }
     }]
 
@@ -66,8 +72,8 @@ const Badge = () => {
             <div className="dashboard__content">
                 <ActionTitle title="Badge Holders" actions={titleActions} />
 
-                {isLeader && isDrawerCollapsed && (
-                    <BadgeManagementDrawer action={action} badge={badge} org={org} isLeader={isLeader} />
+                {isLeader && (
+                    <BadgeManagementDrawer drawer={drawer} badge={badge} org={org} isLeader={isLeader} />
                 )}
             </div>
 

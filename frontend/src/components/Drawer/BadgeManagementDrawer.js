@@ -8,7 +8,7 @@ import { FormReducer, IconButton, InputListCSV, Header, HolderTable, Select } fr
 
 import { putBadgeRolesRequest } from "@utils";
 
-const BadgeManagementDrawer = ({ action, badge, org }) => {
+const BadgeManagementDrawer = ({ drawer, badge, org }) => {
     const { setError } = useContext(ErrorContext);
 
     const [areAddressesValid, setAreAddressesValid] = useState(false);
@@ -16,7 +16,7 @@ const BadgeManagementDrawer = ({ action, badge, org }) => {
 
     const [addressesToUpdate, dispatchAddresses] = useReducer(FormReducer, { addresses: [] });
 
-    const txMethod = ["Mint", "Revoke"].includes(action) ? "manageOwnership" : "setDelegates";
+    const txMethod = ["Mint", "Revoke"].includes(drawer.action) ? "manageOwnership" : "setDelegates";
 
     const setDelegatesReady = areAddressesValid && txMethod === "setDelegates"
     const manageOwnershipReady = areAddressesValid && txMethod === "manageOwnership"
@@ -26,7 +26,7 @@ const BadgeManagementDrawer = ({ action, badge, org }) => {
         org.ethereum_address,               // orgAddress
         badge.token_id,                     // tokenId array
         addressesToUpdate.addresses,        // address array
-        action,                             // mint, revoke, add or remove leaders
+        drawer.action,                      // mint, revoke, add or remove leaders
     );
 
     const manageOwnership = useManageBadgeOwnership(
@@ -34,7 +34,7 @@ const BadgeManagementDrawer = ({ action, badge, org }) => {
         org.ethereum_address,               // orgAddress
         badge.token_id,                     // tokenId array
         addressesToUpdate.addresses,        // address array
-        action,                             // mint, revoke, add or remove leaders
+        drawer.action,                      // mint, revoke, add or remove leaders
         1                                   // amount of each token
     );
 
@@ -143,6 +143,8 @@ const BadgeManagementDrawer = ({ action, badge, org }) => {
     //         })
     //     }
     // }, [manageOwnership.error, setDelegates.error, txMethod, setError])
+
+    if(drawer.collapsed) return null;
 
     return (
         <>
