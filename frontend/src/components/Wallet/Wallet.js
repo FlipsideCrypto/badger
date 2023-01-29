@@ -3,6 +3,8 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
+import { AuthenticationContextProvider, OrgContextProvider, UserContextProvider } from '@contexts';
+
 const Wallet = ({ children }) => {
     const { chains, provider } = configureChains(
         [...defaultChains, chain.polygon, chain.localhost],
@@ -26,7 +28,13 @@ const Wallet = ({ children }) => {
     return (
         <WagmiConfig client={wagmiClient}>
             <RainbowKitProvider chains={chains}>
-                {children}
+                <AuthenticationContextProvider>
+                    <OrgContextProvider>
+                        <UserContextProvider>
+                            {children}
+                        </UserContextProvider>
+                    </OrgContextProvider>
+                </AuthenticationContextProvider>
             </RainbowKitProvider>
         </WagmiConfig>
     )
