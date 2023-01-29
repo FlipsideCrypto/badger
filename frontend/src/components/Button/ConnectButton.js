@@ -3,7 +3,7 @@ import { useAccount, useNetwork, useSwitchNetwork } from "wagmi"
 
 import { useConnectModal } from "@rainbow-me/rainbowkit"
 
-import { AuthenticationContext } from "@contexts"
+import { UserContext } from "@contexts"
 
 import { useAuthenticationModal } from "@hooks"
 
@@ -17,7 +17,7 @@ const ConnectButton = () => {
 
     const { openConnectModal } = useConnectModal()
 
-    const { authenticatedAddress, isAuthenticated } = useContext(AuthenticationContext)
+    const { isAuthenticating } = useContext(UserContext)
 
     const { openAuthenticationModal } = useAuthenticationModal();
 
@@ -31,7 +31,7 @@ const ConnectButton = () => {
         onClick={switchNetwork?.bind(null, chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)?.id)}
     >Switch to {PRIMARY_PRODUCTION_CHAIN}</button>
 
-    return <button disabled={isAuthenticated} onClick={openAuthenticationModal}>Sign In</button>
+    return <button disabled={isAuthenticating} onClick={openAuthenticationModal}>Sign In</button>
 }
 
 export { ConnectButton }

@@ -5,11 +5,11 @@ import { AuthenticationContext } from "@contexts";
 
 import { getAuthentication, getAuthenticationMessage } from "@utils";
 
-const useAuthenticationModal = () => {
+const useAuthenticationModal = ({ onAuthenticated = () => { } }) => {
     const { chain } = useNetwork();
     const { data: signer } = useSigner();
 
-    const { setAuthenticatedAddress } = useContext(AuthenticationContext);
+    const { setIsAuthenticating, setAuthenticatedAddress } = useContext(AuthenticationContext);
 
     const openAuthenticationModal = () => {
         const tryAuthentication = async ({ chainId, signer }) => {
@@ -21,12 +21,20 @@ const useAuthenticationModal = () => {
 
             if (!response.success) return
 
-            setAuthenticatedAddress(signer._address);
+            setAuthenticatedAddress(signer._address).then(() => onAuthenticated());
         };
 
         if (!signer || !chain) return;
 
-        tryAuthentication({ chainId: chain.id, signer });
+        try {
+            setIsAuthenticating(true);
+
+            tryAuthentication({ chainId: chain.id, signer });
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsAuthenticating(false);
+        }
     }
 
     return { openAuthenticationModal }

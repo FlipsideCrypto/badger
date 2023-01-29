@@ -10,6 +10,7 @@ const getAuthenticatedAddress = () => {
 const AuthenticationContextProvider = ({ children }) => {
     const { address, isConnected } = useAccount();
 
+    const [isAuthenticating, setIsAuthenticating] = useState(false);
     const [authenticatedAddress, setAuthenticatedAddress] = useState(getAuthenticatedAddress());
 
     const isAuthenticated = isConnected && address === authenticatedAddress;
@@ -17,9 +18,10 @@ const AuthenticationContextProvider = ({ children }) => {
     return (
         <AuthenticationContext.Provider value={{
             authenticatedAddress,
-            setAuthenticatedAddress,
+            isAuthenticating,
             isAuthenticated,
-            isConnected
+            setIsAuthenticating,
+            setAuthenticatedAddress
         }}>
             {children}
         </AuthenticationContext.Provider>

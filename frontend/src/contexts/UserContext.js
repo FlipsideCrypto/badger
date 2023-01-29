@@ -1,11 +1,14 @@
 import { createContext, useContext } from "react";
+import { useAccount } from "wagmi";
 
 import { AuthenticationContext, BadgeContext, OrgContext } from "@contexts";
 
 const UserContext = createContext();
 
 const UserContextProvider = ({ children }) => {
-    const { authenticatedAddress, isAuthenticated, isConnected } = useContext(AuthenticationContext);
+    const { isConnected } = useAccount();
+
+    const { authenticatedAddress, isAuthenticated, isAuthenticating } = useContext(AuthenticationContext);
     const { organizations } = useContext(OrgContext);
     const { badges } = useContext(BadgeContext);
 
@@ -18,6 +21,7 @@ const UserContextProvider = ({ children }) => {
             badges,
             isConnected,
             isAuthenticated,
+            isAuthenticating,
             isLoaded
         }}>
             {children}
