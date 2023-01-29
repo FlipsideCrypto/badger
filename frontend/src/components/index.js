@@ -4,12 +4,14 @@ export { ActionButton, ConnectButton, IconButton, LogoutButton } from './Button'
 export { Card, ErrorCard, OrgCard } from './Card';
 export { BadgeDangerZone, OrgDangerZone } from './DangerZone';
 export { Dashboard } from './Dashboard/Dashboard';
+export { BadgeManagementDrawer } from './Drawer';
 export { Empty } from './Empty/Empty';
 export { Checkbox, Input, InputAddress, InputListCSV, InputListKeyValue, Select, Switch, FormDrawer, FormReducer, initialBadgeForm, initialOrgForm } from './Form';
 export { Header } from './Header/Header';
 export { Help, HelpCopy, HelpSidebar } from './Help';
 export { ChainIcon } from './Icon/ChainIcon';
 export { OrgStats } from './Org/OrgStats';
+export { BadgePreview } from './Preview/BadgePreview';
 export { SEO } from './SEO/SEO';
 export { StatusIndicators } from './StatusIndicators/StatusIndicators';
 export { BadgeTable, HolderTable, ObjectTable, TableSortHead } from './Table';

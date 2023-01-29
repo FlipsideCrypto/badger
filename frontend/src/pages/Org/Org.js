@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useUser } from "@hooks";

@@ -18,9 +18,8 @@ const ImageLoader = ({
 
     return (
         <>
-            {!loaded &&
-                <div className={className} />
-            }
+            {!loaded && <div className={className} />}
+
             <img
                 className={className}
                 src={prependGateway ? IPFS_GATEWAY_URL + src : src}

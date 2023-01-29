@@ -1,0 +1,1 @@
+export { BadgeManagementDrawer } from './BadgeManagementDrawer';

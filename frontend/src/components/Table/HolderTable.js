@@ -12,9 +12,9 @@ import { holderHeadRows } from "@static";
 
 import "@style/Table/HolderTable.css";
 
-const HolderTable = ({ badge }) => {
+const HolderTable = ({ delegates, users }) => {
     const [headRows, setHeadRows] = useState(holderHeadRows);
-    const [sortedList, setSortedList] = useState(badge.users);
+    const [sortedList, setSortedList] = useState(users);
 
     const onSortChange = (key) => {
         // Get the current sort method and inverse it for chevron display.
@@ -57,9 +57,9 @@ const HolderTable = ({ badge }) => {
 
     // If users changes, update and combine holders and delegates in the sorted list.
     useEffect(() => {
-        const combinedUsers = combineUsersAndDelegates(badge.users, badge.delegates);
+        const combinedUsers = combineUsersAndDelegates(users, delegates);
         setSortedList(combinedUsers);
-    }, [badge.users, badge.delegates])
+    }, [delegates, users])
 
     return (
         <div id="holder__table">
