@@ -1,9 +1,9 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { useAccount, useNetwork, useSigner } from "wagmi";
+import { createContext, useContext, useState } from "react";
+import { useAccount } from "wagmi";
 
 import { BadgeContext, OrgContext } from "@contexts";
 
-import { getAuthentication, getAuthenticationMessage } from "@utils";
+import { useAuthenticationModal } from "@hooks";
 
 const UserContext = createContext();
 
@@ -12,10 +12,13 @@ const getAuthenticatedAddress = () => {
 }
 
 const UserContextProvider = ({ children }) => {
-    const { chain } = useNetwork();
-    const { data: signer } = useSigner();
-
     const { address, isConnected } = useAccount();
+
+    const { openAuthenticationModal } = useAuthenticationModal({
+        onAuthenticated: (address) => {
+            setAuthenticatedAddress(address);
+        }
+    });
 
     const { organizations } = useContext(OrgContext);
     const { badges } = useContext(BadgeContext);
@@ -26,26 +29,9 @@ const UserContextProvider = ({ children }) => {
 
     const isLoaded = organizations && badges;
 
-    useEffect(() => {
-        const tryAuthentication = async ({ chainId, signer }) => {
-            const { message } = await getAuthenticationMessage(signer._address, chainId);
-
-            const signature = await signer.signMessage(message.prepareMessage());
-
-            const response = await getAuthentication(message, signature);
-
-            if (!response.success) return
-
-            setAuthenticatedAddress(signer._address);
-        };
-
-        if (!signer || !chain || isAuthenticated) return;
-
-        tryAuthentication({ chainId: chain.id, signer });
-    }, [signer, chain])
-
     return (
         <UserContext.Provider value={{
+            openAuthenticationModal,
             authenticatedAddress,
             organizations,
             badges,

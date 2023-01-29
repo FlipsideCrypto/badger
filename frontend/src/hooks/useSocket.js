@@ -7,7 +7,7 @@ const useSocket = ({ enabled, url }) => {
     const [objects, setObjects] = useState(null);
 
     const client = useMemo(() => {
-        if(!enabled) return null;
+        if (!enabled) return null;
 
         return new ReconnectingWebSocket(url);
     }, [enabled, url]);
@@ -43,7 +43,14 @@ const useSocket = ({ enabled, url }) => {
         // We encountered an error
         if (data.data === null) return;
 
-        if (data.action === 'connected') {
+        if (data.action === 'disconnected') {
+            console.error('Disconnected from server', data)
+
+            setConnected(false);
+            if (data.message === 'You must be logged in to connect.') {
+                document.cookie = 'authenticatedAddress=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            }
+        } else if (data.action === 'connected') {
             setConnected(true);
         } else if (data.action === 'list') {
             setObjects(data.data);

@@ -6,6 +6,7 @@
     "@craco/craco": "^7.0.0-alpha.0",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
+    "@fcannizzaro/react-use-cookie-watcher": "^2.0.6",
     "@fortawesome/fontawesome-pro": "^6.2.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-brands-svg-icons": "^6.1.1",

@@ -1,4 +1,4 @@
-import { createContext } from "react"
+import { createContext, useContext } from "react"
 import { useAccount } from "wagmi"
 
 import { BadgeContextProvider } from "@contexts"

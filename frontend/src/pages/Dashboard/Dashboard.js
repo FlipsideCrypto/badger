@@ -59,7 +59,7 @@ const Dashboard = () => {
                     body="This may take a few seconds. If this takes longer than 10 seconds, please refresh the page."
                 />}
 
-                {isLoaded && <DashboardContent>
+                {isAuthenticated && isLoaded && <DashboardContent>
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/organization/new/" element={<OrgForm />} />

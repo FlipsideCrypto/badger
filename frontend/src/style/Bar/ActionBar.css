@@ -8,7 +8,7 @@
     padding-inline: 20px;
 }
 
-.action_bar div:last-child { 
+.action_bar .action_bar__actions { 
     display: flex;
     justify-content: flex-end;
 }

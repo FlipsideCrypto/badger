@@ -12,6 +12,7 @@ const LogoutButton = () => {
     const onDisconnect = () => {
         document.cookie = 'csrftoken=; Path=/; Expires=Sat, 01 Jan 2000 00:00:001 GMT;';
         document.cookie = 'authenticatedAddress=; Path=/; Expires=Sat, 01 Jan 2000 00:00:001 GMT;';
+        document.cookie = 'sessionid=; Path=/; Expires=Sat, 01 Jan 2000 00:00:001 GMT;';
 
         disconnect({ onSuccess: () => { navigate("/dashboard/") } });
     }
