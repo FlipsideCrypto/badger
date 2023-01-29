@@ -19,7 +19,7 @@ const ActionBar = ({ collapsed, setCollapsed }) => {
 
     const { ensAvatar, ensName } = useENSProfile(authenticatedAddress);
 
-    const orgId = pathname.replace('/dashboard/', '').replace('organization/', '');
+    const orgId = pathname.replace('dashboard', '').replace('organization', '').replaceAll('/', '');
 
     return (
         <div className="action_bar">
