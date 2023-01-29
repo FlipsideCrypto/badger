@@ -1,21 +1,20 @@
 import { Link } from "react-router-dom";
 
-import { IconButton } from "@components";
+import { Dashboard, IconButton } from "@components";
 
-const Empty = ({
-    title,
-    body,
-    button,
-    url
-}) => {
+import "@style/Empty/Empty.css";
+
+const Empty = ({ title, body, button, url }) => {
     return (
-        <div className="org__container empty" style={{ gridColumn: "span 3" }}>
-            <h1>{title}</h1>
-            <p style={{ marginBottom: "40px" }}>{body}</p>
+        <div className="empty">
+            <Dashboard>
+                <h1>{title}</h1>
+                <p>{body}</p>
 
-            {url && button && <Link className="internal-link" to={url}>
-                <IconButton icon={['fal', 'arrow-right']} text={button} />
-            </Link>}
+                {url && button && <Link className="internal-link" to={url}>
+                    <IconButton icon={['fal', 'arrow-right']} text={button} />
+                </Link>}
+            </Dashboard>
         </div>
     )
 }

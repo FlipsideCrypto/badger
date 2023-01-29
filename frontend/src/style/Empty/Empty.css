@@ -1,0 +1,28 @@
+.empty {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin-inline: 20px;
+}
+
+.empty,
+.empty .dashboardContent {
+    grid-column: 1 / span 2;
+}
+
+.empty .dashboardContent p {
+    margin-bottom: 40px;
+}
+
+@media (max-width: 1024px) {
+    .empty,
+    .empty .dashboardContent {
+        grid-column: 1 / span 3;
+    }
+}
+
+@media (max-width: 768px) {
+    .empty,
+    .empty .dashboardContent {
+        grid-column: 1 / span 4;
+    }
+}

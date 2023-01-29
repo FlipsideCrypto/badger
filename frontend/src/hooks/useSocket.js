@@ -2,7 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 
 import ReconnectingWebSocket from 'reconnecting-websocket';
 
+import { useLogout } from "@hooks";
+
 const useSocket = ({ enabled, url }) => {
+    const { logout } = useLogout();
+
     const [connected, setConnected] = useState(false);
     const [objects, setObjects] = useState(null);
 
@@ -18,10 +22,8 @@ const useSocket = ({ enabled, url }) => {
         if (client.readyState === client.OPEN) {
             const requestId = JSON.parse(message).request_id;
 
-            // Set the callback so that we can handle the response
             callbacks[requestId] = callback;
 
-            // Send the actual message to the server
             client.send(message);
         }
     };
@@ -40,16 +42,14 @@ const useSocket = ({ enabled, url }) => {
     const handleAction = (message) => {
         const data = JSON.parse(message.data.toString());
 
-        // We encountered an error
         if (data.data === null) return;
 
         if (data.action === 'disconnected') {
             console.error('Disconnected from server', data)
 
             setConnected(false);
-            if (data.message === 'You must be logged in to connect.') {
-                document.cookie = 'authenticatedAddress=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            }
+
+            if (data.message === 'You must be logged in to connect.') logout();
         } else if (data.action === 'connected') {
             setConnected(true);
         } else if (data.action === 'list') {

@@ -1,6 +1,8 @@
+import "@style/Dashboard/Dashboard.css";
+
 const Dashboard = ({ children }) => {
     return (
-        <div className="dashboard__content" style={{ marginInline: "20px" }}>
+        <div className="dashboardContent">
             {children}
         </div>
     )

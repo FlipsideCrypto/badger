@@ -1,5 +1,6 @@
 .action_bar { 
     display: grid;
+    grid-column: 1 / span 4;
     grid-template-columns: 4fr 8fr;
     grid-template-rows: 1fr;
     align-items: center;

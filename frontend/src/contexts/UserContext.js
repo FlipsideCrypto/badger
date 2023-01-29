@@ -8,7 +8,7 @@ const UserContext = createContext();
 const UserContextProvider = ({ children }) => {
     const { isConnected } = useAccount();
 
-    const { authenticatedAddress, isAuthenticated, isAuthenticating } = useContext(AuthenticationContext);
+    const { authenticatedAddress, isAuthenticated, isAuthenticating, isWrongNetwork, primaryChain } = useContext(AuthenticationContext);
     const { organizations } = useContext(OrgContext);
     const { badges } = useContext(BadgeContext);
 
@@ -16,13 +16,15 @@ const UserContextProvider = ({ children }) => {
 
     return (
         <UserContext.Provider value={{
+            primaryChain,
             authenticatedAddress,
             organizations,
             badges,
             isConnected,
             isAuthenticated,
             isAuthenticating,
-            isLoaded
+            isLoaded,
+            isWrongNetwork
         }}>
             {children}
         </UserContext.Provider>

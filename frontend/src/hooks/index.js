@@ -8,4 +8,5 @@ export { getAverageColor, handleImageLoad } from './useColor';
 export { useENSProfile } from './useENSProfile';
 export { useFees } from './useFees';
 export { useIPFSImageHash, useIPFSMetadataHash } from './useIPFSHash';
+export { useLogout } from './useLogout';
 export { useSocket } from './useSocket';
