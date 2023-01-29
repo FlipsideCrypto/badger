@@ -4,11 +4,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useAccount } from "wagmi"
 
-import { OrgContext, ErrorContext } from "@contexts";
+import { ErrorContext } from "@contexts";
 
 import { ActionTitle, FormReducer, IconButton, InputListCSV, Header, HolderTable, ImageLoader, Select } from "@components";
 
-import { useManageBadgeOwnership, useSetDelegates } from "@hooks";
+import { useManageBadgeOwnership, useSetDelegates, useUser } from "@hooks";
 
 import { putBadgeRolesRequest } from "@utils";
 
@@ -16,195 +16,191 @@ import { IPFS_GATEWAY_URL } from "@static";
 
 import "@style/pages/Badge.css";
 
+const selectActions = [
+    "Mint",
+    "Revoke",
+    "Add Manager",
+    "Remove Manager"
+]
+
 const Badge = () => {
     const navigate = useNavigate();
+
     const { orgId, badgeId } = useParams();
+
     const { address } = useAccount();
-    const { orgData, setOrgData } = useContext(OrgContext);
+
+    const { organizations } = useUser()
+
     const { setError } = useContext(ErrorContext);
 
     const [isManage, setIsManage] = useState(false);
     const [areAddressesValid, setAreAddressesValid] = useState(false);
     const [selectedAction, setSelectedAction] = useState("Mint");
-    const [txMethod, setTxMethod] = useState("manageOwnership");
     const [txPending, setTxPending] = useState(false);
     const [addressesToUpdate, dispatchAddresses] = useReducer(FormReducer, { addresses: [] });
 
-    const badgeIndex = useMemo(() =>
-        orgData?.badges?.findIndex(badge => badge.id === parseInt(badgeId)), [orgData, badgeId]
+    const org = organizations && organizations.find(org => String(org.id) === orgId);
+    const badge = org?.badges?.find(badge => String(badge.id) === badgeId);
+
+    const txMethod = ["Mint", "Revoke"].includes(selectedAction) ? "manageOwnership" : "setDelegates";
+
+    const isLeader = org && badge && (
+        org.owner.ethereum_address === address ||
+        badge.delegates.find(delegate => delegate.ethereum_address === address)
     );
-
-    const [badge, setBadge] = useState(orgData?.badges?.[badgeIndex] || {});
-
-    const isLeader = useMemo(() => {
-        return (
-            orgData?.owner?.ethereum_address === address ||
-            badge?.delegates?.find(delegate => delegate.ethereum_address === address)
-        )
-    }, [orgData, badge, address]);
 
     const setDelegates = useSetDelegates(
         isLeader && areAddressesValid && txMethod === "setDelegates",
-        orgData?.ethereum_address,          // orgAddress
-        badge?.token_id,                    // tokenId array
+        org.ethereum_address,               // orgAddress
+        badge.token_id,                     // tokenId array
         addressesToUpdate.addresses,        // address array
         selectedAction,                     // mint, revoke, add or remove leaders
     );
 
     const manageOwnership = useManageBadgeOwnership(
         areAddressesValid && txMethod === "manageOwnership",
-        orgData?.ethereum_address,          // orgAddress
-        badge?.token_id,                    // tokenId array
+        org.ethereum_address,               // orgAddress
+        badge.token_id,                     // tokenId array
         addressesToUpdate.addresses,        // address array
         selectedAction,                     // mint, revoke, add or remove leaders
         1                                   // amount of each token
     );
 
-    // Limit actions for Managers.
-    const selectActions = [
-        "Mint",
-        "Revoke",
-        "Add Manager",
-        "Remove Manager"
-    ]
+    // // Update the badge array after the transaction is completed, POST 
+    // // out to the API, update our orgData context, and reset call transaction flag.
+    // const onMembersUpdate = useCallback(async () => {
+    //     let badgeObj = { ...badge }
+    //     if (!badgeObj.users) badge.users = [];
 
-    // When select option changes, set the controlled value and update the
-    // method to determine function flow and to send to be further parsed
-    // into single, bundle, or full bundle methods at the contract level.
-    const onMethodChange = (method) => {
-        setSelectedAction(method);
-        if (method === "Mint" || method === "Revoke") {
-            setTxMethod("manageOwnership");
-        } else {
-            setTxMethod("setDelegates");
-        }
-    }
+    //     addressesToUpdate.addresses.forEach(member => {
+    //         if (selectedAction === "Revoke") {
+    //             const index = badgeObj.users.findIndex(user => user.ethereum_address === member);
+    //             badgeObj.users.splice(index, 1);
+    //         }
+    //         else if (selectedAction === "Mint") {
+    //             badgeObj.users.push({ ethereum_address: member });
+    //         }
+    //     })
 
-    // Update the badge array after the transaction is completed, POST 
-    // out to the API, update our orgData context, and reset call transaction flag.
-    const onMembersUpdate = useCallback(async () => {
-        let badgeObj = { ...badge }
-        if (!badgeObj.users) badge.users = [];
+    //     const response = await putBadgeRolesRequest(badgeObj, orgId)
+    //     if (response.error)
+    //         setError({
+    //             label: 'Adding members to database failed',
+    //             message: response.error
+    //         });
+    //     else {
+    //         setBadge(response);
+    //         setOrgData(orgData => { orgData.badges[badgeIndex] = response; return { ...orgData } });
+    //     }
 
-        addressesToUpdate.addresses.forEach(member => {
-            if (selectedAction === "Revoke") {
-                const index = badgeObj.users.findIndex(user => user.ethereum_address === member);
-                badgeObj.users.splice(index, 1);
-            }
-            else if (selectedAction === "Mint") {
-                badgeObj.users.push({ ethereum_address: member });
-            }
-        })
+    //     setTxPending(false);
+    // }, [badge, addressesToUpdate, selectedAction, orgId, setError, setOrgData, badgeIndex]);
 
-        const response = await putBadgeRolesRequest(badgeObj, orgId)
-        if (response.error)
-            setError({
-                label: 'Adding members to database failed',
-                message: response.error
-            });
-        else {
-            setBadge(response);
-            setOrgData(orgData => { orgData.badges[badgeIndex] = response; return { ...orgData } });
-        }
+    // // Update the badge array after the transaction is completed, POST 
+    // // out to the API, update our orgData context, and reset call transaction flag.
+    // const onDelegatesUpdate = useCallback(async () => {
+    //     let badgeObj = { ...badge }
+    //     if (!badgeObj.delegates) badge.delegates = [];
 
-        setTxPending(false);
-    }, [badge, addressesToUpdate, selectedAction, orgId, setError, setOrgData, badgeIndex]);
+    //     addressesToUpdate.addresses.forEach(member => {
+    //         if (selectedAction === "Remove Manager") {
+    //             const index = badgeObj.delegates.findIndex(delegate => delegate.ethereum_address === member);
+    //             badgeObj.delegates.splice(index, 1);
+    //         }
+    //         else if (selectedAction === "Add Manager") {
+    //             badgeObj.delegates.push({ ethereum_address: member });
+    //         }
+    //     })
 
-    // Update the badge array after the transaction is completed, POST 
-    // out to the API, update our orgData context, and reset call transaction flag.
-    const onDelegatesUpdate = useCallback(async () => {
-        let badgeObj = { ...badge }
-        if (!badgeObj.delegates) badge.delegates = [];
+    //     const response = await putBadgeRolesRequest(badgeObj, orgId)
+    //     if (response.error) {
+    //         setError({
+    //             label: 'Adding managers to database failed',
+    //             message: response.error
+    //         });
+    //     }
+    //     else {
+    //         setBadge(response);
+    //         setOrgData(orgData => { orgData.badges[badgeIndex] = response; return { ...orgData } });
+    //     }
 
-        addressesToUpdate.addresses.forEach(member => {
-            if (selectedAction === "Remove Manager") {
-                const index = badgeObj.delegates.findIndex(delegate => delegate.ethereum_address === member);
-                badgeObj.delegates.splice(index, 1);
-            }
-            else if (selectedAction === "Add Manager") {
-                badgeObj.delegates.push({ ethereum_address: member });
-            }
-        })
-
-        const response = await putBadgeRolesRequest(badgeObj, orgId)
-        if (response.error) {
-            setError({
-                label: 'Adding managers to database failed',
-                message: response.error
-            });
-        }
-        else {
-            setBadge(response);
-            setOrgData(orgData => { orgData.badges[badgeIndex] = response; return { ...orgData } });
-        }
-
-        setTxPending(false);
-    }, [badge, badgeIndex, addressesToUpdate, orgId, selectedAction, setError, setOrgData]);
+    //     setTxPending(false);
+    // }, [badge, badgeIndex, addressesToUpdate, orgId, selectedAction, setError, setOrgData]);
 
     // Manage the transaction write and clean up effects.
-    const runTransaction = useCallback(async () => {
-        setTxPending(true);
+    // const runTransaction = useCallback(async () => {
+    //     setTxPending(true);
 
-        let tx;
-        try {
-            if (txMethod === "manageOwnership")
-                tx = await manageOwnership.write?.()
-            else if (txMethod === "setDelegates")
-                tx = await setDelegates.write?.()
+    //     let tx;
+    //     try {
+    //         if (txMethod === "manageOwnership")
+    //             tx = await manageOwnership.write?.()
+    //         else if (txMethod === "setDelegates")
+    //             tx = await setDelegates.write?.()
 
-            if (tx) {
-                const txReceipt = await tx?.wait();
-                if (txReceipt.status !== 1)
-                    throw new Error(setDelegates.error || manageOwnership.error);
+    //         if (tx) {
+    //             const txReceipt = await tx?.wait();
+    //             if (txReceipt.status !== 1)
+    //                 throw new Error(setDelegates.error || manageOwnership.error);
 
-                txMethod === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
-            }
-        } catch (error) {
-            setError({
-                label: 'Error managing members',
-                message: error
-            });
+    //             txMethod === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
+    //         }
+    //     } catch (error) {
+    //         setError({
+    //             label: 'Error managing members',
+    //             message: error
+    //         });
+    //     }
+
+    //     setTxPending(false);
+    // }, [txMethod, setDelegates, manageOwnership, setError, onMembersUpdate, onDelegatesUpdate]);
+
+    // // If we have a silent error from preparing the transaction, display it.
+    // useEffect(() => {
+    //     setError(null)
+    //     if (manageOwnership?.error && txMethod === "manageOwnership") {
+    //         setError({
+    //             label: 'Error managing members',
+    //             message: manageOwnership?.error
+    //         })
+    //     }
+    //     else if (setDelegates?.error && txMethod === "setDelegates") {
+    //         setError({
+    //             label: 'Error setting delegates',
+    //             message: setDelegates?.error
+    //         })
+    //     }
+    // }, [manageOwnership.error, setDelegates.error, txMethod, setError])
+
+    const headerActions = isLeader && [{
+        text: "Settings",
+        icon: ["fal", "fa-gear"],
+        event: () => navigate(`/dashboard/organization/${orgId}/badge/${badgeId}/edit`)
+    }]
+
+    const titleActions = isLeader && [{
+        className: "home__action-button",
+        icon: ['fal', 'fa-user'],
+        afterText: "Update holders",
+        onClick: () => {
+            setSelectedAction("Mint");
+            setIsManage(true)
         }
-
-        setTxPending(false);
-    }, [txMethod, setDelegates, manageOwnership, setError, onMembersUpdate, onDelegatesUpdate]);
-
-    // Set badge data if orgData has been updated.
-    useEffect(() => {
-        if (orgData?.badges?.[badgeIndex]) {
-            setBadge(orgData?.badges[badgeIndex]);
+    },
+    {
+        className: "home__action-button",
+        icon: ['fal', 'fa-people-roof'],
+        afterText: "Update managers",
+        onClick: () => {
+            setSelectedAction("Add Manager");
+            setIsManage(true)
         }
-    }, [orgData, badgeIndex])
-
-    // If we have a silent error from preparing the transaction, display it.
-    useEffect(() => {
-        setError(null)
-        if (manageOwnership?.error && txMethod === "manageOwnership") {
-            setError({
-                label: 'Error managing members',
-                message: manageOwnership?.error
-            })
-        }
-        else if (setDelegates?.error && txMethod === "setDelegates") {
-            setError({
-                label: 'Error setting delegates',
-                message: setDelegates?.error
-            })
-        }
-    }, [manageOwnership.error, setDelegates.error, txMethod, setError])
+    }]
 
     return (
         <>
-            <Header
-                back={() => navigate(`/dashboard/organization/${orgId}`)}
-                actions={isLeader ?
-                    [{
-                        text: "Settings",
-                        icon: ["fal", "fa-gear"],
-                        event: () => navigate(`/dashboard/organization/${orgId}/badge/${badgeId}/edit`)
-                    }] : []
-                }
-            />
+            <Header back={() => navigate(`/dashboard/organization/${orgId}/`)} actions={headerActions} />
 
             <div id="badge">
                 <div className="badge__header container__background">
@@ -218,46 +214,23 @@ const Badge = () => {
 
                     <div className="badge__header__content">
                         <div className="badge__title">
-                            <span className="badge__name">{badge?.name}</span>
+                            <span className="badge__name">{badge.name}</span>
+
                             <div className="badge__title__icons">
-                                {badge?.account_bound &&
-                                    <FontAwesomeIcon icon={["fal", "fa-lock"]} />
-                                }
+                                {badge.account_bound && <FontAwesomeIcon icon={["fal", "fa-lock"]} />}
                             </div>
                         </div>
-                        <p className="badge__description">
-                            {badge?.description}
-                        </p>
+
+                        <p className="badge__description">{badge?.description}</p>
+
                         <div className="indicator__pill">
-                            {`#${badge?.token_id ?? ""}`}
+                            {`#${badge.token_id}`}
                         </div>
                     </div>
                 </div>
 
                 <div style={{ marginInline: "20px", marginTop: "20px" }}>
-                    <ActionTitle
-                        title="Badge Holders"
-                        actions={isLeader ?
-                            [{
-                                className: "home__action-button",
-                                icon: ['fal', 'fa-user'],
-                                afterText: "Update holders",
-                                onClick: () => {
-                                    onMethodChange("Mint");
-                                    setIsManage(true)
-                                }
-                            },
-                            {
-                                className: "home__action-button",
-                                icon: ['fal', 'fa-people-roof'],
-                                afterText: "Update managers",
-                                onClick: () => {
-                                    onMethodChange("Add Manager");
-                                    setIsManage(true)
-                                }
-                            }] : []
-                        }
-                    />
+                    <ActionTitle title="Badge Holders" actions={titleActions} />
                 </div>
 
                 {isManage && isLeader &&
@@ -266,7 +239,7 @@ const Badge = () => {
                             label="Update Type"
                             options={selectActions}
                             value={selectedAction}
-                            setValue={(e) => onMethodChange(e.target.value)}
+                            setValue={(e) => setSelectedAction(e.target.value)}
                         />
                         <InputListCSV
                             label={selectedAction === "Mint" ? "Members to Update" : "Managers to Update"}
@@ -278,7 +251,7 @@ const Badge = () => {
                         <IconButton
                             icon={['fal', 'arrow-right']}
                             text={txMethod === "manageOwnership" ? "UPDATE MEMBERS" : "UPDATE MANAGERS"}
-                            onClick={() => runTransaction()}
+                            // onClick={() => runTransaction()}
                             style={{ margin: "20px 0px 20px auto" }}
                             loading={txPending}
                             disabled={txMethod === "manageOwnership" ?

@@ -10,3 +10,4 @@ export { useFees } from './useFees';
 export { useIPFSImageHash, useIPFSMetadataHash } from './useIPFSHash';
 export { useLogout } from './useLogout';
 export { useSocket } from './useSocket';
+export { useUser } from './useUser';

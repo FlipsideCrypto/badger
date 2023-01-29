@@ -1,9 +1,6 @@
-import { useContext } from "react";
 import { useLocation } from "react-router-dom";
 
-import { UserContext } from "@contexts";
-
-import { useENSProfile } from "@hooks";
+import { useENSProfile, useUser } from "@hooks";
 
 import { ActionButton, ConnectButton, LogoutButton, OrgView, ProfileView } from "@components"
 
@@ -15,11 +12,12 @@ import "@style/Bar/ActionBar.css";
 const ActionBar = ({ collapsed, setCollapsed }) => {
     const { pathname } = useLocation();
 
-    const { authenticatedAddress, isAuthenticated, isLoaded } = useContext(UserContext);
+    const { authenticatedAddress, isAuthenticated, isLoaded } = useUser();
 
     const { ensAvatar, ensName } = useENSProfile(authenticatedAddress);
 
-    const orgId = pathname.replace('dashboard', '').replace('organization', '').replaceAll('/', '');
+    const orgId = pathname.split('/')[3];
+    const badgeId = pathname.includes('badge') ? pathname.split('/')[5] : null; //
 
     return (
         <div className="action_bar">

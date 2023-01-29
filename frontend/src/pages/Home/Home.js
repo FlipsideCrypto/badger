@@ -1,7 +1,7 @@
 import { useContext, Suspense } from "react"
 import { useNavigate } from "react-router-dom";
 
-import { UserContext } from "@contexts";
+import { useUser } from "@hooks";
 
 import { ActionTitle, Empty, OrgCard } from "@components"
 
@@ -10,7 +10,7 @@ import "@style/pages/Home.css";
 const Home = () => {
     const navigate = useNavigate();
 
-    const { isAuthenticated, organizations } = useContext(UserContext);
+    const { isAuthenticated, organizations } = useUser();
 
     const titleActions = isAuthenticated && [{
         className: "home__action-button",

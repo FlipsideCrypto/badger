@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { UserContext } from "@contexts";
+import { useUser } from "@hooks";
 
 import { ActionTitle, BadgeTable, Empty, Header } from "@components";
 
@@ -10,7 +10,7 @@ const Org = () => {
 
     const { orgId } = useParams();
 
-    const { authenticatedAddress, organizations } = useContext(UserContext);
+    const { authenticatedAddress, organizations } = useUser();
 
     const org = organizations && organizations.find(org => String(org.id) === orgId);
 
@@ -43,7 +43,7 @@ const Org = () => {
                     url={`/dashboard/organization/${orgId}/badge/new/`}
                 />}
 
-                {org && org.badges.length > 0 && <BadgeTable orgId={org?.id} badges={org?.badges} />}
+                {org && org.badges.length > 0 && <BadgeTable orgId={org.id} badges={org.badges} />}
             </div>
         </>
     )

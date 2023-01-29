@@ -1,7 +1,6 @@
-import { useContext } from "react";
 import { Link } from 'react-router-dom';
 
-import { UserContext } from "@contexts"
+import { useUser } from "@hooks"
 
 import { ActionButton, ImageLoader } from "@components"
 
@@ -14,7 +13,7 @@ import "@style/View/OrgView.css"
 const copy = (text) => navigator.clipboard.writeText(text);
 
 const OrgView = ({ orgId }) => {
-    const { organizations } = useContext(UserContext);
+    const { organizations } = useUser()
 
     const org = organizations && organizations.find(org => String(org.id) === orgId);
 

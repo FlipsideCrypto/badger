@@ -1,7 +1,7 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 
-import { UserContext } from "@contexts"
+import { useUser } from "@hooks";
 
 import { ActionBar, Dashboard as DashboardContent, Empty, HelpSidebar } from "@components";
 
@@ -10,7 +10,7 @@ import { Badge, BadgeForm, Home, Org, OrgForm } from "@pages";
 import "@style/Dashboard/Dashboard.css";
 
 const Dashboard = () => {
-    const { isAuthenticated, isConnected, isLoaded, isWrongNetwork, primaryChain } = useContext(UserContext);
+    const { isAuthenticated, isConnected, isLoaded, isWrongNetwork, primaryChain } = useUser();
 
     const [collapsed, setCollapsed] = useState(false);
 
