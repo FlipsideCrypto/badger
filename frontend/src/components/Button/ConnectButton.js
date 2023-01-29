@@ -18,6 +18,8 @@ const ConnectButton = () => {
     // mirror the functionality of useAccount and useConnectModal with the authentication flow
     // const { authenticatedAddress, isAuthenticated, isLoading } = useAuthentication()
 
+    // maybe we also want to create an AuthenticationWrapper like WalletWrapper
+
     const { openAuthenticationModal } = useContext(UserContext)
 
     const isWrongNetwork = chain?.name !== PRIMARY_PRODUCTION_CHAIN

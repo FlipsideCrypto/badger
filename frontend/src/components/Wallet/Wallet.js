@@ -3,7 +3,7 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
-const WalletWrapper = ({ children }) => {
+const Wallet = ({ children }) => {
     const { chains, provider } = configureChains(
         [...defaultChains, chain.polygon, chain.localhost],
         [
@@ -32,4 +32,4 @@ const WalletWrapper = ({ children }) => {
     )
 }
 
-export { WalletWrapper };
+export { Wallet };

@@ -16,4 +16,4 @@ export { BadgeTable, HolderTable, ObjectTable, TableSortHead } from './Table';
 export { ActionTitle } from './Title/ActionTitle';
 export { ImageLoader } from "./Utils";
 export { OrgView, ProfileView } from './View';
-export { WalletWrapper } from './WalletWrapper/WalletWrapper';
+export { Wallet } from './Wallet';
