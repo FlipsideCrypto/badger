@@ -5,18 +5,18 @@ import { AuthenticationContext } from "@contexts";
 
 import { getAuthentication, getAuthenticationMessage } from "@utils";
 
-const useAuthenticationModal = ({
-    onAuthenticated = () => { },
-    onAuthenticating = () => { },
-    onError = (e) => { console.error(e) },
-    onSettled = () => { }
-}) => {
+const useAuthenticationModal = () => {
     const { chain } = useNetwork();
     const { data: signer } = useSigner();
 
     const { setIsAuthenticating, setAuthenticatedAddress } = useContext(AuthenticationContext);
 
-    const openAuthenticationModal = () => {
+    const openAuthenticationModal = ({
+        onAuthenticating = () => { },
+        onAuthenticated = () => { },
+        onError = (e) => { console.error(e) },
+        onSettled = () => { },
+    }) => {
         const tryAuthentication = async ({ chainId, signer }) => {
             const { message } = await getAuthenticationMessage(signer._address, chainId);
 
@@ -32,13 +32,13 @@ const useAuthenticationModal = ({
         if (!signer || !chain) return;
 
         try {
-            setIsAuthenticating(true).then(() => onAuthenticating);
+            setIsAuthenticating(true).then(onAuthenticating);
 
-            tryAuthentication({ chainId: chain.id, signer }).then(() => onAuthenticated());
+            tryAuthentication({ chainId: chain.id, signer }).then(onAuthenticated);
         } catch (error) {
-            onError(error);
+            onError(error)
         } finally {
-            setIsAuthenticating(false).then(() => onSettled());
+            setIsAuthenticating(false).then(onSettled);
         }
     }
 

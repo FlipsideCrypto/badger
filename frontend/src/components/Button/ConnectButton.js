@@ -3,9 +3,7 @@ import { useAccount, useNetwork, useSwitchNetwork } from "wagmi"
 
 import { useConnectModal } from "@rainbow-me/rainbowkit"
 
-import { UserContext } from "@contexts"
-
-import { useAuthenticationModal } from "@hooks"
+import { useAuthentication, useAuthenticationModal } from "@hooks"
 
 const PRIMARY_PRODUCTION_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN
 
@@ -17,7 +15,7 @@ const ConnectButton = () => {
 
     const { openConnectModal } = useConnectModal()
 
-    const { isAuthenticating } = useContext(UserContext)
+    const { isAuthenticating } = useAuthentication()
 
     const { openAuthenticationModal } = useAuthenticationModal();
 
