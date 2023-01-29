@@ -1,12 +1,17 @@
+import { useContext } from "react";
 import { useNetwork, useSigner } from "wagmi";
+
+import { AuthenticationContext } from "@contexts";
 
 import { getAuthentication, getAuthenticationMessage } from "@utils";
 
-const useAuthenticationModal = ({ onAuthenticated }) => {
+const useAuthenticationModal = () => {
     const { chain } = useNetwork();
     const { data: signer } = useSigner();
 
-    const openAuthenticationModal = () => { 
+    const { setAuthenticatedAddress } = useContext(AuthenticationContext);
+
+    const openAuthenticationModal = () => {
         const tryAuthentication = async ({ chainId, signer }) => {
             const { message } = await getAuthenticationMessage(signer._address, chainId);
 
@@ -16,7 +21,7 @@ const useAuthenticationModal = ({ onAuthenticated }) => {
 
             if (!response.success) return
 
-            onAuthenticated(signer._address);
+            setAuthenticatedAddress(signer._address);
         };
 
         if (!signer || !chain) return;

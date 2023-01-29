@@ -5,7 +5,7 @@ import { AuthenticationContext, BadgeContext, OrgContext } from "@contexts";
 const UserContext = createContext();
 
 const UserContextProvider = ({ children }) => {
-    const { authenticatedAddress, isAuthenticated } = useContext(AuthenticationContext);
+    const { authenticatedAddress, isAuthenticated, isConnected } = useContext(AuthenticationContext);
     const { organizations } = useContext(OrgContext);
     const { badges } = useContext(BadgeContext);
 

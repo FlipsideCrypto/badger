@@ -3,7 +3,9 @@ import { useAccount, useNetwork, useSwitchNetwork } from "wagmi"
 
 import { useConnectModal } from "@rainbow-me/rainbowkit"
 
-import { UserContext } from "@contexts"
+import { AuthenticationContext } from "@contexts"
+
+import { useAuthenticationModal } from "@hooks"
 
 const PRIMARY_PRODUCTION_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN
 
@@ -15,12 +17,9 @@ const ConnectButton = () => {
 
     const { openConnectModal } = useConnectModal()
 
-    // mirror the functionality of useAccount and useConnectModal with the authentication flow
-    // const { authenticatedAddress, isAuthenticated, isLoading } = useAuthentication()
+    const { authenticatedAddress, isAuthenticated } = useContext(AuthenticationContext)
 
-    // maybe we also want to create an AuthenticationWrapper like WalletWrapper
-
-    const { openAuthenticationModal } = useContext(UserContext)
+    const { openAuthenticationModal } = useAuthenticationModal();
 
     const isWrongNetwork = chain?.name !== PRIMARY_PRODUCTION_CHAIN
 
@@ -32,7 +31,7 @@ const ConnectButton = () => {
         onClick={switchNetwork?.bind(null, chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)?.id)}
     >Switch to {PRIMARY_PRODUCTION_CHAIN}</button>
 
-    return <button onClick={openAuthenticationModal}>Sign In</button>
+    return <button disabled={isAuthenticated} onClick={openAuthenticationModal}>Sign In</button>
 }
 
 export { ConnectButton }

@@ -1,8 +1,6 @@
 import { createContext, useState } from "react";
 import { useAccount } from "wagmi";
 
-import { useAuthenticationModal } from "@hooks";
-
 const AuthenticationContext = createContext();
 
 const getAuthenticatedAddress = () => {
@@ -14,20 +12,14 @@ const AuthenticationContextProvider = ({ children }) => {
 
     const [authenticatedAddress, setAuthenticatedAddress] = useState(getAuthenticatedAddress());
 
-    const { openAuthenticationModal } = useAuthenticationModal({
-        onAuthenticated: (address) => {
-            setAuthenticatedAddress(address);
-        }
-    });
-
     const isAuthenticated = isConnected && address === authenticatedAddress;
 
     return (
         <AuthenticationContext.Provider value={{
             authenticatedAddress,
             setAuthenticatedAddress,
-            openAuthenticationModal,
-            isAuthenticated
+            isAuthenticated,
+            isConnected
         }}>
             {children}
         </AuthenticationContext.Provider>
