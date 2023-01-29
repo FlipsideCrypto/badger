@@ -1,5 +1,3 @@
-// I want to take the AuthenticationContext and make it a hook of useAuthentication()
-
 import { useContext } from 'react';
 
 import { AuthenticationContext } from '@contexts';

@@ -32,13 +32,15 @@ const useAuthenticationModal = () => {
         if (!signer || !chain) return;
 
         try {
-            setIsAuthenticating(true).then(onAuthenticating);
+            setIsAuthenticating(true) && onAuthenticating();
 
-            tryAuthentication({ chainId: chain.id, signer }).then(onAuthenticated);
+            const args = { chainId: chain.id, signer }
+
+            tryAuthentication({ ...args }) && onAuthenticated({ ...args });
         } catch (error) {
             onError(error)
         } finally {
-            setIsAuthenticating(false).then(onSettled);
+            setIsAuthenticating(false) && onSettled();
         }
     }
 
