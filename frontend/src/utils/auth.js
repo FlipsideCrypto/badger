@@ -41,7 +41,7 @@ async function getAuthenticationMessage(address, chainId) {
     }
 }
 
-async function getAuthentication(message, signature) {
+async function getAuthentication(address, message, signature) {
     const csrfToken = getCSRFToken();
 
     if (!csrfToken) throw new Error(ERRORS["API_CSRF_TOKEN_NOT_FOUND"]);
@@ -58,8 +58,6 @@ async function getAuthentication(message, signature) {
 
     if (response.ok) {
         // save the address as a cookie
-        const address = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
-
         document.cookie = `authenticatedAddress=${address}; path=/; max-age=31536000; SameSite=Lax; Secure`;
 
         return response.json()
