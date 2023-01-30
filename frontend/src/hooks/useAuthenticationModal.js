@@ -22,7 +22,7 @@ const useAuthenticationModal = () => {
 
             const signature = await signer.signMessage(message.prepareMessage());
 
-            const response = await getAuthentication(message, signature);
+            const response = await getAuthentication(signer._address, message, signature);
 
             if (!response.success) return
 
