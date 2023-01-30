@@ -9,11 +9,7 @@ const Org = () => {
 
     const { orgId } = useParams();
 
-    const { authenticatedAddress, organizations } = useUser();
-
-    const org = organizations && organizations.find(org => String(org.id) === orgId);
-
-    const isOwner = org && org.owner.ethereum_address === authenticatedAddress;
+    const { badges, isOwner, organization } = useUser({ orgId });
 
     const headerActions = isOwner && [{
         text: "Settings",
@@ -34,7 +30,7 @@ const Org = () => {
             <div className="dashboard__content">
                 <ActionTitle title="Organization Badges" actions={titleActions} />
 
-                {org && org.badges.length === 0 && <Empty
+                {badges && badges.length === 0 && <Empty
                     title="No Badges in the Organization yet!"
                     body="You are one step closer to having the credentials of your on-chain Organization.
                     Now you can create and distribute your badges that act as keys throughout the ecosystem in a matter of seconds."
@@ -42,7 +38,7 @@ const Org = () => {
                     url={`/dashboard/organization/${orgId}/badge/new/`}
                 />}
 
-                {org && org.badges.length > 0 && <BadgeTable orgId={org.id} badges={org.badges} />}
+                {badges && badges.length > 0 && <BadgeTable orgId={organization.id} badges={badges} />}
             </div>
         </>
     )

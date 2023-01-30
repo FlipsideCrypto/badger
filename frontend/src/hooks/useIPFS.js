@@ -16,7 +16,7 @@ const useIPFS = ({ image, data }) => {
     const useImageHash = async () => {
         console.log('inside useImageHash', image)
 
-        if(!image) return { hash: null };
+        if (!image) return { hash: null };
 
         const reader = new FileReader();
 
@@ -103,14 +103,8 @@ const useIPFSMetadataHash = (data) => {
         async function getHash() {
             if (!data) return;
 
-            const stringify = JSON.stringify({
-                ...data,
-                image: IPFS_GATEWAY_URL + data.image
-            });
-            await Hash.of(stringify, {
-                cidVersion: 0,
-                onlyHash: true,
-            })
+            const stringify = JSON.stringify({ ...data, image: IPFS_GATEWAY_URL + data.image });
+            await Hash.of(stringify, { cidVersion: 0, onlyHash: true })
                 .then((res) => {
                     setHash(res);
                 })

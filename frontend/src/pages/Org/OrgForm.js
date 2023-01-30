@@ -27,13 +27,11 @@ const OrgForm = ({ isEdit = false }) => {
     const { address } = useAccount();
     const { chain } = useNetwork();
 
+    const { organization } = useUser({ orgId });
+
     const { setError } = useContext(ErrorContext);
 
-    const { organizations } = useUser();
-
-    const org = organizations && organizations.find(org => String(org.id) === orgId);
-
-    const [obj, setObj] = useState(org || initialOrgForm);
+    const [obj, setObj] = useState(organization || initialOrgForm);
     const [image, setImage] = useState(null);
 
     const [txPending, setTxPending] = useState(false);
@@ -51,26 +49,25 @@ const OrgForm = ({ isEdit = false }) => {
         attributes: obj.attributes
     }
 
-    const { hash: deterministicMetadataHash } = useIPFSMetadataHash({
-        name: obj.name,
-        description: obj.description,
-        image: objImage,
-        attributes: obj.attributes
-    })
+    const { hash: deterministicMetadataHash } = useIPFSMetadataHash(imageHashArgs)
 
     const { pinImage, pinMetadata } = useIPFS({
         image: image || generatedImage,
-        data: imageHashArgs 
-    });
-
-    const isDisabled = !(obj.name && obj.symbol && obj.description && (obj.image_hash || objImage));
+        data: imageHashArgs
+    })
 
     const isCustomImage = obj.image_hash !== null || image !== null;
 
+    const isDisabled = !(obj.name && obj.symbol && obj.description && (obj.image_hash || objImage));
+
     // TODO Refactor this into a hook
+    // openCreateOrgTxModal
+    // openUpdateOrgTxModal
+    // onSuccess
+    // onError
     const createContract = useCreateOrg(
         !isDisabled && !isEdit,
-        org,
+        obj,
         deterministicImageHash,
         deterministicMetadataHash,
         address,
@@ -78,8 +75,8 @@ const OrgForm = ({ isEdit = false }) => {
     )
 
     const updateOrg = useEditOrg(
-        !isDisabled && isEdit && org.ethereum_address,
-        org.ethereum_address,
+        !isDisabled && isEdit && organization.ethereum_address,
+        organization.ethereum_address,
         deterministicMetadataHash
     )
 
@@ -208,29 +205,28 @@ const OrgForm = ({ isEdit = false }) => {
     }, [updateOrg.error, createContract.error, setError])
 
     const onNameChange = (e) => {
-        setObj({ ...org, name: e.target.value, symbol: nameToSymbol(e.target.value) })
+        setObj({ ...obj, name: e.target.value, symbol: nameToSymbol(e.target.value) })
     }
 
     const onSymbolChange = (e) => {
         if (e.target.value.length > 4) return;
 
-        setObj({ ...org, symbol: e.target.value })
+        setObj({ ...obj, symbol: e.target.value })
     }
 
     const onDescriptionChange = (e) => {
-        setObj({ ...org, description: e.target.value })
+        setObj({ ...obj, description: e.target.value })
     }
 
     const onImageChange = (e) => {
         const files = e.target.files[0];
 
-        if (files) {
-            const reader = new FileReader();
-            reader.readAsDataURL(files);
-            reader.onload = () => {
-                setImage(reader.result);
-            };
-        }
+        if (!files) return
+
+        const reader = new FileReader();
+
+        reader.readAsDataURL(files);
+        reader.onload = () => { setImage(reader.result) };
     }
 
     return (
@@ -272,15 +268,12 @@ const OrgForm = ({ isEdit = false }) => {
                 <input id="org-image" ref={imageInput} accept="image/*" type="file" style={{ display: "none" }} onChange={onImageChange} />
             </FormDrawer>
 
-            <FormActionBar
-                help={"Badge creation occurs after your organization has been established."}
-                actions={actions}
-                style={{ marginInline: "30px" }}
-            />
+            <FormActionBar actions={actions} style={{ marginInline: "30px" }}
+                help={"Badge creation occurs after your organization has been established."} />
 
             <hr style={{ margin: "30px 20px 30px 20px", backgroundColor: "#EEEEF6", border: "none", height: "1px" }} />
 
-            {isEdit && <OrgDangerZone orgAddress={org.ethereum_address} />}
+            {isEdit && <OrgDangerZone orgAddress={organization.ethereum_address} />}
         </div>
     )
 }
