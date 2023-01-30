@@ -8,16 +8,32 @@ import { IPFS_GATEWAY_URL } from "@static"
 
 const Hash = require("ipfs-only-hash");
 
-const useIPFS = () => {
+const useIPFS = ({ image, data }) => {
     const { setError } = useContext(ErrorContext);
 
     const [imageHash, setImageHash] = useState(null);
 
-    const useImageHash = async (image) => {
+    const useImageHash = async () => {
+        console.log('inside useImageHash', image)
 
+        if(!image) return { hash: null };
+
+        const reader = new FileReader();
+
+        reader.onload = async () => {
+            var uint8Array = new Uint8Array(reader.result);
+            await Hash.of(uint8Array, {
+                cidVersion: 0,
+                onlyHash: true,
+            })
+                .then((res) => { setImageHash(res); })
+                .catch((err) => { console.error('Error with deterministic image hashing', err); })
+        };
+
+        return { hash: imageHash }
     }
 
-    const useMetadataHash = async (data) => {
+    const useMetadataHash = async () => {
 
     }
 

@@ -14,11 +14,11 @@ const nameToSymbol = (name) => {
     return name.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().substring(0, 5);
 }
 
+// TODO: Finalize the implementation of image handling
 // TODO: Fix the contract hooks
 
 const OrgForm = ({ isEdit = false }) => {
     const imageInput = useRef();
-    const firstCharOfName = useRef();
 
     const navigate = useNavigate();
 
@@ -31,31 +31,43 @@ const OrgForm = ({ isEdit = false }) => {
 
     const { organizations } = useUser();
 
-    const { characterPFP } = usePFP();
-
     const org = organizations && organizations.find(org => String(org.id) === orgId);
 
     const [obj, setObj] = useState(org || initialOrgForm);
-
     const [image, setImage] = useState(null);
 
     const [txPending, setTxPending] = useState(false);
 
-    const { useImageHash, useMetadataHash, pinImage, pinMetadata } = useIPFS();
+    const { characterPFP: generatedImage } = usePFP({ name: obj.name });
 
-    const { hash: deterministicImageHash } = useIPFSImageHash(customImage)
+    const { hash: deterministicImageHash } = useIPFSImageHash(image || generatedImage);
+
+    const objImage = obj.image_hash || deterministicImageHash;
+
+    const imageHashArgs = {
+        name: obj.name,
+        description: obj.description,
+        image: objImage,
+        attributes: obj.attributes
+    }
 
     const { hash: deterministicMetadataHash } = useIPFSMetadataHash({
         name: obj.name,
         description: obj.description,
-        image: obj.image_hash || deterministicImageHash,
+        image: objImage,
         attributes: obj.attributes
     })
 
-    const objImage = obj.image_hash || deterministicImageHash;
+    const { pinImage, pinMetadata } = useIPFS({
+        image: image || generatedImage,
+        data: imageHashArgs 
+    });
 
-    const isDisabled = !(obj.name && obj.symbol && obj.description && objImage);
+    const isDisabled = !(obj.name && obj.symbol && obj.description && (obj.image_hash || objImage));
 
+    const isCustomImage = obj.image_hash !== null || image !== null;
+
+    // TODO Refactor this into a hook
     const createContract = useCreateOrg(
         !isDisabled && !isEdit,
         org,
@@ -72,7 +84,6 @@ const OrgForm = ({ isEdit = false }) => {
     )
 
     const badger = useCallback(() => getBadgerAbi(chain.name), [chain]);
-    const { image: generatedImage } = useCallback(() => characterPFP(obj.name), [obj.name]);
 
     const actions = [{
         text: isEdit ? "Update organization" : "Create organization",
@@ -175,19 +186,7 @@ const OrgForm = ({ isEdit = false }) => {
 
         if (!response?.error && response?.id) {
             console.log('Successful org post');
-            // let newUserData = { ...userData };
-
-            // const index = newUserData.organizations.findIndex((org) => org.id === response.id);
-            // if (!newUserData.organizations || index === -1) {
-            //     newUserData.organizations.push(response);
-            // }
-            // else {
-            //     newUserData.organizations[index] = response;
-            // }
-
-            // setUserData(newUserData);
-        }
-        else {
+        } else {
             setError({
                 label: 'Could not add org to database',
                 message: response.error
@@ -208,6 +207,32 @@ const OrgForm = ({ isEdit = false }) => {
         }
     }, [updateOrg.error, createContract.error, setError])
 
+    const onNameChange = (e) => {
+        setObj({ ...org, name: e.target.value, symbol: nameToSymbol(e.target.value) })
+    }
+
+    const onSymbolChange = (e) => {
+        if (e.target.value.length > 4) return;
+
+        setObj({ ...org, symbol: e.target.value })
+    }
+
+    const onDescriptionChange = (e) => {
+        setObj({ ...org, description: e.target.value })
+    }
+
+    const onImageChange = (e) => {
+        const files = e.target.files[0];
+
+        if (files) {
+            const reader = new FileReader();
+            reader.readAsDataURL(files);
+            reader.onload = () => {
+                setImage(reader.result);
+            };
+        }
+    }
+
     return (
         <div id="new-org">
             <Header back={() => navigate((isEdit ? `/dashboard/organization/${orgId}/` : '/dashboard/'))} />
@@ -216,40 +241,19 @@ const OrgForm = ({ isEdit = false }) => {
 
             <FormDrawer label="General" open={true}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gridGap: "20px" }}>
-                    <Input
-                        name="orgName"
-                        label="Name"
-                        required={true}
-                        value={obj.name || ""}
-                        onChange={(e) => { setObj({ ...org, name: e.target.value, symbol: nameToSymbol(e.target.value) }) }}
-                    />
+                    <Input name="orgName" label="Name" required={true}
+                        value={obj.name || ""} onChange={onNameChange} />
 
-                    <Input
-                        name="orgSymbol"
-                        label="Symbol"
-                        required={false}
-                        value={obj.symbol || ""}
-                        onChange={(e) => setObj({ ...org, symbol: e.target.value })}
-                    />
+                    <Input name="orgSymbol" label="Symbol" required={true}
+                        value={obj.symbol || ""} onChange={onSymbolChange} />
                 </div>
 
-                <Input
-                    name="orgDescription"
-                    label="Description"
-                    required={true}
-                    value={obj.description || ""}
-                    onChange={(e) => setObj({ ...org, description: e.target.value })}
+                <Input name="orgDescription" label="Description" required={true}
+                    value={obj.description || ""} onChange={onDescriptionChange}
                 />
 
-                <FormActionBar
-                    help={
-                        `You can only set the on-chain name of your Organization once. 
-                        After creation, you can update the off-chain name and description 
-                        but you cannot change the name of the contract. Please make sure 
-                        you are happy with it before submitting.`
-                    }
-                    helpStyle={{ maxWidth: "840px" }}
-                />
+                <FormActionBar help={`You can only set the on-chain name of your Organization once. After creation, you can update the off-chain name and description but you cannot change the name of the contract. Please make sure you are happy with it before submitting.`}
+                    helpStyle={{ maxWidth: "840px" }} />
             </FormDrawer>
 
             <FormDrawer label="Appearance" open={true}>
@@ -259,28 +263,13 @@ const OrgForm = ({ isEdit = false }) => {
                     label="Custom Image"
                     placeholder="Upload Custom Organization Image"
                     disabled={true}
-                    value={isCustomImage && customImage?.name ? customImage.name : "Choose file..."}
-                    append={
-                        <button
-                            className="button-secondary"
-                            onClick={() => imageInput.current.click()}
-                            style={{ width: "auto" }}
-                        >
-                            {isCustomImage ?
-                                "Change image" :
-                                "Upload image"
-                            }
-                        </button>
-                    }
+                    value={isCustomImage && image?.name ? image.name : "Choose file..."}
+                    append={<button className="button-secondary" style={{ width: "auto" }} onClick={() => imageInput.current.click()} >
+                        {isCustomImage ? "Change image" : "Upload image"}
+                    </button>}
                 />
-                <input
-                    id="org-image"
-                    style={{ display: "none" }}
-                    ref={imageInput}
-                    accept="image/*"
-                    type="file"
-                // onChange={(event) => { onCustomImageUpload(event.target.files[0]) }}
-                />
+
+                <input id="org-image" ref={imageInput} accept="image/*" type="file" style={{ display: "none" }} onChange={onImageChange} />
             </FormDrawer>
 
             <FormActionBar

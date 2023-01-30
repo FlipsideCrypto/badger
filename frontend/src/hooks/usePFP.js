@@ -1,14 +1,21 @@
+import { useEffect, useState } from 'react';
+
 import { getPFPImage } from '@utils';
 
+const usePFP = ({ name }) => {
+    const [characterPFP, setCharacterPFP] = useState(null);
 
-const usePFP = () => {
-    const characterPFP = async (string) => {
-        const char = string.charAt(0).toUpperCase();
+    const formattedName = name.charAt(0).toUpperCase();
 
-        const image = await getPFPImage(char);
+    useEffect(() => {
+        async function getImage() {
+            const image = await getPFPImage(formattedName);
 
-        return { image };
-    }
+            setCharacterPFP(image);
+        }
+
+        getImage();
+    }, [formattedName]);
 
     return { characterPFP };
 }
