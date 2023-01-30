@@ -1,6 +1,5 @@
-import { useState, useContext, useRef, useEffect, useMemo, useCallback } from "react";
+import { useState, useContext, useRef, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useNetwork, useAccount } from "wagmi";
 
 import { ErrorContext } from "@contexts";
 
@@ -24,10 +23,7 @@ const OrgForm = ({ isEdit = false }) => {
 
     const { orgId } = useParams();
 
-    const { address } = useAccount();
-    const { chain } = useNetwork();
-
-    const { organization } = useUser({ orgId });
+    const { authenticatedAddress, chain, organization } = useUser({ orgId });
 
     const { setError } = useContext(ErrorContext);
 
@@ -70,7 +66,7 @@ const OrgForm = ({ isEdit = false }) => {
         obj,
         deterministicImageHash,
         deterministicMetadataHash,
-        address,
+        authenticatedAddress,
         chain?.name
     )
 
@@ -122,7 +118,7 @@ const OrgForm = ({ isEdit = false }) => {
                 contract_uri_hash: metadataHash,
                 image_hash: imageHash,
                 chain: chain.name,
-                owner: address,
+                owner: authenticatedAddress,
                 is_active: true
             }
 
