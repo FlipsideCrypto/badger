@@ -5,14 +5,11 @@ import { ActionTitle, BadgeManagementDrawer, BadgePreview, Header, HolderTable, 
 
 import { useUser } from "@hooks";
 
+import { badgeDrawerSelectActions as selectActions } from "@static";
+
 import "@style/pages/Badge.css";
 
-const selectActions = [
-    "Mint",
-    "Revoke",
-    "Add Manager",
-    "Remove Manager"
-]
+// TODO: Make sure that empty is all good
 
 const Badge = () => {
     const navigate = useNavigate();
@@ -72,9 +69,10 @@ const Badge = () => {
             <div className="dashboard__content">
                 <ActionTitle title="Badge Holders" actions={titleActions} />
 
-                {isLeader && (
-                    <BadgeManagementDrawer drawer={drawer} badge={badge} org={org} isLeader={isLeader} />
-                )}
+                {isLeader && <BadgeManagementDrawer
+                    drawer={drawer} setDrawer={setDrawer}
+                    badge={badge} org={org} isLeader={isLeader}
+                />}
             </div>
 
             {badge && badge.users.length + badge.delegates.length === 0 && <Empty

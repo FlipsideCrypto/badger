@@ -1,3 +1,51 @@
+const pfpEmojis = [
+    "😀",
+    "😃",
+    "😄",
+    "😁",
+    "😆",
+    "😅",
+    "🤣",
+    "😂",
+    "🙂",
+    "🙃",
+    "😉",
+    "😊",
+    "😇",
+    "🤩",
+    "😋",
+    "😛",
+    "😜",
+    "🤪",
+    "😝",
+    "🤑",
+    "🤗",
+    "🤭",
+    "🤫",
+    "🤔",
+    "🤐",
+    "🤨",
+    "😐",
+    "😶",
+    "😏",
+    "🙄",
+    "😬",
+    "😌",
+    "🤤",
+    "😴",
+    "🌟",
+    "🚀",
+    "🌙",
+    "👑",
+    "🔥",
+]
+
+const getRandomEmoji = (address) => {
+    const char = address.charCodeAt(39) + address.charCodeAt(40);
+    const randomIndex = char % pfpEmojis.length;
+    return pfpEmojis[randomIndex];
+}
+
 const badgeHeadRows = {
     name: {
         label: 'Badge',
@@ -60,57 +108,17 @@ const holderHeadRows = {
     },
 }
 
-const pfpEmojis = [
-    "😀",
-    "😃",
-    "😄",
-    "😁",
-    "😆",
-    "😅",
-    "🤣",
-    "😂",
-    "🙂",
-    "🙃",
-    "😉",
-    "😊",
-    "😇",
-    "🤩",
-    "😋",
-    "😛",
-    "😜",
-    "🤪",
-    "😝",
-    "🤑",
-    "🤗",
-    "🤭",
-    "🤫",
-    "🤔",
-    "🤐",
-    "🤨",
-    "😐",
-    "😶",
-    "😏",
-    "🙄",
-    "😬",
-    "😌",
-    "🤤",
-    "😴",
-    "🌟",
-    "🚀",
-    "🌙",
-    "👑",
-    "🔥",
+const badgeDrawerSelectActions = [
+    "Mint",
+    "Revoke",
+    "Add Manager",
+    "Remove Manager"
 ]
 
-const getRandomEmoji = (address) => {
-    const char = address.charCodeAt(39) + address.charCodeAt(40);
-    const randomIndex = char % pfpEmojis.length;
-    return pfpEmojis[randomIndex];
-}
-
 export { 
+    pfpEmojis,
+    getRandomEmoji,
     badgeHeadRows,
     holderHeadRows,
-    pfpEmojis,
-    getRandomEmoji
+    badgeDrawerSelectActions
 }

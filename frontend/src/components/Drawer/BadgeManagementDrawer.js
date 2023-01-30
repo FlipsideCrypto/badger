@@ -4,11 +4,21 @@ import { useManageBadgeOwnership, useSetDelegates } from "@hooks";
 
 import { ErrorContext } from "@contexts";
 
-import { FormReducer, IconButton, InputListCSV, Header, HolderTable, Select } from "@components";
+import { FormReducer, IconButton, InputListCSV, Select } from "@components";
 
 import { putBadgeRolesRequest } from "@utils";
 
-const BadgeManagementDrawer = ({ drawer, badge, org }) => {
+import { badgeDrawerSelectActions as selectActions } from "@static";
+
+// TODO: Still need to clean up the below functions
+// setDelegates hook
+// manageOwnership hook
+// onMembersUpdate
+// onDelegatesUpdate
+// runTransaction
+// useEffect
+
+const BadgeManagementDrawer = ({ drawer, badge, org, setDrawer }) => {
     const { setError } = useContext(ErrorContext);
 
     const [areAddressesValid, setAreAddressesValid] = useState(false);
@@ -16,7 +26,7 @@ const BadgeManagementDrawer = ({ drawer, badge, org }) => {
 
     const [addressesToUpdate, dispatchAddresses] = useReducer(FormReducer, { addresses: [] });
 
-    const txMethod = ["Mint", "Revoke"].includes(drawer.action) ? "manageOwnership" : "setDelegates";
+    const txMethod = selectActions.slice(0, 2).includes(drawer.action) ? "manageOwnership" : "setDelegates";
 
     const setDelegatesReady = areAddressesValid && txMethod === "setDelegates"
     const manageOwnershipReady = areAddressesValid && txMethod === "manageOwnership"
@@ -38,125 +48,122 @@ const BadgeManagementDrawer = ({ drawer, badge, org }) => {
         1                                   // amount of each token
     );
 
+    // Update the badge array after the transaction is completed, POST 
+    // out to the API, update our orgData context, and reset call transaction flag.
+    const onMembersUpdate = useCallback(async () => {
+        let badgeObj = { ...badge }
+        if (!badgeObj.users) badge.users = [];
+
+        addressesToUpdate.addresses.forEach(member => {
+            if (drawer.action === "Revoke") {
+                const index = badgeObj.users.findIndex(user => user.ethereum_address === member);
+                badgeObj.users.splice(index, 1);
+            }
+            else if (drawer.action === "Mint") {
+                badgeObj.users.push({ ethereum_address: member });
+            }
+        })
+
+        const response = await putBadgeRolesRequest(badgeObj, org)
+        if (response.error)
+            setError({
+                label: 'Adding members to database failed',
+                message: response.error
+            });
+        else {
+            console.log('successful members update')
+            // setBadge(response);
+            // setOrgData(orgData => { orgData.badges[badgeIndex] = response; return { ...orgData } });
+        }
+
+        setTxPending(false);
+    }, [drawer, badge, addressesToUpdate, org, setError]);
+
+    // Update the badge array after the transaction is completed, POST 
+    // out to the API, update our orgData context, and reset call transaction flag.
+    const onDelegatesUpdate = useCallback(async () => {
+        let badgeObj = { ...badge }
+        if (!badgeObj.delegates) badge.delegates = [];
+
+        addressesToUpdate.addresses.forEach(member => {
+            if (drawer.action === "Remove Manager") {
+                const index = badgeObj.delegates.findIndex(delegate => delegate.ethereum_address === member);
+                badgeObj.delegates.splice(index, 1);
+            } else if (drawer.action === "Add Manager") {
+                badgeObj.delegates.push({ ethereum_address: member });
+            }
+        })
+
+        const response = await putBadgeRolesRequest(badgeObj, org)
+
+        if (response.error) {
+            setError({
+                label: 'Adding managers to database failed',
+                message: response.error
+            });
+        }
+        else {
+            console.log('success');
+            // setBadge(response);
+            // setOrgData(orgData => { orgData.badges[badgeIndex] = response; return { ...orgData } });
+        }
+
+        setTxPending(false);
+    }, [drawer, badge, addressesToUpdate, org, setError]);
+
     // Manage the transaction write and clean up effects.
-    // const runTransaction = useCallback(async () => {
-    //     setTxPending(true);
+    const runTransaction = useCallback(async () => {
+        setTxPending(true);
 
-    //     let tx;
-    //     try {
-    //         if (txMethod === "manageOwnership")
-    //             tx = await manageOwnership.write?.()
-    //         else if (txMethod === "setDelegates")
-    //             tx = await setDelegates.write?.()
+        let tx;
+        try {
+            if (txMethod === "manageOwnership")
+                tx = await manageOwnership.write?.()
+            else if (txMethod === "setDelegates")
+                tx = await setDelegates.write?.()
 
-    //         if (tx) {
-    //             const txReceipt = await tx?.wait();
-    //             if (txReceipt.status !== 1)
-    //                 throw new Error(setDelegates.error || manageOwnership.error);
+            if (tx) {
+                const txReceipt = await tx?.wait();
+                if (txReceipt.status !== 1)
+                    throw new Error(setDelegates.error || manageOwnership.error);
 
-    //             txMethod === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
-    //         }
-    //     } catch (error) {
-    //         setError({
-    //             label: 'Error managing members',
-    //             message: error
-    //         });
-    //     }
+                txMethod === "manageOwnership" ? onMembersUpdate() : onDelegatesUpdate();
+            }
+        } catch (error) {
+            setError({
+                label: 'Error managing members',
+                message: error
+            });
+        }
 
-    //     setTxPending(false);
-    // }, [txMethod, setDelegates, manageOwnership, setError, onMembersUpdate, onDelegatesUpdate]);
+        setTxPending(false);
+    }, [txMethod, setDelegates, manageOwnership, setError, onMembersUpdate, onDelegatesUpdate]);
 
-    // // Update the badge array after the transaction is completed, POST 
-    // // out to the API, update our orgData context, and reset call transaction flag.
-    // const onMembersUpdate = useCallback(async () => {
-    //     let badgeObj = { ...badge }
-    //     if (!badgeObj.users) badge.users = [];
+    // If we have a silent error from preparing the transaction, display it.
+    useEffect(() => {
+        setError(null)
+        if (manageOwnership?.error && txMethod === "manageOwnership") {
+            setError({
+                label: 'Error managing members',
+                message: manageOwnership?.error
+            })
+        }
+        else if (setDelegates?.error && txMethod === "setDelegates") {
+            setError({
+                label: 'Error setting delegates',
+                message: setDelegates?.error
+            })
+        }
+    }, [manageOwnership.error, setDelegates.error, txMethod, setError])
 
-    //     addressesToUpdate.addresses.forEach(member => {
-    //         if (action === "Revoke") {
-    //             const index = badgeObj.users.findIndex(user => user.ethereum_address === member);
-    //             badgeObj.users.splice(index, 1);
-    //         }
-    //         else if (action === "Mint") {
-    //             badgeObj.users.push({ ethereum_address: member });
-    //         }
-    //     })
-
-    //     const response = await putBadgeRolesRequest(badgeObj, orgId)
-    //     if (response.error)
-    //         setError({
-    //             label: 'Adding members to database failed',
-    //             message: response.error
-    //         });
-    //     else {
-    //         setBadge(response);
-    //         setOrgData(orgData => { orgData.badges[badgeIndex] = response; return { ...orgData } });
-    //     }
-
-    //     setTxPending(false);
-    // }, [badge, addressesToUpdate, action, orgId, setError, setOrgData, badgeIndex]);
-
-    // // Update the badge array after the transaction is completed, POST 
-    // // out to the API, update our orgData context, and reset call transaction flag.
-    // const onDelegatesUpdate = useCallback(async () => {
-    //     let badgeObj = { ...badge }
-    //     if (!badgeObj.delegates) badge.delegates = [];
-
-    //     addressesToUpdate.addresses.forEach(member => {
-    //         if (action === "Remove Manager") {
-    //             const index = badgeObj.delegates.findIndex(delegate => delegate.ethereum_address === member);
-    //             badgeObj.delegates.splice(index, 1);
-    //         }
-    //         else if (action === "Add Manager") {
-    //             badgeObj.delegates.push({ ethereum_address: member });
-    //         }
-    //     })
-
-    //     const response = await putBadgeRolesRequest(badgeObj, orgId)
-    //     if (response.error) {
-    //         setError({
-    //             label: 'Adding managers to database failed',
-    //             message: response.error
-    //         });
-    //     }
-    //     else {
-    //         setBadge(response);
-    //         setOrgData(orgData => { orgData.badges[badgeIndex] = response; return { ...orgData } });
-    //     }
-
-    //     setTxPending(false);
-    // }, [badge, badgeIndex, addressesToUpdate, orgId, action, setError, setOrgData]);
-
-    // // If we have a silent error from preparing the transaction, display it.
-    // useEffect(() => {
-    //     setError(null)
-    //     if (manageOwnership?.error && txMethod === "manageOwnership") {
-    //         setError({
-    //             label: 'Error managing members',
-    //             message: manageOwnership?.error
-    //         })
-    //     }
-    //     else if (setDelegates?.error && txMethod === "setDelegates") {
-    //         setError({
-    //             label: 'Error setting delegates',
-    //             message: setDelegates?.error
-    //         })
-    //     }
-    // }, [manageOwnership.error, setDelegates.error, txMethod, setError])
-
-    if(drawer.collapsed) return null;
+    if (drawer.collapsed) return null;
 
     return (
         <>
-            <h1>Drawer</h1>
+            <Select label="Update Type" options={selectActions}
+                value={drawer.action} setValue={(e) => setDrawer({ ...drawer, action: e.target.value })} />
 
-            {/* <Select label="Update Type"
-                options={selectActions}
-                value={action}
-                setValue={(e) => setAction(e.target.value)}
-            />
-
-            <InputListCSV label={action === "Mint" ? "Members to Update" : "Managers to Update"}
+            <InputListCSV label={drawer.action === "Mint" ? "Members to Update" : "Managers to Update"}
                 inputList={addressesToUpdate.addresses}
                 listKey={"addresses"}
                 dispatch={dispatchAddresses}
@@ -172,7 +179,7 @@ const BadgeManagementDrawer = ({ drawer, badge, org }) => {
                     !manageOwnership.isSuccess || !areAddressesValid :
                     !setDelegates.isSuccess || !areAddressesValid
                 }
-            /> */}
+            />
         </>
     )
 }
