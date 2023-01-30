@@ -1,20 +1,15 @@
-import { useState, useContext, useRef, useEffect, useCallback } from "react";
+import { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { ErrorContext } from "@contexts";
-
-import { getBadgerAbi, useCreateOrg, useEditOrg, useIPFS, useIPFSImageHash, useIPFSMetadataHash, usePFP, useUser } from "@hooks";
+import { useIPFSImageHash, useIPFSMetadataHash, useOrgForm, usePFP, useUser } from "@hooks";
 
 import { FormActionBar, FormDrawer, initialOrgForm, Input, Header, OrgDangerZone } from "@components"
 
-import { postOrgRequest } from "@utils";
-
-const nameToSymbol = (name) => {
+const getSymbol = (name) => {
     return name.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().substring(0, 5);
 }
 
-// TODO: Finalize the implementation of image handling
-// TODO: Fix the contract hooks
+// TODO: Uploading a new image for an existing org will not work because the image hash is the first check
 
 const OrgForm = ({ isEdit = false }) => {
     const imageInput = useRef();
@@ -23,185 +18,51 @@ const OrgForm = ({ isEdit = false }) => {
 
     const { orgId } = useParams();
 
-    const { authenticatedAddress, chain, organization } = useUser({ orgId });
-
-    const { setError } = useContext(ErrorContext);
+    const { organization } = useUser({ orgId });
 
     const [obj, setObj] = useState(organization || initialOrgForm);
     const [image, setImage] = useState(null);
 
-    const [txPending, setTxPending] = useState(false);
+    const { characterPFP } = usePFP({ name: obj.name });
 
-    const { characterPFP: generatedImage } = usePFP({ name: obj.name });
-
-    const { hash: deterministicImageHash } = useIPFSImageHash(image || generatedImage);
+    const { hash: deterministicImageHash } = useIPFSImageHash(image || characterPFP);
 
     const objImage = obj.image_hash || deterministicImageHash;
 
-    const imageHashArgs = {
+    const objMetadata = {
         name: obj.name,
         description: obj.description,
         image: objImage,
         attributes: obj.attributes
     }
 
-    const { hash: deterministicMetadataHash } = useIPFSMetadataHash(imageHashArgs)
-
-    const { pinImage, pinMetadata } = useIPFS({
-        image: image || generatedImage,
-        data: imageHashArgs
-    })
+    const { hash: deterministicMetadataHash } = useIPFSMetadataHash(objMetadata)
 
     const isCustomImage = obj.image_hash !== null || image !== null;
 
     const isDisabled = !(obj.name && obj.symbol && obj.description && (obj.image_hash || objImage));
 
-    // TODO Refactor this into a hook
-    // openCreateOrgTxModal
-    // openUpdateOrgTxModal
-    // onSuccess
-    // onError
-    const createContract = useCreateOrg(
-        !isDisabled && !isEdit,
-        obj,
-        deterministicImageHash,
-        deterministicMetadataHash,
-        authenticatedAddress,
-        chain?.name
-    )
-
-    const updateOrg = useEditOrg(
-        !isDisabled && isEdit && organization.ethereum_address,
-        organization.ethereum_address,
-        deterministicMetadataHash
-    )
-
-    const badger = useCallback(() => getBadgerAbi(chain.name), [chain]);
+    const { openOrgFormTx, isPrepared, isLoading, isSuccess } = useOrgForm({
+        enabled: !isDisabled && (isEdit && organization.ethereum_address || !isEdit),
+        address: obj.ethereum_address,
+        name: obj.name,
+        symbol: obj.symbol,
+        image: objImage,
+        metadata: objMetadata,
+        imageHash: obj.image_hash || deterministicImageHash,
+        contractHash: deterministicMetadataHash
+    })
 
     const actions = [{
-        text: isEdit ? "Update organization" : "Create organization",
+        text: `${isEdit ? "Update" : "Create"} organization`,
         icon: ["fal", "arrow-right"],
-        loading: txPending,
-        disabled: isEdit ? !updateOrg.isSuccess : !createContract.isSuccess,
-        event: isEdit ? () => updateOrgTx() : () => createOrgTx()
+        loading: isLoading,
+        disabled: isDisabled || !isPrepared,
+        event: openOrgFormTx
     }]
 
-    // Awaits a prepared transaction before running it.
-    const createOrgTx = async () => {
-        setTxPending(true);
-        try {
-            let tx = await createContract.write?.();
-
-            // Await the txReceipt, image hash, and metadata hash in parallel.
-            const [txReceipt, imageHash, metadataHash] = await Promise.all([
-                tx.wait(),
-                pinImage(objImage),
-                pinMetadata({
-                    name: obj.name,
-                    description: obj.description,
-                    imageHash: objImage,
-                })
-            ])
-
-            if (txReceipt.status !== 1) throw new Error(createContract?.error);
-
-            // Decode the transaction receipt to get the contract address from the event.
-            const orgCreatedTopic = badger.abi.getEventTopic("OrganizationCreated");
-
-            const orgCreatedEvent = txReceipt.logs.find((log) => log.topics[0] === orgCreatedTopic);
-            const orgEvent = badger.abi.decodeEventLog("OrganizationCreated", orgCreatedEvent.data, orgCreatedEvent.topics);
-            const contractAddress = orgEvent.organization;
-
-            const org = {
-                ...org,
-                ethereum_address: contractAddress,
-                contract_uri_hash: metadataHash,
-                image_hash: imageHash,
-                chain: chain.name,
-                owner: authenticatedAddress,
-                is_active: true
-            }
-
-            const response = await postOrg(org);
-            navigate(`/dashboard/organization/${response.id}`);
-        }
-        catch (error) {
-            setError({
-                label: 'Error creating Org',
-                message: error
-            });
-            setTxPending(false);
-        }
-    }
-
-    const updateOrgTx = async () => {
-        setTxPending(true);
-        try {
-            let tx = await updateOrg.write?.();
-            // Await the txReceipt, image hash, and metadata hash in parallel.
-            const [txReceipt, imageHash, metadataHash] = await Promise.all([
-                tx.wait(),
-                pinImage(objImage),
-                pinMetadata({
-                    name: obj.name,
-                    description: obj.description,
-                    imageHash: objImage,
-                })
-            ])
-
-            if (txReceipt.status !== 1)
-                throw new Error(updateOrg?.error);
-
-            const org = {
-                ...org,
-                contract_uri_hash: metadataHash,
-                image_hash: imageHash,
-            }
-            const response = await postOrg(org);
-
-            setObj(response);
-            // TODO: Success message!
-            setTxPending(false);
-            navigate(`/dashboard/organization/${response.id}`);
-        }
-        catch (error) {
-            setError({
-                label: 'Error updating Org',
-                message: error
-            });
-            setTxPending(false);
-        }
-    }
-
-    // Post the org Obj to the backend once the contract address is added.
-    const postOrg = useCallback(async (org) => {
-        const response = await postOrgRequest(org);
-
-        if (!response?.error && response?.id) {
-            console.log('Successful org post');
-        } else {
-            setError({
-                label: 'Could not add org to database',
-                message: response.error
-            });
-        }
-
-        return response;
-    }, [setError]);
-
-    // If we have a silent error from preparing the transaction, display it.
-    useEffect(() => {
-        setError(null);
-        if (createContract?.error || updateOrg?.error) {
-            setError({
-                label: 'Error managing the Org',
-                message: createContract?.error || updateOrg?.error
-            })
-        }
-    }, [updateOrg.error, createContract.error, setError])
-
     const onNameChange = (e) => {
-        setObj({ ...obj, name: e.target.value, symbol: nameToSymbol(e.target.value) })
+        setObj({ ...obj, name: e.target.value, symbol: getSymbol(e.target.value) })
     }
 
     const onSymbolChange = (e) => {

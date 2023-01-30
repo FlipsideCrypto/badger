@@ -1,5 +1,5 @@
 export {
-    getPrimaryImplementation, getBadgerAddress, getBadgerOrganizationAbi, getBadgerAbi, useCreateOrg, useEditOrg, useSetBadge, useManageBadgeOwnership, useSetDelegates, useTransferOwnership, useRenounceOwnership
+    getPrimaryImplementation, getBadgerAddress, getBadgerOrganizationAbi, getBadgerAbi, useCreateOrg, useEditOrg, useSetBadge, useOrgForm, useManageBadgeOwnership, useSetDelegates, useTransferOwnership, useRenounceOwnership
 } from './contracts';
 
 export { useAuthentication } from './useAuthentication';

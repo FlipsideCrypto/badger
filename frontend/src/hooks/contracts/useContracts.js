@@ -1,76 +1,282 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { ethers } from "ethers";
 import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
-import { getPrimaryImplementation, getBadgerOrganizationAbi, getBadgerAbi, useFees } from "@hooks";
+import { getPrimaryImplementation, getBadgerOrganizationAbi, getBadgerAbi, useFees, useIPFS, useUser } from "@hooks";
+
+import { postOrgRequest } from "@utils";
 
 import { IPFS_GATEWAY_URL } from "@static";
 
-// Creates a new sash contract for an organization.
-const useCreateOrg = (isTxReady, orgObj, imageHash, contractHash, address, chainName) => {
-    const Badger = useMemo(() => getBadgerAbi(chainName), [chainName]);
-    const [error, setError] = useState();
-
-    const args = [
+const getOrgFormTxArgs = ({ functionName, authenticatedAddress, name, symbol, imageHash, contractHash }) => {
+    if (functionName === "setOrganizationURI") {
+        return [
+            IPFS_GATEWAY_URL + contractHash
+        ]
+    } else if (functionName === "createOrganization") return [
         getPrimaryImplementation(),
-        address,
+        authenticatedAddress,
         IPFS_GATEWAY_URL + imageHash,
         IPFS_GATEWAY_URL + contractHash,
-        orgObj.name,
-        orgObj.symbol,
+        name,
+        symbol,
     ]
+}
+
+const useOrgForm = ({ enabled, address, name, symbol, image, metadata, imageHash, contractHash }) => {
+    const navigate = useNavigate();
 
     const fees = useFees();
-    const { config, isSuccess } = usePrepareContractWrite({
-        addressOrName: Badger.address,
+
+    const { authenticatedAddress, chain } = useUser();
+
+    const { pinImage, pinMetadata } = useIPFS({
+        image: image,
+        data: metadata
+    })
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
+
+    const functionName = address ? "setOrganizationURI" : "createOrganization";
+
+    const Badger = useMemo(() => {
+        if (address) return getBadgerOrganizationAbi();
+
+        return getBadgerAbi(chain.name);
+    }, [functionName, chain.name]);
+
+    const isReady = Boolean(enabled && fees && Badger);
+
+    const args = getOrgFormTxArgs({ functionName, authenticatedAddress, name, symbol, imageHash, contractHash });
+
+    const overrides = { gasPrice: fees?.gasPrice };
+
+    const { config, isSuccess: isPrepared } = usePrepareContractWrite({
+        enabled: isReady,
+        addressOrName: address || Badger.address,
         contractInterface: Badger.abi,
-        functionName: "createOrganization",
-        args: args,
-        enabled: Boolean(fees && isTxReady),
-        overrides: {
-            gasPrice: fees?.gasPrice,
-        },
-        onError(e) {
+        functionName,
+        args,
+        overrides,
+        onError: (e) => {
             const err = e?.error?.message || e?.data?.message || e
-            setError(err);
-            console.error('Error creating Org: ', err);
+
+            throw new Error(err);
         }
     })
 
     const { writeAsync } = useContractWrite(config);
 
-    return { write: writeAsync, isSuccess, error };
+    const openOrgFormTx = async ({
+        onError = (e) => { console.error(e) },
+        onLoading = () => { },
+        onSuccess = ({ tx, org, response }) => { }
+    }) => {
+        try {
+            setIsLoading(true) && onLoading()
+
+            const tx = await writeAsync()
+
+            const [txReceipt, imageHash, metadataHash] = await Promise.all([
+                tx.wait(),
+                pinImage(image),
+                pinMetadata(metadata)
+            ])
+
+            if (txReceipt.status === 0) throw new Error("Error submitting transaction.");
+
+            // TODO: Include the logic here
+
+            const org = {}
+
+            const response = await postOrgRequest(org)
+
+            if (!response.ok) throw new Error("Error submitting Organization request.")
+
+            navigate(`/dashboard/organization/${response.id}/`)
+
+            setIsSuccess(true) && onSuccess({ tx, org, response })
+        } catch (e) {
+            console.error(e);
+
+            onError(e);
+        }
+    }
+
+    return { openOrgFormTx, isPrepared, isLoading, isSuccess };
+}
+
+/**
+ * @dev Hook to trigger and handle a transaction that calls `createOrganization` on the Badger contract.
+ */
+const useCreateOrg = ({ enabled, name, symbol, imageHash, contractHash }) => {
+    const navigate = useNavigate();
+
+    const fees = useFees();
+
+    const { authenticatedAddress, chain } = useUser();
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
+
+    const Badger = useMemo(() => getBadgerAbi(chain.name), [chain.name]);
+
+    const orgCreatedTopic = Badger.abi.getEventTopic("OrganizationCreated");
+
+    const isReady = Boolean(enabled && fees && Badger);
+
+    const args = getOrgFormTxArgs({ functionName: "createOrganization", authenticatedAddress, name, symbol, imageHash, contractHash });
+
+    const { config, isSuccess: isPrepared } = usePrepareContractWrite({
+        addressOrName: Badger.address,
+        contractInterface: Badger.abi,
+        functionName: "createOrganization",
+        args: args,
+        enabled: isReady,
+        overrides: { gasPrice: fees?.gasPrice },
+        onError(e) {
+            const err = e?.error?.message || e?.data?.message || e
+
+            throw new Error(err);
+        }
+    })
+
+    const { writeAsync } = useContractWrite(config);
+
+    const openCreateOrgTx = async ({
+        onError = (e) => { console.error(e) },
+        onLoading = () => { },
+        onSuccess = ({ tx, org, response }) => { }
+    }) => {
+        try {
+            setIsLoading(true) && onLoading();
+
+            const tx = await writeAsync();
+
+            const [txReceipt, imageHash, metadataHash] = await Promise.all([
+                tx.wait(),
+                null,
+                null
+                // pinImage(objImage),
+                // pinMetadata(objMetadata),
+            ]);
+
+            if (txReceipt.status === 0) throw new Error("Error submitting Organization transaction.");
+
+            const orgCreatedEvent = txReceipt.logs.find((log) => log.topics[0] === orgCreatedTopic);
+            const orgEvent = Badger.abi.decodeEventLog("OrganizationCreated", orgCreatedEvent.data, orgCreatedEvent.topics);
+            const contractAddress = orgEvent.organization;
+
+            if (!contractAddress) throw new Error("Could not find event emission from Organization creation.");
+
+            const org = {
+                ...org,
+                ethereum_address: contractAddress,
+                contract_uri_hash: metadataHash,
+                image_hash: imageHash,
+                chain: chain.name,
+                owner: authenticatedAddress, // don't do it like this
+                is_active: true
+            }
+
+            const response = await postOrgRequest(org);
+
+            if (!response.ok) throw new Error("Error creating Organization in database.");
+
+            navigate(`/dashboard/organization/${response.id}/`);
+
+            setIsSuccess(true) && onSuccess({ tx, org, response });
+        } catch (e) {
+            console.error(e);
+
+            setIsSuccess(false) && onError(e);
+        }
+    }
+
+    return { openCreateOrgTx, isPrepared, isLoading, isSuccess };
 }
 
 // Edit the contract URI of an organization and update the image, description, and name.
-const useEditOrg = (isTxReady, contractAddress, contractUriHash) => {
+const useEditOrg = ({ enabled, contractAddress, contractUriHash }) => {
+    const navigate = useNavigate();
+
+    const fees = useFees();
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
+
     const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    const [error, setError] = useState();
+
+    const isReady = Boolean(enabled && fees && BadgerOrganization);
 
     const args = [
         IPFS_GATEWAY_URL + contractUriHash
     ]
 
-    const fees = useFees();
-    const { config, isSuccess } = usePrepareContractWrite({
+    const { config, isSuccess: isPrepared } = usePrepareContractWrite({
         addressOrName: contractAddress,
         contractInterface: BadgerOrganization.abi,
         functionName: "setOrganizationURI",
         args: args,
-        enabled: Boolean(fees && isTxReady),
-        overrides: {
-            gasPrice: fees?.gasPrice,
-        },
+        enabled: isReady,
+        overrides: { gasPrice: fees?.gasPrice },
         onError(e) {
             const err = e?.error?.message || e?.data?.message || e
-            setError(err);
-            console.error('Error updating Org: ', err);
+
+            throw new Error(err);
         }
     })
 
     const { writeAsync } = useContractWrite(config);
 
-    return { write: writeAsync, isSuccess, error };
+    const openCreateOrgTx = async ({
+        onError = (e) => { console.error(e) },
+        onLoading = () => { },
+        onSuccess = ({ tx, org, response }) => { }
+    }) => {
+        try {
+            setIsLoading(true) && onLoading();
+
+            const tx = await writeAsync();
+
+            const [txReceipt, imageHash, metadataHash] = await Promise.all([
+                tx.wait(),
+                null,
+                null
+                // pinImage(objImage),  
+                // pinMetadata({
+                //     name: obj.name,
+                //     description: obj.description,
+                //     imageHash: objImage,
+                // })
+            ])
+
+            if (txReceipt.status === 0) throw new Error("Error submitting Organization transaction.");
+
+            const org = {
+                ...org,
+                contract_uri_hash: metadataHash,
+                image_hash: imageHash,
+            }
+
+            const response = await postOrgRequest(org);
+
+            if (!response.ok) throw new Error("Error creating Organization in database.");
+
+            navigate(`/dashboard/organization/${response.id}/`);
+
+            setIsSuccess(true) && onSuccess({ tx, org, response });
+        } catch (e) {
+            console.error(e);
+
+            setIsSuccess(false) && onError(e);
+        }
+    }
+
+    return { openCreateOrgTx, isPrepared, isLoading, isSuccess };
 }
 
 // Creates a badge from a cloned sash contract.
@@ -131,7 +337,7 @@ const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, action, amou
     // If ids is an array, then we call revoke with multiple different badges.
     // If revoke is false, same checks but for minting instead of revoke
     const revoke = action === "Revoke" ? true : false
-    const method = revoke ?
+    const functionName = revoke ?
         users.length === 1 ? "revoke" :
             typeof (ids) === "number" ? "revokeBatch" : "revokeFullBatch"
         :
@@ -166,7 +372,7 @@ const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, action, amou
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: orgAddress,
         contractInterface: BadgerOrganization.abi,
-        functionName: method,
+        functionName: functionName,
         args: args,
         enabled: Boolean(fees && isTxReady),
         overrides: {
@@ -192,7 +398,7 @@ const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) => {
 
     const revoke = action === "Remove Manager" ? true : false
     const isDelegateArray = Array(delegates.length).fill(!revoke);
-    const method = typeof (ids) === "number" ? "setDelegates" : "setDelegatesBatch";
+    const functionName = typeof (ids) === "number" ? "setDelegates" : "setDelegatesBatch";
 
     // This should also clean/check the addresses as well.
     delegates.forEach((delegate, index) => {
@@ -211,7 +417,7 @@ const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) => {
     const { config, isSuccess } = usePrepareContractWrite({
         addressOrName: orgAddress,
         contractInterface: BadgerOrganization.abi,
-        functionName: method,
+        functionName: functionName,
         args: args,
         enabled: Boolean(fees && isTxReady),
         overrides: {
@@ -291,6 +497,7 @@ const useRenounceOwnership = (isTxReady, orgAddress) => {
 export {
     useCreateOrg,
     useEditOrg,
+    useOrgForm,
     useSetBadge,
     useManageBadgeOwnership,
     useSetDelegates,
