@@ -1,0 +1,9 @@
+.actionBar {
+    display: grid;
+    grid-template-columns: auto min-content;
+    margin-inline: 20px;
+}
+
+.actionBar .help { }
+
+.actionBar .actions { }

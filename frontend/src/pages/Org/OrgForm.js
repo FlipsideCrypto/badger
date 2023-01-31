@@ -1,15 +1,19 @@
 import { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { useIPFSImageHash, useIPFSMetadataHash, useOrgForm, usePFP, useUser } from "@hooks";
+import { useOrgForm, usePFP, useUser } from "@hooks";
 
 import { FormActionBar, FormDrawer, initialOrgForm, Input, Header, OrgDangerZone } from "@components"
+
+import { IPFS_GATEWAY_URL } from "@static";
+
+import "@style/pages/OrgForm.css";
 
 const getSymbol = (name) => {
     return name.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().substring(0, 5);
 }
 
-// TODO: Uploading a new image for an existing org will not work because the image hash is the first check
+// TODO: Properly display the image name on the input
 
 const OrgForm = ({ isEdit = false }) => {
     const imageInput = useRef();
@@ -25,40 +29,27 @@ const OrgForm = ({ isEdit = false }) => {
 
     const { characterPFP } = usePFP({ name: obj.name });
 
-    const { hash: deterministicImageHash } = useIPFSImageHash(image || characterPFP);
+    const customImage = image || obj.image_hash;
 
-    const objImage = obj.image_hash || deterministicImageHash;
+    const activeImage = customImage || characterPFP;
 
-    const objMetadata = {
-        name: obj.name,
-        description: obj.description,
-        image: objImage,
-        attributes: obj.attributes
-    }
+    const imageURL = customImage && (image ? image : IPFS_GATEWAY_URL + obj.image_hash);
 
-    const { hash: deterministicMetadataHash } = useIPFSMetadataHash(objMetadata)
+    const isDisabled = !(obj.name && obj.symbol && obj.description && activeImage);
 
-    const isCustomImage = obj.image_hash !== null || image !== null;
-
-    const isDisabled = !(obj.name && obj.symbol && obj.description && (obj.image_hash || objImage));
-
-    const { openOrgFormTx, isPrepared, isLoading, isSuccess } = useOrgForm({
-        enabled: !isDisabled && (isEdit && organization.ethereum_address || !isEdit),
-        address: obj.ethereum_address,
-        name: obj.name,
-        symbol: obj.symbol,
-        image: objImage,
-        metadata: objMetadata,
-        imageHash: obj.image_hash || deterministicImageHash,
-        contractHash: deterministicMetadataHash
+    const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({
+        obj,
+        image: activeImage
     })
 
     const actions = [{
-        text: `${isEdit ? "Update" : "Create"} organization`,
+        text: `${isEdit ? "Save" : "Create"} organization`,
         icon: ["fal", "arrow-right"],
         loading: isLoading,
         disabled: isDisabled || !isPrepared,
-        event: openOrgFormTx
+        event: () => openOrgFormTx({
+            onSuccess: ({ org }) => { navigate(`/dashboard/organization/${org.id}/`) }
+        })
     }]
 
     const onNameChange = (e) => {
@@ -75,6 +66,10 @@ const OrgForm = ({ isEdit = false }) => {
         setObj({ ...obj, description: e.target.value })
     }
 
+    const onImageUpload = () => { 
+        imageInput.current.click();
+    }
+
     const onImageChange = (e) => {
         const files = e.target.files[0];
 
@@ -87,51 +82,38 @@ const OrgForm = ({ isEdit = false }) => {
     }
 
     return (
-        <div id="new-org">
+        <>
             <Header back={() => navigate((isEdit ? `/dashboard/organization/${orgId}/` : '/dashboard/'))} />
 
-            <h2 className="dashboard__margin__left">{isEdit ? "Update Organization" : "Create Organization"}</h2>
+            <div className="dashboard__content">
+                <h2>{isEdit ? "Update Organization" : "Create Organization"}</h2>
+            </div>
 
-            <FormDrawer label="General" open={true}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gridGap: "20px" }}>
-                    <Input name="orgName" label="Name" required={true}
-                        value={obj.name || ""} onChange={onNameChange} />
-
-                    <Input name="orgSymbol" label="Symbol" required={true}
-                        value={obj.symbol || ""} onChange={onSymbolChange} />
+            <FormDrawer label="General">
+                <div className="vanities">
+                    <Input label="Name" value={obj.name || ""} onChange={onNameChange} />
+                    <Input label="Symbol" value={obj.symbol || ""} onChange={onSymbolChange} />
                 </div>
 
-                <Input name="orgDescription" label="Description" required={true}
-                    value={obj.description || ""} onChange={onDescriptionChange}
-                />
-
-                <FormActionBar help={`You can only set the on-chain name of your Organization once. After creation, you can update the off-chain name and description but you cannot change the name of the contract. Please make sure you are happy with it before submitting.`}
-                    helpStyle={{ maxWidth: "840px" }} />
+                <Input label="Description" value={obj.description || ""} onChange={onDescriptionChange} />
             </FormDrawer>
 
-            <FormDrawer label="Appearance" open={true}>
-                <Input
-                    name="Custom Image"
-                    accept="image/*"
-                    label="Custom Image"
-                    placeholder="Upload Custom Organization Image"
-                    disabled={true}
-                    value={isCustomImage && image?.name ? image.name : "Choose file..."}
-                    append={<button className="button-secondary" style={{ width: "auto" }} onClick={() => imageInput.current.click()} >
-                        {isCustomImage ? "Change image" : "Upload image"}
+            <FormDrawer label="Appearance" open={!!obj.image_hash}>
+                <Input label="Image" accept="image/*" disabled={true}
+                    append={<button className="secondary" onClick={onImageUpload}>
+                        {`${customImage ? "Update" : "Upload"} image`}
                     </button>}
-                />
+                    value={imageURL || "Choose file..."} />
 
-                <input id="org-image" ref={imageInput} accept="image/*" type="file" style={{ display: "none" }} onChange={onImageChange} />
+                <input ref={imageInput} accept="image/*" type="file" onChange={onImageChange} />
             </FormDrawer>
 
-            <FormActionBar actions={actions} style={{ marginInline: "30px" }}
-                help={"Badge creation occurs after your organization has been established."} />
+            <FormActionBar actions={actions} />
 
-            <hr style={{ margin: "30px 20px 30px 20px", backgroundColor: "#EEEEF6", border: "none", height: "1px" }} />
+            <hr />
 
             {isEdit && <OrgDangerZone orgAddress={organization.ethereum_address} />}
-        </div>
+        </>
     )
 }
 

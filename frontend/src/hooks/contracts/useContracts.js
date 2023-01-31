@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
-import { getPrimaryImplementation, getBadgerOrganizationAbi, getBadgerAbi, useFees, useIPFS, useUser } from "@hooks";
+import { getPrimaryImplementation, getBadgerOrganizationAbi, getBadgerAbi, useFees, useIPFS, useIPFSImageHash, useIPFSMetadataHash, useUser } from "@hooks";
 
 import { postOrgRequest } from "@utils";
 
@@ -12,9 +12,7 @@ import { IPFS_GATEWAY_URL } from "@static";
 
 const getOrgFormTxArgs = ({ functionName, authenticatedAddress, name, symbol, imageHash, contractHash }) => {
     if (functionName === "setOrganizationURI") {
-        return [
-            IPFS_GATEWAY_URL + contractHash
-        ]
+        return [IPFS_GATEWAY_URL + contractHash]
     } else if (functionName === "createOrganization") return [
         getPrimaryImplementation(),
         authenticatedAddress,
@@ -25,38 +23,54 @@ const getOrgFormTxArgs = ({ functionName, authenticatedAddress, name, symbol, im
     ]
 }
 
-const useOrgForm = ({ enabled, address, name, symbol, image, metadata, imageHash, contractHash }) => {
-    const navigate = useNavigate();
-
+const useOrgForm = ({ obj, image }) => {
     const fees = useFees();
 
-    const { authenticatedAddress, chain } = useUser();
+    const { hash: imageHash } = useIPFSImageHash(image)
+
+    const metadata = {
+        name: obj.name,
+        description: obj.description,
+        image: imageHash,
+        attributes: obj.attributes
+    }
+
+    const { hash: contractHash } = useIPFSMetadataHash(metadata)
 
     const { pinImage, pinMetadata } = useIPFS({
         image: image,
         data: metadata
     })
 
+    const { authenticatedAddress, chain } = useUser();
+
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
 
-    const functionName = address ? "setOrganizationURI" : "createOrganization";
+    const functionName = obj.ethereum_address ? "setOrganizationURI" : "createOrganization";
 
     const Badger = useMemo(() => {
-        if (address) return getBadgerOrganizationAbi();
+        if(obj.ethereum_address) return getBadgerOrganizationAbi();
 
         return getBadgerAbi(chain.name);
     }, [functionName, chain.name]);
 
-    const isReady = Boolean(enabled && fees && Badger);
+    const isReady = Badger && fees && authenticatedAddress;
 
-    const args = getOrgFormTxArgs({ functionName, authenticatedAddress, name, symbol, imageHash, contractHash });
+    const args = getOrgFormTxArgs({ 
+        functionName, 
+        authenticatedAddress, 
+        name: obj.name, 
+        symbol: obj.symbol, 
+        imageHash, 
+        contractHash 
+    });
 
     const overrides = { gasPrice: fees?.gasPrice };
 
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
         enabled: isReady,
-        addressOrName: address || Badger.address,
+        addressOrName: obj.ethereum_address || Badger.address,
         contractInterface: Badger.abi,
         functionName,
         args,
@@ -95,8 +109,6 @@ const useOrgForm = ({ enabled, address, name, symbol, image, metadata, imageHash
             const response = await postOrgRequest(org)
 
             if (!response.ok) throw new Error("Error submitting Organization request.")
-
-            navigate(`/dashboard/organization/${response.id}/`)
 
             setIsSuccess(true) && onSuccess({ tx, org, response })
         } catch (e) {

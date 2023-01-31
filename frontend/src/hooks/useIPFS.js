@@ -11,32 +11,6 @@ const Hash = require("ipfs-only-hash");
 const useIPFS = ({ image, data }) => {
     const { setError } = useContext(ErrorContext);
 
-    const [imageHash, setImageHash] = useState(null);
-
-    const useImageHash = async () => {
-        console.log('inside useImageHash', image)
-
-        if (!image) return { hash: null };
-
-        const reader = new FileReader();
-
-        reader.onload = async () => {
-            var uint8Array = new Uint8Array(reader.result);
-            await Hash.of(uint8Array, {
-                cidVersion: 0,
-                onlyHash: true,
-            })
-                .then((res) => { setImageHash(res); })
-                .catch((err) => { console.error('Error with deterministic image hashing', err); })
-        };
-
-        return { hash: imageHash }
-    }
-
-    const useMetadataHash = async () => {
-
-    }
-
     const pinImage = async (image) => {
         const response = await postIPFSImage(image);
 
@@ -66,7 +40,7 @@ const useIPFS = ({ image, data }) => {
         return response.hash;
     }
 
-    return { useImageHash, useMetadataHash, pinImage, pinMetadata }
+    return { pinImage, pinMetadata }
 }
 
 const useIPFSImageHash = (imageFile) => {

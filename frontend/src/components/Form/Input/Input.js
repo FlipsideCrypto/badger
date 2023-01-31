@@ -3,7 +3,7 @@ import "@style/Form/Input.css"
 const Input = (props) => {
     const {
         label,
-        required,
+        required = true,
         prepend,
         append,
         placeholder,

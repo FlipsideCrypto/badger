@@ -410,8 +410,7 @@ const BadgeForm = ({ isEdit = false }) => {
                     disabled={true}
                     value={isCustomImage && badgeImage?.name ? badgeImage.name : ""}
                     append={
-                        <button
-                            className="button-secondary"
+                        <button className="secondary"
                             onClick={() => imageInput.current.click()}
                             style={{ width: "auto" }}
                         >

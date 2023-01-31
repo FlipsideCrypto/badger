@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import "@style/Form/FormDrawer.css";
 
-const FormDrawer = ({ label, open, children, ...props }) => {
+const FormDrawer = ({ label, open = true, children, ...props }) => {
     const [isOpen, setIsOpen] = useState(open);
 
     return (

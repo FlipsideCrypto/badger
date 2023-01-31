@@ -43,7 +43,7 @@ button {
   padding-inline: 16px;
 }
 
-.button-secondary {
+button.secondary {
   width: auto;
   background: #000;
   border: 1px solid #fff;
