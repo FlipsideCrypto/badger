@@ -16,8 +16,9 @@ const ActionBar = ({ collapsed, setCollapsed }) => {
 
     const { ensAvatar, ensName } = useENSProfile(authenticatedAddress);
 
-    const orgId = pathname.split('/')[3];
-    const badgeId = pathname.includes('badge') ? pathname.split('/')[5] : null; //
+    const orgRegex = /\/dashboard\/organization\/([0-9]+)\//;
+
+    const orgId = orgRegex.test(pathname) && orgRegex.exec(pathname)[1]
 
     return (
         <div className="action_bar">
@@ -34,19 +35,12 @@ const ActionBar = ({ collapsed, setCollapsed }) => {
             </div>
 
             <div className="action_bar__actions">
-                <ActionButton
-                    link="https://github.com/flipsidecrypto/badger"
-                    afterText="Star on GitHub"
-                    sx={{ textTransform: 'capitalize' }}
-                    icon={['fal', 'star']}
-                />
+                <ActionButton icon={['fal', 'star']} afterText="Star on GitHub" 
+                    link="http://github.com/flipsidecrypto/badger" />
 
-                <ActionButton
-                    onClick={() => { setCollapsed(!collapsed) }}
-                    afterText="Help"
-                    sx={{ textTransform: 'capitalize' }}
-                    icon={['fal', 'question']}
-                />
+                <ActionButton icon={['fal', 'question']} afterText="Help" onClick={() => {
+                    setCollapsed(!collapsed)
+                }} />
 
                 {isAuthenticated && authenticatedAddress && <LogoutButton />}
             </div>

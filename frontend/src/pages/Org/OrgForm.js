@@ -9,6 +9,9 @@ import { IPFS_GATEWAY_URL } from "@static";
 
 import "@style/pages/OrgForm.css";
 
+// TODO: Image handling still has some issues
+// TODO: OrgDangerZone is a landmine that I am not yet ready to mount.
+
 const getSymbol = (name) => {
     return name.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().substring(0, 5);
 }
@@ -82,7 +85,7 @@ const OrgForm = ({ isEdit = false }) => {
 
             <h2 className="dashboard__content">{`${isEdit ? "Update" : "Create"} Organization`}</h2>
 
-            <FormDrawer label="General">
+            <FormDrawer label="Information">
                 <div className="vanities">
                     <Input label="Name" value={obj.name || ""} onChange={onNameChange} />
                     <Input label="Symbol" value={obj.symbol || ""} onChange={onSymbolChange} />
@@ -103,9 +106,11 @@ const OrgForm = ({ isEdit = false }) => {
 
             <FormActionBar actions={actions} />
 
-            <hr />
+            {isEdit && <>
+                <hr />
 
-            {isEdit && <OrgDangerZone orgAddress={organization.ethereum_address} />}
+                <OrgDangerZone orgAddress={organization.ethereum_address} />
+            </>}
         </>
     )
 }
