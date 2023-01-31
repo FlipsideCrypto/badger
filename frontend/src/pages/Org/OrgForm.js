@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { useOrgForm, usePFP, useUser } from "@hooks";
 
-import { FormActionBar, FormDrawer, initialOrgForm, Input, Header, OrgDangerZone } from "@components"
+import { initialOrgForm, FormActionBar, FormDrawer, Header, Input, OrgDangerZone } from "@components"
 
 import { IPFS_GATEWAY_URL } from "@static";
 
@@ -55,9 +55,7 @@ const OrgForm = ({ isEdit = false }) => {
     }
 
     const onSymbolChange = (e) => {
-        if (e.target.value.length > 4) return;
-
-        setObj({ ...obj, symbol: e.target.value })
+        setObj({ ...obj, symbol: getSymbol(e.target.value) })
     }
 
     const onDescriptionChange = (e) => {
