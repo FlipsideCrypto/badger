@@ -13,8 +13,6 @@ const getSymbol = (name) => {
     return name.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().substring(0, 5);
 }
 
-// TODO: Properly display the image name on the input
-
 const OrgForm = ({ isEdit = false }) => {
     const imageInput = useRef();
 
@@ -33,14 +31,11 @@ const OrgForm = ({ isEdit = false }) => {
 
     const activeImage = customImage || characterPFP;
 
-    const imageURL = customImage && (image ? image : IPFS_GATEWAY_URL + obj.image_hash);
+    const imageURL = customImage && (image ? image.name : IPFS_GATEWAY_URL + obj.image_hash);
 
     const isDisabled = !(obj.name && obj.symbol && obj.description && activeImage);
 
-    const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({
-        obj,
-        image: activeImage
-    })
+    const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({ obj, image: activeImage })
 
     const actions = [{
         text: `${isEdit ? "Save" : "Create"} organization`,
@@ -66,7 +61,7 @@ const OrgForm = ({ isEdit = false }) => {
         setObj({ ...obj, description: e.target.value })
     }
 
-    const onImageUpload = () => { 
+    const onImageUpload = () => {
         imageInput.current.click();
     }
 
@@ -85,9 +80,7 @@ const OrgForm = ({ isEdit = false }) => {
         <>
             <Header back={() => navigate((isEdit ? `/dashboard/organization/${orgId}/` : '/dashboard/'))} />
 
-            <div className="dashboard__content">
-                <h2>{isEdit ? "Update Organization" : "Create Organization"}</h2>
-            </div>
+            <h2 className="dashboard__content">{`${isEdit ? "Update" : "Create"} Organization`}</h2>
 
             <FormDrawer label="General">
                 <div className="vanities">
@@ -99,13 +92,13 @@ const OrgForm = ({ isEdit = false }) => {
             </FormDrawer>
 
             <FormDrawer label="Appearance" open={!!obj.image_hash}>
-                <Input label="Image" accept="image/*" disabled={true}
-                    append={<button className="secondary" onClick={onImageUpload}>
+                <Input label="Image" accept="image/*" disabled={true} append={
+                    <button className="secondary" onClick={onImageUpload}>
                         {`${customImage ? "Update" : "Upload"} image`}
                     </button>}
                     value={imageURL || "Choose file..."} />
 
-                <input ref={imageInput} accept="image/*" type="file" onChange={onImageChange} />
+                <input ref={imageInput} type="file" accept="image/*" onChange={onImageChange} />
             </FormDrawer>
 
             <FormActionBar actions={actions} />

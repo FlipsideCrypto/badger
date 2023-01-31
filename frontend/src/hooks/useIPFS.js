@@ -48,9 +48,8 @@ const useIPFSImageHash = (imageFile) => {
 
     useEffect(() => {
         async function getHash(image) {
-            if (!image) return;
-
             const reader = new FileReader();
+
             reader.onload = async () => {
                 var uint8Array = new Uint8Array(reader.result);
                 await Hash.of(uint8Array, {
@@ -62,6 +61,15 @@ const useIPFSImageHash = (imageFile) => {
             };
 
             reader.readAsArrayBuffer(image);
+        }
+
+        if(!imageFile) return;
+
+        if(typeof imageFile === 'string') {
+            // If provided a string, it is treated as if it is hash.
+            setHash(imageFile);
+
+            return;
         }
 
         getHash(imageFile);
