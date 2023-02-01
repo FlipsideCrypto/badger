@@ -10,6 +10,20 @@ import { postOrgRequest } from "@utils";
 
 import { IPFS_GATEWAY_URL } from "@static";
 
+// TODO: Refactor the image field to be stored as a hash on the obj
+// TODO: Do the same for the contract hash
+
+// IPFS has been the major pain point of this project so let's fix that.
+// on success of transaction, should pin the image through the calling of a hook
+
+// sometimes though, we will know the hash when calling the transaction without using an image so having to pass the image in the hooks is wrong and was has been causing a lot of issues
+// Basically the only thing that changes between all the code in this file is the args, the function name and whether or not it is using ipfs or not
+// I see no reason we couldn't easily have a useOrg and useBadge hook that takes in the args and function name and then does the rest of the work
+
+// The real architecture I want is useCreateOrg, useEditOrg and then inside each of those have logic for openOrgTx
+// The initial hooks were written in a way that required a lot of logic to be above the component any time it was used
+// This is a step in the right direction, but I want to get to a point where the hooks are the only thing that needs to be imported
+
 const getOrgFormTxArgs = ({ functionName, authenticatedAddress, name, symbol, imageHash, contractHash }) => {
     if (functionName === "setOrganizationURI") {
         return [IPFS_GATEWAY_URL + contractHash]
@@ -21,6 +35,68 @@ const getOrgFormTxArgs = ({ functionName, authenticatedAddress, name, symbol, im
         name,
         symbol,
     ]
+}
+
+const useOrg = ({ obj, functionName }) => {
+    const fees = useFees();
+
+    const { authenticatedAddress, chain } = useUser();
+
+    const Badger = useMemo(() => {
+        if (obj.ethereum_address) return getBadgerOrganizationAbi();
+
+        return getBadgerAbi(chain.name);
+    }, [functionName, chain.name]);
+
+    const isReady = Badger && fees && authenticatedAddress;
+
+    const overrides = { gasPrice: fees?.gasPrice };
+
+    // TODO: Args
+    const args = []
+
+    const { config, isSuccess: isPrepared } = usePrepareContractWrite({
+        enabled: isReady,
+        addressOrName: obj.ethereum_address || Badger.address,
+        contractInterface: Badger.abi,
+        functionName,
+        args,
+        overrides,
+        onError: (e) => {
+            const err = e?.error?.message || e?.data?.message || e
+
+            throw new Error(err);
+        }
+    })
+
+    const { writeAsync } = useContractWrite(config);
+
+    // We are separating the openOrg logic because every function called through this needs to have a post request following
+    const openOrgTx = async ({
+        onError = (e) => { console.error(e) },
+        onLoading = () => { },
+        onSuccess = ({ tx, org, response }) => { }
+    }) => {
+        try {
+            onLoading()
+
+            const tx = await writeAsync()
+
+            const txReceipt = await tx.wait()
+
+            if (txReceipt.status === 0) throw new Error("Error submitting transaction.");
+
+            const response = await postOrgRequest(obj)
+
+            if (!response.ok) throw new Error("Error submitting Organization request.")
+
+            onSuccess({ tx, obj, response })
+        } catch (e) {
+            onError(e);
+        }
+    }
+
+    return { openOrgTx }
 }
 
 const useOrgForm = ({ obj, image }) => {
@@ -50,20 +126,20 @@ const useOrgForm = ({ obj, image }) => {
     const functionName = obj.ethereum_address ? "setOrganizationURI" : "createOrganization";
 
     const Badger = useMemo(() => {
-        if(obj.ethereum_address) return getBadgerOrganizationAbi();
+        if (obj.ethereum_address) return getBadgerOrganizationAbi();
 
         return getBadgerAbi(chain.name);
     }, [functionName, chain.name]);
 
     const isReady = Badger && fees && authenticatedAddress;
 
-    const args = getOrgFormTxArgs({ 
-        functionName, 
-        authenticatedAddress, 
-        name: obj.name, 
-        symbol: obj.symbol, 
-        imageHash, 
-        contractHash 
+    const args = getOrgFormTxArgs({
+        functionName,
+        authenticatedAddress,
+        name: obj.name,
+        symbol: obj.symbol,
+        imageHash,
+        contractHash
     });
 
     const overrides = { gasPrice: fees?.gasPrice };
