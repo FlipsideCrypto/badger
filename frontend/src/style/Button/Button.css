@@ -1,0 +1,26 @@
+.button__secondary {
+    background: #ffffff;
+    color: #000000;
+    font-weight: 400;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 18px;
+    text-transform: none;
+    padding: 5px 10px;
+    line-height: 1.5;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    -webkit-transition: all .1s ease-in-out;
+    -o-transition: all .1s ease-in-out;
+    transition: all .1s ease-in-out;
+}

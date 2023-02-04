@@ -1,0 +1,68 @@
+.landing .navbar {
+    background: transparent;
+    height: 75px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+}
+
+.landing .navbar .container {
+    display: grid;
+    margin: auto;
+    grid-template-rows: 1fr;
+    grid-template-columns: auto 1fr 1fr;
+}
+
+.landing .navbar .navbar__logo {
+    max-height: fit-content;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: auto auto;
+    align-items: center;
+    gap: 12px;
+}
+
+.landing .navbar .navbar__logo .navbar__logo__image {
+    height: 20px;
+    width: 20px;
+    background-color: black;
+    border-radius: 50%;
+}
+
+.landing .navbar .navbar__logo .navbar__title {
+    margin: 0;
+    font-size: 24px;
+}
+
+.landing .navbar a {
+    text-decoration: none;
+    color: #000;
+    cursor: pointer;
+    transition: .1s all ease-in-out;
+    font-size: 18px;
+    font-weight: 400;
+    margin-top: 2px;
+    text-align: center;
+}
+
+.landing .navbar a:hover,
+.landing .navbar a:active,
+.landing .navbar a:focus {
+
+}
+
+.landing .navbar .navbar__links__left {
+    margin-left: 40px;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+}
+
+.landing .navbar .navbar__links__right {
+    text-align: right;
+}
+
+.landing .navbar .navbar__links__right a {}

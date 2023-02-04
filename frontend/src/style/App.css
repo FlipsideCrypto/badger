@@ -3,7 +3,7 @@
 }
 
 * {
-  font-family: 'Poppins', sans-serif;
+  font-family: "gopher", sans-serif;
 }
 
 body {
@@ -15,7 +15,7 @@ body {
   min-height: 100vh;
 }
 
-button { 
+button {
   background: transparent;
   border: 1px solid #000;
   outline: none;
@@ -69,7 +69,7 @@ button.secondary {
   color: #fff !important;
 }
 
-.lead { 
+.lead {
   font-size: 18px;
 }
 
@@ -93,6 +93,12 @@ button.secondary {
   text-decoration: unset;
 }
 
+.container {
+  max-width: 1440px;
+  padding: 20px;
+  margin: auto;
+}
+
 .container__background {
   background: #FCFCFF;
   border-radius: 10px;
@@ -103,55 +109,64 @@ a {
 }
 
 @media screen and (max-width: 3000px) {
-  .page-margins{
+  .page-margins {
     margin-right: 300px;
     margin-left: 300px;
   }
-  .page-margin-left{
+
+  .page-margin-left {
     margin-left: 300px;
   }
-  .page-margin-right{
+
+  .page-margin-right {
     width: 100%;
     margin-right: 300px;
   }
 }
 
 @media screen and (max-width: 1200px) {
-  .page-margins{
+  .page-margins {
     margin-right: 100px;
     margin-left: 100px;
   }
-  .page-margin-left{
+
+  .page-margin-left {
     margin-left: 100px;
   }
-  .page-margin-right{
+
+  .page-margin-right {
     width: 100%;
     margin-right: 100px;
   }
 }
+
 @media screen and (max-width: 900px) {
-  .page-margins{
+  .page-margins {
     margin-right: 50px;
     margin-left: 50px;
   }
-  .page-margin-left{
+
+  .page-margin-left {
     margin-left: 50px;
   }
-  .page-margin-right{
+
+  .page-margin-right {
     width: 100%;
     margin-right: 50px;
   }
 }
 
 @media screen and (max-width: 600px) {
-  .page-margins{
+  .page-margins {
     margin-right: 10px;
     margin-left: 10px;
   }
-  .page-margin-left{
+
+  .page-margin-left {
     margin-left: 10px;
   }
-  .page-margin-right{
+
+  .page-margin-right {
     width: 100%;
     margin-right: 10px;
   }
