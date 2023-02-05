@@ -1,3 +1,25 @@
+.hardLight { 
+    overflow: hidden;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    width: 100vw;
+    z-index: -1;
+}
+
+.softLight {
+    position: absolute;
+    height: 5000px;
+    width: 5000px;
+    border-radius: 50%;
+    background-image: url(../../static/images/hero-noise.png);
+    background-size: 1920px 1080px;
+    background-repeat: repeat;
+    z-index: -2;
+    transition: all 3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    opacity: 0.5;
+}
+
 .hero {
     position: relative;
     margin-left: auto;
@@ -30,7 +52,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
+    z-index: -3;
 }
 
 .hero::after {
@@ -42,7 +64,7 @@
     height: 100%;
     background: url(../../static/images/hero-noise.png) repeat;
     background-size: 1920px 1080px;
-    z-index: -2;
+    z-index: -3;
 }
 
 .hero .blob {

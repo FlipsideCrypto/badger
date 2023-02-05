@@ -1,12 +1,15 @@
+
+
 import { Link } from "react-router-dom";
 
-import { ArrowLink, Accordion,  Footer, Metrics, Navbar, StoryPreview, LandingHero } from "@components";
+import { ArrowLink, Accordion, Metrics, StoryPreview, LandingHero } from "@components";
 
 import "@style/pages/Landing.css";
 
 const Landing = () => {
     return (
         <div className="landing">
+
             <LandingHero className="slim">
                 <div className="container">
                     <h1>The no-code solution that unlocks the power of on-chain badges for everyone.</h1>

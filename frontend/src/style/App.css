@@ -16,6 +16,7 @@ body {
 .App {
     position: relative;
     min-height: 100vh;
+    min-width: 100vw;
 }
 
 strong {
@@ -25,7 +26,7 @@ strong {
 
 blockquote {
     border-left: 1px solid rgba(0, 0, 0, 0.1);
-    padding-left: 45px; 
+    padding-left: 45px;
     max-width: 85%;
     margin: 0;
 }
@@ -39,6 +40,14 @@ button {
     border-radius: 5px;
     font-weight: 700;
     font-size: inherit;
+    transition: all 3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    box-shadow: 0 0 80px transparent;
+}
+
+button:hover,
+button:focus,
+button:active {
+    box-shadow: 0 0 80px rgba(0, 0, 0, 0.1);
 }
 
 button.unstyled {
@@ -55,17 +64,27 @@ button.primary {
     position: relative;
 }
 
-button.primary:hover {
-    background: linear-gradient(30deg, #00FF94 0%, #00FFE0 35%);
+button.primary span {
+    position: relative;
+    z-index: 1;
+}
+
+button.primary:hover,
+button.primary:focus,
+button.primary:active {
+    background: linear-gradient(33deg, #00FFE0 0%, #00FF94 10%, #00FFE0 45%);
+    box-shadow: 0 0 80px rgba(0, 255, 224, .35);
 }
 
 button.primary::after {
+    content: "";
     position: absolute;
     top: 0;
-    left: 0;
+    left: 0%;
     width: 100%;
     height: 100%;
-    border-radius: 5px;
+    background: url(../static/images/hero-noise.png) repeat;
+    background-size: 100% auto;
 }
 
 button.secondary {
@@ -131,8 +150,8 @@ a {
     transition: color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
 
-p { 
-    color: rgba(0, 0, 0, .65);    
+p {
+    color: rgba(0, 0, 0, .65);
 }
 
 .blue {
