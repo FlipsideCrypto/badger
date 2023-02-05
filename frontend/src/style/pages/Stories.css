@@ -1,0 +1,10 @@
+.stories {
+}
+
+.stories .container .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 920px;
+    margin: auto;
+    gap: 20px;
+}

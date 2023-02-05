@@ -1,0 +1,32 @@
+.metrics {
+    margin-block: 80px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr;
+    grid-gap: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    padding-bottom: 25px;
+}
+
+.metric {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+}
+
+.metric__title {
+    font-size: 24px;
+    font-weight: 300;
+    white-space: nowrap;
+}
+
+.metric__value {
+    font-size: 64px;
+    font-weight: 700;
+}
+
+@media only screen and (max-width: 1028px) {
+    .metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

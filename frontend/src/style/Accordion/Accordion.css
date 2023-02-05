@@ -1,0 +1,88 @@
+/* .accordion .item.active {
+    box-shadow: 0 0 10px rgb(0 0 0 / 10%);
+    display: block;
+} */
+
+.accordion .title {
+    font-size: 24px;
+    font-weight: 700;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto;
+    padding: 10px 5px;
+    cursor: pointer;
+    transition: ease-in-out 0.3s all;
+    position: relative;
+}
+
+.accordion .title:before,
+.accordion .title:after {
+   content:'';
+   position: absolute;
+   height: 2px;
+   transition: ease-in-out 0.4s all;
+   bottom: 0;
+   left: 0;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.accordion .title:before {
+   width: 100%;
+   background-color: rgba(0, 0, 0, 0.1);
+}
+.accordion .title:after {
+   background-image: linear-gradient(90deg, #00FFE0, #00FF94);
+   width: 0%;
+}
+
+.accordion .title:hover::after {
+    width: 100%;
+ }
+ 
+.accordion .title p {
+    transition: ease-out 0.25s all;
+    padding-right: 20px;
+}
+
+.accordion .title:hover p {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.accordion .title svg {
+    justify-self: end;
+    align-self: center;
+    height: 14px;
+    width: 14px;
+    transition: ease-in-out 0.25s all;
+}
+
+.accordion .title.active svg {
+    transform: rotate(-90deg);
+}
+
+
+.accordion .content {
+    opacity: 0.3;
+    height: 0;
+    padding: 0px 20px;
+    font-size: 18px;
+    font-weight: 500;
+    max-width: 900px;
+    transition: all 1s cubic-bezier(0.05,0.7,0.05,1);
+    overflow: hidden;
+}
+
+.accordion .content.active {
+    opacity: 1;
+    padding: 20px;
+    height: auto;
+    /* transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1); */
+    backdrop-filter: blur(2px);
+}
+
+.accordion p {
+    margin: 0;
+}

@@ -1,29 +1,41 @@
-import { Link } from "react-router-dom";
-import { HOME_LINKS } from "@static";
+import { useState, useEffect } from "react";
 
-import { Button } from "@components";
+import { Link } from "react-router-dom";
+
+import { Button, LogoIcon } from "@components";
+
+import { HOME_LINKS } from "@static";
 
 import "@style/Navbar/Navbar.css";
 
 const Navbar = () => {
+    const [isFilled, setIsFilled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => setIsFilled(window.scrollY > 75);
+
+        window.addEventListener("scroll", handleScroll);
+
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
     return (
-        <div className="navbar">
+        <div className={`navbar ${isFilled && "filled"}`}>
             <div className="container">
-                <div className="navbar__logo">
-                    {/* <img src={logo} alt="logo" /> */}
-                    <div className="navbar__logo__image" />
-                    <h3 className="navbar__title">Badger</h3>
-                </div>
+                <Link to="/"><LogoIcon name="Badger" image={""} /></Link>
 
-
-                <div className="navbar__links__left">
-                    <Link to={HOME_LINKS.gitbook}>Docs</Link>
+                <div className="navbar__links__left underline">
+                    <a href={HOME_LINKS.gitbook} target="_blank" rel="noreferrer">Docs</a>
                     <Link to="/faq/">FAQ</Link>
                     <Link to="/stories/">Customer Stories</Link>
                 </div>
 
                 <div className="navbar__links__right">
-                    <Button className="button__secondary" text="Enter App" link="/dashboard/" />
+                    <Link to="/dashboard/">
+                        <button className="secondary">
+                            Enter app
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div>

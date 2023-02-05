@@ -1,0 +1,87 @@
+.story {
+    display: grid;
+    grid-template-columns: 2fr 6fr 2fr;
+    gap: 20px;
+}
+
+.story .content {
+    margin-bottom: 40px;
+}
+
+.story .content .preview.full, 
+.story .content .container,
+.story .content h4:first-of-type { 
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.story .share .items { 
+    position: relative;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+}
+
+.story .share .items.sticky { 
+    position: sticky;
+    top: 150px;
+}
+
+.story .share .items::before { 
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    background: #000;
+    height: 50%;
+    width: 1px;
+}
+
+.story .share .items::after { 
+    content: 'SHARE';
+    font-family: 'Gopher';
+    position: absolute;
+    bottom: -120%;
+    left: 50%;
+    font-weight: 700;
+    transform: translate(-50%, 50%) rotate(-90deg);
+    background: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.story .share .items div { 
+    background: #fff;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    cursor: pointer;
+}
+
+.story .share .items div svg { 
+    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.story .share .items div:hover svg,
+.story .share .items div:hover svg { 
+    transform: translateY(-3px);
+}
+
+.story .content .markdown h2 { 
+    font-size: 32px;
+    margin-top: 0px;
+}
+
+.story .content .markdown h3 { 
+    font-size: 24px;
+    margin-top: 0px;
+}
+
+.story .content .markdown h4 { 
+    font-size: 20px;
+}

@@ -1,173 +1,222 @@
 :root {
-  --page-margins: 20px;
+    --page-margins: 20px;
+    --blue: #00FFE0;
+    --green: #00FF94;
 }
 
 * {
-  font-family: "gopher", sans-serif;
+    font-family: "gopher", sans-serif;
+    text-decoration: none;
 }
 
 body {
-  overflow-x: hidden;
+    overflow-x: hidden;
 }
 
 .App {
-  position: relative;
-  min-height: 100vh;
+    position: relative;
+    min-height: 100vh;
+}
+
+strong {
+    font-weight: 700;
+    color: #000;
+}
+
+blockquote {
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    padding-left: 45px; 
+    max-width: 85%;
+    margin: 0;
 }
 
 button {
-  background: transparent;
-  border: 1px solid #000;
-  outline: none;
-  padding: 5px 20px;
-  cursor: pointer;
-  border-radius: 5px;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-weight: 700;
+    font-size: inherit;
 }
 
-.button__unstyled {
-  background: none;
-  border: none;
-  padding: 0px;
-  text-align: left;
-  all: none;
+button.unstyled {
+    background: none;
+    border: none;
+    padding: 0px;
+    text-align: left;
+    all: none;
 }
 
-.button-primary {
-  width: auto;
-  background: #fff;
-  border: 1px solid #fff;
-  border-radius: 5px;
-  color: #000;
-  white-space: nowrap;
-  font-size: 12px;
-  padding-inline: 16px;
+button.primary {
+    background: linear-gradient(30deg, #00FF94 0%, #00FFE0 35%);
+    color: #000000;
+    position: relative;
+}
+
+button.primary:hover {
+    background: linear-gradient(30deg, #00FF94 0%, #00FFE0 35%);
+}
+
+button.primary::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
 }
 
 button.secondary {
-  width: auto;
-  background: #000;
-  border: 1px solid #fff;
-  border-radius: 5px;
-  color: #fff;
-  white-space: nowrap;
-  font-size: 12px;
-  padding-inline: 16px;
+    background: #000;
+    color: #fff;
+    white-space: nowrap;
 }
 
 .button__warning {
-  height: 40px;
-  border-radius: 5px;
-  border: 1px solid #FF0000;
-  color: #FF0000 !important;
-  font-size: 12px;
-  white-space: nowrap;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid #FF0000;
+    color: #FF0000 !important;
+    font-size: 12px;
+    white-space: nowrap;
 }
 
 .button__warning:hover,
 .button__warning:focus {
-  background: #FF0000;
-  color: #fff !important;
+    background: #FF0000;
+    color: #fff !important;
 }
 
 .lead {
-  font-size: 18px;
+    font-size: 18px;
 }
 
 .internal-link {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 .link-wrapper {
-  margin: none !important;
-  color: inherit;
-  cursor: pointer;
-  text-decoration: none;
-  height: 100%;
-  width: 100%;
-  display: block;
+    margin: none !important;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    height: 100%;
+    width: 100%;
+    display: block;
 }
 
 .link-text {
-  font-weight: 700;
-  color: rgba(0, 0, 0, .65);
-  text-decoration: unset;
+    font-weight: 700;
+    color: rgba(0, 0, 0, .65);
+    text-decoration: unset;
 }
 
 .container {
-  max-width: 1440px;
-  padding: 20px;
-  margin: auto;
+    max-width: 1440px;
+    padding: 20px;
+    margin: auto;
+    width: 100%;
 }
 
 .container__background {
-  background: #FCFCFF;
-  border-radius: 10px;
+    background: #FCFCFF;
+    border-radius: 10px;
 }
 
 a {
-  transition: color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    transition: color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.underline a {
+    transition: ease-in-out 0.4s all;
+}
+
+.underline a:after {
+   content:'';
+   height: 2px;
+   width: auto;
+   transition: ease-in-out 0.4s all;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   background-image: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,0));
+}
+
+.underline a:hover::after {
+  background-image: linear-gradient(90deg, #000000, #000000);
+    width: auto;
+ }
+
+.blue {
+    color: #00FFE0;
+}
+
+.green {
+    color: #00FF94;
 }
 
 @media screen and (max-width: 3000px) {
-  .page-margins {
-    margin-right: 300px;
-    margin-left: 300px;
-  }
+    .page-margins {
+        margin-right: 300px;
+        margin-left: 300px;
+    }
 
-  .page-margin-left {
-    margin-left: 300px;
-  }
+    .page-margin-left {
+        margin-left: 300px;
+    }
 
-  .page-margin-right {
-    width: 100%;
-    margin-right: 300px;
-  }
+    .page-margin-right {
+        width: 100%;
+        margin-right: 300px;
+    }
 }
 
 @media screen and (max-width: 1200px) {
-  .page-margins {
-    margin-right: 100px;
-    margin-left: 100px;
-  }
+    .page-margins {
+        margin-right: 100px;
+        margin-left: 100px;
+    }
 
-  .page-margin-left {
-    margin-left: 100px;
-  }
+    .page-margin-left {
+        margin-left: 100px;
+    }
 
-  .page-margin-right {
-    width: 100%;
-    margin-right: 100px;
-  }
+    .page-margin-right {
+        width: 100%;
+        margin-right: 100px;
+    }
 }
 
 @media screen and (max-width: 900px) {
-  .page-margins {
-    margin-right: 50px;
-    margin-left: 50px;
-  }
+    .page-margins {
+        margin-right: 50px;
+        margin-left: 50px;
+    }
 
-  .page-margin-left {
-    margin-left: 50px;
-  }
+    .page-margin-left {
+        margin-left: 50px;
+    }
 
-  .page-margin-right {
-    width: 100%;
-    margin-right: 50px;
-  }
+    .page-margin-right {
+        width: 100%;
+        margin-right: 50px;
+    }
 }
 
 @media screen and (max-width: 600px) {
-  .page-margins {
-    margin-right: 10px;
-    margin-left: 10px;
-  }
+    .page-margins {
+        margin-right: 10px;
+        margin-left: 10px;
+    }
 
-  .page-margin-left {
-    margin-left: 10px;
-  }
+    .page-margin-left {
+        margin-left: 10px;
+    }
 
-  .page-margin-right {
-    width: 100%;
-    margin-right: 10px;
-  }
+    .page-margin-right {
+        width: 100%;
+        margin-right: 10px;
+    }
 }

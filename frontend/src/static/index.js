@@ -9,3 +9,6 @@ export { default as tutorial } from './images/tutorial.mp4'
 
 export { default as localhost } from './images/networks/localhost.png'
 export { default as polygon } from './images/networks/polygon.png'
+
+export { default as mdao } from './images/partners/mdao.png'
+export { default as talentdao } from './images/partners/talentdao.png'

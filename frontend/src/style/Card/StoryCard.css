@@ -1,0 +1,12 @@
+.card { 
+    color: #000;
+    border: none;
+}
+
+.card h2 { 
+    max-width: 90%;
+}
+
+.card p { 
+    margin-bottom: 40px;
+}

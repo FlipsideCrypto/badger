@@ -4,23 +4,54 @@
     font-weight: 400;
     border-radius: 5px;
     text-decoration: none;
-    font-size: 18px;
     text-transform: none;
-    padding: 5px 10px;
-    line-height: 1.5;
     cursor: pointer;
     display: inline-block;
     margin: 0;
     text-align: center;
     white-space: nowrap;
     vertical-align: middle;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
     background-image: none;
-    border: 1px solid transparent;
-    -webkit-transition: all .1s ease-in-out;
-    -o-transition: all .1s ease-in-out;
-    transition: all .1s ease-in-out;
+}
+
+.button__secondary:hover {
+    background-color: #ffffff;
+}
+
+.button__secondary span, 
+.button__primary span {
+    font-size: 18px;
+    font-weight: 400; 
+    display: inline-block;
+    padding: 0px 10px;
+}
+
+
+.button__primary {
+    background: linear-gradient(30deg, #00FF94 0%, #00FFE0 35%);
+    background-color: unset;
+    color: #000000;
+    font-weight: 400;
+    border-radius: 5px;
+    text-decoration: none;
+    text-transform: none;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+}
+
+.button__primary:hover {
+    background: linear-gradient(30deg, #00FF94 0%, #00FFE0 35%);
+}
+
+.button__primary span {
+    font-size: 24px;
+    font-weight: 700; 
+    display: inline-block;
+    padding: 3px 20px;
 }

@@ -1,8 +1,7 @@
-.landing {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    right: 0;
+.landing p,
+.lainding .section a {
+    color: rgba(0, 0, 0, .65);
+    font-size: 1.2rem;
 }
 
 .landing .hero {
@@ -13,9 +12,57 @@
     min-height: 750px;
     overflow: hidden;
 }
-    
 
-.landing .hero .blobs {
+.landing .hero .container p {
+    margin-bottom: 60px;
+    font-size: 32px;
+    max-width: 620px;
+}
+
+.landing .hero .container a { 
+    font-size: 24px;
+}
+
+.landing .hero .container a button { 
+    padding: 8px 20px;
+}
+
+.landing .section {
+    display: grid;
+    grid-template: 'a a'
+        'b c';
+    grid-template-columns: 2fr 1fr;
+    grid-column-gap: 80px;
+}
+
+.landing .section.left {
+    grid-template: 'a a'
+        'c b';
+    grid-template-columns: 1fr 2fr;
+}
+
+.landing .section h2 {
+    font-size: 64px;
+    max-width: 1200px;
+    grid-area: a;
+}
+
+.landing .section .context {
+    grid-area: b;
+    min-height: 650px;
+    position: relative;
+    left: -20%;
+    width: 120%;
+    overflow: hidden;
+}
+
+.landing .section.left .context {
+    left: 0;
+    right: -20%;
+}
+
+.landing .section .context .blobs,
+.landing .help .blobs {
     filter: blur(150px);
     position: absolute;
     top: 0;
@@ -25,82 +72,238 @@
     z-index: -3;
 }
 
-.landing .hero::before {
+.landing .section .context .blob {
     position: absolute;
-    background: linear-gradient(180deg, transparent, transparent, white);
-    content: '';
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    filter: blur(5px);
+    top: -200px;
+    right: -20%;
+    width: 600px;
+    height: 800px;
+    z-index: -3;
+    background: var(--green);
+    clip-path: polygon(58% 4%, 79% 24%, 79% 60%, 94% 78%, 46% 99%, 18% 88%, 24% 57%, 0% 43%, 20% 19%);
+    animation: blob 10s infinite;
 }
 
-.landing .hero::after {
+.landing .section .context .blob:nth-of-type(2) {
+    top: 55%;
+    right: 10%;
+    width: 1900px;
+    height: 1200px;
+    background: var(--blue);
+    clip-path: polygon(50% 0%, 57% 51%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 23% 72%, 0% 43%, 17% 12%);
+}
+
+
+.landing .section .context::before {
+    content: "";
+    position: absolute;
+    top: 80px;
+    right: 0;
+    width: calc(100% - 200px);
+    height: calc(100% - 160px);
+    background: white;
+    z-index: -2;
+}
+
+.landing .section .context::after {
     content: "";
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
+    left: -100%;
+    width: 200%;
     height: 100%;
     background: url(../../static/images/hero-noise.png) repeat;
     background-size: 1920px 1080px;
     z-index: -2;
 }
 
-.landing .hero .blob {
+.landing .section.left .context::after {
+    content: "";
     position: absolute;
-    top: -200px;;
-    right: -10%;
+    top: 0;
+    right: -100%;
+    width: 200%;
+    height: 100%;
+    background: url(../../static/images/hero-noise.png) repeat;
+    background-size: 1920px 1080px;
+    z-index: -2;
+}
+
+.landing .section.left .context::before {
+    left: 0;
+    width: calc(100% - 200px);
+    height: calc(100% - 160px);
+    background: white;
+    z-index: -2;
+}
+
+.landing .section .content {
+    grid-area: c;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.landing .section .cta {
+    color: #000;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #000;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    width: fit-content;
+    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.landing .help {
+    padding-block: 80px;
+    overflow: hidden;
+    position: relative;
+}
+
+.landing .help .container {
+    display: grid;
+    grid-template:
+        'a a'
+        'b c'
+        'd d';
+    grid-gap: 20px;
+}
+
+.landing .help .container .card {
+    background: #fff;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    border: none;
+}
+
+.landing .help .container .card p {
+    margin-bottom: 20px;
+}
+
+.landing .help .container .card a {
+    color: #000;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #000;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    width: 100%;
+    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.landing .help .container .card h3 a { 
+    font-size: inherit;
+}
+
+.landing .help .container .card h3 {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.landing .help .container .title {
+    grid-area: a;
+    margin-bottom: 40px;
+}
+
+.landing .help .title h2 {
+    font-size: 64px;
+    max-width: 1200px;
+    margin-bottom: 20px;
+}
+
+.landing .help .title p {
+    margin: 0px;
+    font-size: 24px;
+    max-width: 580px;
+}
+
+.landing .help .container .card.learn {
+    grid-area: b;
+}
+
+.landing .help .container .card.explore {
+    grid-area: c;
+}
+
+/* .landing .help .container .card.learn a::after,
+.landing .help .container .card.explore a::after {
+    content: '';
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background: blue;
+    border-radius: 50%;
+} */
+
+.landing .help .container .card.expert {
+    grid-area: d;
+}
+
+.landing .help .container .card.expert p {
+    max-width: 540px;
+}
+
+.landing .help .blob {
+    position: absolute;
+    top: -200px;
+    right: -20%;
     width: 600px;
     height: 800px;
     z-index: -3;
-    background: #00FFE0;
+    background: var(--green);
     clip-path: polygon(58% 4%, 79% 24%, 79% 60%, 94% 78%, 46% 99%, 18% 88%, 24% 57%, 0% 43%, 20% 19%);
     animation: blob 10s infinite;
 }
 
-.landing .hero .blob:nth-of-type(2) {
-    top: -125%;
-    right: 30%;
+.landing .help .blob:nth-of-type(2) {
+    top: 85%;
+    right: 10%;
     width: 1900px;
     height: 1200px;
-    background: #00FFE0;
+    background: var(--blue);
     clip-path: polygon(50% 0%, 57% 51%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 23% 72%, 0% 43%, 17% 12%);
 }
 
-.landing .hero .blob:nth-of-type(3) {
+.landing .help .blob:nth-of-type(3) {
     top: -100px;
-    right: -350px;
+    left: -350px;
     width: 800px;
     height: 800px;
     background: #00FF94;
     clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 68% 40%, 60% 56%, 49% 79%, 17% 73%, 0% 43%, 32% 40%);
 }
 
-@keyframes blob {
-    0% {
-        transform: translate(0, -75px) rotate(-10deg);
-    }
-
-    50% {
-        transform: translate(0, 0px) scale(1.1) rotate(10deg);
-    }
-
-    100% {
-        transform: translate(0, -75px) rotate(-10deg);
-    }
+.landing .help .blob:nth-of-type(4) {
+    position: absolute;
+    top: -200px;
+    right: 40%;
+    width: 600px;
+    height: 800px;
+    z-index: -3;
+    background: var(--blue);
+    clip-path: polygon(58% 4%, 79% 24%, 79% 60%, 94% 78%, 46% 99%, 18% 88%, 24% 57%, 0% 43%, 20% 19%);
+    animation: blob 10s infinite;
 }
 
-.landing .hero .container h1 {
-    font-size: 96px;
-    margin-bottom: 20px;
-}
-
-.landing .hero .container p {
-    margin-bottom: 60px;
-    font-size: 32px;
+.landing .help::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -100%;
+    width: 200%;
+    height: 100%;
+    background: url(../../static/images/hero-noise.png) repeat;
+    background-size: 1920px 1080px;
+    z-index: -2;
 }
 
 @media only screen and (max-width: 1028px) {
@@ -117,5 +320,19 @@
         background-size: auto 100%;
         background-position: left;
         z-index: -1;
+    }
+}
+
+@keyframes blob {
+    0% {
+        transform: translate(0, -75px) rotate(-10deg);
+    }
+
+    50% {
+        transform: translate(0, 0px) scale(1.1) rotate(10deg);
+    }
+
+    100% {
+        transform: translate(0, -75px) rotate(-10deg);
     }
 }
