@@ -8,7 +8,7 @@
     padding-top: 80px;
 }
 
-.hero.slim { 
+.hero.slim {
     min-height: 350px;
 }
 
@@ -95,36 +95,41 @@
     max-width: 920px;
 }
 
-.hero .container .back { 
+.hero .container .back {
     display: flex;
     gap: 20px;
     color: #000;
     font-weight: 700;
 }
 
-.hero .container .back svg { 
+.hero .container .back svg {
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
-.hero .container .back:hover svg { 
+.hero .container .back:hover svg {
     transform: translateX(-5px) scale(1.2);
-} 
-
+}
 
 @media only screen and (max-width: 1028px) {
-    .hero .container {
-        min-height: 600px;
-        padding-top: 120px;
-    }
-
-    .hero .container h1 {
+    .hero .container * {
         max-width: 100%;
     }
 
-    .hero::after {
-        background-size: auto 100%;
-        background-position: left;
-        z-index: -1;
+    .hero.slim .container {
+        min-height: 300px;
+    }
+
+    .hero .container h1 {
+        font-size: 64px;
+        margin-top: 40px;
+    }
+
+    .hero .container h2 {
+        font-size: 52px;
+    }
+
+    .hero .container p {
+        font-size: 20px;
     }
 }
 

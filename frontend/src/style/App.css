@@ -126,9 +126,14 @@ button.secondary {
 }
 
 a {
+    color: #000;
+    font-weight: 700;
     transition: color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
 
+p { 
+    color: rgba(0, 0, 0, .65);    
+}
 
 .blue {
     color: #00FFE0;

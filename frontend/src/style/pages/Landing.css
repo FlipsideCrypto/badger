@@ -16,7 +16,7 @@
 .landing .hero .container p {
     margin-bottom: 60px;
     font-size: 32px;
-    max-width: 620px;
+    max-width: 720px;
 }
 
 .landing .hero .container a { 
@@ -231,19 +231,6 @@
     grid-area: c;
 }
 
-/* .landing .help .container .card.learn a::after,
-.landing .help .container .card.explore a::after {
-    content: '';
-    position: absolute;
-    right: 0px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    background: blue;
-    border-radius: 50%;
-} */
-
 .landing .help .container .card.expert {
     grid-area: d;
 }
@@ -309,11 +296,14 @@
 @media only screen and (max-width: 1028px) {
     .landing .hero .container {
         min-height: 600px;
-        padding-top: 120px;
     }
 
     .landing .hero .container h1 {
         max-width: 100%;
+    }
+
+    .landing .hero .container p { 
+        font-size: 24px;
     }
 
     .landing .hero::after {
