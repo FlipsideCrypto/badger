@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { ArrowLink, AccordianCard,  Footer, Metrics, Navbar, StoryPreview, LandingHero } from "@components";
+import { ArrowLink, Accordion,  Footer, Metrics, Navbar, StoryPreview, LandingHero } from "@components";
 
 import "@style/pages/Landing.css";
 
@@ -39,20 +39,20 @@ const Landing = () => {
 
                     <Link className="cta" to="/dashboard/">Get started - it's free</Link>
 
-                    <AccordianCard start={1} actions={[{
+                    <Accordion start={1} items={[{
                         icon: ['fal', 'sitemap'],
                         title: 'Launch Organizations',
-                        description: 'Get past the ground-zero phase and launch your on-chain organization with badges in just a few clicks.'
+                        content: 'Get past the ground-zero phase and launch your on-chain organization with badges in just a few clicks.'
                     },
                     {
                         icon: ['fal', 'chart-network'],
                         title: 'Distribute Badges',
-                        description: 'Mint badges and distribute them to your members in a matter of seconds with the help of automated and bulk minting tools.'
+                        content: 'Mint badges and distribute them to your members in a matter of seconds with the help of automated and bulk minting tools.'
                     },
                     {
                         icon: ['fal', 'user-check'],
                         title: 'Delegate Permissions',
-                        description: 'Delegate permissions to your team members so that you can focus on the big picture while maintaining security and control of your organization.'
+                        content: 'Delegate permissions to your team members so that you can focus on the big picture while maintaining security and control of your organization.'
                     }]} />
                 </div>
             </div>
@@ -67,18 +67,18 @@ const Landing = () => {
 
                     <Link className="cta" to="/dashboard/">Create your Badges now</Link>
 
-                    <AccordianCard start={0} actions={[{
+                    <Accordion start={0} items={[{
                         icon: ['fal', 'bolt'],
                         title: 'Power Complex Permissions',
-                        description: 'With unopinionated Badges you can create organizations with nested permissions and even smart contract AND/OR access gates.'
+                        content: 'With unopinionated Badges you can create organizations with nested permissions and even smart contract AND/OR access gates.'
                     }, {
                         icon: ['fal', 'lock'],
                         title: 'Secure On-Chain Activity',
-                        description: 'The simple access control system of Badges lets you define rules for your team and mint badges that can be used to secure any on-chain activity.'
+                        content: 'The simple access control system of Badges lets you define rules for your team and mint badges that can be used to secure any on-chain activity.'
                     }, {
                         icon: ['fal', 'tasks'],
                         title: 'Optimize Permission Management',
-                        description: 'Forget the days of struggling to manage private keys and multi-sigs. With Badger organizations can unlock a world of more effective on-chain operations.'
+                        content: 'Forget the days of struggling to manage private keys and multi-sigs. With Badger organizations can unlock a world of more effective on-chain operations.'
                     }]} />
                 </div>
 

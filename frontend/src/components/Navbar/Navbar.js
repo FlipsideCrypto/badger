@@ -24,7 +24,7 @@ const Navbar = () => {
             <div className="container">
                 <Link to="/"><LogoIcon name="Badger" image={""} /></Link>
 
-                <div className="navbar__links__left underline">
+                <div className="navbar__links__left">
                     <a href={HOME_LINKS.gitbook} target="_blank" rel="noreferrer">Docs</a>
                     <Link to="/faq/">FAQ</Link>
                     <Link to="/stories/">Customer Stories</Link>

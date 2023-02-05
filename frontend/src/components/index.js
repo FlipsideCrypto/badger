@@ -1,7 +1,7 @@
 export { Avatar } from './Avatar/Avatar';
 export { ActionBar, FormActionBar } from './Bar';
 export { Button, ActionButton, ConnectButton, IconButton, LogoutButton } from './Button';
-export { AccordianCard, Card, ErrorCard, OrgCard, StoryCard } from './Card';
+export { Card, ErrorCard, OrgCard, StoryCard } from './Card';
 export { BadgeDangerZone, OrgDangerZone } from './DangerZone';
 export { Dashboard } from './Dashboard/Dashboard';
 export { BadgeManagementDrawer } from './Drawer';
