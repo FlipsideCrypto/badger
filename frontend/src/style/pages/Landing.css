@@ -3,7 +3,7 @@
 }
 
 .landing p,
-.lainding .section a {
+.landing .section a {
     color: rgba(0, 0, 0, .65);
     font-size: 1.2rem;
 }
@@ -312,6 +312,30 @@
 
     .landing .hero .container h1 {
         max-width: 100%;
+    }
+
+    .landing .hero .container p {
+        font-size: 24px;
+    }
+
+    .landing .hero::after {
+        background-size: auto 100%;
+        background-position: left;
+        z-index: -1;
+    }
+}
+
+@media only screen and (max-width: 628px) {
+    .landing .container h2 {
+        font-size: 48px;
+    }
+
+    .landing .hero .container {
+        min-height: 600px;
+    }
+
+    .landing .hero .container h1 {
+        font-size: 50px;
     }
 
     .landing .hero .container p {

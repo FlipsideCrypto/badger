@@ -99,6 +99,10 @@
         grid-area: d;
     }
 
+    .footer .legal div {
+        gap: 16px;
+    }
+
 }
 
 @media only screen and (max-width: 628px) {
@@ -147,6 +151,12 @@
 
     .footer .legal h4 {
         display: block;
+    }
+
+    .footer .legal p {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        float: none;
     }
 
     .footer .legal div {

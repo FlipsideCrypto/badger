@@ -15,12 +15,17 @@
 }
 
 .navbar .container {
-    display: grid;
+    display: flex;
     margin: auto;
-    grid-template-rows: 1fr;
-    grid-template-columns: auto 1fr 1fr;
-    align-items: center;
     padding: 15px 20px;
+    align-items: center;
+}
+
+.navbar .links {
+    display: inline-grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
 }
 
 .navbar a {
@@ -39,6 +44,10 @@
     font-size: 16px;
 }
 
+.navbar .hamburger {
+    display: none;
+}
+
 .navbar a:hover,
 .navbar a:active,
 .navbar a:focus {}
@@ -55,4 +64,37 @@
     text-align: right;
 }
 
-.navbar .navbar__links__right a {}
+@media only screen and (max-width: 628px) {
+    .navbar .links {
+        display: none;
+    }
+
+    .navbar .links.active {
+        display: block;
+        position: absolute; 
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, .95);
+        z-index: 5;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .navbar .links.active div {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .navbar .links.active .navbar__links__right {
+        margin-top: 20px;
+    }
+
+    .navbar .hamburger {
+        display: block;
+        margin-left: auto;
+    }
+}
