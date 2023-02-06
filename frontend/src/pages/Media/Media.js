@@ -66,6 +66,7 @@ const Media = () => {
                     <img src="/empty-opengraph.png" />
                     <img src="/interoperable.png" />
                     <img src="/interoperable-simple.png" />
+                    <img src="/badges-example.png" />
                 </div>
             </div>
         </div>
