@@ -16,6 +16,7 @@ const Stories = () => {
             <LandingHero className="slim">
                 <div className="container">
                     <h2>Explore the success stories of Badger champions.</h2>
+                    <p>Badger powers some of the most impactful organizations of Web3 no matter the scale. Read their stories and see what Badger can do for your company.</p>
                 </div>
             </LandingHero>
 
@@ -23,9 +24,7 @@ const Stories = () => {
                 <div className="container">
                     <div className="cards">
                         {stories && stories.map((story) => (
-                            <Link key={story.filename} to={`/stories/${story.filename}`}>
-                                <StoryCard story={story} />
-                            </Link>
+                            <StoryCard story={story} />
                         ))}
                     </div>
                 </div>

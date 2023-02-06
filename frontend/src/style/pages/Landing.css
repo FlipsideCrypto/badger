@@ -117,7 +117,7 @@
     width: 200%;
     height: 100%;
     background: url(../../static/images/hero-noise.png) repeat;
-    background-size: 1920px 1080px;
+    background-size: 960px 540px;
     z-index: -2;
 }
 
@@ -129,7 +129,7 @@
     width: 200%;
     height: 100%;
     background: url(../../static/images/hero-noise.png) repeat;
-    background-size: 1920px 1080px;
+    background-size: 960px 540px;
     z-index: -2;
 }
 
@@ -301,7 +301,7 @@
     width: 200%;
     height: 100%;
     background: url(../../static/images/hero-noise.png) repeat;
-    background-size: 1920px 1080px;
+    background-size: 960px 540px;
     z-index: -2;
 }
 

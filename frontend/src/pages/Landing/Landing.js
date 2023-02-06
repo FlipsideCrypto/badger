@@ -1,12 +1,17 @@
-
-
 import { Link } from "react-router-dom";
+
+import { useStory } from "@hooks";
 
 import { ArrowLink, Accordion, Metrics, StoryPreview, LandingHero } from "@components";
 
 import "@style/pages/Landing.css";
 
 const Landing = () => {
+    const { story: talentdao } = useStory("talentdao");
+    const { story: mdao } = useStory("mdao");
+
+    console.log(mdao)
+
     return (
         <div className="landing">
 
@@ -60,7 +65,7 @@ const Landing = () => {
                 </div>
             </div>
 
-            <StoryPreview className="left" />
+            <StoryPreview story={talentdao} className="left" />
 
             <div className="container section left">
                 <h2>Optimized for on-chain organizations, backed by access and security.</h2>
@@ -93,7 +98,7 @@ const Landing = () => {
                 </div>
             </div>
 
-            <StoryPreview />
+            <StoryPreview story={mdao} />
 
             <div className="help">
                 <div className="blobs">

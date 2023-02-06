@@ -9,7 +9,7 @@ const processContents = (files, contents) => {
         const attributesObject = {};
 
         attributes.forEach((attribute) => {
-            const [key, value] = attribute.split(":");
+            const [key, value] = attribute.split(": ");
 
             if (key && value) {
                 attributesObject[key.trim()] = value.trim();
@@ -68,7 +68,10 @@ export const useStory = (filename) => {
             // Get the content of the file
             const paper = await fetch(file).then((response) => response.text());
 
-            setStory(processContents([file], [paper])[0])
+            setStory({
+                ...processContents([file], [paper])[0],
+                filename
+            })
         }
 
         fetchStory();
