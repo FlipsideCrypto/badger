@@ -12,12 +12,10 @@ logo: https://raw.githubusercontent.com/FlipsideCrypto/badger/8eba03cd31582cd916
 image: https://raw.githubusercontent.com/FlipsideCrypto/badger/2c46e6fd18b5a0dda316ad37b717d0ff8651e6c1/frontend/public/talentdao-app.png
 color: #f10606
 color_dark: #b41c2e
-stat_1_title: Badges Minted
-stat_1_value: 1,000+
-stat_2_title: Badges Claimed
+stat_1_title: Organizations Created
+stat_1_value: 7+
+stat_2_title: Badges Minted
 stat_2_value: 1,000+
-stat_3_title: Badges Earned
-stat_3_value: 1,000+
 ---
 ## Limiting tools, limited output
 

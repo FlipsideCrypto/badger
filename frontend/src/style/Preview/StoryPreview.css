@@ -43,8 +43,9 @@
     font-weight: 400;
 }
 
-.preview img { 
+.preview img.logo { 
     width: 80%;
+    filter: saturate(0) brightness(0);
 }
 
 .preview .author { 

@@ -56,20 +56,20 @@ const Story = () => {
                             <p>{story.attributes.description}</p>
 
                             <div className="stats" style={{ color: story.attributes.color_dark }}>
-                                <div className="metric">
+                                {story.attributes.stat_1_title && <div className="metric">
                                     <h3>{story.attributes.stat_1_value.toLocaleString()}</h3>
                                     <h4>{story.attributes.stat_1_title}</h4>
-                                </div>
+                                </div>}
 
-                                <div className="metric">
+                                {story.attributes.stat_2_title && <div className="metric">
                                     <h3>{story.attributes.stat_2_value.toLocaleString()}</h3>
                                     <h4>{story.attributes.stat_2_title}</h4>
-                                </div>
+                                </div>}
 
-                                <div className="metric">
+                                {story.attributes.stat_3_title && <div className="metric">
                                     <h3>{story.attributes.stat_3_value.toLocaleString()}</h3>
                                     <h4>{story.attributes.stat_3_title}</h4>
-                                </div>
+                                </div>}
                             </div>
                         </div>
 

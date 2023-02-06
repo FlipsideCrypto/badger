@@ -1,7 +1,5 @@
 import { ArrowLink } from "@components"
 
-import { mdao } from "@static"
-
 import "@style/Preview/StoryPreview.css"
 
 const StoryPreview = ({ story, className }) => {
@@ -23,7 +21,7 @@ const StoryPreview = ({ story, className }) => {
                         </div>
                     </div>
 
-                    <img src={mdao} />
+                    <img className="logo" src={story.attributes.logo} />
                 </>}
             </div>
         </div>
