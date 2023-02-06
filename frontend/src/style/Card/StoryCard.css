@@ -18,7 +18,6 @@
 .card .img img {
     width: 90%;
     margin: 5%;
-    margin-bottom: 0px;
     position: relative;
     z-index: 2;
     border-radius: 2px;
