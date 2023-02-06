@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useStory } from "@hooks";
 
-import { LandingHero, StoryPreview } from "@components";
+import { StoryPreview } from "@components";
 
 import "@style/pages/Story.css"
 
@@ -18,7 +18,17 @@ const Story = () => {
 
     const [sticky, setSticky] = useState(false);
 
+    const links = story && {
+        twitter: `https://twitter.com/intent/tweet?text=${story.attributes.title}%20%7C%20%40trybadger%0A%0A%F0%9F%91%89&url=${window.location.href}`,
+        linkedin: `https://www.linkedin.com/shareArticle?url=${window.location.href}&title=${story.attributes.title}`,
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
+    }
+
     const handleScroll = () => setSticky(window.scrollY > 200);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(window.location.href);
+    }
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
@@ -28,24 +38,52 @@ const Story = () => {
 
     return (
         <>
-            {story && <>
-                <LandingHero className="slim">
+            {story && <div className="story">
+                <div className="hero slim tiny" style={{
+                    background: `linear-gradient(-33deg, #fff, #fff, ${story.attributes.color})`,
+                }}>
                     <div className="container">
-                        <Link to="/stories/" className="back"><FontAwesomeIcon icon={['fal', 'arrow-left']} />Back to customer stories</Link>
+                        <div>
+                            <Link to="/stories/" className="back"><FontAwesomeIcon icon={['fal', 'arrow-left']} />Back to customer stories</Link>
 
-                        <h2>{story.attributes.title}</h2>
-                        <p>{story.attributes.description}</p>
+                            <a href={story.attributes.partner_url} target="_blank" rel="noreferrer">
+                                <img className="logo" src={story.attributes.logo} />
+                            </a>
+
+                            <h2>{story.attributes.title}</h2>
+                            <p>{story.attributes.description}</p>
+
+                            <div className="stats" style={{ color: story.attributes.color }}>
+                                <div className="metric">
+                                    <h3>{story.attributes.stat_1_value.toLocaleString()}</h3>
+                                    <h4>{story.attributes.stat_1_title}</h4>
+                                </div>
+
+                                <div className="metric">
+                                    <h3>{story.attributes.stat_2_value.toLocaleString()}</h3>
+                                    <h4>{story.attributes.stat_2_title}</h4>
+                                </div>
+
+                                <div className="metric">
+                                    <h3>{story.attributes.stat_3_value.toLocaleString()}</h3>
+                                    <h4>{story.attributes.stat_3_title}</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="background" style={{ backgroundColor: story.attributes.color }}>
+                            <img className="image" src={story.attributes.image} />
+                        </div>
                     </div>
-                </LandingHero>
+                </div>
 
-                <div className="story container">
+                <div className="body container">
                     <div className="share">
                         <div className={`items ${sticky ? 'sticky' : ''}`}>
-                            <div><FontAwesomeIcon icon={['fab', 'twitter']} /></div>
-                            <div><FontAwesomeIcon icon={['fab', 'linkedin-in']} /></div>
-                            <div><FontAwesomeIcon icon={['fab', 'slack']} /></div>
-                            <div><FontAwesomeIcon icon={['fab', 'facebook-f']} /></div>
-                            <div><FontAwesomeIcon icon={['fal', 'share-alt']} /></div>
+                            <a href={links.twitter} target="_blank" rel="noreferrer"><FontAwesomeIcon icon={['fab', 'twitter']} /></a>
+                            <a href={links.linkedin} target="_blank" rel="noreferrer"><FontAwesomeIcon icon={['fab', 'linkedin-in']} /></a>
+                            <a href={links.facebook} target="_blank" rel="noreferrer"><FontAwesomeIcon icon={['fab', 'facebook-f']} /></a>
+                            <div onClick={handleCopy}><FontAwesomeIcon icon={['fal', 'share-alt']} /></div>
                         </div>
                     </div>
 
@@ -55,7 +93,7 @@ const Story = () => {
                         <Markdown className="markdown">{story.content}</Markdown>
                     </div>
                 </div>
-            </>}
+            </div>}
         </>
     )
 }

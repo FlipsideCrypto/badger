@@ -16,7 +16,7 @@ const Stories = () => {
             <LandingHero className="slim">
                 <div className="container">
                     <h2>Explore the success stories of Badger champions.</h2>
-                    <p>Badger powers some of the most impactful organizations of Web3 no matter the scale. Read their stories and see what Badger can do for your company.</p>
+                    <p>Badger powers many very impactful organizations of Web3 without concern for scale. Read their stories and see what Badger can do for your on-chain organization today.</p>
                 </div>
             </LandingHero>
 

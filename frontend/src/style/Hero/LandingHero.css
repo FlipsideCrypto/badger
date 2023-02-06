@@ -31,8 +31,9 @@
 }
 
 .hero.slim {
-    min-height: 350px;
+    min-height: 400px;
     margin-bottom: 40px;
+    padding-bottom: 80px;
 }
 
 .hero .blobs {
@@ -131,6 +132,10 @@
 
 .hero .container .back:hover svg {
     transform: translateX(-5px) scale(1.2);
+}
+
+.hero.tiny .container p { 
+    font-size: 18px;
 }
 
 @media only screen and (max-width: 1028px) {

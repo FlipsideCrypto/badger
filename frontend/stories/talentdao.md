@@ -11,6 +11,12 @@ quoter_image: https://pbs.twimg.com/profile_images/1469356718597423105/-C4aOTnz_
 logo: https://raw.githubusercontent.com/FlipsideCrypto/badger/feat-badger-day/frontend/public/talentdao.png
 image: https://assets.website-files.com/5dbfbe5b9bf13e1ebb54e91f/60d39073b2fdf8572c0fd264_screen-1-p-2000.jpeg
 color: #FF00FF
+stat_1_title: Badges Minted
+stat_1_value: 1,000+
+stat_2_title: Badges Claimed
+stat_2_value: 1,000+
+stat_3_title: Badges Earned
+stat_3_value: 1,000+
 ---
 ## Limiting tools, limited output
 
