@@ -63,7 +63,9 @@ const Media = () => {
 
                         <div className="images">
                             <img src="/opengraph.png" />
+                            <img src="/empty-opengraph.png" />
                             <img src="/interoperable.png" />
+                            <img src="/interoperable-simple.png" />
                         </div>
                     </div>
                 </div>
