@@ -25,7 +25,7 @@ const Landing = () => {
 
                         <Link to="/dashboard/">
                             <button className="primary">
-                                <span>Start badging now</span>
+                                <span>Mint badges now</span>
                             </button>
                         </Link>
                     </div>

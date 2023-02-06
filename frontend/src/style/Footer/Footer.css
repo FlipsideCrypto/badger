@@ -9,9 +9,12 @@
 .footer .container a {
     color: #000000;
     text-decoration: none;
-    font-size: 18px;
     font-weight: 400;
     display: block;
+}
+
+.footer .container .logo p {
+    max-width: 85%;
 }
 
 .footer .links {
@@ -69,9 +72,10 @@
         grid-gap: 40px;
         grid-template-columns: 1fr 3fr;
     }
+
     .footer .container .links {
         grid-template-areas: "a b"
-                             "c d";
+            "c d";
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
     }
@@ -79,25 +83,25 @@
     .links .list.features {
         grid-area: a;
     }
-    
+
     .links .list.features__extended {
         display: block;
         grid-area: c;
     }
-    
+
     .links .list.solutions {
         grid-area: b;
     }
-    
+
     .links .list.community {
         grid-area: d;
     }
-    
+
     .links .list.community {
         margin-top: 30px;
         grid-area: d;
     }
-    
+
 }
 
 @media only screen and (max-width: 628px) {
@@ -106,36 +110,37 @@
         grid-template-rows: min-content 1fr;
         grid-gap: 30px;
     }
+
     .footer .container .logo {
         max-width: 300px;
     }
 
     .footer .container .links {
         grid-template-areas: "a"
-                             "b"
-                             "c"
-                             "d";
+            "b"
+            "c"
+            "d";
         grid-template-columns: 1fr;
         grid-template-rows: 1fr 1fr 1fr 1fr;
     }
-    
+
     .links .list.features {
         grid-area: a;
     }
-    
+
     .links .list.features__extended {
         display: block;
         grid-area: b;
     }
-    
+
     .links .list.solutions {
         grid-area: c;
     }
-    
+
     .links .list.community {
         grid-area: d;
     }
-    
+
     .footer .legal {
         margin-top: 0px;
         display: flex;
@@ -148,12 +153,12 @@
     .footer .legal h4 {
         display: block;
     }
-    
+
     .footer .legal div {
         flex-direction: column;
         gap: 10px;
     }
-    
+
     .footer .legal p {
         margin-top: 10px;
         margin-bottom: 10px;
