@@ -6,9 +6,6 @@ const LandingHero = ({ children, className = undefined }) => {
     const [mouse, setMouse] = useState({ left: 0, top: 0 });
 
     const handleMouseMove = (e) => {
-        console.log(e);
-
-        // set the mouse to the global page coordinates of the mouse
         setMouse({
             left: e.pageX - 2500,
             top: e.pageY - 2500

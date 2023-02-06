@@ -8,8 +8,12 @@
     margin-bottom: 40px;
 }
 
+.story .content .container { 
+    margin: 0;
+    padding: 0;
+}
+
 .story .content .preview.full, 
-.story .content .container,
 .story .content h4:first-of-type { 
     padding-top: 0;
     margin-top: 0;

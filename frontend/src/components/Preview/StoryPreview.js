@@ -5,8 +5,6 @@ import { mdao } from "@static"
 import "@style/Preview/StoryPreview.css"
 
 const StoryPreview = ({ story, className }) => {
-    console.log(story)
-
     return (
         <div className="container">
             <div className={`preview ${className}`}>

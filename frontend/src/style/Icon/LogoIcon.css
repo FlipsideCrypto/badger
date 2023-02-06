@@ -8,13 +8,13 @@
 }
 
 .logo__icon .logo__image {
-    height: 20px;
-    width: 20px;
+    height: 16px;
+    width: 16px;
     background-color: black;
     border-radius: 50%;
 }
 
 .logo__icon .logo__name {
     margin: 0;
-    font-size: 24px;
+    font-size: 18px;
 }

@@ -4,7 +4,11 @@ author: danner* and CHANCE+ and masonchain+
 description: Traditional businesses and organizations have historically used methods of top-down management to streamline operations by attempting to lower costs and more strongly control internal actions and external outputs. Inside every organization, whether real or digital, there exists an internal definition of who has access to do what.
 partner: MetricsDAO
 partner_url: https://metricsdao.xyz
-logo: https://raw.githubusercontent.com/FlipsideCrypto/badger/feat-badger-day/frontend/public/mdao.png
+quote: Having Badger available to drive the credentials and completion certificates for MetricsDAO educational courses has changed the way we approach creating material.
+quoter: Aaron Lamphere
+quoter_title: Head of Growth and Retention
+quoter_image: https://pbs.twimg.com/profile_images/1469356718597423105/-C4aOTnz_400x400.jpg
+logo: https://raw.githubusercontent.com/FlipsideCrypto/badger/feat-badger-day/frontend/public/talentdao.png
 image: https://assets.website-files.com/5dbfbe5b9bf13e1ebb54e91f/60d39073b2fdf8572c0fd264_screen-1-p-2000.jpeg
 color: #FF00FF
 ---

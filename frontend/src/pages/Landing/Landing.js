@@ -10,8 +10,6 @@ const Landing = () => {
     const { story: talentdao } = useStory("talentdao");
     const { story: mdao } = useStory("mdao");
 
-    console.log(mdao)
-
     return (
         <div className="landing">
 
