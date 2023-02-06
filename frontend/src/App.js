@@ -5,7 +5,7 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 
 import { ErrorContextProvider } from "@contexts"
 
-import { SEO, Wallet } from "@components"
+import { SEO, ScrollToTop, Wallet } from "@components"
 
 import { Dashboard, Page } from "@pages"
 
@@ -22,6 +22,8 @@ function App() {
             <SEO title={title} description={description} />
 
             <Router>
+                <ScrollToTop />
+
                 <Routes>
                     <Route exact path="/dashboard/*" element={
                         <ErrorContextProvider>

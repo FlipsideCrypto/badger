@@ -15,6 +15,7 @@ export { Help, HelpCopy, HelpSidebar } from './Help';
 export { ChainIcon, LogoIcon } from './Icon';
 export { OrgStats } from './Org/OrgStats';
 export { BadgePreview, StoryPreview } from './Preview';
+export { ScrollToTop } from './Scroll/ScrollToTop';
 export { SEO } from './SEO/SEO';
 export { StatusIndicators } from './StatusIndicators/StatusIndicators';
 export { BadgeTable, HolderTable, ObjectTable, TableSortHead } from './Table';
