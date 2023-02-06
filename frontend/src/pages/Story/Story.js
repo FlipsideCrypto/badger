@@ -42,7 +42,7 @@ const Story = () => {
 
             {story && <div className="story">
                 <div className="hero slim tiny" style={{
-                    background: `linear-gradient(215deg, #fff, #fff, ${story.attributes.color})`,
+                    background: `linear-gradient(130deg,  #fff, #fff, ${story.attributes.color})`,
                 }}>
                     <div className="container">
                         <div>
@@ -55,7 +55,7 @@ const Story = () => {
                             <h2>{story.attributes.title}</h2>
                             <p>{story.attributes.description}</p>
 
-                            <div className="stats" style={{ color: story.attributes.color }}>
+                            <div className="stats" style={{ color: story.attributes.color_dark }}>
                                 <div className="metric">
                                     <h3>{story.attributes.stat_1_value.toLocaleString()}</h3>
                                     <h4>{story.attributes.stat_1_title}</h4>
@@ -73,7 +73,13 @@ const Story = () => {
                             </div>
                         </div>
 
-                        <div className="background" style={{ backgroundColor: story.attributes.color }}>
+                        <div className="background">
+                            <div className="blobs">
+                                {Array.from({ length: Math.floor(Math.random() * 5) + 1 }, (o, i) => (
+                                    <div className="blob" style={{ background: i % 2 === 0 ? story.attributes.color : story.attributes.color_dark }}></div>
+                                ))}
+                            </div>
+
                             <img className="image" src={story.attributes.image} />
                         </div>
                     </div>

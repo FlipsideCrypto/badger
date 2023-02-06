@@ -23,18 +23,19 @@
 
 .story .hero .container {
     display: grid;
-    grid-template-columns: 10fr 2fr;
+    grid-template-columns: 8fr 4fr;
     gap: 80px;
 }
 
 .story .hero .container .background {
     display: flex;
     align-items: center;
-    padding: 80px;
-    margin-right: -240px;
+    padding: 60px;
+    margin-right: -120px;
     position: relative;
-    border-radius: 3px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    overflow: hidden;
+    margin-top: -100px;
+    height: calc(100% + 100px);
 }
 
 .story .hero .container .background::after {
@@ -57,7 +58,7 @@
     align-self: center;
     position: relative;
     z-index: 2;
-    border-radius: 2px;
+    border-radius: 4px;
 }
 
 .story .hero .logo {
