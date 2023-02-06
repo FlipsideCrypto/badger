@@ -37,17 +37,17 @@ const Footer = () => {
                     <div className="list solutions">
                         <h4>Solutions</h4>
                         <div>
-                            <Link>Creators</Link>
-                            <Link>Start Ups</Link>
-                            <Link>Enterprises</Link>
+                            <Link to="/stories/pinedao/">Creators</Link>
+                            <Link to="/stories/taptive/">Start Ups</Link>
+                            <Link to="/stories/mdao/">Enterprises</Link>
                         </div>
                     </div>
 
                     <div className="list community">
                         <h4>Community</h4>
                         <div>
-                            <Link>Discord</Link>
-                            <Link>Twitter</Link>
+                            <a href="https://discord.com/invite/TASvMj4vyk" target="_blank" rel="noreferrer">Discord</a>
+                            <a href="https://twitter.com/trybadger" target="_blank" rel="noreferrer">Twitter</a>
                         </div>
                     </div>
                 </div>
@@ -55,12 +55,12 @@ const Footer = () => {
             <div className="container legal">
                 <h4>Resources</h4>
                 <div>
-                    <Link>Privacy Policy</Link>
-                    <Link>Terms of Service</Link>
-                    <Link>Media Kit</Link>
+                    <Link to="/privacy/">Privacy Policy</Link>
+                    <Link to="/terms/">Terms of Service</Link>
+                    <Link to="/media/">Media Kit</Link>
                 </div>
 
-                <p>Copyright Badger 2023</p>
+                <p>Built by <span><a href="https://cosanostra.gg" target="_blank" rel="noreferrer"> cosanostra </a></span> // Copyright Badger 2023</p>
             </div>
         </div>
     )

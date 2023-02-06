@@ -7,9 +7,6 @@
 }
 
 .footer .container a {
-    color: #000000;
-    text-decoration: none;
-    font-weight: 400;
     display: block;
 }
 
@@ -41,7 +38,8 @@
 
 .footer .legal {
     margin-top: 60px;
-    display: flex;
+    display: grid;
+    grid-template-columns: auto max-content;
 }
 
 .footer .legal h4 {
@@ -55,11 +53,10 @@
 }
 
 .footer .legal p {
-    color: black;
-    white-space: nowrap;
-    margin: 0;
+    width: fit-content;
     display: inline-flex;
-    float: right;
+    gap: 5px;
+    margin-block: 0;
 }
 
 .footer .container .column {
