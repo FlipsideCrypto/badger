@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { ActionTitle, BadgeManagementDrawer, BadgePreview, Header, HolderTable, Empty } from "@components";
+import { ActionTitle, BadgeManagementDrawer, BadgePreview, Header, HolderTable, Empty, SEO } from "@components";
 
 import { useUser } from "@hooks";
 
@@ -62,6 +62,8 @@ const Badge = () => {
 
     return (
         <>
+            <SEO title={`${org.name} | ${badge.name} | Badger`} description={badge.description} />
+
             <Header back={() => navigate(`/dashboard/organization/${orgId}/`)} actions={headerActions} />
 
             <BadgePreview badge={badge} />

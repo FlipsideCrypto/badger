@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useStory } from "@hooks";
 
-import { StoryPreview } from "@components";
+import { SEO, StoryPreview } from "@components";
 
 import "@style/pages/Story.css"
 
@@ -38,9 +38,11 @@ const Story = () => {
 
     return (
         <>
+            <SEO title={story && story.attributes.title} description={story && story.attributes.description} />
+
             {story && <div className="story">
                 <div className="hero slim tiny" style={{
-                    background: `linear-gradient(-33deg, #fff, #fff, ${story.attributes.color})`,
+                    background: `linear-gradient(215deg, #fff, #fff, ${story.attributes.color})`,
                 }}>
                     <div className="container">
                         <div>

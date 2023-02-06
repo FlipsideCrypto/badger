@@ -3,11 +3,14 @@ import { Route, Routes } from "react-router-dom";
 
 import { useUser } from "@hooks";
 
-import { ActionBar, Dashboard as DashboardContent, Empty, HelpSidebar } from "@components";
+import { ActionBar, Dashboard as DashboardContent, Empty, HelpSidebar, SEO } from "@components";
 
 import { Badge, BadgeForm, Home, Org, OrgForm } from "@pages";
 
 import "@style/Dashboard/Dashboard.css";
+
+const title = "Dashboard | Badger";
+const description = "Badger is a decentralized, open-source, and community-driven platform for creating, managing, and sharing on-chain organizations and badges.";
 
 const Dashboard = () => {
     const { isAuthenticated, isConnected, isLoaded, isWrongNetwork, primaryChain } = useUser();
@@ -15,45 +18,49 @@ const Dashboard = () => {
     const [collapsed, setCollapsed] = useState(false);
 
     return (
-        <div className={collapsed ? "dashboard collapsed" : "dashboard"}>
-            <div className="dashboard__contents">
-                <ActionBar collapsed={collapsed} setCollapsed={setCollapsed} />
+        <>
+            <SEO title={title} description={description} />
 
-                {!isConnected && <Empty
-                    title="Connect your wallet to view your Organizations!"
-                    body="Connecting your wallet is simple and secure. Using Sign in with Ethereum, you can sign and create, manage, and share your Organizations and Badges in seconds just by signing a message."
-                />}
+            <div className={collapsed ? "dashboard collapsed" : "dashboard"}>
+                <div className="dashboard__contents">
+                    <ActionBar collapsed={collapsed} setCollapsed={setCollapsed} />
 
-                {isConnected && isWrongNetwork && <Empty
-                    title="Wrong Network!"
-                    body={`Please connect to ${primaryChain.name} network.`}
-                />}
+                    {!isConnected && <Empty
+                        title="Connect your wallet to view your Organizations!"
+                        body="Connecting your wallet is simple and secure. Using Sign in with Ethereum, you can sign and create, manage, and share your Organizations and Badges in seconds just by signing a message."
+                    />}
 
-                {isConnected && (!isAuthenticated && <Empty
-                    title="Authenticate your wallet to view your Organizations!"
-                    body="Authentication is simple and secure. Using Sign in with Ethereum, you can sign and create, manage, and share your Organizations and Badges in seconds just by signing a message."
-                />)}
+                    {isConnected && isWrongNetwork && <Empty
+                        title="Wrong Network!"
+                        body={`Please connect to ${primaryChain.name} network.`}
+                    />}
 
-                {isAuthenticated && !isLoaded && <Empty
-                    title="Loading Organizations and Badges..."
-                    body="This may take a few seconds. If this takes longer than 10 seconds, please refresh the page."
-                />}
+                    {isConnected && (!isAuthenticated && <Empty
+                        title="Authenticate your wallet to view your Organizations!"
+                        body="Authentication is simple and secure. Using Sign in with Ethereum, you can sign and create, manage, and share your Organizations and Badges in seconds just by signing a message."
+                    />)}
 
-                {isAuthenticated && isLoaded && <DashboardContent>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/organization/new/" element={<OrgForm />} />
-                        <Route path="/organization/:orgId/" element={<Org />} />
-                        <Route path="/organization/:orgId/edit/" element={<OrgForm isEdit={true} />} />
-                        <Route path="/organization/:orgId/badge/new/" element={<BadgeForm />} />
-                        <Route path="/organization/:orgId/badge/:badgeId/" element={<Badge />} />
-                        <Route path="/organization/:orgId/badge/:badgeId/edit/" element={<BadgeForm isEdit={true} />} />
-                    </Routes>
-                </DashboardContent>}
+                    {isAuthenticated && !isLoaded && <Empty
+                        title="Loading Organizations and Badges..."
+                        body="This may take a few seconds. If this takes longer than 10 seconds, please refresh the page."
+                    />}
+
+                    {isAuthenticated && isLoaded && <DashboardContent>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/organization/new/" element={<OrgForm />} />
+                            <Route path="/organization/:orgId/" element={<Org />} />
+                            <Route path="/organization/:orgId/edit/" element={<OrgForm isEdit={true} />} />
+                            <Route path="/organization/:orgId/badge/new/" element={<BadgeForm />} />
+                            <Route path="/organization/:orgId/badge/:badgeId/" element={<Badge />} />
+                            <Route path="/organization/:orgId/badge/:badgeId/edit/" element={<BadgeForm isEdit={true} />} />
+                        </Routes>
+                    </DashboardContent>}
+                </div>
+
+                <HelpSidebar collapsed={collapsed} />
             </div>
-
-            <HelpSidebar collapsed={collapsed} />
-        </div>
+        </>
     )
 }
 

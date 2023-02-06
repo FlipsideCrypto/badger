@@ -37,7 +37,7 @@ const Footer = () => {
                     <div className="list solutions">
                         <h4>Solutions</h4>
                         <div>
-                            <Link>Creators and Freelancers</Link>
+                            <Link>Creators</Link>
                             <Link>Start Ups</Link>
                             <Link>Enterprises</Link>
                         </div>

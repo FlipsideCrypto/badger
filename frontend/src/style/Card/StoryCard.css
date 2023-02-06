@@ -63,6 +63,7 @@
 .card img.logo {
     height: 30px;
     margin-block: 20px;
+    filter: saturate(0) brightness(0);
 }
 
 .card h2 {

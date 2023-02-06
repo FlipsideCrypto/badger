@@ -63,6 +63,7 @@
 .story .hero .logo {
     height: 45px;
     margin-top: 40px;
+    filter: saturate(0) brightness(0);
 }
 
 .story .stats {

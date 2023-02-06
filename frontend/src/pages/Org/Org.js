@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { useUser } from "@hooks";
 
-import { ActionTitle, BadgeTable, Empty, Header } from "@components";
+import { ActionTitle, BadgeTable, Empty, Header, SEO } from "@components";
 
 const Org = () => {
     const navigate = useNavigate();
@@ -25,6 +25,8 @@ const Org = () => {
 
     return (
         <>
+            <SEO title={`${organization.name} | Badger`} description={`Browse ${organization.name} and all its Badges and associated members.`} />
+
             <Header back={() => navigate("/dashboard/")} actions={headerActions} />
 
             <div className="dashboard__content">
