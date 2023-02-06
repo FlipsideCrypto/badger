@@ -15,12 +15,14 @@
 }
 
 .metric__title {
+    margin: 0;
     font-size: 24px;
     font-weight: 300;
     white-space: nowrap;
 }
 
 .metric__value {
+    margin: 0;
     font-size: 64px;
     font-weight: 700;
 }
@@ -28,5 +30,11 @@
 @media only screen and (max-width: 1028px) {
     .metrics {
         grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media only screen and (max-width: 628px) {
+    .metrics {
+        grid-template-columns: 1fr;
     }
 }

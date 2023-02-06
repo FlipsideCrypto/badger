@@ -7,6 +7,11 @@
     overflow: hidden;
 }
 
+.hero h1,
+.hero h2 {
+    margin: 0;
+}
+
 
 .hero .blobs {
     filter: blur(150px);
