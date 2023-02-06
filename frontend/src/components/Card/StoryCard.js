@@ -8,7 +8,13 @@ const StoryCard = ({ story }) => {
     return (
         <div className="card">
             <Link to={`/stories/${story.filename}/`}>
-                <div className="img" style={{ background: story.attributes.color }}>
+                <div className="img">
+                    <div className="blobs">
+                        {Array.from({ length: Math.floor(Math.random() * 1) + 2 }, (o, i) => (
+                            <div className="blob" style={{ background: i % 2 === 0 ? story.attributes.color : story.attributes.color_dark }}></div>
+                        ))}
+                    </div>
+
                     <img src={story.attributes.image} alt={story.attributes.title} />
                 </div>
 
