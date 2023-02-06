@@ -1,0 +1,57 @@
+.media .granular,
+.media .resources {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+}
+
+.media .granular .fonts .four {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.media .granular .fonts .seven {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #000;
+}
+
+.media .granular .colors {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    max-width: 640px;
+}
+
+.media .granular .colors div { 
+    cursor: pointer;
+}
+
+.media .granular .colors .color {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+}
+
+.media .resources {
+    margin-top: 80px;
+}
+
+.media .resources .logo .logos { 
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 20px;
+}
+
+.media .resources .logo .logos img {
+    width: 50%;
+}
+
+.media .resources .images { 
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.media .resources .images img { 
+    width: 100%;
+}
