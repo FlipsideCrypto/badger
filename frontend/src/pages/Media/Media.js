@@ -24,6 +24,16 @@ const Media = () => {
             </LandingHero>
 
             <div className="container">
+                <div className="intro">
+                    <img src={logo} />
+
+                    <p>Badger is an open-source efficiency-first EVM-based badge primitive. It is a simple, flexible, and scalable way to issue and manage badges on Ethereum.</p>
+
+                    <p>With a couple clicks, you can deploy an organization, issue a badge to anyone on Ethereum, and secure the future of your on-chain operations with ease. Badges can be used to represent anything, from a membership to a certification to a badge of honor.</p>
+
+                    <p><strong>Our mission is simple:</strong> Lower the barrier of efficient on-chain credential management and use for everyone.</p>
+                </div>
+
                 <div className="granular">
                     <div>
                         <h2>Fonts</h2>
@@ -48,26 +58,14 @@ const Media = () => {
                     </div>
                 </div>
 
-                <div className="resources">
-                    <div className="logo">
-                        <h2>Logo</h2>
+                <h2>Images</h2>
 
-                        <div className="logos">
-                            <img src={logo} />
-                            <img src="/badger-logo-black.png" />
-                        </div>
-                    </div>
-
-                    <div>
-                        <h2>Images</h2>
-
-                        <div className="images">
-                            <img src="/opengraph.png" />
-                            <img src="/empty-opengraph.png" />
-                            <img src="/interoperable.png" />
-                            <img src="/interoperable-simple.png" />
-                        </div>
-                    </div>
+                <div className="images">
+                    <img src="/opengraph.png" />
+                    <img src="/logo-opengraph.png" />
+                    <img src="/empty-opengraph.png" />
+                    <img src="/interoperable.png" />
+                    <img src="/interoperable-simple.png" />
                 </div>
             </div>
         </div>
