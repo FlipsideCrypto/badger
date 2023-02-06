@@ -98,7 +98,7 @@ const Story = () => {
                     <div className="content">
                         <StoryPreview story={story} className="full" />
 
-                        <Markdown className="markdown">{story.content}</Markdown>
+                        <Markdown className="markdown" options={{ forceBlock: true }}>{story.content}</Markdown>
                     </div>
                 </div>
             </div>}

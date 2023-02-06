@@ -176,3 +176,61 @@ h4 {
 .story .content .markdown h4 {
     font-size: 20px;
 }
+
+.story .content .markdown blockquote,
+.story .content .markdown .blobs {
+    margin-block: 40px;
+}
+
+.story .content .markdown img {
+    max-width: 100%;
+    height: auto;
+    position: relative;
+}
+
+.story .content .markdown p {
+    position: relative;
+}
+
+.story .content .markdown .blobs { 
+    position: relative;
+}
+
+.story .content .markdown .blobs .blob { 
+    top: 0;
+    left: 0;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    z-index: -2;
+    pointer-events: none;
+    position: absolute;
+    filter: blur(150px);
+}
+
+.story .content .markdown .blobs .blob.two { 
+    right: 0;
+    bottom: 0;
+}
+
+.story .content .markdown .blobs .blob.three { 
+    left: 0;
+    bottom: 0;
+}
+
+.story .content .markdown .blobs .blob.four { 
+    right: 0;
+    top: 0;
+}
+
+.story .content .markdown .blobs::after { 
+    content: '';
+    position: absolute;
+    top: -150%;
+    left: -150%;
+    width: 300%;
+    height: 300%;
+    background-image: url(../../static/images/hero-noise.png);
+    background-size: 960px 540px;
+    z-index: -1;
+}

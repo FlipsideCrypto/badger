@@ -10,8 +10,6 @@ const description = "Badger powers many very impactful organizations of Web3 wit
 const Stories = () => {
     const { stories } = useStories();
 
-    console.log(stories)
-
     return (
         <>
             <SEO title={title} description={description} />
@@ -26,8 +24,8 @@ const Stories = () => {
             <div className="stories">
                 <div className="container">
                     <div className="cards">
-                        {stories && stories.map((story) => (
-                            <StoryCard story={story} />
+                        {stories && stories.map((story, i) => (
+                            <StoryCard key={i} story={story} />
                         ))}
                     </div>
                 </div>

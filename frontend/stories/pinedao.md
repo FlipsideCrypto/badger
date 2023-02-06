@@ -8,7 +8,7 @@ quote: Having Badger available to drive the credentials and completion certifica
 quoter: Aaron Lamphere
 quoter_title: Head of Growth and Retention
 quoter_image: https://pbs.twimg.com/profile_images/1469356718597423105/-C4aOTnz_400x400.jpg
-logo: https://raw.githubusercontent.com/FlipsideCrypto/badger/8eba03cd31582cd916a1893f5b1ec725e7bea442/frontend/public/talentdao.png
+logo: https://raw.githubusercontent.com/FlipsideCrypto/badger/2a47cae40f46805a73c86c94aefffa0320e8c34e/frontend/public/pinedao.png
 image: https://raw.githubusercontent.com/FlipsideCrypto/badger/f656b9032d7508151cebd42edcc95afec481438d/frontend/public/pine-app.png
 color: #31c77f
 color_dark: #022b2b
@@ -26,3 +26,6 @@ stat_2_value: 1,000+
 As Freshly began exploring expanded content marketing efforts in 2019, they faced a problem: getting new content live — whether that be on their blog or as web pages  — was a slow, engineering-driven process. The blog was a neglected, outdated WordPress instance that “was a pain to update, and that none of our engineers wanted to get involved with,” according to Product Manager Christopher Patota. As for the website, new pages needed to be coded by hand by engineers, which meant competing for prioritization with core product related projects.
 
 To remove these obstacles, Freshly’s cross-functional content team was organized to find a better way for the team to build, launch, and measure the impact of new content efforts.
+
+
+<div class="blobs">![Freshly's content team](https://raw.githubusercontent.com/FlipsideCrypto/badger/2a47cae40f46805a73c86c94aefffa0320e8c34e/frontend/public/pine-app.png)<div class="blob" style="background: #31c77f"></div></div>
