@@ -1,3 +1,7 @@
+.media h2 {
+    margin-top: 80px;
+}
+
 .media .granular,
 .media .resources {
     display: grid;
@@ -32,10 +36,6 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
 }
 
-.media .resources {
-    margin-top: 80px;
-}
-
 .media .resources .logo .logos { 
     display: grid;
     grid-template-columns: 1fr;
@@ -54,4 +54,15 @@
 
 .media .resources .images img { 
     width: 100%;
+}
+
+@media (max-width: 1024px) {
+    .media .granular,
+    .media .resources {
+        grid-template-columns: 1fr;
+    }
+
+    .media .granular .colors {
+        grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    }
 }
