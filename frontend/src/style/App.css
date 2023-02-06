@@ -139,6 +139,10 @@ button.secondary {
     width: 100%;
 }
 
+.container.top { 
+    margin-top: 80px;
+}
+
 .container__background {
     background: #FCFCFF;
     border-radius: 10px;

@@ -11,10 +11,10 @@
     overflow: hidden;
 }
 
-.card:hover .img,
+/* .card:hover .img,
 .card .img.selected {
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-}
+} */
 
 .card .img img {
     width: 90%;
@@ -61,7 +61,7 @@
     clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 68% 40%, 60% 56%, 49% 79%, 17% 73%, 0% 43%, 32% 40%);
 }
 
-.card .img::before { 
+.card .img::before {
     content: '';
     position: absolute;
     top: 0;
@@ -78,12 +78,21 @@
 .card .img::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-    mix-blend-mode: multiply;
+    top: -20%;
+    left: -20%;
+    right: -20%;
+    bottom: -20%;
+    z-index: 3;
+    background: linear-gradient(to right, transparent 10%, rgba(255, 255, 255, 0.25) 18%, transparent 33%);
+    background-size: 800px 104px;
+    background-position: -320px 0;
+    transform: skew(-30deg);
+    transition: all 1.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.card .img:hover::after {
+    background-position: 590px 0;
+    opacity: 0.3;
 }
 
 .card img.logo {
