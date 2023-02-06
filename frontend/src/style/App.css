@@ -17,6 +17,7 @@ body {
     position: relative;
     min-height: 100vh;
     min-width: 100vw;
+    overflow-x: hidden;
 }
 
 strong {
@@ -137,6 +138,7 @@ button.secondary {
     padding: 20px;
     margin: auto;
     width: 100%;
+    box-sizing: border-box;
 }
 
 .container.top { 
