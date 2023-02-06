@@ -67,6 +67,7 @@ const Media = () => {
                     <img src="/interoperable.png" />
                     <img src="/interoperable-simple.png" />
                     <img src="/badges-example.png" />
+                    <img src="/manual-actions.png" />
                 </div>
             </div>
         </div>
