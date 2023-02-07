@@ -6,6 +6,7 @@ a.arrowLink {
     font-size: inherit;
     display: flex;
     border-bottom: 1px solid #000;
+    gap: 10px;
 }
 
 a.arrowLink.clean { 

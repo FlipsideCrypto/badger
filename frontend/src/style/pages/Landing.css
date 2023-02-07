@@ -326,17 +326,19 @@
 }
 
 @media only screen and (max-width: 628px) {
+    .landing .container h1 {
+        font-size: 54px;
+        margin-top: 20px;
+    }
+
     .landing .container h2 {
-        font-size: 48px;
+        font-size: 34px;
     }
 
     .landing .hero .container {
         min-height: 600px;
     }
 
-    .landing .hero .container h1 {
-        font-size: 50px;
-    }
 
     .landing .hero .container p {
         font-size: 24px;
@@ -346,6 +348,49 @@
         background-size: auto 100%;
         background-position: left;
         z-index: -1;
+    }
+
+    .landing .container .preview {
+        grid-template-areas: "img"
+                             "content";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        grid-gap: 20px;
+    }
+
+    .landing .container .preview .logo {
+        width: 60%;
+        grid-area: img;
+    }
+
+    .landing .help .container .card h3 {
+        font-size: 32px;
+    }
+
+    /* .landing .section .context {
+        min-height: 450px;
+        left: -50%;
+        width: 170%;
+    } */
+
+    .landing .section,
+    .landing .section.left {
+        grid-template: 
+                    'a'
+                    'b'
+                    'c';
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .landing .help .container {
+        display: grid;
+        grid-template:
+            'a'
+            'b'
+            'c'
+            'd';
+        grid-gap: 20px;
     }
 }
 

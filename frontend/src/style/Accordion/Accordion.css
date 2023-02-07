@@ -22,6 +22,7 @@
 .accordion .card h3 {
     font-size: 1.2rem;
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    gap: 10px;
 }
 
 .accordion .card h3 svg {

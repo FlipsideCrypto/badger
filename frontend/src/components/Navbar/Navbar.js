@@ -49,7 +49,7 @@ const Navbar = () => {
                 </div>
                 <div className="hamburger">
                     <button onClick={onHamburgerClick} className="secondary">
-                        <FontAwesomeIcon icon="fal fa-bars" />
+                        <FontAwesomeIcon icon={['fal', 'fa-bars']} />
                     </button>
                 </div>
             </div>

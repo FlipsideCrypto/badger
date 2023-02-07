@@ -34,7 +34,11 @@
 }
 
 @media only screen and (max-width: 628px) {
-    .metrics {
-        grid-template-columns: 1fr;
+    .metrics .metric__title {
+        font-size: 18px;
+    }
+
+    .metrics .metric__value {
+        font-size: 48px;
     }
 }
