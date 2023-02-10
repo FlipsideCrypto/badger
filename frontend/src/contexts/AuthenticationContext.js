@@ -25,7 +25,7 @@ const AuthenticationContextProvider = ({ children }) => {
     const isAuthenticated = isConnected && !isWrongNetwork && address === authenticatedAddress;
 
     useEffect(() => {
-        if (isWrongNetwork) switchNetwork(primaryChain.id)
+        if (isWrongNetwork) switchNetwork?.(primaryChain.id)
     }, [chain]);
 
     return (
