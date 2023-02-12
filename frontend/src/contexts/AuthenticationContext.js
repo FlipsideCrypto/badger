@@ -26,7 +26,7 @@ const AuthenticationContextProvider = ({ children }) => {
 
     useEffect(() => {
         if (isWrongNetwork) switchNetwork(primaryChain.id)
-    }, [chain]);
+    }, [isWrongNetwork]);
 
     return (
         <AuthenticationContext.Provider value={{
