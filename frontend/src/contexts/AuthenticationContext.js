@@ -20,12 +20,12 @@ const AuthenticationContextProvider = ({ children }) => {
 
     const primaryChain = chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)
 
-    const isWrongNetwork = chain && primaryChain && chain.id !== primaryChain.id;
+    const isWrongNetwork = isConnected && chain && primaryChain && chains && chain.id !== primaryChain.id;
 
     const isAuthenticated = isConnected && !isWrongNetwork && address === authenticatedAddress;
 
     useEffect(() => {
-        if (chains && isWrongNetwork) switchNetwork(primaryChain.id)
+        if (isWrongNetwork) switchNetwork(primaryChain.id)
     }, [chain]);
 
     return (
