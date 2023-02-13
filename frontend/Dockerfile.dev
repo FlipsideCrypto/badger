@@ -1,4 +1,3 @@
-# Use node image
 FROM node
 
 ARG FONTAWESOME_NPM_AUTH_TOKEN
@@ -7,14 +6,14 @@ ARG FONTAWESOME_NPM_AUTH_TOKEN
 WORKDIR /code
 
 # Copy package.json
-COPY package.json /code/package.json
-COPY package-lock.json /code/package-lock.json
+COPY package.json /code/
+COPY package-lock.json /code/
 
 # Load FontAwesome registry
 RUN npm config set "@fortawesome:registry" https://npm.fontawesome.com/
 RUN npm config set "//npm.fontawesome.com/:_authToken" ${FONTAWESOME_NPM_AUTH_TOKEN}
 
-# Set the auth token
+# Install the dependencies
 RUN npm install
 
 # Set WATCHBACK_POLLING as true

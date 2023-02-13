@@ -7,4 +7,12 @@
 +**/README.md
 +**/LICENSE
 
+***/node_modules/
+***/artifacts/
+***/cache/
+***/coverage/
+***/node_modules/
 ***/database/
+***/venv/
+
+coverage.json

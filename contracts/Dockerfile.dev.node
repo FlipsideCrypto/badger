@@ -1,9 +1,12 @@
 FROM node
 
+# Set working directory
 WORKDIR /code
 
-COPY package.json /code/package.json
+# Copy the requirements file
+COPY package.json /code/
 
+# Install the dependencies
 RUN npm install
 
 COPY . /code/
