@@ -84,7 +84,7 @@ services:
       dockerfile: Dockerfile.dev
       context: ./frontend
       args:
-        FONTAWESOME_NPM_AUTH_TOKEN: ${FONTAWESOME_NPM_AUTH_TOKEN}
+        NPM_TOKEN: ${NPM_TOKEN}
     volumes:
       - ./frontend:/code
       - /code/node_modules

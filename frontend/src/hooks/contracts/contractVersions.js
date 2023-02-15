@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 
-const PRIMARY_IMPLEMENTATION = process.env.REACT_APP_BADGER_IMPLEMENTATION;
-const PRIMARY_PROD_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
+const PRIMARY_IMPLEMENTATION = process.env.REACT_APP_BADGER_SINGLETON;
+const PRIMARY_PRODUCTION_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
 
 // Gets the Badger implementation to clone based on the version.
 // TODO: Add versioning
@@ -13,7 +13,7 @@ function getPrimaryImplementation() {
 function getBadgerAddress(chainName) {
     try {
         const BADGER_ADDRESSES = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES);
-        const address = BADGER_ADDRESSES[chainName] ? BADGER_ADDRESSES[chainName] : BADGER_ADDRESSES[PRIMARY_PROD_CHAIN];
+        const address = BADGER_ADDRESSES[chainName] ? BADGER_ADDRESSES[chainName] : BADGER_ADDRESSES[PRIMARY_PRODUCTION_CHAIN];
         return address;
     }
     catch {
