@@ -22,6 +22,7 @@ stat_2_value: 150+
 > We started with OpenSea shared mints but quickly found that integrating with other tools was limiting. Beyond that our network was open and we needed more control to establish a system to manage access and ensure we met commitments to our partners.
 > 
 > **JACK STEWART, FOUNDER**
+
 As Pine developed a system to recognize and reward their participants, they realized that they needed a more powerful solution. The NFTs they had used from  OpenSea did not integrate well with other DAO tools and they were unable to sustainably manage permissions and to properly route oppurtunities. In addition to managing access to various workspaces, Pine uses on-chain credentials to ensure users are able to participate in activities tailored to their skills and interests.
 
 
