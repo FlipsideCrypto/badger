@@ -1,30 +1,28 @@
 title: Unleasing The Power of Organized Writing Cohorts with Taptive
-date: Nov. 16, 2022
-author: danner* and CHANCE+ and masonchain+
-description: Traditional businesses and organizations have historically used methods of top-down management to streamline operations by attempting to lower costs and more strongly control internal actions and external outputs. Inside every organization, whether real or digital, there exists an internal definition of who has access to do what.
+date: Feb. 23, 2023
+author: danner and Grant Nissly
+description: Taptive understands that growing and engaging a community takes time, resources, and a lot of hard work. Taptive runs writing cohorts to strengthen, grow, and level up communities. 
 partner: Taptive
-partner_url: https://www.taptive.xyz/
-quote: Having Badger available to drive the credentials and completion certificates for MetricsDAO educational courses has changed the way we approach creating material.
-quoter: Aaron Lamphere
-quoter_title: Head of Growth and Retention
+partner_url: https://taptive.xyz
+quote: Digital certificates and awards given off chain are easily lost and rarely resurfaced. When we issue awards on chain, participants are able to bring their reputation and accomplishments with them wherever they go.
+quoter: Grant Nissly
+quoter_title: Founder
 quoter_image: https://pbs.twimg.com/profile_images/1469356718597423105/-C4aOTnz_400x400.jpg
 logo: https://raw.githubusercontent.com/FlipsideCrypto/badger/f656b9032d7508151cebd42edcc95afec481438d/frontend/public/taptive.png
 image: https://raw.githubusercontent.com/FlipsideCrypto/badger/f656b9032d7508151cebd42edcc95afec481438d/frontend/public/taptive-app.png
 color: #615df5
 color_dark: #5a55f4
-stat_1_title: Badges Minted
-stat_1_value: 1,000+
-stat_2_title: Badges Claimed
-stat_2_value: 1,000+
-stat_3_title: Badges Earned
-stat_3_value: 1,000+
+stat_1_title: Cohorts Badged
+stat_1_value: 2+
+stat_2_title: Badges Minted
+stat_2_value: 30+
 ---
-## Limiting tools, limited output
+## Immortalizing recognition on-chain
 
-> We had a very basic WordPress blog that was built years before that was a pain to update, and that none of our engineers wanted to get involved with. Beyond that, we had none of our reporting tools set up on the blog, so we had no visibility on the impact our content efforts were making.
-> 
-> **CHRISTOPHER PATOTA, PRODUCT MANAGER**
+> We do everything we can to improve the cohort experience. Issuing NFTs through Badger has improved the participants experience because they leave with recognition from Taptive of their accomplishments. Having on chain awards has also increased engagement because cohort participants know there is an award at the end of the cohort. 
+> > 
+> **GRANT NISSLY, FOUNDER**
 
-As Freshly began exploring expanded content marketing efforts in 2019, they faced a problem: getting new content live — whether that be on their blog or as web pages  — was a slow, engineering-driven process. The blog was a neglected, outdated WordPress instance that “was a pain to update, and that none of our engineers wanted to get involved with,” according to Product Manager Christopher Patota. As for the website, new pages needed to be coded by hand by engineers, which meant competing for prioritization with core product related projects.
+Taptive was inspired to start using Badger because they were looking for an easy way to issue on-chain rewards to participants who completed their cohorts. They found Badger to be the supremely easy option compared to other solutions on the market. With Badger, Taptive is able to easily issue NFTs for their cohort participants. Before Badger, Taptive would simply issue social rewards such as announcing winners in their Discord. However, with Badger, they are now able to recognize competition winners with an on-chain NFT that they can hold onto and share with others.
 
-To remove these obstacles, Freshly’s cross-functional content team was organized to find a better way for the team to build, launch, and measure the impact of new content efforts.
+Taptive plans to continue to utilize Badger in the future by recognizing winners of cohort competitions. As Taptive continues to grow its reach and impact, Badger can be the solution to all of its credentialing needs, creating a large network of writers who are recognized with Taptive credentials on-chain.
