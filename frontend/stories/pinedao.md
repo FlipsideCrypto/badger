@@ -1,31 +1,34 @@
 title: Powering the Future of Analytics with Badger
-date: Nov. 16, 2022
-author: danner* and CHANCE+ and masonchain+
-description: Traditional businesses and organizations have historically used methods of top-down management to streamline operations by attempting to lower costs and more strongly control internal actions and external outputs. Inside every organization, whether real or digital, there exists an internal definition of who has access to do what.
-partner: MetricsDAO
-partner_url: https://talentdao.io/
-quote: Having Badger available to drive the credentials and completion certificates for MetricsDAO educational courses has changed the way we approach creating material.
-quoter: Aaron Lamphere
-quoter_title: Head of Growth and Retention
-quoter_image: https://pbs.twimg.com/profile_images/1469356718597423105/-C4aOTnz_400x400.jpg
+date: Feb. 23, 2023
+author: danner and jackthepine
+description: Pine is a community of data analysts and researchers that work together to create timely and impactful analytics that keep their partners and the wider Web3 ecosystem up-to-date and informed. 
+partner: Pine
+partner_url: https://cantina-pines.xyz/
+quote: The integration of Badger with other low-code DAO tools has been a key factor in the success of Pine and has allowed for greater growth and engagement in the community.
+quoter: Jack Stewart
+quoter_title: Founder
+quoter_image: https://pbs.twimg.com/profile_images/1618055308714168320/nw_VfW3K_400x400.jpg
 logo: https://raw.githubusercontent.com/FlipsideCrypto/badger/2a47cae40f46805a73c86c94aefffa0320e8c34e/frontend/public/pinedao.png
 image: https://raw.githubusercontent.com/FlipsideCrypto/badger/f656b9032d7508151cebd42edcc95afec481438d/frontend/public/pine-app.png
 color: #31c77f
 color_dark: #022b2b
-stat_1_title: Organizations Created
-stat_1_value: 7+
+stat_1_title: Roles Defined
+stat_1_value: 4+
 stat_2_title: Badges Minted
-stat_2_value: 1,000+
+stat_2_value: 150+
 ---
 ## Limiting tools, limited output
 
-> We had a very basic WordPress blog that was built years before that was a pain to update, and that none of our engineers wanted to get involved with. Beyond that, we had none of our reporting tools set up on the blog, so we had no visibility on the impact our content efforts were making.
+> We started with OpenSea shared mints but quickly found that integrating with other tools was limiting. Beyond that our network was open and we needed more control to establish a system to manage access and ensure we met commitments to our partners.
 > 
-> **CHRISTOPHER PATOTA, PRODUCT MANAGER**
+> **JACK STEWART, FOUNDER**
 
-As Freshly began exploring expanded content marketing efforts in 2019, they faced a problem: getting new content live — whether that be on their blog or as web pages  — was a slow, engineering-driven process. The blog was a neglected, outdated WordPress instance that “was a pain to update, and that none of our engineers wanted to get involved with,” according to Product Manager Christopher Patota. As for the website, new pages needed to be coded by hand by engineers, which meant competing for prioritization with core product related projects.
+As Pine developed a system to recognize and reward their participants, they realized that they needed a more powerful solution. The NFTs they had used from  OpenSea did not integrate well with other DAO tools and they were unable to sustainably manage permissions and to properly route oppurtunities. In addition to managing access to various workspaces, Pine uses on-chain credentials to ensure users are able to participate in activities tailored to their skills and interests.
 
-To remove these obstacles, Freshly’s cross-functional content team was organized to find a better way for the team to build, launch, and measure the impact of new content efforts.
+
+To scale their community, Pine uses Badger as a single access control point across many functionalities and applications. This empowers them to manage and reward their community members in a single front-end, rather than requiring the creation of an authentication system for each app. 
+
+
 
 
 <div class="blobs">![Freshly's content team](https://raw.githubusercontent.com/FlipsideCrypto/badger/2a47cae40f46805a73c86c94aefffa0320e8c34e/frontend/public/pine-app.png)<div class="blob" style="background: #31c77f"></div></div>
