@@ -17,12 +17,30 @@ stat_1_value: 2+
 stat_2_title: Badges Minted
 stat_2_value: 30+
 ---
-## Immortalizing recognition on-chain
+## Immortalizing accomplishments on-chain
 
-> We do everything we can to improve the cohort experience. Issuing NFTs through Badger has improved the participants experience because they leave with recognition from Taptive of their accomplishments. Having on chain awards has also increased engagement because cohort participants know there is an award at the end of the cohort. 
-> > 
+> Issuing NFTs through Badger has improved the experienceof participants because they leave with recognition from Taptive of their accomplishments. Having on-chain Badges has also increased engagement because cohort participants know there is an award at the end of the cohort. 
+>
 > **GRANT NISSLY, FOUNDER**
 
-Taptive was inspired to start using Badger because they were looking for an easy way to issue on-chain rewards to participants who completed their cohorts. They found Badger to be the supremely easy option compared to other solutions on the market. With Badger, Taptive is able to easily issue NFTs for their cohort participants. Before Badger, Taptive would simply issue social rewards such as announcing winners in their Discord. However, with Badger, they are now able to recognize competition winners with an on-chain NFT that they can hold onto and share with others.
+Taptive was inspired to start using Badger because they were looking for an easy way to issue on-chain rewards to participants who completed their cohorts. With Badger, Taptive is able to easily issue NFTs for their cohort participants. 
 
-Taptive plans to continue to utilize Badger in the future by recognizing winners of cohort competitions. As Taptive continues to grow its reach and impact, Badger can be the solution to all of its credentialing needs, creating a large network of writers who are recognized with Taptive credentials on-chain.
+IMAGE_NEEDED
+
+Before Badger, Taptive would simply convey rewards socially such as announcing winners in their Discord. However, with Badger, they are now able to recognize competition winners with an on-chain NFT that they can hold onto and share with others.
+ 
+## The easiest way to issue badges
+
+After reviewing a number of options ranging from sophisticated reputation management protocols and NFT minting apps, Taptive chose Badger as their tool of choice. While other options may appear to have extra features or appear simpler, Grant found that Badger's simple interface was the best tool for the job and gave recipients the extensibility necessary.
+
+Taptive is able to distribute account bound credentials with the click of the button. 
+
+## Mobilizing recognition across communities
+
+> When we issue awards on chain, participants are able to bring their reputation and accomplishments with them wherever they go. 
+>
+> **GRANT NISSLY, FOUNDER**
+
+IMAGE_NEEDED 
+
+Taptive plans to continue to utilize Badger in the future by recognizing winners of cohort competitions, creating a large network of writers who are recognized with Taptive credentials on-chain. By integrating Badger into their communities, participants of Taptive's cohorts can take their engagement from Taptive and demonstrate their skills locally within their home community.
