@@ -109,14 +109,6 @@ module.exports = {
             tasks: ["clean", { command: "compile", params: { quiet: true } }, { command: "test", params: { noCompile: true, testFiles: ["testfile.ts"] } }],
         }
     },
-    abiExporter: {
-        path: 'abis/',
-        runOnCompile: true,
-        clear: true,
-        flat: true,
-        spacing: 2,
-        format: "minimal"
-    },
     etherscan: {
         apiKey: {
             mainnet: process.env.ETHERSCAN_API_KEY,
@@ -143,24 +135,32 @@ module.exports = {
         },
         goerli: {
             url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ETH_ALCHEMY_KEY}`,
-            accounts: [`0x${process.env.ETHEREUM_PRIVATE_KEY}`],
+            accounts: [`0x${process.env.PRIVATE_KEY}`],
             gasPrice: 5000000000, // 5 gwei
         },
         mumbai: {
             url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.POLYGON_ALCHEMY_KEY}`,
-            accounts: [`0x${process.env.POLYGON_PRIVATE_KEY}`],
+            accounts: [`0x${process.env.PRIVATE_KEY}`],
             gas: 3000000,
             gasPrice: 100000000000 // 100 gwei
         },
         mainnet: {
             url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ETH_ALCHEMY_KEY}`,
-            accounts: [`0x${process.env.ETHEREUM_PRIVATE_KEY}`],
+            accounts: [`0x${process.env.PRIVATE_KEY}`],
             gasPrice: 50000000000, // 50 gwei
         },
         polygon: {
             url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_ALCHEMY_KEY}`,
-            accounts: [`0x${process.env.POLYGON_PRIVATE_KEY}`],
+            accounts: [`0x${process.env.PRIVATE_KEY}`],
             gasPrice: 'auto'
         },
+    },
+    abiExporter: {
+        path: '../frontend/src/abis/',
+        runOnCompile: true,
+        clear: true,
+        flat: true,
+        spacing: 2,
+        format: "json"
     }
 };

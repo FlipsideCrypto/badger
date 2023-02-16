@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "ganache-cli": "^6.12.2",
-    "solidity-coverage": "^0.8.2"
+    "solidity-coverage": "^0.8.2",
+    "solmate": "^6.7.0"
   }
 }

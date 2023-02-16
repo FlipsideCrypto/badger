@@ -2,28 +2,10 @@
 
 pragma solidity ^0.8.16;
 
-interface BadgerOrganizationInterface { 
-    
+interface IBadgeOrganization {
     /*//////////////////////////////////////////////////////////////
                                 SETTERS
     //////////////////////////////////////////////////////////////*/
-    
-    /**
-     * @notice Initialize the Organization with the starting state needed.
-     * @param _owner The owner of the Organization. (Ideally a multi-sig).
-     * @param _uri The base URI for the Organization.
-     * @param _contractURI The URI for the contract metadata.
-     * @param _name The name of the Organization.
-     * @param _symbol The symbol of the Organization.
-     */
-    function initialize(
-          address _owner
-        , string memory _uri
-        , string memory _contractURI
-        , string memory _name
-        , string memory _symbol
-    )
-        external;
 
     /**
      * @dev Allows the leader of a badge to mint the badge they are leading.
@@ -31,17 +13,16 @@ interface BadgerOrganizationInterface {
      * @param _id The id of the badge to mint.
      * @param _amount The amount of the badge to mint.
      * @param _data The data to pass to the receiver.
-     * 
+     *
      * Requirements:
      * - `_msgSender` must be the leader of the badge.
      */
     function leaderMint(
-          address _to
-        , uint256 _id 
-        , uint256 _amount 
-        , bytes memory _data
-    )
-        external;
+        address _to,
+        uint256 _id,
+        uint256 _amount,
+        bytes memory _data
+    ) external;
 
     /**
      * @notice Allows a leader of a badge to mint a batch of recipients in a single transaction.
@@ -54,12 +35,11 @@ interface BadgerOrganizationInterface {
      * @param _data The data to pass to the receiver.
      */
     function leaderMintBatch(
-          address[] memory _tos
-        , uint256 _id
-        , uint256[] memory _amounts
-        , bytes memory _data
-    )
-        external;
+        address[] memory _tos,
+        uint256 _id,
+        uint256[] memory _amounts,
+        bytes memory _data
+    ) external;
 
     /**
      * @notice Allows a user to mint a claim that has been designated to them.
@@ -70,20 +50,18 @@ interface BadgerOrganizationInterface {
      * @param _amount The amount of the badge being claimed.
      * @param _nonce The nonce of the claim for the user.
      * @param _data Any data that is being passed to the mint function.
-     * 
+     *
      * Requirements:
      * - `_id` must corresponding to an existing Badge config.
      * - `_signature` must be a valid signature of the claim.
      */
     function claimMint(
-          bytes calldata _signature
-        , uint256 _id 
-        , uint256 _amount 
-        , uint256 _nonce
-        , bytes memory _data
-    )
-        external
-        payable;
+        bytes calldata _signature,
+        uint256 _id,
+        uint256 _amount,
+        uint256 _nonce,
+        bytes memory _data
+    ) external payable;
 
     /**
      * @notice Allows the owner and leader of a contract to revoke a badge from a user.
@@ -95,11 +73,10 @@ interface BadgerOrganizationInterface {
      * - `_msgSender` must be the owner or leader of the badge.
      */
     function revoke(
-          address _from
-        , uint256 _id
-        , uint256 _amount
-    )
-        external;
+        address _from,
+        uint256 _id,
+        uint256 _amount
+    ) external;
 
     /**
      * @notice Allows the owner and leaders of a contract to revoke badges from a user.
@@ -111,11 +88,10 @@ interface BadgerOrganizationInterface {
      * - `_msgSender` must be the owner or leader of the badge.
      */
     function revokeBatch(
-          address[] memory _froms
-        , uint256 _id
-        , uint256[] memory _amounts 
-    )
-        external;
+        address[] memory _froms,
+        uint256 _id,
+        uint256[] memory _amounts
+    ) external;
 
     /**
      * @notice Allows the owner of a badge to forfeit their ownership.
@@ -124,21 +100,16 @@ interface BadgerOrganizationInterface {
      * @param _data The data to pass to the receiver.
      */
     function forfeit(
-          uint256 _id
-        , uint256 _amount
-        , bytes memory _data
-    )
-        external;
+        uint256 _id,
+        uint256 _amount,
+        bytes memory _data
+    ) external;
 
     /**
      * @notice Allows the owner of a badge to deposit ETH to fund the claiming of a badge.
      * @param _id The id of the badge to deposit ETH for.
      */
-    function depositETH(
-        uint256 _id
-    )
-        external
-        payable;
+    function depositETH(uint256 _id) external payable;
 
     /**
      * @notice Allows the owner of a badge to deposit an ERC20 into the contract.
@@ -147,9 +118,8 @@ interface BadgerOrganizationInterface {
      * @param _amount The amount of the token to deposit.
      */
     function depositERC20(
-          uint256 _id
-        , address _token
-        , uint256 _amount
-    )
-        external;
+        uint256 _id,
+        address _token,
+        uint256 _amount
+    ) external;
 }
