@@ -22,6 +22,7 @@ stat_2_value: 150+
 > We started with OpenSea shared mints but quickly found that integrating with other tools was limiting. Beyond that our network was open and we needed more control to establish a system to manage access and ensure we met commitments to our partners.
 > 
 > **JACK STEWART, FOUNDER**
+
 Pine was launched initially through a shared OpenSea contract that was circulated in a private Discord channel. Once the community formed around the NFT collection and began to take the next step in their journey they organized around the mission of creating analytics for partners.
 
 IMAGE_NEEDED
