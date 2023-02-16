@@ -10,6 +10,13 @@ require("@nomiclabs/hardhat-etherscan");
 require('solidity-coverage');
 require("dotenv").config();
 
+// All of these keys have been knowingly leaked to make the startup process easier for new onboards.
+// Do not use any of these keys in production.
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY;
+const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
+const PRIVATE_KEY_ACCOUNTS = [process.env.PRIVATE_KEY];
+
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
     const accounts = await hre.ethers.getSigners();
 
@@ -95,7 +102,7 @@ module.exports = {
     gasReporter: {
         currency: 'USD',
         gasPrice: 60,
-        coinmarketcap: process.env.COINMARKETCAP_API_KEY,
+        coinmarketcap: COINMARKETCAP_API_KEY,
         showMethodSig: true,
         showTimeSpent: true,
     },
@@ -119,13 +126,10 @@ module.exports = {
     },
     etherscan: {
         apiKey: {
-            mainnet: process.env.ETHERSCAN_API_KEY,
-            rinkeby: process.env.ETHERSCAN_API_KEY,
-            goerli: process.env.ETHERSCAN_API_KEY,
-            kovan: process.env.ETHERSCAN_API_KEY,
-            ropsten: process.env.ETHERSCAN_API_KEY,
-            mumbai: process.env.POLYGONSCAN_API_KEY,
-            matic: process.env.POLYGONSCAN_API_KEY,
+            goerli: ETHERSCAN_API_KEY,
+            mumbai: POLYGONSCAN_API_KEY,
+            mainnet: ETHERSCAN_API_KEY,
+            matic: POLYGONSCAN_API_KEY,
         }
     },
     defaultNetwork: "hardhat",
@@ -142,24 +146,24 @@ module.exports = {
             }
         },
         goerli: {
-            url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ETH_ALCHEMY_KEY}`,
-            accounts: [`0x${process.env.ETHEREUM_PRIVATE_KEY}`],
+            url: `https://eth-goerli.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,
+            accounts: PRIVATE_KEY_ACCOUNTS,
             gasPrice: 5000000000, // 5 gwei
         },
         mumbai: {
-            url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.POLYGON_ALCHEMY_KEY}`,
-            accounts: [`0x${process.env.POLYGON_PRIVATE_KEY}`],
+            url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,
+            accounts: PRIVATE_KEY_ACCOUNTS,
             gas: 3000000,
             gasPrice: 100000000000 // 100 gwei
         },
         mainnet: {
-            url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ETH_ALCHEMY_KEY}`,
-            accounts: [`0x${process.env.ETHEREUM_PRIVATE_KEY}`],
+            url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,
+            accounts: PRIVATE_KEY_ACCOUNTS,
             gasPrice: 50000000000, // 50 gwei
         },
         polygon: {
-            url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_ALCHEMY_KEY}`,
-            accounts: [`0x${process.env.POLYGON_PRIVATE_KEY}`],
+            url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,
+            accounts: PRIVATE_KEY_ACCOUNTS,
             gasPrice: 'auto'
         },
     }

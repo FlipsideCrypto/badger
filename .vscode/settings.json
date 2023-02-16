@@ -1,0 +1,4 @@
+// Remap the solidity node modules to contracts/node_modules
+{
+  "solidity.packageDefaultDependenciesDirectory": "contracts/node_modules"
+}
