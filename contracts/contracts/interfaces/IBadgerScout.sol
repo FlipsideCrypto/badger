@@ -79,12 +79,12 @@ interface IBadgerScout {
 
     /**
      * @notice Allow Organization Managers to control Badge Managers.
-     * @param _id The id of the badge.
+     * @param _id The id of the Badge.
      * @param _managers The addresses of the Managers to update.
      * @param _isManager The status of the Managers being updated.
      *
      * Requirements:
-     * - `_msgSender` must be an Organization Manager.
+     * - `_msgSender` must be an Organization Manager or Owner.
      */
     function setManagers(
         uint256 _id,
@@ -125,9 +125,9 @@ interface IBadgerScout {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * @notice Get the config for a specific badge id.
-     * @param _id The id of the badge being accessed.
-     * @return True if the badge is account bound, false otherwise.
+     * @notice Get the config for a specific Badge id.
+     * @param _id The id of the Badge being accessed.
+     * @return True if the Badge is account bound, false otherwise.
      */
     function getAccountBound(uint256 _id) external view returns (bool);
 }

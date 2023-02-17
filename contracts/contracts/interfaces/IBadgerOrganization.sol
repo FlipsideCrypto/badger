@@ -61,9 +61,9 @@ interface IBadgerOrganization {
 
     /**
      * @notice Allows a Manager to revoke Badges from a user.
-     * @param _froms The addresses to revoke the badge from.
-     * @param _id The id of the badge to revoke.
-     * @param _amounts The amount of the badge to revoke.
+     * @param _froms The addresses to revoke the Badge from.
+     * @param _id The id of the Badge to revoke.
+     * @param _amounts The amount of the Badge to revoke.
      *
      * Requirements:
      * - `_msgSender` must be a Manager of the Badge or Organization.
