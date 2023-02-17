@@ -143,11 +143,15 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
 
         /// @dev Load the stack.
         uint256 i;
+        bytes32 managerHash;
 
         /// @dev Loop through the arrays and update the state of the Managers.
         for (i; i < _managers.length; i++) {
-            /// @dev Update the state of the Manager for the Badge.
-            _setManager(keccak256(abi.encode(_managers[i])), _isManager[i]);
+            /// @dev Calculate the hash for the Organization Manager.
+            managerHash = _managerHash(_managers[i]);
+
+            /// @dev Update the state of the Manager for the Organization.
+            _setManager(managerHash, _isManager[i]);
         }
     }
 
@@ -164,14 +168,15 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
 
         /// @dev Load the stack.
         uint256 i;
+        bytes32 managerHash;
 
         /// @dev Loop through the arrays and update the state of the Managers.
         for (i; i < _managers.length; i++) {
+            /// @dev Calculate the hash for the Organization Manager.
+            managerHash = _badgeManagerHash(_id, _managers[i]);
+
             /// @dev Update the state of the Manager for the Badge.
-            _setManager(
-                keccak256(abi.encode(_id, _managers[i])),
-                _isManager[i]
-            );
+            _setManager(managerHash, _isManager[i]);
         }
     }
 
@@ -185,17 +190,18 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     ) public virtual override onlyOrganizationManager {
         /// @dev Confirm the arrays provided are of the same length
         _validateLengths(_ids.length, _managers.length, _isManager.length);
-        
+
         /// @dev Load the stack.
         uint256 i;
+        bytes32 managerHash;
 
         /// @dev Loop through the arrays and update the state of the Managers.
         for (i; i < _managers.length; i++) {
+            /// @dev Calculate the hash for the Organization Manager.
+            managerHash = _badgeManagerHash(_ids[i], _managers[i]);
+
             /// @dev Update the state of the Manager for the Badge.
-            _setManager(
-                keccak256(abi.encode(_ids[i], _managers[i])),
-                _isManager[i]
-            );
+            _setManager(managerHash, _isManager[i]);
         }
     }
 
@@ -318,6 +324,47 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         emit ManagerUpdated(_key, _isManager);
     }
 
+    /**
+     * @notice Enforces account bound Badges to be transferred only when permissioned.
+     * @param _operator The address of the operator.
+     * @param _from The address of the Badge owner.
+     * @param _to The address of the Badge recipient.
+     * @param _ids The ids of the Badges being transferred.
+     * @param _amounts The amounts of the Badges being transferred.
+     * @param _data The data of the Badges being transferred.
+     */
+    function _beforeTokenTransfer(
+        address _operator,
+        address _from,
+        address _to,
+        uint256[] memory _ids,
+        uint256[] memory _amounts,
+        bytes memory _data
+    ) internal virtual override {
+        /// @dev Load the stack.
+        uint256 i;
+
+        /// @dev Loop through all the IDs and confirm that the transfer is ready.
+        for (i; i < _ids.length; i++) {
+            /// @dev Confirm that every token being transferred can be managed by
+            ///      the message sender.
+            require(
+                _isTransferReady(_operator, _from, _to, _ids[i]),
+                "BadgerScout::_beforeTokenTransfer: Transfer not ready."
+            );
+        }
+
+        /// @dev Call the parent function.
+        super._beforeTokenTransfer(
+            _operator,
+            _from,
+            _to,
+            _ids,
+            _amounts,
+            _data
+        );
+    }
+
     /*//////////////////////////////////////////////////////////////
                             INTERNAL GETTERS
     //////////////////////////////////////////////////////////////*/
@@ -376,44 +423,28 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     }
 
     /**
-     * @notice Enforces account bound Badges to be transferred only when permissioned.
-     * @param _operator The address of the operator.
-     * @param _from The address of the Badge owner.
-     * @param _to The address of the Badge recipient.
-     * @param _ids The ids of the Badges being transferred.
-     * @param _amounts The amounts of the Badges being transferred.
-     * @param _data The data of the Badges being transferred.
+     * @notice Calculates the hash that would be used for this sender pointer reference.
+     * @param _manager The address of the alleged Manager.
+     * @return The hash of the Manager.
      */
-    function _beforeTokenTransfer(
-        address _operator,
-        address _from,
-        address _to,
-        uint256[] memory _ids,
-        uint256[] memory _amounts,
-        bytes memory _data
-    ) internal virtual override {
-        /// @dev Load the stack.
-        uint256 i;
+    function _managerHash(address _manager) internal pure returns (bytes32) {
+        /// @dev Build the hash of the Manager.
+        return keccak256(abi.encode(_manager));
+    }
 
-        /// @dev Loop through all the IDs and confirm that the transfer is ready.
-        for (i; i < _ids.length; i++) {
-            /// @dev Confirm that every token being transferred can be managed by
-            ///      the message sender.
-            require(
-                _isTransferReady(_operator, _from, _to, _ids[i]),
-                "BadgerScout::_beforeTokenTransfer: Transfer not ready."
-            );
-        }
-
-        /// @dev Call the parent function.
-        super._beforeTokenTransfer(
-            _operator,
-            _from,
-            _to,
-            _ids,
-            _amounts,
-            _data
-        );
+    /**
+     * @notice Calculates the hash that would be used for this sender pointer reference.
+     * @param _id The id of the Badge.
+     * @param _manager The address of the alleged Manager.
+     * @return The hash of the Manager.
+     */
+    function _badgeManagerHash(uint256 _id, address _manager)
+        internal
+        pure
+        returns (bytes32)
+    {
+        /// @dev Build the hash of the Manager.
+        return keccak256(abi.encode(_id, _manager));
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -426,7 +457,11 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
      * @param _length2 The second array length.
      * @param _length3 The third array length.
      */
-    function _validateLengths(uint256 _length1, uint256 _length2, uint256 _length3) internal pure {
+    function _validateLengths(
+        uint256 _length1,
+        uint256 _length2,
+        uint256 _length3
+    ) internal pure {
         require(
             _length1 == _length2 && _length2 == _length3,
             "BadgerScout::_validateLengths: Array lengths must be equal."
@@ -438,7 +473,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
      * @param _length1 The first array length.
      * @param _length2 The second array length.
      */
-    function _validateLengths(uint256 _length1, uint256 _length2) internal pure {
+    function _validateLengths(uint256 _length1, uint256 _length2)
+        internal
+        pure
+    {
         require(
             _length1 == _length2,
             "BadgerScout::_validateLengths: Array lengths must be equal."
