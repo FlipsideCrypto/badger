@@ -72,7 +72,7 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     }
 
     /**
-     * @notice Confirm that only owner or the leader of a Badge passes.
+     * @notice Confirm that only a Manager of a Badge passes.
      * @param _id The id of the Badge being accessed.
      */
     modifier onlyBadgeManager(uint256 _id) {
