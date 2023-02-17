@@ -195,7 +195,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
     function forfeit(
         uint256 _id,
         uint256 _amount,
-        bytes memory _data
+        bytes memory
     ) external virtual override {
         /// @dev Revoke the Badge from the user.
         _burn(_msgSender(), _id, _amount);
