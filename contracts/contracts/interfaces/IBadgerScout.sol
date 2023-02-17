@@ -93,21 +93,8 @@ interface IBadgerScout {
     ) external;
 
     /**
-     * @notice Allow the Owner of the Organization to control Organization Managers.
-     * @param _managers The addresses of the Managers to update.
-     * @param _isManager The status of the Managers being updated.
-     *
-     * Requirements:
-     * - `_msgSender` must be the Organization Owner.
-     */
-    function setManagersBatch(
-        address[] calldata _managers,
-        bool[] calldata _isManager
-    ) external;
-
-    /**
-     * @notice Allow Organization Managers to control Badge Managers.
-     * @param _ids The ids of the badges.
+     * @notice Allow Organization Managers to control Badge Managers for multiple Badges.
+     * @param _ids The ids of the Badges.
      * @param _managers The addresses of the Managers to update.
      * @param _isManager The status of the Managers being updated.
      *
