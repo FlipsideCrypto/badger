@@ -3,7 +3,7 @@
 pragma solidity ^0.8.16;
 
 /// @dev Factory output.
-import {BadgerOrganization} from "../BadgerOrganization/BadgerOrganization.sol";
+import {BadgerOrganization} from "../BadgerOrganization.sol";
 
 interface IBadger {
     ////////////////////////////////////////////////////////

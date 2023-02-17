@@ -6,16 +6,24 @@ pragma solidity ^0.8.16;
 import {IBadgerOrganization} from "./interfaces/IBadgerOrganization.sol";
 import {BadgerScout} from "./BadgerScout.sol";
 
+/**
+ * @dev Badger Organizations are localized ecosystems of members, managers and
+ *      badges. With a system of harmonious management, on-chain Organizations
+ *      can unlock the power of secure permission systems and access policies
+ *      by minting ERC1155 Badges to their members.
+ * @author CHANCE (@nftchance)
+ * @author masonthechain (@masonthechain)
+ */
 contract BadgerOrganization is IBadgerOrganization, BadgerScout {
-    /*//////////////////////////////////////////////////////////////
-                              CONSTRUCTOR 
-    //////////////////////////////////////////////////////////////*/
+    ////////////////////////////////////////////////////////
+    ///                   CONSTRUCTOR                    ///
+    ////////////////////////////////////////////////////////
 
     constructor() BadgerScout() {}
 
-    /*//////////////////////////////////////////////////////////////
-                          ORGANIZATION LOGIC
-    //////////////////////////////////////////////////////////////*/
+    ////////////////////////////////////////////////////////
+    ///                     SETTERS                      ///
+    ////////////////////////////////////////////////////////
 
     /**
      * See {IBadgerOrganization.leaderMint}
@@ -185,9 +193,9 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         _burn(_msgSender(), _id, _amount);
     }
 
-    /*//////////////////////////////////////////////////////////////
-                            TOKEN LOGIC
-    //////////////////////////////////////////////////////////////*/
+    ////////////////////////////////////////////////////////
+    ///                     GETTERS                      ///
+    ////////////////////////////////////////////////////////
 
     /**
      * See {ERC1155.uri}
@@ -210,10 +218,6 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         /// @dev Use the default base URI with the token id added.
         return super.uri(_id);
     }
-
-    /*//////////////////////////////////////////////////////////////
-                      EXTERNAL ORGANIZATION LOGIC
-    //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Returns the metadata URI for the organization.

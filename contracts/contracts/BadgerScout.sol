@@ -10,12 +10,21 @@ import {IBadgerScout} from "./interfaces/IBadgerScout.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
+/**
+ * @dev BadgerScout contains the back-end logic of a Badger Organization.
+ * @author CHANCE (@nftchance)
+ * @author masonthechain (@masonthechain)
+ */
 contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
+    ////////////////////////////////////////////////////////
+    ///                      STATE                       ///
+    ////////////////////////////////////////////////////////
+
     /// @dev The name of the contract.
-    string public immutable name;
+    string public name;
 
     /// @dev The symbol of the contract.
-    string public immutable symbol;
+    string public symbol;
 
     /// @dev The URI for the Organization/contract.
     string public organizationURI;
@@ -25,6 +34,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
 
     /// @dev Tracking the Manages of a Badge.
     mapping(bytes32 => bool) public managerKeyToIsManager;
+
+    ////////////////////////////////////////////////////////
+    ///                   CONSTRUCTOR                    ///
+    ////////////////////////////////////////////////////////
 
     constructor() ERC1155(Badger(msg.sender).getOrganizationURI()) {
         /// @dev Get the Organization details from the factory.
@@ -178,7 +191,7 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     }
 
     /**
-     * See {IBadgerScout.setManagers}
+     * See {IBadgerScout.setManagersBatch}
      */
     function setManagersBatch(
         address[] calldata _managers,
@@ -201,7 +214,7 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     }
 
     /**
-     * See {IBadgerScout.setManagers}
+     * See {IBadgerScout.setManagersBatch}
      */
     function setManagersBatch(
         uint256[] calldata _ids,
@@ -244,7 +257,7 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     {
         /// @dev If the value in config can be masked to `1` then the first slot
         ///      is active, and thus the boolean is `true`.
-        return badges[_id].config && 1 == 1;
+        return (badges[_id].config & 1) == 1;
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -263,8 +276,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         bool _value
     ) internal virtual {
         if (_value) {
+            /// @dev Set the bit and shift it to the correct position.
             badges[_id].config |= (1 << _bit);
         } else {
+            /// @dev Unset the bit and shift it to the correct position.
             badges[_id].config &= ~(1 << _bit);
         }
     }
@@ -351,6 +366,8 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
 
     /**
      * @notice Confirms whether this address is a Manager of the Organization or not.
+     * @param _address The address of the Manager to check.
+     * @return True if the address is a Manager of the Organization, false otherwise.
      */
     function _isOrganizationManager(address _address)
         internal
@@ -359,9 +376,15 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         returns (bool)
     {
         return (_address == owner() ||
-            managerKeyToIsManager[keccak256(_address)]);
+            managerKeyToIsManager[keccak256(abi.encode(_address))]);
     }
 
+    /**
+     * @notice Confirms whether this address is a Manager of the Badge or not.
+     * @param _id The id of the badge to check.
+     * @param _address The address of the Manager to check.
+     * @return True if the address is a Manager of the Badge, false otherwise.
+     */
     function _isBadgeManager(uint256 _id, address _address)
         internal
         view
@@ -377,15 +400,16 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
      * @param _id The id of the token to check.
      * @param _from The address of the token owner.
      * @param _to The address of the token recipient.
+     * @return True if the token is in a state to be transferred, false otherwise.
      */
     function _isTransferReady(
         address _operator,
         address _from,
         address _to,
         uint256 _id
-    ) internal view {
+    ) internal view returns (bool) {
         /// @dev Confirm that the transfer can proceed if the account is not token bound
-        ///      or the message sender is a leader of the badge.
+        ///      or the message sender is a leader of the badge, or it's a mint/burn.
         return
             _from == address(0) ||
             _to == address(0) ||
@@ -393,6 +417,15 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
             !getAccountBound(_id);
     }
 
+    /**
+     * @notice Enforces account bound tokens to be transferred only when permissioned.
+     * @param _operator The address of the operator.
+     * @param _from The address of the token owner.
+     * @param _to The address of the token recipient.
+     * @param _ids The ids of the tokens being transferred.
+     * @param _amounts The amounts of the tokens being transferred.
+     * @param _data The data of the tokens being transferred.
+     */
     function _beforeTokenTransfer(
         address _operator,
         address _from,

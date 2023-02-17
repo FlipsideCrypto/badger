@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.16;
 
-interface IBadgeOrganization {
+interface IBadgerOrganization {
     /*//////////////////////////////////////////////////////////////
                                 SETTERS
     //////////////////////////////////////////////////////////////*/
@@ -40,28 +40,6 @@ interface IBadgeOrganization {
         uint256[] memory _amounts,
         bytes memory _data
     ) external;
-
-    /**
-     * @notice Allows a user to mint a claim that has been designated to them.
-     * @dev This function is only used when the mint is being paid with ETH or has no payment at all.
-     *      To use this with no payment, the `tokenType` of NATIVE with `quantity` of 0 must be used.
-     * @param _signature The signature that is being used to verify the authenticity of claim.
-     * @param _id The id of the badge being claimed.
-     * @param _amount The amount of the badge being claimed.
-     * @param _nonce The nonce of the claim for the user.
-     * @param _data Any data that is being passed to the mint function.
-     *
-     * Requirements:
-     * - `_id` must corresponding to an existing Badge config.
-     * - `_signature` must be a valid signature of the claim.
-     */
-    function claimMint(
-        bytes calldata _signature,
-        uint256 _id,
-        uint256 _amount,
-        uint256 _nonce,
-        bytes memory _data
-    ) external payable;
 
     /**
      * @notice Allows the owner and leader of a contract to revoke a badge from a user.
@@ -103,23 +81,5 @@ interface IBadgeOrganization {
         uint256 _id,
         uint256 _amount,
         bytes memory _data
-    ) external;
-
-    /**
-     * @notice Allows the owner of a badge to deposit ETH to fund the claiming of a badge.
-     * @param _id The id of the badge to deposit ETH for.
-     */
-    function depositETH(uint256 _id) external payable;
-
-    /**
-     * @notice Allows the owner of a badge to deposit an ERC20 into the contract.
-     * @param _id The id of the badge to deposit for.
-     * @param _token The address of the token to deposit.
-     * @param _amount The amount of the token to deposit.
-     */
-    function depositERC20(
-        uint256 _id,
-        address _token,
-        uint256 _amount
     ) external;
 }
