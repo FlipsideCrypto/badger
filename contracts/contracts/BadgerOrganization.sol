@@ -26,9 +26,9 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
     ////////////////////////////////////////////////////////
 
     /**
-     * See {IBadgerOrganization.leaderMint}
+     * See {IBadgerOrganization.mint}
      */
-    function leaderMint(
+    function mint(
         address _to,
         uint256 _id,
         uint256 _amount,
@@ -39,19 +39,16 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
     }
 
     /**
-     * See {IBadgerOrganization.leaderMintBatch}
+     * See {IBadgerOrganization.mintBatch}
      */
-    function leaderMintBatch(
+    function mintBatch(
         address[] memory _tos,
         uint256 _id,
         uint256[] memory _amounts,
         bytes memory _data
     ) external virtual override onlyBadgeManager(_id) {
         /// @dev Make sure that the supplied arrays are equal in length.
-        require(
-            _tos.length == _amounts.length,
-            "BadgerOrganization::leaderMintBatch: _tos and _amounts must be the same length."
-        );
+        _validateLengths(_tos.length, _amounts.length);
 
         /// @dev Load the stack.
         uint256 i;
@@ -64,7 +61,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
     }
 
     /**
-     * @notice Allows Organization and Badge Managers to batch mint badges.
+     * @notice Allows Organization and Badge Managers to batch mint Badges.
      * @dev This is an extremely gassy and bad implementation of batch processing
      *      for Ethereum mainnet. However, because many organizations do not live on ETH
      *      this function enables the user a simpler front-end experience.
@@ -78,17 +75,14 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
      * - `_tos`, `_ids`, and `_amounts` must be the same length.
      * - `_msgSender` must be a Manager of the Badge or Organization.
      */
-    function leaderMintFullBatch(
+    function mintFullBatch(
         address[] memory _tos,
         uint256[] memory _ids,
         uint256[] memory _amounts,
         bytes memory _data
     ) external virtual {
         /// @dev Make sure that the supplied arrays are equal in length.
-        require(
-            _tos.length == _ids.length && _ids.length == _amounts.length,
-            "BadgerOrganization::leaderMintFullBatch: _froms, _ids, and _amounts must be the same length."
-        );
+        _validateLengths(_tos.length, _ids.length, _amounts.length);
 
         /// @dev Load the stack.
         uint256 i;
@@ -101,7 +95,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
             /// @dev Make sure the user has permission to mint this Badge.
             require(
                 _isBadgeManager(id, _msgSender()),
-                "BadgerOrganization::leaderMintFullBatch: Only a Manager of the Badge can mint."
+                "BadgerOrganization::mintFullBatch: Only a Manager of the Badge can mint."
             );
 
             /// @dev Mint the Badges to the users.
@@ -130,10 +124,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         uint256[] memory _amounts
     ) external virtual override onlyBadgeManager(_id) {
         /// @dev Make sure that the supplied arrays are equal in length.
-        require(
-            _froms.length == _amounts.length,
-            "BadgerOrganization::revokeBatch: _from and _amounts must be the same length."
-        );
+        _validateLengths(_froms.length, _amounts.length);
 
         /// @dev Load the stack.
         uint256 i;
@@ -146,7 +137,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
     }
 
     /**
-     * @notice Allows Organization and Badge Managers to revoke badges from a user.
+     * @notice Allows Organization and Badge Managers to revoke Badges from a user.
      * @dev This is an extremely gassy and bad implementation of batch processing
      *      for Ethereum mainnet. However, because many organizations do not live on ETH
      *      this function enables the user a simpler front-end experience.
@@ -166,10 +157,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         uint256[] memory _amounts
     ) external virtual {
         /// @dev Make sure that the supplied arrays are equal in length.
-        require(
-            _froms.length == _ids.length && _ids.length == _amounts.length,
-            "BadgerOrganization::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
-        );
+        _validateLengths(_froms.length, _ids.length, _amounts.length);
 
         /// @dev Load the stack.
         uint256 i;

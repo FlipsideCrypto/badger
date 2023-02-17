@@ -41,7 +41,6 @@ interface IBadger {
      */
     function createOrganization(Organization calldata _organization)
         external
-        virtual
         returns (BadgerOrganization badgerOrganization, uint256 organizationId);
 
     ////////////////////////////////////////////////////////
@@ -56,12 +55,11 @@ interface IBadger {
     function getOrganization(uint256 _organizationId)
         external
         view
-        virtual
         returns (BadgerOrganization);
 
     /**
      * @dev Get the URI of the last deployed Organization.
      * @return The URI of the last deployed Organization.
      */
-    function getOrganizationURI() external view virtual returns (string memory);
+    function getOrganizationURI() external view returns (string memory);
 }

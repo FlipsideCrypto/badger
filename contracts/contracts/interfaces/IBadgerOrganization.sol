@@ -17,7 +17,7 @@ interface IBadgerOrganization {
      * Requirements:
      * - `_msgSender` must be a Manager of the Badge or Organization.
      */
-    function leaderMint(
+    function mint(
         address _to,
         uint256 _id,
         uint256 _amount,
@@ -37,7 +37,7 @@ interface IBadgerOrganization {
      * Requirements:
      * - `_msgSender` must be a Manager of the Badge or Organization.
      */
-    function leaderMintBatch(
+    function mintBatch(
         address[] memory _tos,
         uint256 _id,
         uint256[] memory _amounts,
