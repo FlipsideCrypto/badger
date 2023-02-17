@@ -3,10 +3,10 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {BadgerOrganizationInterface} from "./interfaces/BadgerOrganizationInterface.sol";
+import {IBadgerOrganization} from "./interfaces/IBadgerOrganization.sol";
 import {BadgerScout} from "./BadgerScout.sol";
 
-contract BadgerOrganization is BadgerOrganizationInterface, BadgerScout {
+contract BadgerOrganization is IBadgerOrganization, BadgerScout {
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR 
     //////////////////////////////////////////////////////////////*/
@@ -18,7 +18,7 @@ contract BadgerOrganization is BadgerOrganizationInterface, BadgerScout {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * See {BadgerOrganizationInterface.leaderMint}
+     * See {IBadgerOrganization.leaderMint}
      */
     function leaderMint(
         address _to,
@@ -31,7 +31,7 @@ contract BadgerOrganization is BadgerOrganizationInterface, BadgerScout {
     }
 
     /**
-     * See {BadgerOrganizationInterface.leaderMintBatch}
+     * See {IBadgerOrganization.leaderMintBatch}
      */
     function leaderMintBatch(
         address[] memory _tos,
@@ -98,7 +98,7 @@ contract BadgerOrganization is BadgerOrganizationInterface, BadgerScout {
     }
 
     /**
-     * See {BadgerOrganizationInterface.revoke}
+     * See {IBadgerOrganization.revoke}
      */
     function revoke(
         address _from,
@@ -110,7 +110,7 @@ contract BadgerOrganization is BadgerOrganizationInterface, BadgerScout {
     }
 
     /**
-     * See {BadgerOrganizationInterface.revokeBatch}
+     * See {IBadgerOrganization.revokeBatch}
      */
     function revokeBatch(
         address[] memory _froms,
@@ -174,7 +174,7 @@ contract BadgerOrganization is BadgerOrganizationInterface, BadgerScout {
     }
 
     /**
-     * See {BadgerOrganizationInterface.forfeit}
+     * See {IBadgerOrganization.forfeit}
      */
     function forfeit(
         uint256 _id,
