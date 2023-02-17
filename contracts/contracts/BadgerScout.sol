@@ -29,10 +29,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     /// @dev The URI for the Organization/contract.
     string public organizationURI;
 
-    /// @dev Mapping from token ID to badge
+    /// @dev Mapping from token ID to Badge
     mapping(uint256 => Badge) public badges;
 
-    /// @dev Tracking the Manages of a Badge.
+    /// @dev Tracking the Managers of a Badge.
     mapping(bytes32 => bool) public managerKeyToIsManager;
 
     ////////////////////////////////////////////////////////
@@ -66,19 +66,19 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     modifier onlyOrganizationManager() {
         require(
             _isOrganizationManager(_msgSender()),
-            "BadgerScout::onlyOrganizationManager: Must be Owner or Organization Manager."
+            "BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this."
         );
         _;
     }
 
     /**
-     * @notice Confirm that only owner or the leader of a Badge passes.
+     * @notice Confirm that only a Manager of a Badge passes.
      * @param _id The id of the Badge being accessed.
      */
     modifier onlyBadgeManager(uint256 _id) {
         require(
             _isBadgeManager(_id, _msgSender()),
-            "BadgerScout::onlyBadgeManager: Only leaders can call this."
+            "BadgerScout::onlyBadgeManager: Only Managers can call this."
         );
         _;
     }
@@ -200,7 +200,7 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         /// @dev Confirm the arrays provided are of the same length
         require(
             _managers.length == _isManager.length,
-            "BadgerScout::setManagersBatch: _ids, _isManager, and _isManager must be the same length."
+            "BadgerScout::setManagersBatch: _ids, and _isManager must be the same length."
         );
 
         /// @dev Load the stack.
@@ -266,7 +266,7 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
 
     /**
      * @notice Converts a boolean into a bit and packs it into the config.
-     * @param _id The ID of the badge.
+     * @param _id The ID of the Badge.
      * @param _bit The bit to pack.
      * @param _value The value to pack.
      */
@@ -285,7 +285,7 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     }
 
     /**
-     * @notice Allows the owner of the contract to update the Organization URI.
+     * @notice Allows the Owner of the contract to update the Organization URI.
      * @param _uri The new URI for the Organization.
      */
     function _setOrganizationURI(string memory _uri) internal virtual {
@@ -297,11 +297,11 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     }
 
     /**
-     * @notice Create a badge in the Organization.
-     * @param _id The id of the badge being created.
-     * @param _accountBound Whether or not the badge is account bound.
-     * @param _uri The URI for the badge.
-     * @param _managers The addresses of the delegates.
+     * @notice Create a Badge in the Organization.
+     * @param _id The id of the Badge being created.
+     * @param _accountBound Whether or not the Badge is account bound.
+     * @param _uri The URI for the Badge.
+     * @param _managers The addresses of the Badge Managers.
      */
     function _setBadge(
         uint256 _id,
@@ -334,9 +334,9 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     }
 
     /**
-     * @notice Sets the URI for the badge and emits event that URI was updated.
-     * @param _id The ID of the badge.
-     * @param _uri The URI of the badge.
+     * @notice Sets the URI for the Badge and emits event that URI was updated.
+     * @param _id The ID of the Badge.
+     * @param _uri The URI of the Badge.
      */
     function _setBadgeURI(uint256 _id, string memory _uri) internal virtual {
         /// @dev Set the URI of the Badge.
@@ -381,9 +381,9 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
 
     /**
      * @notice Confirms whether this address is a Manager of the Badge or not.
-     * @param _id The id of the badge to check.
+     * @param _id The id of the Badge to check.
      * @param _address The address of the Manager to check.
-     * @return True if the address is a Manager of the Badge, false otherwise.
+     * @return True if the address is a Manager of the Badge or Organization, false otherwise.
      */
     function _isBadgeManager(uint256 _id, address _address)
         internal
@@ -396,11 +396,11 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     }
 
     /**
-     * @notice Confirms whether this token is in a state to be a transferred or not.
-     * @param _id The id of the token to check.
-     * @param _from The address of the token owner.
-     * @param _to The address of the token recipient.
-     * @return True if the token is in a state to be transferred, false otherwise.
+     * @notice Confirms whether this Badge is in a state to be a transferred or not.
+     * @param _id The id of the Badge to check.
+     * @param _from The address of the Badge owner.
+     * @param _to The address of the Badge recipient.
+     * @return True if the Badge is in a state to be transferred, false otherwise.
      */
     function _isTransferReady(
         address _operator,
@@ -408,8 +408,8 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         address _to,
         uint256 _id
     ) internal view returns (bool) {
-        /// @dev Confirm that the transfer can proceed if the account is not token bound
-        ///      or the message sender is a leader of the badge, or it's a mint/burn.
+        /// @dev Confirm that the transfer can proceed if the Badge is not account bound
+        ///      or the message sender is a Manager, or it's a mint/burn.
         return
             _from == address(0) ||
             _to == address(0) ||
@@ -418,13 +418,13 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     }
 
     /**
-     * @notice Enforces account bound tokens to be transferred only when permissioned.
+     * @notice Enforces account bound Badges to be transferred only when permissioned.
      * @param _operator The address of the operator.
-     * @param _from The address of the token owner.
-     * @param _to The address of the token recipient.
-     * @param _ids The ids of the tokens being transferred.
-     * @param _amounts The amounts of the tokens being transferred.
-     * @param _data The data of the tokens being transferred.
+     * @param _from The address of the Badge owner.
+     * @param _to The address of the Badge recipient.
+     * @param _ids The ids of the Badges being transferred.
+     * @param _amounts The amounts of the Badges being transferred.
+     * @param _data The data of the Badges being transferred.
      */
     function _beforeTokenTransfer(
         address _operator,
