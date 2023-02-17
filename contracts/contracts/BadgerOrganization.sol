@@ -34,7 +34,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         uint256 _amount,
         bytes memory _data
     ) external virtual override onlyBadgeManager(_id) {
-        /// @dev Mint the badge to the user.
+        /// @dev Mint the Badge to the user.
         _mint(_to, _id, _amount, _data);
     }
 
@@ -64,15 +64,19 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
     }
 
     /**
-     * @notice Allows the owner and leaders of a contract to batch mint badges.
+     * @notice Allows Organization and Badge Managers to batch mint badges.
      * @dev This is an extremely gassy and bad implementation of batch processing
      *      for Ethereum mainnet. However, because many organizations do not live on ETH
      *      this function enables the user a simpler front-end experience.
      * @dev If you are minting through a custom contract. Recommended usage is
      *      to use the `mintBatch` function instead by doing 1 Badge at a time.
-     * @param _tos The addresses to mint the badge to.
-     * @param _ids The id of the badge to mint.
-     * @param _amounts The amount of the badge to mint.
+     * @param _tos The addresses to mint the Badge to.
+     * @param _ids The ids of the Badges to mint.
+     * @param _amounts The amounts of the Badges to mint.
+     *
+     * Requirements:
+     * - `_tos`, `_ids`, and `_amounts` must be the same length.
+     * - `_msgSender` must be a Manager of the Badge or Organization.
      */
     function leaderMintFullBatch(
         address[] memory _tos,
@@ -90,17 +94,17 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         uint256 i;
         uint256 id;
 
-        /// @dev Mint the badge to all of the recipients with their given amount.
+        /// @dev Mint the Badge to all of the recipients with their given amount.
         for (i; i < _tos.length; i++) {
             id = _ids[i];
 
-            /// @dev Make sure the user has permission to mint this badge.
+            /// @dev Make sure the user has permission to mint this Badge.
             require(
                 _isBadgeManager(id, _msgSender()),
-                "BadgerOrganization::leaderMintFullBatch: Only the leader of the Badge can mint."
+                "BadgerOrganization::leaderMintFullBatch: Only a Manager of the Badge can mint."
             );
 
-            /// @dev Mint the badges to the users.
+            /// @dev Mint the Badges to the users.
             _mint(_tos[i], id, _amounts[i], _data);
         }
     }
@@ -113,7 +117,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         uint256 _id,
         uint256 _amount
     ) external virtual override onlyBadgeManager(_id) {
-        /// @dev Revoke the badge from the user.
+        /// @dev Revoke the Badge from the user.
         _burn(_from, _id, _amount);
     }
 
@@ -134,23 +138,27 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         /// @dev Load the stack.
         uint256 i;
 
-        /// @dev Revoke the badge from all of the recipients with their given amount.
+        /// @dev Revoke the Badge from all of the recipients with their given amount.
         for (i; i < _froms.length; i++) {
-            /// @dev Revoke the badge from the user.
+            /// @dev Revoke the Badge from the user.
             _burn(_froms[i], _id, _amounts[i]);
         }
     }
 
     /**
-     * @notice Allows the owner and leaders of a contract to revoke badges from a user.
+     * @notice Allows Organization and Badge Managers to revoke badges from a user.
      * @dev This is an extremely gassy and bad implementation of batch processing
      *      for Ethereum mainnet. However, because many organizations do not live on ETH
      *      this function enables the user a simpler front-end experience.
      * @dev If you are revoking through a custom contract. Recommended usage is
      *      to use the `revokeBatch` function instead.
-     * @param _froms The addresses to revoke the badge from.
-     * @param _ids The id of the badge to revoke.
-     * @param _amounts The amount of the badge to revoke.
+     * @param _froms The addresses to revoke the Badge from.
+     * @param _ids The id of the Badge to revoke.
+     * @param _amounts The amount of the Badge to revoke.
+     *
+     * Requirements:
+     * - `_tos`, `_ids`, and `_amounts` must be the same length.
+     * - `_msgSender` must be a Manager of the Badge or Organization.
      */
     function revokeFullBatch(
         address[] memory _froms,
@@ -170,10 +178,10 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         for (i; i < _froms.length; i++) {
             id = _ids[i];
 
-            /// @dev Make sure the user has permission to revoke this badge.
+            /// @dev Make sure the user has permission to revoke this Badge.
             require(
                 _isBadgeManager(id, _msgSender()),
-                "BadgerOrganization::revokeFullBatch: Only the leader of the Badge can revoke."
+                "BadgerOrganization::revokeFullBatch: Only a Manager of the Badge can revoke."
             );
 
             /// @dev Revoke the badge from the user.
@@ -189,7 +197,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         uint256 _amount,
         bytes memory _data
     ) external virtual override {
-        /// @dev Revoke the badge from the user.
+        /// @dev Revoke the Badge from the user.
         _burn(_msgSender(), _id, _amount);
     }
 
@@ -207,10 +215,10 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         override
         returns (string memory)
     {
-        /// @dev Get the URI for the badge.
+        /// @dev Get the URI for the Badge.
         string memory _uri = badges[_id].uri;
 
-        /// @dev If a custom URI has been set for this badge, return it.
+        /// @dev If a custom URI has been set for this Badge, return it.
         if (bytes(_uri).length > 0) {
             return _uri;
         }
@@ -220,8 +228,8 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
     }
 
     /**
-     * @notice Returns the metadata URI for the organization.
-     * @return The metadata URI for the organization.
+     * @notice Returns the metadata URI for the Organization.
+     * @return The metadata URI for the Organization.
      */
     function contractURI() public view returns (string memory) {
         return organizationURI;
