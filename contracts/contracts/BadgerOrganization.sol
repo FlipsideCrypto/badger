@@ -48,7 +48,10 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         bytes memory _data
     ) external virtual override onlyBadgeManager(_id) {
         /// @dev Make sure that the supplied arrays are equal in length.
-        _validateLengths(_tos.length, _amounts.length);
+        require(
+            _tos.length == _amounts.length,
+            "BadgerOrganization::mintBatch: _tos and _amounts must be the same length."
+        );
 
         /// @dev Load the stack.
         uint256 i;
@@ -82,7 +85,10 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         bytes memory _data
     ) external virtual {
         /// @dev Make sure that the supplied arrays are equal in length.
-        _validateLengths(_tos.length, _ids.length, _amounts.length);
+        require(
+            _tos.length == _ids.length && _ids.length == _amounts.length,
+            "BadgerOrganization::mintFullBatch: _froms, _ids, and _amounts must be the same length."
+        );
 
         /// @dev Load the stack.
         uint256 i;
@@ -124,7 +130,10 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         uint256[] memory _amounts
     ) external virtual override onlyBadgeManager(_id) {
         /// @dev Make sure that the supplied arrays are equal in length.
-        _validateLengths(_froms.length, _amounts.length);
+        require(
+            _froms.length == _amounts.length,
+            "BadgerOrganization::revokeBatch: _from and _amounts must be the same length."
+        );
 
         /// @dev Load the stack.
         uint256 i;
@@ -157,7 +166,10 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         uint256[] memory _amounts
     ) external virtual {
         /// @dev Make sure that the supplied arrays are equal in length.
-        _validateLengths(_froms.length, _ids.length, _amounts.length);
+        require(
+            _froms.length == _ids.length && _ids.length == _amounts.length,
+            "BadgerOrganization::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
+        );
 
         /// @dev Load the stack.
         uint256 i;

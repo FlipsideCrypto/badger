@@ -93,7 +93,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         onlyOrganizationManager
     {
         /// @dev Confirm a valid URI was provided.
-        _validateURI(_uri);
+        require(
+            bytes(_uri).length > 0,
+            "BadgerScout::setOrganizationURI: URI must be set."
+        );
 
         /// @dev Set the URI of the Organization.
         _setOrganizationURI(_uri);
@@ -109,7 +112,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         address[] memory _managers
     ) public virtual override onlyBadgeManager(_id) {
         /// @dev Confirm a valid URI was provided.
-        _validateURI(_uri);
+        require(
+            bytes(_uri).length > 0,
+            "BadgerScout::setBadge: URI must be set."
+        );
 
         /// @dev Update the Badge configuration.
         _setBadge(_id, _accountBound, _uri, _managers);
@@ -125,7 +131,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         onlyBadgeManager(_id)
     {
         /// @dev Confirm a valid URI was provided.
-        _validateURI(_uri);
+        require(
+            bytes(_uri).length > 0,
+            "BadgerScout::setBadgeURI: URI must be set."
+        );
 
         /// @dev Set the URI of the Badge.
         _setBadgeURI(_id, _uri);
@@ -139,7 +148,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         bool[] calldata _isManager
     ) public virtual override onlyOwner {
         /// @dev Confirm the arrays provided are of the same length.
-        _validateLengths(_managers.length, _isManager.length);
+        require(
+            _managers.length == _isManager.length,
+            "BadgerScout::setManagers: _managers and _isManager must be the same length."
+        );
 
         /// @dev Load the stack.
         uint256 i;
@@ -164,7 +176,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         bool[] calldata _isManager
     ) public virtual override onlyOrganizationManager {
         /// @dev Confirm the arrays provided are of the same length.
-        _validateLengths(_managers.length, _isManager.length);
+        require(
+            _managers.length == _isManager.length,
+            "BadgerScout::setManagers: _managers and _isManager must be the same length."
+        );
 
         /// @dev Load the stack.
         uint256 i;
@@ -189,7 +204,11 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         bool[] calldata _isManager
     ) public virtual override onlyOrganizationManager {
         /// @dev Confirm the arrays provided are of the same length
-        _validateLengths(_ids.length, _managers.length, _isManager.length);
+        require(
+            _ids.length == _managers.length &&
+                _managers.length == _isManager.length,
+            "BadgerScout::setManagersBatch: _ids, _managers, and _isManager must be the same length."
+        );
 
         /// @dev Load the stack.
         uint256 i;
@@ -445,52 +464,5 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     {
         /// @dev Build the hash of the Manager.
         return keccak256(abi.encode(_id, _manager));
-    }
-
-    /*//////////////////////////////////////////////////////////////
-                        INTERNAL VALIDATORS
-    //////////////////////////////////////////////////////////////*/
-
-    /**
-     * @notice Enforces that the length of three arrays are equal.
-     * @param _length1 The first array length.
-     * @param _length2 The second array length.
-     * @param _length3 The third array length.
-     */
-    function _validateLengths(
-        uint256 _length1,
-        uint256 _length2,
-        uint256 _length3
-    ) internal pure {
-        require(
-            _length1 == _length2 && _length2 == _length3,
-            "BadgerScout::_validateLengths: Array lengths must be equal."
-        );
-    }
-
-    /**
-     * @notice Enforces that the length of two arrays are equal.
-     * @param _length1 The first array length.
-     * @param _length2 The second array length.
-     */
-    function _validateLengths(uint256 _length1, uint256 _length2)
-        internal
-        pure
-    {
-        require(
-            _length1 == _length2,
-            "BadgerScout::_validateLengths: Array lengths must be equal."
-        );
-    }
-
-    /**
-     * @notice Enforces a Badge URI to not be set to an empty string.
-     * @param _uri The URI to check.
-     */
-    function _validateURI(string memory _uri) internal pure {
-        require(
-            bytes(_uri).length > 0,
-            "BadgerScout::_validateURI: URI must be set."
-        );
     }
 }

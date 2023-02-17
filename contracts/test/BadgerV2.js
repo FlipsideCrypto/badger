@@ -94,7 +94,7 @@ describe("Badger", function () {
                 false,
                 "",
                 []
-            ).should.be.revertedWith("BadgerScout::_validateURI: URI must be set.")
+            ).should.be.revertedWith("BadgerScout::setBadge: URI must be set.")
         })
 
         it('setBadge() success', async () => {
@@ -124,7 +124,7 @@ describe("Badger", function () {
             await org.connect(owner).setBadgeURI(
                 0,
                 ""
-            ).should.be.revertedWith("BadgerScout::_validateURI: URI must be set.")
+            ).should.be.revertedWith("BadgerScout::setBadgeURI: URI must be set.")
         });
 
         it('setManagers() success', async () => {
@@ -156,7 +156,7 @@ describe("Badger", function () {
                 0,
                 [badgeManagerSigner.address],
                 [true, false]
-            ).should.be.revertedWith("BadgerScout::_validateLengths: Array lengths must be equal.")
+            ).should.be.revertedWith("BadgerScout::setManagers: _managers and _isManager must be the same length.")
         });
 
         it('setManagersBatch() success', async () => {
@@ -188,7 +188,7 @@ describe("Badger", function () {
                 [0, 0],
                 [badgeManagerSigner.address, badgeManagerSigner.address],
                 [true]
-            ).should.be.revertedWith("BadgerScout::_validateLengths: Array lengths must be equal.")
+            ).should.be.revertedWith("BadgerScout::setManagersBatch: _ids, _managers, and _isManager must be the same length.")
         });
     })
 
@@ -235,7 +235,7 @@ describe("Badger", function () {
                 0,
                 [1, 1, 1],
                 "0x"
-            ).should.be.revertedWith("BadgerScout::_validateLengths: Array lengths must be equal.")
+            ).should.be.revertedWith("BadgerOrganization::mintBatch: _tos and _amounts must be the same length.")
         });
 
         it("mintFullBatch() success", async () => {
@@ -277,7 +277,7 @@ describe("Badger", function () {
                 [0, 0],
                 [1, 1, 1],
                 "0x"
-            ).should.be.revertedWith("BadgerScout::_validateLengths: Array lengths must be equal.")
+            ).should.be.revertedWith("BadgerOrganization::mintFullBatch: _froms, _ids, and _amounts must be the same length.");
         });
 
         it("revoke() success", async () => {
@@ -333,7 +333,7 @@ describe("Badger", function () {
                 [signer1.address, badgeManagerSigner.address],
                 0,
                 [1, 1, 1],
-            ).should.be.revertedWith("BadgerScout::_validateLengths: Array lengths must be equal.")
+            ).should.be.revertedWith("BadgerOrganization::revokeBatch: _from and _amounts must be the same length.")
         });
 
         it("revokeFullBatch() success", async () => {
@@ -379,7 +379,7 @@ describe("Badger", function () {
                 [signer1.address, badgeManagerSigner.address],
                 [0, 0],
                 [1, 1, 1],
-            ).should.be.revertedWith("BadgerScout::_validateLengths: Array lengths must be equal.")
+            ).should.be.revertedWith("BadgerOrganization::revokeFullBatch: _froms, _ids, and _amounts must be the same length.")
         });
 
         it("forfeit() success", async () => {
