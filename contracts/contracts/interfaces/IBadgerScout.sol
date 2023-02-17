@@ -9,8 +9,8 @@ interface IBadgerScout {
 
     /// @dev The processing information for this Badge.
     struct Badge {
-        uint256 config; /// ---- @dev Bitpacked accountBound.
-        string uri; /// -------- @dev The URI for the badge.
+        bool accountBound; /// ---- @dev Whether or not the Badge is account bound.
+        string uri; /// ----------- @dev The URI for the badge.
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ interface IBadgerScout {
     event OrganizationUpdated(string organizationURI);
 
     /// @dev Event that announces when the status of a Badge is updated.
-    event BadgeUpdated(uint256 indexed badgeId, uint256 indexed config);
+    event BadgeUpdated(uint256 indexed badgeId, bool indexed accountBound);
 
     /// @dev Event that announces when the state of a Manager changes.
     event ManagerUpdated(bytes32 indexed managerKey, bool indexed isManager);
@@ -106,15 +106,4 @@ interface IBadgerScout {
         address[] calldata _managers,
         bool[] calldata _isManager
     ) external;
-
-    /*//////////////////////////////////////////////////////////////
-                                GETTERS
-    //////////////////////////////////////////////////////////////*/
-
-    /**
-     * @notice Get the config for a specific Badge id.
-     * @param _id The id of the Badge being accessed.
-     * @return True if the Badge is account bound, false otherwise.
-     */
-    function getAccountBound(uint256 _id) external view returns (bool);
 }

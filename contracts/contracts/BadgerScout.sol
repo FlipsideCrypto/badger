@@ -60,6 +60,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         symbol = _symbol;
     }
 
+    ////////////////////////////////////////////////////////
+    ///                    MODIFIERS                     ///
+    ////////////////////////////////////////////////////////
+
     /**
      * @notice Confirm that only the Owner or an Organization Manager passes.
      */
@@ -82,6 +86,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         );
         _;
     }
+
+    ////////////////////////////////////////////////////////
+    ///                     SETTERS                      ///
+    ////////////////////////////////////////////////////////
 
     /**
      * See {IBadgerScout.setOrganizationURI}
@@ -224,48 +232,9 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         }
     }
 
-    /*//////////////////////////////////////////////////////////////
-                                GETTERS
-    //////////////////////////////////////////////////////////////*/
-
-    /**
-     * See {IBadgerScout.getAccountBound}
-     */
-    function getAccountBound(uint256 _id)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
-        /// @dev If the value in config can be masked to `1` then the first slot
-        ///      is active, and thus the boolean is `true`.
-        return (badges[_id].config & 1) == 1;
-    }
-
-    /*//////////////////////////////////////////////////////////////
-                            INTERNAL SETTERS
-    //////////////////////////////////////////////////////////////*/
-
-    /**
-     * @notice Converts a boolean into a bit and packs it into the config.
-     * @param _id The ID of the Badge.
-     * @param _bit The bit to pack.
-     * @param _value The value to pack.
-     */
-    function _setBit(
-        uint256 _id,
-        uint256 _bit,
-        bool _value
-    ) internal virtual {
-        if (_value) {
-            /// @dev Set the bit and shift it to the correct position.
-            badges[_id].config |= (1 << _bit);
-        } else {
-            /// @dev Unset the bit and shift it to the correct position.
-            badges[_id].config &= ~(1 << _bit);
-        }
-    }
+    ////////////////////////////////////////////////////////
+    ///                 INTERNAL SETTERS                 ///
+    ////////////////////////////////////////////////////////
 
     /**
      * @notice Allows the Owner of the contract to update the Organization URI.
@@ -295,11 +264,11 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         /// @dev Retrieve the Badge from storage.
         Badge storage badge = badges[_id];
 
+        /// @dev Set the account bound bit of the Badge.
+        badge.accountBound = _accountBound;
+
         /// @dev Set the URI of the Badge.
         _setBadgeURI(_id, _uri);
-
-        /// @dev Set the account bound bit of the Badge.
-        _setBit(_id, 0, _accountBound);
 
         /// @dev Load the stack.
         uint256 i;
@@ -309,11 +278,11 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         ///         `true` for the Badge.
         for (i; i < _managers.length; i++) {
             /// @dev Update the state of all the Managers.
-            _setManager(keccak256(abi.encode(_id, _managers[i])), true);
+            _setManager(_badgeManagerHash(_id, _managers[i]), true);
         }
 
         /// @dev Announce the Badge update.
-        emit BadgeUpdated(_id, badge.config);
+        emit BadgeUpdated(_id, _accountBound);
     }
 
     /**
@@ -384,9 +353,9 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         );
     }
 
-    /*//////////////////////////////////////////////////////////////
-                            INTERNAL GETTERS
-    //////////////////////////////////////////////////////////////*/
+    ////////////////////////////////////////////////////////
+    ///                 INTERNAL GETTERS                 ///
+    ////////////////////////////////////////////////////////
 
     /**
      * @notice Confirms whether this address is a Manager of the Organization or not.
@@ -399,8 +368,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         virtual
         returns (bool)
     {
+        /// @dev Confirm that the address is either the Owner of the contract or
+        ///      a Manager of the Organization.
         return (_address == owner() ||
-            managerKeyToIsManager[keccak256(abi.encode(_address))]);
+            managerKeyToIsManager[_managerHash(_address)]);
     }
 
     /**
@@ -415,8 +386,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         virtual
         returns (bool)
     {
+        /// @dev Confirm that the address is either a Manager of the Organization or
+        ///      a Manager of the Badge.
         return (_isOrganizationManager(_address) ||
-            managerKeyToIsManager[keccak256(abi.encode(_id, _address))]);
+            managerKeyToIsManager[_badgeManagerHash(_id, _address)]);
     }
 
     /**
@@ -435,10 +408,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         /// @dev Confirm that the transfer can proceed if the Badge is not account bound
         ///      or the message sender is a Manager, or it's a mint/burn.
         return
-            _from == address(0) ||
-            _to == address(0) ||
-            _isBadgeManager(_id, _operator) ||
-            !getAccountBound(_id);
+            _from == address(0) || // ------------------------------- @dev Mints
+            _to == address(0) || // --------------------------------- @dev Burns
+            _isBadgeManager(_id, _operator) || // ----------------- @dev Manager Actions
+            badges[_id].accountBound == false; // ------------------- @dev Non-account bound
     }
 
     /**
