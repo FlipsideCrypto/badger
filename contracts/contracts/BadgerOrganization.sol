@@ -4,7 +4,6 @@ pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
 import {IBadgerOrganization} from "./interfaces/IBadgerOrganization.sol";
-
 import {BadgerScout} from "./BadgerScout.sol";
 
 /**

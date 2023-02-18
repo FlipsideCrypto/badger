@@ -2,52 +2,50 @@
 
 pragma solidity ^0.8.16;
 
+/// @dev Core dependencies.
+import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+
 // TODO: Need to add `badges` and `managerKeys` to the BadgerScout interface
 
 contract BadgerHooks {
+    using EnumerableSet for EnumerableSet.AddressSet;
+
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
-    address[] private _beforeMintingHooks;
-
-    address[] private _beforeRevokingHooks;
-
-    address[] private _beforeForfeitHooks;
-
-    address[] private _beforeTransferHooks;
+    /// @dev The hooks that are processed when their triggers hit.
+    /// @notice Instead of needing to loop through all of the hooks, we can
+    ///         just loop through the hooks that are registered for the
+    ///         specific trigger without having to have a handle mechanism
+    ///         for every type of hook.
+    /// @notice There is no quality enforcement on the hooks beyond a validating
+    ///         the supplied address is a contract address due to the inherent
+    ///         nature of suppporting multiple interfaces and functions from a
+    ///         a single Hook Postman.
+    /// @dev Slot 0: reversed for `beforeSetHook`
+    /// @dev Slot 1: reserved for `beforeMintingHook`
+    /// @dev Slot 2: reserved for `beforeRevokingHook`
+    /// @dev Slot 3: reserved for `beforeForfeitHook`
+    /// @dev Slot 4: reserved for `beforeTransferHook`
+    mapping(uint8 => EnumerableSet.AddressSet) internal hooks;
 
     ////////////////////////////////////////////////////////
     ///                 INTERNAL SETTERS                 ///
     ////////////////////////////////////////////////////////
 
-    function _setHooks(address[] storage _hooks, address[] memory _newHooks)
-        internal
-    {
-        /// @dev Load the stack.
-        uint256 i;
+    /**
+     */
+    function _setHook(
+        uint8 _slot,
+        address _slotHook,
+        bool _isActive
+    ) internal {
+        if (_isActive) {
+            _beforeSetHook(_slot, _slotHook, _isActive); /// @dev Call the `beforeSetHook` hook.
 
-        /// @dev Loop through the new hooks and add them.
-        for (i; i < _newHooks.length; i++) {
-            // Add the new hook.
-            _hooks.push(_newHooks[i]);
-        }
-    }
-
-    function _setBeforeMintingHooks(address[] memory _newHooks) internal {
-        _setHooks(_beforeMintingHooks, _newHooks);
-    }
-
-    function _setBeforeRevokingHooks(address[] memory _newHooks) internal {
-        _setHooks(_beforeRevokingHooks, _newHooks);
-    }
-
-    function _setBeforeForfeitHooks(address[] memory _newHooks) internal {
-        _setHooks(_beforeForfeitHooks, _newHooks);
-    }
-
-    function _setBeforeTransferHooks(address[] memory _newHooks) internal {
-        _setHooks(_beforeTransferHooks, _newHooks);
+            hooks[_slot].add(_slotHook); /// --- @dev Add the item to the slot.
+        } else hooks[_slot].remove(_slotHook); /// @dev If the hook is not active, remove it from the set.
     }
 
     function _beforeMintHook(
@@ -66,7 +64,7 @@ contract BadgerHooks {
         );
 
         // Call the hooks.
-        _hook(_beforeMintingHooks, data, "beforeMintingHook");
+        _hook(0, data, "beforeMintingHook");
     }
 
     function _beforeRevokeHook(
@@ -81,7 +79,7 @@ contract BadgerHooks {
             _amount
         );
 
-        _hook(_beforeRevokingHooks, data, "beforeRevokeHook");
+        _hook(1, data, "beforeRevokeHook");
     }
 
     function _beforeForfeitHook(
@@ -96,7 +94,7 @@ contract BadgerHooks {
             _amount
         );
 
-        _hook(_beforeForfeitHooks, data, "beforeForfeitHook");
+        _hook(2, data, "beforeForfeitHook");
     }
 
     function _beforeTransferHook(
@@ -117,21 +115,24 @@ contract BadgerHooks {
             _data
         );
 
-        _hook(_beforeTransferHooks, data, "beforeTransferHook");
+        _hook(3, data, "beforeTransferHook");
     }
 
     function _hook(
-        address[] storage _hooks,
+        uint8 _slot,
         bytes memory _data,
         bytes memory _key
     ) internal {
+        /// @dev Retrieve the hooks out of storage.
+        address[] storage slotHooks = hooks[_slot];
+
         /// @dev Load the stack.
         uint256 i;
 
         /// @dev Loop through the hooks and call them.
-        for (i; i < _hooks.length; i++) {
+        for (i; i < slotHooks.length; i++) {
             // Make the low level call the hook using the supplied data.
-            (bool success, ) = _hooks[i].call(_data);
+            (bool success, ) = slotHooks[i].call(_data);
 
             /// @dev If the hook fails, revert the transaction.
             require(
