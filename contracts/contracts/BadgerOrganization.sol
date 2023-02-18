@@ -217,7 +217,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         returns (string memory)
     {
         /// @dev Get the URI for the Badge.
-        string memory _uri = badges[_id].uri;
+        string memory _uri = uris[_id];
 
         /// @dev If a custom URI has been set for this Badge, return it.
         if (bytes(_uri).length > 0) {
