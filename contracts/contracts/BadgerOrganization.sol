@@ -1,9 +1,10 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
 import {IBadgerOrganization} from "./interfaces/IBadgerOrganization.sol";
+
 import {BadgerScout} from "./BadgerScout.sol";
 
 /**
@@ -118,7 +119,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         uint256 _amount
     ) external virtual override onlyBadgeManager(_id) {
         /// @dev Revoke the Badge from the user.
-        _burn(_from, _id, _amount);
+        _revoke(_from, _id, _amount);
     }
 
     /**
@@ -141,7 +142,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         /// @dev Revoke the Badge from all of the recipients with their given amount.
         for (i; i < _froms.length; i++) {
             /// @dev Revoke the Badge from the user.
-            _burn(_froms[i], _id, _amounts[i]);
+            _revoke(_froms[i], _id, _amounts[i]);
         }
     }
 
@@ -185,7 +186,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
             );
 
             /// @dev Revoke the badge from the user.
-            _burn(_froms[i], _ids[i], _amounts[i]);
+            _revoke(_froms[i], _ids[i], _amounts[i]);
         }
     }
 
@@ -198,7 +199,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         bytes memory
     ) external virtual override {
         /// @dev Revoke the Badge from the user.
-        _burn(_msgSender(), _id, _amount);
+        _forfeit(_msgSender(), _id, _amount);
     }
 
     ////////////////////////////////////////////////////////

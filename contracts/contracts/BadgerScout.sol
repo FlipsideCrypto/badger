@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 pragma solidity ^0.8.16;
 
@@ -9,13 +9,14 @@ import {Badger} from "./Badger.sol";
 import {IBadgerScout} from "./interfaces/IBadgerScout.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import {BadgerHooks} from "./BadgerHooks.sol";
 
 /**
  * @dev BadgerScout contains the back-end logic of a Badger Organization.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
+contract BadgerScout is IBadgerScout, Ownable, ERC1155, BadgerHooks {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
@@ -313,13 +314,68 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
     }
 
     /**
-     * @notice Enforces account bound Badges to be transferred only when permissioned.
-     * @param _operator The address of the operator.
-     * @param _from The address of the Badge owner.
-     * @param _to The address of the Badge recipient.
-     * @param _ids The ids of the Badges being transferred.
-     * @param _amounts The amounts of the Badges being transferred.
-     * @param _data The data of the Badges being transferred.
+     * @notice Runs enforcement logic before minting a token beyond the
+     *         primary implementation of permissions.
+     * @dev Enables things such as Total Supply, Responsive Capacity, Etc.
+     * @param _to The address of the user.
+     * @param _id The id of the Badge.
+     * @param _amount The amount of the Badge to mint.
+     */
+    function _mint(
+        address _to,
+        uint256 _id,
+        uint256 _amount,
+        bytes memory _data
+    ) internal virtual override {
+        /// @dev Before minting, process any Organization hooks.
+        _beforeMintHook(_to, _id, _amount, _data);
+
+        /// @dev Mint the Badge to the user.
+        super._mint(_to, _id, _amount, _data);
+    }
+
+    /**
+     * @notice Revoke a Badge from a user.
+     * @dev Enables the ability to have condition specific revocation logic such as
+     *      a time based revocation or preventing the act of all together.
+     * @param _from The address of the user.
+     * @param _id The id of the Badge.
+     * @param _amount The amount of the Badge to revoke.
+     */
+    function _revoke(
+        address _from,
+        uint256 _id,
+        uint256 _amount
+    ) internal virtual {
+        /// @dev Before revoking, process any Organization hooks.
+        _beforeRevokeHook(_from, _id, _amount);
+
+        /// @dev Revoke the Badge from the user.
+        super._burn(_from, _id, _amount);
+    }
+
+    /**
+     * @notice Burn the Badge from the user.
+     * @dev Enables the ability run exogenous logic before forfeiting a Badge.
+     * @param _from The address of the user.
+     * @param _id The id of the Badge.
+     * @param _amount The amount of the Badge to burn.
+     */
+    function _forfeit(
+        address _from,
+        uint256 _id,
+        uint256 _amount
+    ) internal virtual {
+        /// @dev Before revoking, process any Organization hooks.
+        _beforeForfeitHook(_from, _id, _amount);
+
+        /// @dev Burn the Badge held by the user.
+        super._burn(_from, _id, _amount);
+    }
+
+    /**
+     * See {ERC1155._beforeTokenTransfer}
+     * @dev Enables the ability to have modules such as Account Bound, etc.
      */
     function _beforeTokenTransfer(
         address _operator,
@@ -329,35 +385,15 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         uint256[] memory _amounts,
         bytes memory _data
     ) internal virtual override {
-        /// @dev Load the stack.
-        uint256 i;
-
-        /// @dev Loop through all the IDs and confirm that the transfer is ready.
-        for (i; i < _ids.length; i++) {
-            /// @dev Confirm that every token being transferred can be managed by
-            ///      the message sender.
-            require(
-                _isTransferReady(_operator, _from, _to, _ids[i]),
-                "BadgerScout::_beforeTokenTransfer: Transfer not ready."
-            );
-        }
-
-        /// @dev Call the parent function.
-        super._beforeTokenTransfer(
-            _operator,
-            _from,
-            _to,
-            _ids,
-            _amounts,
-            _data
-        );
+        /// @dev Before transferring, process any Organization hooks.
+        _beforeTransferHook(_operator, _from, _to, _ids, _amounts, _data);
     }
 
     ////////////////////////////////////////////////////////
     ///                 INTERNAL GETTERS                 ///
     ////////////////////////////////////////////////////////
 
-    /**
+    /*
      * @notice Confirms whether this address is a Manager of the Organization or not.
      * @param _address The address of the Manager to check.
      * @return True if the address is a Manager of the Organization, false otherwise.
@@ -390,28 +426,6 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155 {
         ///      a Manager of the Badge.
         return (_isOrganizationManager(_address) ||
             managerKeyToIsManager[_badgeManagerHash(_id, _address)]);
-    }
-
-    /**
-     * @notice Confirms whether this Badge is in a state to be a transferred or not.
-     * @param _id The id of the Badge to check.
-     * @param _from The address of the Badge owner.
-     * @param _to The address of the Badge recipient.
-     * @return True if the Badge is in a state to be transferred, false otherwise.
-     */
-    function _isTransferReady(
-        address _operator,
-        address _from,
-        address _to,
-        uint256 _id
-    ) internal view returns (bool) {
-        /// @dev Confirm that the transfer can proceed if the Badge is not account bound
-        ///      or the message sender is a Manager, or it's a mint/burn.
-        return
-            _from == address(0) || // ------------------------------- @dev Mints
-            _to == address(0) || // --------------------------------- @dev Burns
-            _isBadgeManager(_id, _operator) || // ----------------- @dev Manager Actions
-            badges[_id].accountBound == false; // ------------------- @dev Non-account bound
     }
 
     /**
