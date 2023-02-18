@@ -37,24 +37,6 @@ interface IBadgerScout {
     function setOrganizationURI(string memory _uri) external;
 
     /**
-     * @notice Create a Badge in the Organization.
-     * @param _id The id of the Badge being created.
-     * @param _accountBound Whether or not the Badge is account bound.
-     * @param _uri The URI for the Badge.
-     * @param _managers The addresses of the Badge Managers.
-     *
-     * Requirements:
-     * - `_msgSender` must be a Manager of the Badge or Organization.
-     * - `_uri` cannot be empty.
-     */
-    function setBadge(
-        uint256 _id,
-        bool _accountBound,
-        string memory _uri,
-        address[] memory _managers
-    ) external;
-
-    /**
      * @notice Set the URI for a Badge.
      * @param _uri The URI for the Badge.
      *

@@ -112,25 +112,6 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155, BadgerHooks {
     }
 
     /**
-     * See {IBadgerScout.setBadge}
-     */
-    function setBadge(
-        uint256 _id,
-        bool _accountBound,
-        string memory _uri,
-        address[] memory _managers
-    ) public virtual override onlyBadgeManager(_id) {
-        /// @dev Confirm a valid URI was provided.
-        require(
-            bytes(_uri).length > 0,
-            "BadgerScout::setBadge: URI must be set."
-        );
-
-        /// @dev Update the Badge configuration.
-        _setBadge(_id, _accountBound, _uri, _managers);
-    }
-
-    /**
      * See {IBadgerScout.setBadgeURI}
      */
     function setBadgeURI(uint256 _id, string memory _uri)
@@ -247,43 +228,6 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155, BadgerHooks {
 
         /// @dev Announce the URI change.
         emit OrganizationUpdated(_uri);
-    }
-
-    /**
-     * @notice Create a Badge in the Organization.
-     * @param _id The id of the Badge being created.
-     * @param _accountBound Whether or not the Badge is account bound.
-     * @param _uri The URI for the Badge.
-     * @param _managers The addresses of the Badge Managers.
-     */
-    function _setBadge(
-        uint256 _id,
-        bool _accountBound,
-        string memory _uri,
-        address[] memory _managers
-    ) internal virtual {
-        /// @dev Retrieve the Badge from storage.
-        Badge storage badge = badges[_id];
-
-        /// @dev Set the account bound bit of the Badge.
-        badge.accountBound = _accountBound;
-
-        /// @dev Set the URI of the Badge.
-        _setBadgeURI(_id, _uri);
-
-        /// @dev Load the stack.
-        uint256 i;
-
-        /// @dev Loop through all the Managers provided and mark them as such.
-        /// @notice Adding Managers through this function marks all of them as
-        ///         `true` for the Badge.
-        for (i; i < _managers.length; i++) {
-            /// @dev Update the state of all the Managers.
-            _setManager(_badgeManagerHash(_id, _managers[i]), true);
-        }
-
-        /// @dev Announce the Badge update.
-        emit BadgeUpdated(_id, _accountBound);
     }
 
     /**
