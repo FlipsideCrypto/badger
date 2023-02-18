@@ -20,9 +20,6 @@ interface IBadgerScout {
     /// @dev Event that announces when the Organization is updated.
     event OrganizationUpdated(string organizationURI);
 
-    /// @dev Event that announces when the status of a Badge is updated.
-    event BadgeUpdated(uint256 indexed badgeId, bool indexed accountBound);
-
     /// @dev Event that announces when the state of a Manager changes.
     event ManagerUpdated(bytes32 indexed managerKey, bool indexed isManager);
 
