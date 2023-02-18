@@ -2,45 +2,6 @@
 
 pragma solidity ^0.8.16;
 
-interface BadgerHook {
-    function beforeMintingHook(
-        address _to,
-        uint256 _id,
-        uint256 _amount,
-        bytes memory _data
-    ) external;
-
-    function beforeRevokeHook(
-        address _from,
-        uint256 _id,
-        uint256 _amount
-    ) external;
-
-    function beforeForfeitHook(
-        address _from,
-        uint256 _id,
-        uint256 _amount
-    ) external;
-
-    function beforeTransferHook(
-        address _operator,
-        address _from,
-        address _to,
-        uint256[] memory _ids,
-        uint256[] memory _amounts,
-        bytes memory _data
-    ) external;
-
-    function afterTransferHook(
-        address _operator,
-        address _from,
-        address _to,
-        uint256[] memory _ids,
-        uint256[] memory _amounts,
-        bytes memory _data
-    ) external;
-}
-
 // TODO: Need to add `badges` and `managerKeys` to the BadgerScout interface
 
 contract BadgerHooks {
@@ -48,31 +9,46 @@ contract BadgerHooks {
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
-    /// @dev The hook contracts being used for minting.
-    BadgerHook[] private _beforeMintingHooks;
+    address[] private _beforeMintingHooks;
 
-    BadgerHook[] private _beforeRevokingHooks;
+    address[] private _beforeRevokingHooks;
 
-    BadgerHook[] private _beforeForfeitHooks;
+    address[] private _beforeForfeitHooks;
 
-    BadgerHook[] private _beforeTransferHooks;
+    address[] private _beforeTransferHooks;
 
-    BadgerHook[] private _afterTransferHooks;
+    ////////////////////////////////////////////////////////
+    ///                 INTERNAL SETTERS                 ///
+    ////////////////////////////////////////////////////////
 
-    // function _beforeMintHook(
-    //     address _to,
-    //     uint256 _id,
-    //     uint256 _amount,
-    //     bytes memory _data
-    // ) internal {
-    //     /// @dev Load the stack.
-    //     uint256 i;
+    function _setHooks(address[] storage _hooks, address[] memory _newHooks)
+        internal
+    {
+        /// @dev Load the stack.
+        uint256 i;
 
-    //     /// @dev Loop through the hooks and call them.
-    //     for (i = 0; i < _beforeMintingHooks.length; i++) {
-    //         _beforeMintingHooks[i].beforeMintingHook(_to, _id, _amount, _data);
-    //     }
-    // }
+        /// @dev Loop through the new hooks and add them.
+        for (i; i < _newHooks.length; i++) {
+            // Add the new hook.
+            _hooks.push(_newHooks[i]);
+        }
+    }
+
+    function _setBeforeMintingHooks(address[] memory _newHooks) internal {
+        _setHooks(_beforeMintingHooks, _newHooks);
+    }
+
+    function _setBeforeRevokingHooks(address[] memory _newHooks) internal {
+        _setHooks(_beforeRevokingHooks, _newHooks);
+    }
+
+    function _setBeforeForfeitHooks(address[] memory _newHooks) internal {
+        _setHooks(_beforeForfeitHooks, _newHooks);
+    }
+
+    function _setBeforeTransferHooks(address[] memory _newHooks) internal {
+        _setHooks(_beforeTransferHooks, _newHooks);
+    }
 
     function _beforeMintHook(
         address _to,
@@ -145,7 +121,7 @@ contract BadgerHooks {
     }
 
     function _hook(
-        BadgerHook[] storage _hooks,
+        address[] storage _hooks,
         bytes memory _data,
         bytes memory _key
     ) internal {
@@ -155,7 +131,9 @@ contract BadgerHooks {
         /// @dev Loop through the hooks and call them.
         for (i; i < _hooks.length; i++) {
             // Make the low level call the hook using the supplied data.
-            (bool success, ) = address(_hooks[i]).call(_data);
+            (bool success, ) = _hooks[i].call(_data);
+
+            /// @dev If the hook fails, revert the transaction.
             require(
                 success,
                 string(
