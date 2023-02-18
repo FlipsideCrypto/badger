@@ -31,7 +31,7 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155, BadgerHooks {
     string public organizationURI;
 
     /// @dev Mapping from token ID to Badge
-    mapping(uint256 => Badge) public badges;
+    mapping(uint256 => string) public uris;
 
     /// @dev Tracking the Managers of a Badge.
     mapping(bytes32 => bool) public managerKeyToIsManager;
@@ -237,7 +237,7 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155, BadgerHooks {
      */
     function _setBadgeURI(uint256 _id, string memory _uri) internal virtual {
         /// @dev Set the URI of the Badge.
-        badges[_id].uri = _uri;
+        uris[_id] = _uri;
 
         /// @dev Announce the URI change for ERC1155 compliance.
         emit URI(_uri, _id);
