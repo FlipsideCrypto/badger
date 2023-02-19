@@ -331,7 +331,7 @@ contract BadgerOrganizationLogic is
         );
 
         /// @dev Mint the Badge to the user.
-        super._mint(_to, _id, _amount, _data);
+        ERC1155._mint(_to, _id, _amount, _data);
     }
 
     /**
@@ -354,7 +354,7 @@ contract BadgerOrganizationLogic is
         );
 
         /// @dev Revoke the Badge from the user.
-        super._burn(_from, _id, _amount);
+        ERC1155._burn(_from, _id, _amount);
     }
 
     /**
@@ -376,7 +376,7 @@ contract BadgerOrganizationLogic is
         );
 
         /// @dev Burn the Badge held by the user.
-        super._burn(_from, _id, _amount);
+        ERC1155._burn(_from, _id, _amount);
     }
 
     /**
@@ -409,6 +409,8 @@ contract BadgerOrganizationLogic is
                 _data
             )
         );
+
+        /// @dev Do not call the super as it is an empty function.
     }
 
     ////////////////////////////////////////////////////////

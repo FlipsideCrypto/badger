@@ -11,6 +11,8 @@ import {BadgerOrganizationLogic} from "./BadgerOrganizationLogic.sol";
  *      badges. With a system of harmonious management, on-chain Organizations
  *      can unlock the power of secure permission systems and access policies
  *      by minting ERC1155 Badges to their members.
+ * @dev Explicit references to the `BadgerOrganizationLogic` contract are used
+ *      to improve developer experience, readability and enable call traces.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
@@ -35,7 +37,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
         bytes memory _data
     ) external virtual override onlyBadgeManager(_id) {
         /// @dev Mint the Badge to the user.
-        _mint(_to, _id, _amount, _data);
+        BadgerOrganizationLogic._mint(_to, _id, _amount, _data);
     }
 
     /**
@@ -59,7 +61,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
         /// @dev Mint the badge to all of the recipients with their given amount.
         for (i; i < _tos.length; i++) {
             /// @dev Mint the badges to the users.
-            _mint(_tos[i], _id, _amounts[i], _data);
+            BadgerOrganizationLogic._mint(_tos[i], _id, _amounts[i], _data);
         }
     }
 
@@ -105,7 +107,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
             );
 
             /// @dev Mint the Badges to the users.
-            _mint(_tos[i], id, _amounts[i], _data);
+            BadgerOrganizationLogic._mint(_tos[i], id, _amounts[i], _data);
         }
     }
 
