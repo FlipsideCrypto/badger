@@ -2,20 +2,10 @@
 
 pragma solidity ^0.8.16;
 
-interface IBadgerScout {
-    /*//////////////////////////////////////////////////////////////
-                                SCHEMAS
-    //////////////////////////////////////////////////////////////*/
-
-    /// @dev The processing information for this Badge.
-    struct Badge {
-        bool accountBound; /// ---- @dev Whether or not the Badge is account bound.
-        string uri; /// ----------- @dev The URI for the badge.
-    }
-
-    /*//////////////////////////////////////////////////////////////
-                                EVENTS
-    //////////////////////////////////////////////////////////////*/
+interface IBadgerOrganizationLogic {
+    ////////////////////////////////////////////////////////
+    ///                     EVENTS                       ///
+    ////////////////////////////////////////////////////////
 
     /// @dev Event that announces when the Organization is updated.
     event OrganizationUpdated(string organizationURI);
@@ -23,9 +13,9 @@ interface IBadgerScout {
     /// @dev Event that announces when the state of a Manager changes.
     event ManagerUpdated(bytes32 indexed managerKey, bool indexed isManager);
 
-    /*//////////////////////////////////////////////////////////////
-                                SETTERS
-    //////////////////////////////////////////////////////////////*/
+    ////////////////////////////////////////////////////////
+    ///                     SETTERS                      ///
+    ////////////////////////////////////////////////////////
 
     /**
      * @notice Set the URI for the Organization.
@@ -84,5 +74,24 @@ interface IBadgerScout {
         uint256[] calldata _ids,
         address[] calldata _managers,
         bool[] calldata _isManager
+    ) external;
+
+    /**
+     * @notice Allow Organization Managers to configure Organization Hooks.
+     * @dev The slot is used to differentiate between different types of hooks.
+     * @param _slot The slot of the hook.
+     * @param _hooks The addresses of the hooks to update.
+     * @param _isHook The status of the hooks being updated.
+     */
+    function setHooks(
+        bytes32 _slot,
+        address[] calldata _hooks,
+        bool[] calldata _isHook
+    ) external;
+
+    function setHooksBatch(
+        bytes32[] calldata _slots,
+        address[] calldata _hooks,
+        bool[] calldata _isHook
     ) external;
 }

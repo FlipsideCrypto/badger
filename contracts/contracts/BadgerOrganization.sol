@@ -4,7 +4,7 @@ pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
 import {IBadgerOrganization} from "./interfaces/IBadgerOrganization.sol";
-import {BadgerScout} from "./BadgerScout.sol";
+import {BadgerOrganizationLogic} from "./BadgerOrganizationLogic.sol";
 
 /**
  * @dev Badger Organizations are localized ecosystems of members, managers and
@@ -14,12 +14,12 @@ import {BadgerScout} from "./BadgerScout.sol";
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerOrganization is IBadgerOrganization, BadgerScout {
+contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
     ////////////////////////////////////////////////////////
     ///                   CONSTRUCTOR                    ///
     ////////////////////////////////////////////////////////
 
-    constructor() BadgerScout() {}
+    constructor() BadgerOrganizationLogic() {}
 
     ////////////////////////////////////////////////////////
     ///                     SETTERS                      ///

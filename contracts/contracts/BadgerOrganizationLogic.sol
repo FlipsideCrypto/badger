@@ -6,17 +6,22 @@ pragma solidity ^0.8.16;
 import {Badger} from "./Badger.sol";
 
 /// @dev Core dependencies.
-import {IBadgerScout} from "./interfaces/IBadgerScout.sol";
+import {IBadgerOrganizationLogic} from "./interfaces/IBadgerOrganizationLogic.sol";
+import {BadgerOrganizationHooked} from "./BadgerOrganizationHooked.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import {BadgerHooks} from "./BadgerHooks.sol";
 
 /**
  * @dev BadgerScout contains the back-end logic of a Badger Organization.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerScout is IBadgerScout, Ownable, ERC1155, BadgerHooks {
+contract BadgerOrganizationLogic is
+    IBadgerOrganizationLogic,
+    BadgerOrganizationHooked,
+    Ownable,
+    ERC1155
+{
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
@@ -214,6 +219,54 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155, BadgerHooks {
         }
     }
 
+    /**
+     * See {IBadgerScout.setHooks}
+     */
+    function setHooks(
+        bytes32 _slot,
+        address[] calldata _hooks,
+        bool[] calldata _isHook
+    ) public virtual override onlyOrganizationManager {
+        /// @dev Confirm the arrays provided are of the same length.
+        require(
+            _hooks.length == _isHook.length,
+            "BadgerScout::setHooks: _hooks and _isHook must be the same length."
+        );
+
+        /// @dev Load the stack.
+        uint256 i;
+
+        /// @dev Loop through the arrays and update the state of the Hooks.
+        for (i; i < _hooks.length; i++) {
+            /// @dev Update the state of the Hook for the Organization.
+            _setHook(_slot, _hooks[i], _isHook[i]);
+        }
+    }
+
+    /**
+     * See {IBadgerScout.setHooksBatch}
+     */
+    function setHooksBatch(
+        bytes32[] calldata _slots,
+        address[] calldata _hooks,
+        bool[] calldata _isHook
+    ) public virtual override onlyOrganizationManager {
+        /// @dev Confirm the arrays provided are of the same length.
+        require(
+            _slots.length == _hooks.length && _hooks.length == _isHook.length,
+            "BadgerScout::setHooksBatch: _hooks and _isHook must be the same length."
+        );
+
+        /// @dev Load the stack.
+        uint256 i;
+
+        /// @dev Loop through the arrays and update the state of the Hooks.
+        for (i; i < _hooks.length; i++) {
+            /// @dev Update the state of the Hook for the Organization.
+            _setHook(_slots[i], _hooks[i], _isHook[i]);
+        }
+    }
+
     ////////////////////////////////////////////////////////
     ///                 INTERNAL SETTERS                 ///
     ////////////////////////////////////////////////////////
@@ -272,7 +325,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155, BadgerHooks {
         bytes memory _data
     ) internal virtual override {
         /// @dev Before minting, process any Organization hooks.
-        _beforeMintHook(_to, _id, _amount, _data);
+        _hook(
+            BEFORE_MINT,
+            abi.encodeWithSignature(BEFORE_MINT_ABI, _to, _id, _amount, _data)
+        );
 
         /// @dev Mint the Badge to the user.
         super._mint(_to, _id, _amount, _data);
@@ -291,8 +347,11 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155, BadgerHooks {
         uint256 _id,
         uint256 _amount
     ) internal virtual {
-        /// @dev Before revoking, process any Organization hooks.
-        _beforeRevokeHook(_from, _id, _amount);
+        /// @dev Before minting, process any Organization hooks.
+        _hook(
+            BEFORE_REVOKE,
+            abi.encodeWithSignature(BEFORE_REVOKE_ABI, _from, _id, _amount)
+        );
 
         /// @dev Revoke the Badge from the user.
         super._burn(_from, _id, _amount);
@@ -311,7 +370,10 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155, BadgerHooks {
         uint256 _amount
     ) internal virtual {
         /// @dev Before revoking, process any Organization hooks.
-        _beforeForfeitHook(_from, _id, _amount);
+        _hook(
+            BEFORE_FORFEIT,
+            abi.encodeWithSignature(BEFORE_FORFEIT_ABI, _from, _id, _amount)
+        );
 
         /// @dev Burn the Badge held by the user.
         super._burn(_from, _id, _amount);
@@ -329,8 +391,24 @@ contract BadgerScout is IBadgerScout, Ownable, ERC1155, BadgerHooks {
         uint256[] memory _amounts,
         bytes memory _data
     ) internal virtual override {
+        /// @dev If the transfer is not between two users, skip the hook.
+        if (_from == address(0) || _to == address(0)) {
+            return;
+        }
+
         /// @dev Before transferring, process any Organization hooks.
-        _beforeTransferHook(_operator, _from, _to, _ids, _amounts, _data);
+        _hook(
+            BEFORE_TRANSFER,
+            abi.encodeWithSignature(
+                BEFORE_TRANSFER_ABI,
+                _operator,
+                _from,
+                _to,
+                _ids,
+                _amounts,
+                _data
+            )
+        );
     }
 
     ////////////////////////////////////////////////////////
