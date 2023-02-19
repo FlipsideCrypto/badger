@@ -350,7 +350,7 @@ contract BadgerOrganizationLogic is
         /// @dev Before minting, process any Organization hooks.
         _hook(
             BEFORE_REVOKE,
-            abi.encodeWithSignature(BEFORE_REVOKE_ABI, _from, _id, _amount)
+            abi.encodeWithSignature(BEFORE_BURN_ABI, _from, _id, _amount)
         );
 
         /// @dev Revoke the Badge from the user.
@@ -372,7 +372,7 @@ contract BadgerOrganizationLogic is
         /// @dev Before revoking, process any Organization hooks.
         _hook(
             BEFORE_FORFEIT,
-            abi.encodeWithSignature(BEFORE_FORFEIT_ABI, _from, _id, _amount)
+            abi.encodeWithSignature(BEFORE_BURN_ABI, _from, _id, _amount)
         );
 
         /// @dev Burn the Badge held by the user.

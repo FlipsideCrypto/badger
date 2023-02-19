@@ -44,13 +44,9 @@ contract BadgerOrganizationHooked {
     string public constant BEFORE_MINT_ABI =
         "beforeMintingHook(address,uint256,uint256,bytes)";
 
-    /// @dev ABI of the function that is called when a Badge is revoked.
-    string public constant BEFORE_REVOKE_ABI =
-        "beforeRevokingHook(address,uint256,uint256,bytes)";
-
-    /// @dev ABI of the function that is called when a Badge is forfeited.
-    string public constant BEFORE_FORFEIT_ABI =
-        "beforeForfeitHook(address,uint256,uint256,bytes)";
+    /// @dev ABI of the function that is called when a Badge is burned.
+    string public constant BEFORE_BURN_ABI =
+        "beforeRevokingHook(address,uint256,uint256)";
 
     /// @dev ABI of the function that is called when a Badge is transferred.
     string public constant BEFORE_TRANSFER_ABI =
