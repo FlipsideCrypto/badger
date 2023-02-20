@@ -42,22 +42,38 @@ contract BadgerTransferBoundManaged is BadgerOrganizationHook {
      */
     function execute(bytes calldata _data) public virtual override {
         /// @dev Decode the transfer data forwarded from the Organization.
-        (address _operator, address _from, address _to, uint256 _id, , ) = abi
-            .decode(
+        (
+            address _operator,
+            address _from,
+            address _to,
+            uint256[] memory _ids,
+            ,
+
+        ) = abi.decode(
                 _data,
-                (address, address, address, uint256, uint256, bytes)
+                (address, address, address, uint256[], uint256[], bytes)
             );
 
-        /// @dev Require the transfer to be from or to the zero address.
-        require(
-            _from == address(0) ||
-                _to == address(0) ||
-                transferable[msg.sender][_id] ||
-                BadgerOrganizationLogic(msg.sender).isBadgeManager(
-                    _id,
-                    _operator
-                ),
-            "BadgerTransferBoundManaged::execute: Invalid permission to transfer token."
-        );
+        /// @dev Load the stack.
+        uint256 i;
+        uint256 id;
+
+        /// @dev Loop through all of the tokens moving.
+        for (i; i < _ids.length; i++) {
+            /// @dev Load the token ID.
+            id = _ids[i];
+
+            /// @dev Require the transfer to be from or to the zero address.
+            require(
+                _from == address(0) ||
+                    _to == address(0) ||
+                    transferable[msg.sender][id] ||
+                    BadgerOrganizationLogic(msg.sender).isBadgeManager(
+                        id,
+                        _operator
+                    ),
+                "BadgerTransferBoundManaged::execute: Invalid permission to transfer token."
+            );
+        }
     }
 }
