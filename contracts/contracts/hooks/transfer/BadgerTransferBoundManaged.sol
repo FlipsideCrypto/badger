@@ -9,7 +9,7 @@ import {BadgerOrganizationLogic} from "../../BadgerOrganizationLogic.sol";
 import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
 
 /**
- * @dev Transfer module that enforces transferable logic that can be
+ * @dev Transfer module that enforces accountBound logic that can be
  *      overridden by Badge Managers.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
@@ -19,8 +19,8 @@ contract BadgerTransferBoundManaged is BadgerOrganizationHook {
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
-    /// @dev Mapping of token addresses to transferable status.
-    mapping(address => mapping(uint256 => bool)) public transferable;
+    /// @dev Mapping of token addresses to accountBound status.
+    mapping(address => mapping(uint256 => bool)) public accountBound;
 
     ////////////////////////////////////////////////////////
     ///                     SETTERS                      ///
@@ -31,10 +31,10 @@ contract BadgerTransferBoundManaged is BadgerOrganizationHook {
      */
     function config(bytes calldata _data) public virtual override {
         /// @dev Decode the configuration data forwarded from the Organization.
-        (uint256 _id, bool _transferable) = abi.decode(_data, (uint256, bool));
+        (uint256 _id, bool _accountBound) = abi.decode(_data, (uint256, bool));
 
-        /// @dev Set the transferable status for the token.
-        transferable[msg.sender][_id] = _transferable;
+        /// @dev Set the accountBound status for the token.
+        accountBound[msg.sender][_id] = _accountBound;
     }
 
     /**
@@ -67,7 +67,7 @@ contract BadgerTransferBoundManaged is BadgerOrganizationHook {
             require(
                 _from == address(0) ||
                     _to == address(0) ||
-                    transferable[msg.sender][id] ||
+                    !accountBound[msg.sender][id] ||
                     BadgerOrganizationLogic(msg.sender).isBadgeManager(
                         id,
                         _operator

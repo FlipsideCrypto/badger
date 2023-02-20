@@ -6,17 +6,18 @@ pragma solidity ^0.8.16;
 import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
 
 /**
- * @dev Transfer module that enforces accountBound logic.
+ * @dev Transfer module that enforces prevents an Organization
+ *      Badge from being transferred to certain addresses.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerTransferBound is BadgerOrganizationHook {
+contract BadgerTransferBlocklist is BadgerOrganizationHook {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
     /// @dev Mapping of token addresses to accountBound status.
-    mapping(address => mapping(uint256 => bool)) public accountBound;
+    mapping(address => mapping(address => bool)) public blocked;
 
     ////////////////////////////////////////////////////////
     ///                     SETTERS                      ///
@@ -27,10 +28,10 @@ contract BadgerTransferBound is BadgerOrganizationHook {
      */
     function config(bytes calldata _data) public virtual override {
         /// @dev Decode the configuration data forwarded from the Organization.
-        (uint256 _id, bool _accountBound) = abi.decode(_data, (uint256, bool));
+        (address _target, bool _blocked) = abi.decode(_data, (address, bool));
 
-        /// @dev Set the accountBound status for the token.
-        accountBound[msg.sender][_id] = _accountBound;
+        /// @dev Set the receiving state for the token.
+        blocked[msg.sender][_target] = _blocked;
     }
 
     /**
@@ -38,23 +39,15 @@ contract BadgerTransferBound is BadgerOrganizationHook {
      */
     function execute(bytes calldata _data) public virtual override {
         /// @dev Decode the transfer data forwarded from the Organization.
-        (, address _from, address _to, uint256[] memory _ids, , ) = abi.decode(
+        (, , address _to, , , ) = abi.decode(
             _data,
             (address, address, address, uint256[], uint256[], bytes)
         );
 
-        /// @dev Load the stack.
-        uint256 i;
-
         /// @dev Loop through all of the tokens moving.
-        for (i; i < _ids.length; i++) {
-            /// @dev Require the transfer to be from or to the zero address.
-            require(
-                _from == address(0) ||
-                    _to == address(0) ||
-                    !accountBound[msg.sender][_ids[i]],
-                "BadgerTransferBound::execute: Invalid permission to transfer token."
-            );
-        }
+        require(
+            !blocked[msg.sender][_to],
+            "BadgerTransferBlocklist::execute: Invalid permission to transfer token."
+        );
     }
 }
