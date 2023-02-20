@@ -6,11 +6,11 @@ pragma solidity ^0.8.16;
 import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
 
 /**
- * @dev Mint module that enforces a max mint per account for a Badge.
+ * @dev Mint module that enforces a max mint per operator for a Badge.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerMintMax is BadgerOrganizationHook {
+contract BadgerMintMaxAllowance is BadgerOrganizationHook {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ contract BadgerMintMax is BadgerOrganizationHook {
         /// @dev Require the max to be greater than zero.
         require(
             _max > 0,
-            "BadgerMintMax::config: Max must be greater than zero."
+            "BadgerMintMaxAllowance::config: Max must be greater than zero."
         );
 
         /// @dev Set the max mint for the token.
@@ -48,18 +48,18 @@ contract BadgerMintMax is BadgerOrganizationHook {
      */
     function execute(bytes calldata _data) public virtual override {
         /// @dev Decode the transfer data forwarded from the Organization.
-        (, address _to, uint256 _id, uint256 _amount, ) = abi.decode(
+        (address _operator, , uint256 _id, uint256 _amount, ) = abi.decode(
             _data,
             (address, address, uint256, uint256, bytes)
         );
 
         /// @dev Increment the minted amount.
-        minted[msg.sender][_id][_to] += _amount;
+        minted[msg.sender][_id][_operator] += _amount;
 
         /// @dev Ensure the minted amount is less than the set max.
         require(
-            minted[msg.sender][_id][_to] <= maxMint[msg.sender][_id],
-            "BadgerMintMax::execute: Max mint reached."
+            minted[msg.sender][_id][_operator] <= maxMint[msg.sender][_id],
+            "BadgerMintMaxAllowance::execute: Max mint reached."
         );
     }
 }

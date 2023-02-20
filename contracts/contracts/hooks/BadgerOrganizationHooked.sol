@@ -15,6 +15,11 @@ import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet
  *      With hooks, Organizations can utilize standardized or custom logic to
  *      extend the functionality of the Badger Organization simply by adding a
  *      hook contract to the Organization.
+ * @notice Compromises have been accepted in this Hook implementation to ignore
+ *         several poorly written EIPs that do little but add burdened overhead.
+ *         When the future is different and there is actually a network of
+ *         consumption, things may be updated to be more compliant however
+ *         for now, this is the best solution.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */

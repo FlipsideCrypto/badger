@@ -11,7 +11,7 @@ import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerMintSelfOperated is BadgerOrganizationHook {
+contract BadgerMintSelf is BadgerOrganizationHook {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////

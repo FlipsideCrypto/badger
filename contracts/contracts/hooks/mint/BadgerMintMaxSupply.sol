@@ -50,9 +50,9 @@ contract BadgerMintMaxSupply is BadgerOrganizationHook {
      */
     function execute(bytes calldata _data) public virtual override {
         /// @dev Decode the transfer data forwarded from the Organization.
-        (, , , uint256 _id, uint256 _amount, ) = abi.decode(
+        (, , uint256 _id, uint256 _amount, ) = abi.decode(
             _data,
-            (address, address, address, uint256, uint256, bytes)
+            (address, address, uint256, uint256, bytes)
         );
 
         /// @dev Add the newly minted amount to the total supply.
