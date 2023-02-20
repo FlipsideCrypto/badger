@@ -38,7 +38,7 @@ contract BadgerMintMaxSupply is BadgerOrganizationHook {
         /// @dev Require the max to be greater than zero.
         require(
             _maxSupply > totalSupply[msg.sender][_id],
-            "BadgerMintMax::config: Max must be greater than the already minted supply."
+            "BadgerMintMaxSupply::config: Max must be greater than the already minted supply."
         );
 
         /// @dev Set the max supply for the token.
@@ -61,7 +61,7 @@ contract BadgerMintMaxSupply is BadgerOrganizationHook {
         /// @dev Ensure the max supply has not been exceeded.
         require(
             totalSupply[msg.sender][_id] <= maxSupply[msg.sender][_id],
-            "BadgerMintMax::execute: Max supply exceeded."
+            "BadgerMintMaxSupply::execute: Max supply exceeded."
         );
     }
 }

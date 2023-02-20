@@ -49,7 +49,7 @@ contract BadgerMintSelfOperated is BadgerOrganizationHook {
 
         require(
             _operator == _to || operatorManaged,
-            "BadgerMintMax::execute: Only mint to self"
+            "BadgerMintSelfOperated::execute: Only mint to self"
         );
     }
 }
