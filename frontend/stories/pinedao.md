@@ -17,7 +17,7 @@ stat_1_value: 4+
 stat_2_title: Badges Minted
 stat_2_value: 150+
 ---
-## Limiting tools, limited output
+## Identifying a tool to drive scale
 
 > We started with OpenSea shared mints but quickly found that integrating with other tools was limiting. Beyond that our network was open and we needed more control to establish a system to manage access and ensure we met commitments to our partners.
 > 
@@ -25,7 +25,7 @@ stat_2_value: 150+
 
 Pine was launched initially through a shared OpenSea contract that was circulated in a private Discord channel. Once the community formed around the NFT collection and began to take the next step in their journey they organized around the mission of creating analytics for partners.
 
-IMAGE_NEEDED
+![](https://github.com/drakedanner/image-hosting/blob/main/pine-badges.png?raw=true)
 
 As Pine developed a system to recognize and reward their participants, they realized that they needed a more powerful solution than their existing contract. The NFTs they had used from OpenSea did not integrate well with other DAO tools like Guild or Collab.Land and permissions were a hassle to manage.
 
@@ -35,7 +35,13 @@ Pine was unable to sustainably manage permissions and to properly route opportun
 
 Pine uses Badger alongside no-code DAO tools like Guild and JokeDAO to service analytics partners. By managing their community with these permissionless tools, Pine is able to access a global community.
 
-IMAGE_NEEDED
+![](https://github.com/drakedanner/image-hosting/blob/main/pine%20guild.png?raw=true)
 
 ## Central access to decentralized workforces
 To scale their community, Pine uses Badger as a single access control point across many functionalities and applications. This empowers them to manage and reward their community members in a single front-end, rather than requiring the creation of an authentication system for each app. 
+ 
+>  Badger's platform is reliable and user-friendly, making it easier for Pine to track and reward contributions. 
+> 
+> **JACK STEWART, FOUNDER**
+
+ Badger has made it easier for Pine to manage and distribute Pine Badges to community members who have participated in the weekly contests. With Badger's support for token distribution and management, Pine has been able to transfer these tokens to users who have made significant contributions, thereby enhancing the user experience within the community. 

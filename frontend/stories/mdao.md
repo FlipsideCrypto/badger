@@ -15,7 +15,15 @@ color_dark: #0ea5e9
 stat_1_title: Badges Minted
 stat_1_value: 3,000+
 ---
+MetricsDAO is the largest organization of Web3 analysts. They work together to produce on-demand analytics for partner institutions, chains, and protocols. To grow their participant network and further empower existing analysts, MetricsDAO runs education programs through their Academy.
+
 When MetricsDAO started managing their education initiative with Badger, they realized they had found the right tool to grow a multi-faceted network of passionate students and instructors. MetricsDAO Academy runs live and asynchronous courses on Web3 analytics and has taught hundreds of individuals how to parse and analyze crypto data.
+
+> Badger has allowed MetricsDAO's education team to set its own direction in giving recognition to network participants. Minting Badger badges doesn't depend on third-party approvals or other external processes. Recognizing roles and achievements is now at our fingertips!
+> 
+> **MARINA, PROJECT LEAD**
+
+![](https://i.seadn.io/gcs/files/4dd29ffbba7808eaa6252a7889595584.png?auto=format&w=300)
 
 # Meaningful representation of achievement
 
@@ -35,6 +43,6 @@ Badges now serve multiple purposes in MetricsDAO Academy including creating acce
 
  As students have graduated from various courses, the team has used Badger to maintain communication with top students and to build out their teaching assistant network. The public nature of Badger networks and permissionless interface makes it easy for new instructors to move from Badge holder to operator. By using Badger to identify their cohorts, MetricsDAO Academy laid the foundation for network evolution and empowered their cohort participants to manage their own cohorts.
 
- IMAGE_NEEDED
+ ![](https://i.seadn.io/gcs/files/875893effb1e6fbb6c7100bc01090fd9.png?auto=format&w=300)
 
-As students have reacted positively to the Badges, MetricsDAO has increased its focus on education running multiple cohorts and minting over 3000 Badges.
+As students have reacted positively to the Badges, MetricsDAO is now increasing its focus on education and has already minted over 3000 Badges. As their students learn new skills and receive Badges, MetricsDAO is able to reach the right people through on-chain identifiers and empower them to become contributors in future education initiatives or to provide other work opportunities to them.
