@@ -94,4 +94,29 @@ interface IBadgerOrganizationLogic {
         address[] calldata _hooks,
         bool[] calldata _isHook
     ) external;
+
+    ////////////////////////////////////////////////////////
+    ///                     GETTERS                      ///
+    ////////////////////////////////////////////////////////
+
+    /**
+     * @notice Determine if an address is an Organization Manager.
+     * @param _manager The address to check.
+     * @return True if the address is an Organization Manager, otherwise false.
+     */
+    function isOrganizationManager(address _manager)
+        external
+        view
+        returns (bool);
+
+    /**
+     * @notice Determine if an address is a Badge Manager.
+     * @param _id The id of the Badge.
+     * @param _manager The address to check.
+     * @return True if the address is a Badge Manager, otherwise false.
+     */
+    function isBadgeManager(uint256 _id, address _manager)
+        external
+        view
+        returns (bool);
 }

@@ -1,0 +1,1 @@
+// TODO: Enable the ability for open claiming of a Badge.

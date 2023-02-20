@@ -45,7 +45,7 @@ contract BadgerOrganizationLogic is
     ///                   CONSTRUCTOR                    ///
     ////////////////////////////////////////////////////////
 
-    constructor() ERC1155(Badger(msg.sender).getOrganizationURI()) {
+    constructor() ERC1155(Badger(_msgSender()).getOrganizationURI()) {
         /// @dev Get the Organization details from the factory.
         (
             address _deployer,
@@ -53,7 +53,7 @@ contract BadgerOrganizationLogic is
             string memory _organizationURI,
             string memory _name,
             string memory _symbol
-        ) = Badger(msg.sender).organization();
+        ) = Badger(_msgSender()).organization();
 
         /// @dev Set ownership of the Organization.
         transferOwnership(_deployer);
@@ -98,7 +98,7 @@ contract BadgerOrganizationLogic is
     ////////////////////////////////////////////////////////
 
     /**
-     * See {IBadgerScout.setOrganizationURI}
+     * See {IBadgerOrganizationLogic.setOrganizationURI}
      */
     function setOrganizationURI(string memory _uri)
         public
@@ -117,7 +117,7 @@ contract BadgerOrganizationLogic is
     }
 
     /**
-     * See {IBadgerScout.setBadgeURI}
+     * See {IBadgerOrganizationLogic.setBadgeURI}
      */
     function setBadgeURI(uint256 _id, string memory _uri)
         public
@@ -136,7 +136,7 @@ contract BadgerOrganizationLogic is
     }
 
     /**
-     * See {IBadgerScout.setManagers}
+     * See {IBadgerOrganizationLogic.setManagers}
      */
     function setManagers(
         address[] calldata _managers,
@@ -163,7 +163,7 @@ contract BadgerOrganizationLogic is
     }
 
     /**
-     * See {IBadgerScout.setManagers}
+     * See {IBadgerOrganizationLogic.setManagers}
      */
     function setManagers(
         uint256 _id,
@@ -191,7 +191,7 @@ contract BadgerOrganizationLogic is
     }
 
     /**
-     * See {IBadgerScout.setManagersBatch}
+     * See {IBadgerOrganizationLogic.setManagersBatch}
      */
     function setManagersBatch(
         uint256[] calldata _ids,
@@ -220,7 +220,7 @@ contract BadgerOrganizationLogic is
     }
 
     /**
-     * See {IBadgerScout.setHooks}
+     * See {IBadgerOrganizationLogic.setHooks}
      */
     function setHooks(
         bytes32 _slot,
@@ -244,7 +244,7 @@ contract BadgerOrganizationLogic is
     }
 
     /**
-     * See {IBadgerScout.setHooksBatch}
+     * See {IBadgerOrganizationLogic.setHooksBatch}
      */
     function setHooksBatch(
         bytes32[] calldata _slots,
@@ -265,6 +265,38 @@ contract BadgerOrganizationLogic is
             /// @dev Update the state of the Hook for the Organization.
             _setHook(_slots[i], _hooks[i], _isHook[i]);
         }
+    }
+
+    ////////////////////////////////////////////////////////
+    ///                     GETTERS                      ///
+    ////////////////////////////////////////////////////////
+
+    /**
+     * See {IBadgerOrganizationLogic.isOrganizationManager}
+     */
+    function isOrganizationManager(address _address)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
+        /// @dev Determine if the address is an Organization Manager.
+        return _isOrganizationManager(_address);
+    }
+
+    /**
+     * See {IBadgerOrganizationLogic.isBadgeManager}
+     */
+    function isBadgeManager(uint256 _id, address _address)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
+        /// @dev Determine if the address is a Badge Manager.
+        return _isBadgeManager(_id, _address);
     }
 
     ////////////////////////////////////////////////////////
@@ -327,7 +359,10 @@ contract BadgerOrganizationLogic is
         /// @dev Before minting, process any Organization hooks.
         _hook(
             BEFORE_MINT,
-            abi.encodeWithSignature(BEFORE_MINT_ABI, _to, _id, _amount, _data)
+            abi.encodeWithSignature(
+                BEFORE_MINT_ABI,
+                abi.encode(_to, _id, _amount, _data)
+            )
         );
 
         /// @dev Mint the Badge to the user.
@@ -350,7 +385,10 @@ contract BadgerOrganizationLogic is
         /// @dev Before minting, process any Organization hooks.
         _hook(
             BEFORE_REVOKE,
-            abi.encodeWithSignature(BEFORE_BURN_ABI, _from, _id, _amount)
+            abi.encodeWithSignature(
+                BEFORE_BURN_ABI,
+                abi.encode(_from, _id, _amount)
+            )
         );
 
         /// @dev Revoke the Badge from the user.
@@ -372,7 +410,10 @@ contract BadgerOrganizationLogic is
         /// @dev Before revoking, process any Organization hooks.
         _hook(
             BEFORE_FORFEIT,
-            abi.encodeWithSignature(BEFORE_BURN_ABI, _from, _id, _amount)
+            abi.encodeWithSignature(
+                BEFORE_BURN_ABI,
+                abi.encode(_from, _id, _amount)
+            )
         );
 
         /// @dev Burn the Badge held by the user.
@@ -391,22 +432,12 @@ contract BadgerOrganizationLogic is
         uint256[] memory _amounts,
         bytes memory _data
     ) internal virtual override {
-        /// @dev If the transfer is not between two users, skip the hook.
-        if (_from == address(0) || _to == address(0)) {
-            return;
-        }
-
         /// @dev Before transferring, process any Organization hooks.
         _hook(
             BEFORE_TRANSFER,
             abi.encodeWithSignature(
                 BEFORE_TRANSFER_ABI,
-                _operator,
-                _from,
-                _to,
-                _ids,
-                _amounts,
-                _data
+                abi.encode(_operator, _from, _to, _ids, _amounts, _data)
             )
         );
 

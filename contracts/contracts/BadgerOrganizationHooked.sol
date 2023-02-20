@@ -2,6 +2,9 @@
 
 pragma solidity ^0.8.16;
 
+/// @dev Core dependencies.
+import {IBadgerHook} from "./interfaces/IBadgerHook.sol";
+
 /// @dev Libraries.
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
@@ -37,20 +40,9 @@ contract BadgerOrganizationHooked {
     bytes32 public constant BEFORE_TRANSFER = keccak256("beforeTransferHook");
 
     /// @dev ABI of the function that is called when a new hook is added.
-    string public constant BEFORE_SET_HOOK_ABI =
-        "beforeSetHook(bytes,address,bool)";
+    string public constant BEFORE_SET_HOOK_ABI = "execute(bytes,address,bool)";
 
-    /// @dev ABI of the function that is called when a new Badge is minted.
-    string public constant BEFORE_MINT_ABI =
-        "beforeMintingHook(address,uint256,uint256,bytes)";
-
-    /// @dev ABI of the function that is called when a Badge is burned.
-    string public constant BEFORE_BURN_ABI =
-        "beforeRevokingHook(address,uint256,uint256)";
-
-    /// @dev ABI of the function that is called when a Badge is transferred.
-    string public constant BEFORE_TRANSFER_ABI =
-        "beforeTransferHook(address,address,uint256,uint256,bytes)";
+    string public constant EXECUTION_ABI = "execute(bytes)";
 
     /// @dev The hooks that are processed when their triggers hit.
     /// @notice Instead of needing to loop through all of the hooks, we can
@@ -89,10 +81,8 @@ contract BadgerOrganizationHooked {
             _hook(
                 BEFORE_SET_HOOK,
                 abi.encodeWithSignature(
-                    BEFORE_SET_HOOK_ABI,
-                    _slot,
-                    _slotHook,
-                    _isHook
+                    EXECUTION_ABI,
+                    abi.encode(_slot, _slotHook, _isHook)
                 )
             );
 
@@ -103,6 +93,8 @@ contract BadgerOrganizationHooked {
             hooks[_slot].remove(_slotHook);
         }
     }
+
+    // TODO: Add config.
 
     /**
      * @dev Process the hooks for a specified slot.
@@ -119,19 +111,7 @@ contract BadgerOrganizationHooked {
         /// @dev Loop through the hooks and call them.
         for (i; i < slotHooks.length; i++) {
             // Make the low level call the hook using the supplied data.
-            (bool success, ) = slotHooks[i].call(_data);
-
-            /// @dev If the hook fails, revert the transaction.
-            require(
-                success,
-                string(
-                    abi.encodePacked(
-                        "BadgerHooks::",
-                        _slot,
-                        ": Hook failed to allow execution."
-                    )
-                )
-            );
+            IBadgerHook(slotHooks[i]).execute(_data);
         }
     }
 }
