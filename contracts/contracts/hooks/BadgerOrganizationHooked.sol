@@ -3,7 +3,8 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {IBadgerHook} from "./interfaces/IBadgerHook.sol";
+import {IBadgerHook} from "../interfaces/IBadgerHook.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 /// @dev Libraries.
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
@@ -39,11 +40,6 @@ contract BadgerOrganizationHooked {
     /// @dev The hooks that are processed when a Badge is transferred.
     bytes32 public constant BEFORE_TRANSFER = keccak256("beforeTransferHook");
 
-    /// @dev ABI of the function that is called when a new hook is added.
-    string public constant BEFORE_SET_HOOK_ABI = "execute(bytes,address,bool)";
-
-    string public constant EXECUTION_ABI = "execute(bytes)";
-
     /// @dev The hooks that are processed when their triggers hit.
     /// @notice Instead of needing to loop through all of the hooks, we can
     ///         just loop through the hooks that are registered for the
@@ -70,21 +66,16 @@ contract BadgerOrganizationHooked {
         address _slotHook,
         bool _isHook
     ) internal {
+        /// @dev Make sure the hook is a BadgerHook.
         require(
-            _slotHook.code.length > 0,
-            "BadgerHooks::_setHook: Hook must be a contract address."
+            IERC165(_slotHook).supportsInterface(type(IBadgerHook).interfaceId),
+            "BadgerHooks::_setHook: Hook does not implement IBadgerHook."
         );
 
         /// @dev If the hook is active, add it to the set.
         if (_isHook) {
             /// @dev Before setting a new hook, process any Organization hooks.
-            _hook(
-                BEFORE_SET_HOOK,
-                abi.encodeWithSignature(
-                    EXECUTION_ABI,
-                    abi.encode(_slot, _slotHook, _isHook)
-                )
-            );
+            _hook(BEFORE_SET_HOOK, abi.encode(_slot, _slotHook, _isHook));
 
             /// @dev Add the hook to the set.
             hooks[_slot].add(_slotHook);
@@ -94,7 +85,26 @@ contract BadgerOrganizationHooked {
         }
     }
 
-    // TODO: Add config.
+    /**
+     * @dev Configure a hook for a specified slot.
+     * @param _slot The slot to configure.
+     * @param _slotHook The hook to configure.
+     * @param _data The data to pass to the hook.
+     */
+    function _configHook(
+        bytes32 _slot,
+        address _slotHook,
+        bytes memory _data
+    ) internal {
+        /// @dev Require the the module is enabled in the slot.
+        require(
+            hooks[_slot].contains(_slotHook),
+            "BadgerHooks::_configHook: Hook is not enabled."
+        );
+
+        /// @dev Make the low level call the hook using the supplied data.
+        IBadgerHook(_slotHook).config(_data);
+    }
 
     /**
      * @dev Process the hooks for a specified slot.
@@ -110,7 +120,7 @@ contract BadgerOrganizationHooked {
 
         /// @dev Loop through the hooks and call them.
         for (i; i < slotHooks.length; i++) {
-            // Make the low level call the hook using the supplied data.
+            /// @dev Make the execution call to the hook.
             IBadgerHook(slotHooks[i]).execute(_data);
         }
     }

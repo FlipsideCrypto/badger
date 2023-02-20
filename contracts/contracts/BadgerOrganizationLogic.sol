@@ -7,7 +7,7 @@ import {Badger} from "./Badger.sol";
 
 /// @dev Core dependencies.
 import {IBadgerOrganizationLogic} from "./interfaces/IBadgerOrganizationLogic.sol";
-import {BadgerOrganizationHooked} from "./BadgerOrganizationHooked.sol";
+import {BadgerOrganizationHooked} from "./hooks/BadgerOrganizationHooked.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
@@ -357,13 +357,7 @@ contract BadgerOrganizationLogic is
         bytes memory _data
     ) internal virtual override {
         /// @dev Before minting, process any Organization hooks.
-        _hook(
-            BEFORE_MINT,
-            abi.encodeWithSignature(
-                BEFORE_MINT_ABI,
-                abi.encode(_to, _id, _amount, _data)
-            )
-        );
+        _hook(BEFORE_MINT, abi.encode(_to, _id, _amount, _data));
 
         /// @dev Mint the Badge to the user.
         ERC1155._mint(_to, _id, _amount, _data);
@@ -383,13 +377,7 @@ contract BadgerOrganizationLogic is
         uint256 _amount
     ) internal virtual {
         /// @dev Before minting, process any Organization hooks.
-        _hook(
-            BEFORE_REVOKE,
-            abi.encodeWithSignature(
-                BEFORE_BURN_ABI,
-                abi.encode(_from, _id, _amount)
-            )
-        );
+        _hook(BEFORE_REVOKE, abi.encode(_from, _id, _amount));
 
         /// @dev Revoke the Badge from the user.
         ERC1155._burn(_from, _id, _amount);
@@ -408,13 +396,7 @@ contract BadgerOrganizationLogic is
         uint256 _amount
     ) internal virtual {
         /// @dev Before revoking, process any Organization hooks.
-        _hook(
-            BEFORE_FORFEIT,
-            abi.encodeWithSignature(
-                BEFORE_BURN_ABI,
-                abi.encode(_from, _id, _amount)
-            )
-        );
+        _hook(BEFORE_FORFEIT, abi.encode(_from, _id, _amount));
 
         /// @dev Burn the Badge held by the user.
         ERC1155._burn(_from, _id, _amount);
@@ -435,10 +417,7 @@ contract BadgerOrganizationLogic is
         /// @dev Before transferring, process any Organization hooks.
         _hook(
             BEFORE_TRANSFER,
-            abi.encodeWithSignature(
-                BEFORE_TRANSFER_ABI,
-                abi.encode(_operator, _from, _to, _ids, _amounts, _data)
-            )
+            abi.encode(_operator, _from, _to, _ids, _amounts, _data)
         );
 
         /// @dev Do not call the super as it is an empty function.
