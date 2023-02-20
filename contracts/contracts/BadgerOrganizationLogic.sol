@@ -346,18 +346,20 @@ contract BadgerOrganizationLogic is
      * @notice Runs enforcement logic before minting a token beyond the
      *         primary implementation of permissions.
      * @dev Enables things such as Total Supply, Responsive Capacity, Etc.
+     * @param _operator The address of the operator.
      * @param _to The address of the user.
      * @param _id The id of the Badge.
      * @param _amount The amount of the Badge to mint.
      */
     function _mint(
+        address _operator,
         address _to,
         uint256 _id,
         uint256 _amount,
         bytes memory _data
-    ) internal virtual override {
+    ) internal virtual {
         /// @dev Before minting, process any Organization hooks.
-        _hook(BEFORE_MINT, abi.encode(_to, _id, _amount, _data));
+        _hook(BEFORE_MINT, abi.encode(_operator, _to, _id, _amount, _data));
 
         /// @dev Mint the Badge to the user.
         ERC1155._mint(_to, _id, _amount, _data);

@@ -37,7 +37,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
         bytes memory _data
     ) external virtual override onlyBadgeManager(_id) {
         /// @dev Mint the Badge to the user.
-        BadgerOrganizationLogic._mint(_to, _id, _amount, _data);
+        BadgerOrganizationLogic._mint(_msgSender(), _to, _id, _amount, _data);
     }
 
     /**
@@ -56,12 +56,19 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
         );
 
         /// @dev Load the stack.
+        address operator = _msgSender();
         uint256 i;
 
         /// @dev Mint the badge to all of the recipients with their given amount.
         for (i; i < _tos.length; i++) {
             /// @dev Mint the badges to the users.
-            BadgerOrganizationLogic._mint(_tos[i], _id, _amounts[i], _data);
+            BadgerOrganizationLogic._mint(
+                operator,
+                _tos[i],
+                _id,
+                _amounts[i],
+                _data
+            );
         }
     }
 
@@ -93,6 +100,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
         );
 
         /// @dev Load the stack.
+        address operator = _msgSender();
         uint256 i;
         uint256 id;
 
@@ -107,7 +115,13 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
             );
 
             /// @dev Mint the Badges to the users.
-            BadgerOrganizationLogic._mint(_tos[i], id, _amounts[i], _data);
+            BadgerOrganizationLogic._mint(
+                operator,
+                _tos[i],
+                id,
+                _amounts[i],
+                _data
+            );
         }
     }
 

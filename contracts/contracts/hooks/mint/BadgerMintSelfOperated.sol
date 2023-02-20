@@ -6,21 +6,18 @@ pragma solidity ^0.8.16;
 import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
 
 /**
- * @dev Mint module that enforces a max mint per account for a Badge.
+ * @dev Mint module that enforces self-operation logic only preventing
+ *      a user from minting a token to another address.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerMintMax is BadgerOrganizationHook {
+contract BadgerMintSelfOperated is BadgerOrganizationHook {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
     /// @dev Mapping of token addresses to accountBound status.
-    mapping(address => mapping(uint256 => uint256)) public maxMint;
-
-    /// @dev Keep track of the number of tokens minted.
-    mapping(address => mapping(uint256 => mapping(address => uint256)))
-        public minted;
+    mapping(address => mapping(uint256 => bool)) public selfOperated;
 
     ////////////////////////////////////////////////////////
     ///                     SETTERS                      ///
@@ -31,16 +28,10 @@ contract BadgerMintMax is BadgerOrganizationHook {
      */
     function config(bytes calldata _data) public virtual override {
         /// @dev Decode the configuration data forwarded from the Organization.
-        (uint256 _id, uint256 _max) = abi.decode(_data, (uint256, uint256));
+        (uint256 _id, bool _selfOperated) = abi.decode(_data, (uint256, bool));
 
-        /// @dev Require the max to be greater than zero.
-        require(
-            _max > 0,
-            "BadgerMintMax::config: Max must be greater than zero."
-        );
-
-        /// @dev Set the max mint for the token.
-        maxMint[msg.sender][_id] = _max;
+        /// @dev Set the state of self-operation only for the token.
+        selfOperated[msg.sender][_id] = _selfOperated;
     }
 
     /**
@@ -48,18 +39,17 @@ contract BadgerMintMax is BadgerOrganizationHook {
      */
     function execute(bytes calldata _data) public virtual override {
         /// @dev Decode the transfer data forwarded from the Organization.
-        (, address _to, , uint256 _id, uint256 _amount, ) = abi.decode(
+        (address _operator, address _to, uint256 _id, , ) = abi.decode(
             _data,
-            (address, address, address, uint256, uint256, bytes)
+            (address, address, uint256, uint256, bytes)
         );
 
-        /// @dev Increment the minted amount.
-        minted[msg.sender][_id][_to] += _amount;
+        /// @dev Determine if the Badge is self-operated.
+        bool operatorManaged = selfOperated[msg.sender][_id] == false;
 
-        /// @dev Ensure the minted amount is less than the set max.
         require(
-            minted[msg.sender][_id][_to] <= maxMint[msg.sender][_id],
-            "BadgerMintMax::execute: Max mint reached."
+            _operator == _to || operatorManaged,
+            "BadgerMintMax::execute: Only mint to self"
         );
     }
 }
