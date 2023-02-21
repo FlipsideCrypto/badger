@@ -9,6 +9,9 @@ import {BadgerOrganization} from "./BadgerOrganization.sol";
 /// @dev Libraries.
 import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
 
+// TODO: Implement multicall for BadgerOrganizationkls
+// TODO: Implement the ability to call config for extensions
+
 /**
  * @dev Badger is a low-level primitive powering middle-out on-chain access policies
  *      for Organizations and and their members with ERC-1155 Badges.
