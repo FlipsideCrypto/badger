@@ -3,15 +3,17 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
+import {BadgerTransferHook} from "../types/BadgerTransferHook.sol";
 
 /**
  * @dev Transfer module that enforces prevents an Organization
  *      Badge from being transferred to certain addresses.
+ * @notice The `bool` is included in the decoded config to prevent
+ *         disastorous states when Marketplaces inevitably change.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerTransferBlocklist is BadgerOrganizationHook {
+contract BadgerTransferBlocklist is BadgerTransferHook {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
@@ -49,5 +51,22 @@ contract BadgerTransferBlocklist is BadgerOrganizationHook {
             !blocked[msg.sender][_to],
             "BadgerTransferBlocklist::execute: Invalid permission to transfer token."
         );
+    }
+
+    ////////////////////////////////////////////////////////
+    ///                     GETTERS                      ///
+    ////////////////////////////////////////////////////////
+
+    /**
+     * See {IBadgerHook-configSchema}.
+     */
+    function configSchema()
+        public
+        pure
+        virtual
+        override
+        returns (string memory)
+    {
+        return "address,bool";
     }
 }

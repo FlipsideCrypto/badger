@@ -3,14 +3,14 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
+import {BadgerMintHook} from "../types/BadgerMintHook.sol";
 
 /**
  * @dev Mint module that enforces a max supply for a Badge.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerMintMaxSupply is BadgerOrganizationHook {
+contract BadgerMintMaxSupply is BadgerMintHook {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
@@ -63,5 +63,22 @@ contract BadgerMintMaxSupply is BadgerOrganizationHook {
             totalSupply[msg.sender][_id] <= maxSupply[msg.sender][_id],
             "BadgerMintMaxSupply::execute: Max supply exceeded."
         );
+    }
+
+    ////////////////////////////////////////////////////////
+    ///                     GETTERS                      ///
+    ////////////////////////////////////////////////////////
+
+    /**
+     * See {IBadgerHook-configSchema}.
+     */
+    function configSchema()
+        public
+        pure
+        virtual
+        override
+        returns (string memory)
+    {
+        return "uint256,uint256";
     }
 }

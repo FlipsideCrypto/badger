@@ -3,7 +3,7 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
+import {BadgerMintHook} from "../types/BadgerMintHook.sol";
 
 /**
  * @dev Mint module that enforces self-operation logic only preventing
@@ -11,7 +11,7 @@ import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerMintSelf is BadgerOrganizationHook {
+contract BadgerMintSelf is BadgerMintHook {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
@@ -51,5 +51,22 @@ contract BadgerMintSelf is BadgerOrganizationHook {
             _operator == _to || operatorManaged,
             "BadgerMintSelfOperated::execute: Only mint to self"
         );
+    }
+
+    ////////////////////////////////////////////////////////
+    ///                     GETTERS                      ///
+    ////////////////////////////////////////////////////////
+
+    /**
+     * See {IBadgerHook-configSchema}.
+     */
+    function configSchema()
+        public
+        pure
+        virtual
+        override
+        returns (string memory)
+    {
+        return "uint256,bool";
     }
 }

@@ -3,14 +3,14 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
+import {BadgerHookHook} from "../types/BadgerHookHook.sol";
 
 /**
  * @dev Hook module that prevents certain hooks from being enabled.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerHookBlocklist is BadgerOrganizationHook {
+contract BadgerHookBlocklist is BadgerHookHook {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
@@ -50,5 +50,22 @@ contract BadgerHookBlocklist is BadgerOrganizationHook {
             !_isHook || !blocked[msg.sender][_slotHook],
             "BadgerHookBlacklist::execute: Cannot enable blocklisted hook."
         );
+    }
+
+    ////////////////////////////////////////////////////////
+    ///                     GETTERS                      ///
+    ////////////////////////////////////////////////////////
+
+    /**
+     * See {IBadgerHook-configSchema}.
+     */
+    function configSchema()
+        public
+        pure
+        virtual
+        override
+        returns (string memory)
+    {
+        return "address";
     }
 }

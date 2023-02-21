@@ -3,14 +3,14 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
+import {BadgerMintHook} from "../types/BadgerMintHook.sol";
 
 /**
  * @dev Mint module that enforces a max mint per account for a Badge.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerMintMax is BadgerOrganizationHook {
+contract BadgerMintMax is BadgerMintHook {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
@@ -61,5 +61,22 @@ contract BadgerMintMax is BadgerOrganizationHook {
             minted[msg.sender][_id][_to] <= maxMint[msg.sender][_id],
             "BadgerMintMax::execute: Max mint reached."
         );
+    }
+
+    ////////////////////////////////////////////////////////
+    ///                     GETTERS                      ///
+    ////////////////////////////////////////////////////////
+
+    /**
+     * See {IBadgerHook-configSchema}.
+     */
+    function configSchema()
+        public
+        pure
+        virtual
+        override
+        returns (string memory)
+    {
+        return "uint256,uint256";
     }
 }

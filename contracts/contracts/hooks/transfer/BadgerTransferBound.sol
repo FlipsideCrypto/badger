@@ -3,14 +3,14 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
+import {BadgerTransferHook} from "../types/BadgerTransferHook.sol";
 
 /**
  * @dev Transfer module that enforces accountBound logic.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerTransferBound is BadgerOrganizationHook {
+contract BadgerTransferBound is BadgerTransferHook {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
@@ -56,5 +56,22 @@ contract BadgerTransferBound is BadgerOrganizationHook {
                 "BadgerTransferBound::execute: Invalid permission to transfer token."
             );
         }
+    }
+
+    ////////////////////////////////////////////////////////
+    ///                     GETTERS                      ///
+    ////////////////////////////////////////////////////////
+
+    /**
+     * See {IBadgerHook-configSchema}.
+     */
+    function configSchema()
+        public
+        pure
+        virtual
+        override
+        returns (string memory)
+    {
+        return "uint256,bool";
     }
 }
