@@ -45,10 +45,17 @@ contract BadgerManagerClaimable is IBadgerManager {
 
     /**
      * @dev Sets a new Badge as an open claim.
+     * @param _targetOrganization The Organization to mint the Badge for.
+     * @param _id The ID of the Badge to mint.
+     * @param _data The data to pass to the mint method.
      */
-    function mint(uint256 _id, bytes calldata _data) external {
+    function mint(
+        address _targetOrganization,
+        uint256 _id,
+        bytes calldata _data
+    ) external {
         /// @dev Mint a new badge for the organization.
-        BadgerOrganization(msg.sender).mint(
+        BadgerOrganization(_targetOrganization).mint(
             msg.sender,
             _id,
             amounts[msg.sender][_id],
