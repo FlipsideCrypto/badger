@@ -3,15 +3,10 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {IBadgerHook} from "../interfaces/IBadgerHook.sol";
+import {IBadgerManager} from "../interfaces/IBadgerManager.sol";
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
-/**
- * @dev Enforcement logic that keeps Hook quality consistent.
- * @author CHANCE (@nftchance)
- * @author masonthechain (@masonthechain)
- */
-abstract contract BadgerOrganizationHook is IBadgerHook, ERC165 {
+abstract contract BadgerManager is IBadgerManager, ERC165 {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
@@ -23,7 +18,7 @@ abstract contract BadgerOrganizationHook is IBadgerHook, ERC165 {
         returns (bool)
     {
         return
-            interfaceId == type(IBadgerHook).interfaceId ||
+            interfaceId == type(IBadgerManager).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 }

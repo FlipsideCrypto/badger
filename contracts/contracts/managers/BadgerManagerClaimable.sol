@@ -3,7 +3,7 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {IBadgerManager} from "../interfaces/IBadgerManager.sol";
+import {BadgerManager} from "./BadgerManager.sol";
 import {BadgerOrganization} from "../BadgerOrganization.sol";
 
 /**
@@ -12,7 +12,7 @@ import {BadgerOrganization} from "../BadgerOrganization.sol";
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerManagerClaimable is IBadgerManager {
+contract BadgerManagerClaimable is BadgerManager {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {IBadgerManager} from "../interfaces/IBadgerManager.sol";
+import {BadgerManager} from "./BadgerManager.sol";
 import {BadgerOrganization} from "../BadgerOrganization.sol";
 
 /// @dev Helper dependencies.
@@ -15,7 +15,7 @@ import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerManagerSignature is IBadgerManager {
+contract BadgerManagerSignature is BadgerManager {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
