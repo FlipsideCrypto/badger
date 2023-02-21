@@ -4,6 +4,7 @@ pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
 import {IBadger} from "./interfaces/IBadger.sol";
+import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {BadgerOrganization} from "./BadgerOrganization.sol";
 
 /// @dev Libraries.
@@ -22,7 +23,7 @@ import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract Badger is IBadger {
+contract Badger is IBadger, ERC165 {
     using Bytes32AddressLib for address;
     using Bytes32AddressLib for bytes32;
 
@@ -113,5 +114,20 @@ contract Badger is IBadger {
     function getOrganizationURI() public view virtual returns (string memory) {
         /// @dev Retrieve the value from the hotslot.
         return organization.uri;
+    }
+
+    /**
+     * See {ERC1155-supportsInterface}.
+     */
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
+        return
+            interfaceId == type(IBadger).interfaceId ||
+            super.supportsInterface(interfaceId);
     }
 }
