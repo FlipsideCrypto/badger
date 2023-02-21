@@ -10,8 +10,8 @@ import {BadgerOrganization} from "../BadgerOrganization.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 /**
- * @dev Implements the ability for individuals to claim Badges with an open
- *      link to the Organization.
+ * @dev Implements the ability for individuals to mint Badges with a
+ *      valid signature from the signer of the Badge.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
