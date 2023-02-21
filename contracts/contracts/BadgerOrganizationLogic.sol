@@ -374,12 +374,13 @@ contract BadgerOrganizationLogic is
      * @param _amount The amount of the Badge to revoke.
      */
     function _revoke(
+        address _operator,
         address _from,
         uint256 _id,
         uint256 _amount
     ) internal virtual {
         /// @dev Before minting, process any Organization hooks.
-        _hook(BEFORE_REVOKE, abi.encode(_from, _id, _amount));
+        _hook(BEFORE_REVOKE, abi.encode(_operator, _from, _id, _amount));
 
         /// @dev Revoke the Badge from the user.
         ERC1155._burn(_from, _id, _amount);

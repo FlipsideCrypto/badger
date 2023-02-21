@@ -134,7 +134,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
         uint256 _amount
     ) external virtual override onlyBadgeManager(_id) {
         /// @dev Revoke the Badge from the user.
-        _revoke(_from, _id, _amount);
+        _revoke(_msgSender(), _from, _id, _amount);
     }
 
     /**
@@ -152,12 +152,13 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
         );
 
         /// @dev Load the stack.
+        address operator = _msgSender();
         uint256 i;
 
         /// @dev Revoke the Badge from all of the recipients with their given amount.
         for (i; i < _froms.length; i++) {
             /// @dev Revoke the Badge from the user.
-            _revoke(_froms[i], _id, _amounts[i]);
+            _revoke(operator, _froms[i], _id, _amounts[i]);
         }
     }
 
@@ -188,6 +189,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
         );
 
         /// @dev Load the stack.
+        address operator = _msgSender();
         uint256 i;
         uint256 id;
 
@@ -201,7 +203,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
             );
 
             /// @dev Revoke the badge from the user.
-            _revoke(_froms[i], _ids[i], _amounts[i]);
+            _revoke(operator, _froms[i], _ids[i], _amounts[i]);
         }
     }
 
