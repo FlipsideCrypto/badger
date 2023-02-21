@@ -126,6 +126,14 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
     ////////////////////////////////////////////////////////
 
     /**
+     * @notice Returns the metadata URI for the Organization.
+     * @return The metadata URI for the Organization.
+     */
+    function contractURI() public view returns (string memory) {
+        return organizationURI;
+    }
+
+    /**
      * See {ERC1155.uri}
      */
     function uri(uint256 _id)
@@ -145,14 +153,6 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
 
         /// @dev Use the default base URI with the token id added.
         return super.uri(_id);
-    }
-
-    /**
-     * @notice Returns the metadata URI for the Organization.
-     * @return The metadata URI for the Organization.
-     */
-    function contractURI() public view returns (string memory) {
-        return organizationURI;
     }
 
     /**
