@@ -3,14 +3,14 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {BadgerHookHook} from "../types/BadgerHookHook.sol";
+import {BadgerForfeitHook} from "../types/BadgerForfeitHook.sol";
 
 /**
  * @dev Hook module that prevents tokens from being forfeited.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerForfeitForbidden is BadgerHookHook {
+contract BadgerForfeitForbidden is BadgerForfeitHook {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////

@@ -3,14 +3,14 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {BadgerHookHook} from "../types/BadgerHookHook.sol";
+import {BadgerRevokeHook} from "../types/BadgerRevokeHook.sol";
 
 /**
  * @dev Hook module that prevents tokens from being revokeed.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerRevokeForbidden is BadgerHookHook {
+contract BadgerRevokeForbidden is BadgerRevokeHook {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
