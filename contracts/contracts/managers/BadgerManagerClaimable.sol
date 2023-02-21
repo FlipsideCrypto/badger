@@ -34,6 +34,11 @@ contract BadgerManagerClaimable is IBadgerManager {
         /// @dev Decode the config data forwarded from the Organization.
         (uint256 _id, uint256 _amount) = abi.decode(_data, (uint256, uint256));
 
+        require(
+            _amount > 0,
+            "BadgerManagerClaimable::config: Amount must be greater than zero."
+        );
+
         /// @dev Set the amount of the Badge to mint with each claim.
         amounts[msg.sender][_id] = _amount;
     }
