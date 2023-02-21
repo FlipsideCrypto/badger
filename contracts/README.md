@@ -1,10 +1,8 @@
 # Badger Contracts
 
-Badger as a primitive has been designed to remove the need of including any opinionated logic in the core contracts. 
+Badger is an opionionated-by-default primitive designed to drive the actions of on-chain Organizations and their members with Badges. As a primitive, the contracts have been designed to remove the need of including any opinionated logic in the core contracts while maintaining the ability of a user-specific solution. 
 
-Critically to note, opinion is not only introduced by the developers of a protocol though as the application of each module could have implications on other Badges. For this reason, `Hooks` and `Managers` have the ability to run at the `Organization` level and the `Badge` level.
-
-This means that while the core contracts are opinionless, the `Hooks` and `Managers` can be used to introduce opinionated logic to the system depending on the need of each Badge. Further, instead of having to apply opinion organization wide, the `Hooks` and `Managers` can be applied to a single Badge while still maintaing the ability to set global values when wanted.
+While the core contracts are opinionless, `Hooks` and `Managers` can be used to introduce opinionated logic to the system depending on the need of each Badge, Organization or even Manager. Further, instead of having to apply opinion organization-wide, `Hooks` and `Managers` can be applied to a single Badge while still maintaing the ability to set global values when wanted.
 
 ```ml
 contracts
@@ -51,7 +49,7 @@ contracts
 
 ## The Shape of an Organization
 
-Badger Organizations are built with a rather-straightforward middle-out approach. Designed to scale in both directions of need; case-specific centralization and decentralization live at the core of how Organizations have been built.
+Badger Organizations are built with a rather straightforward middle-out approach. Designed to scale in both directions of need: case-specific centralization and decentralization live at the core of how Organizations have been built.
 
 At the core, Organizations are deployed by a Factory and instantiated with just an Owner. An Owner has the ability to empower Managers, connect Hooks, create Badges and more all in a single interface and localized smart contract.
 
@@ -59,11 +57,11 @@ At the core, Organizations are deployed by a Factory and instantiated with just 
 * There are Badges with Members and Managers.
 * There are Modules that can be plugged in at a object-level to enable new functionality.
 
-*Organizations grow and evolve over time and Badger is prepared to support that change.* With Hooks, not only can old functionality be disabled, but new `Hooks` and `Managers` can be integrated that drive the future needs without abandoning the historical power and integration of the existing Organization.
+*Organizations grow and evolve over time and Badger is prepared to support that change.* With `Hooks`, not only can old functionality be disabled, but new `Hooks` and `Managers` can be integrated that drive the future needs without abandoning the historical power and integration of the existing Organization.
 
 ## The Manager Pattern
 
-Every Organization and Badge has an optional set of `Managers` that permits shared-access to admin-level functions of the relative scope.
+Every Organization and Badge has an optional set of `Managers` that permits shared access to admin-level functions of the relative scope.
 
 * An Organization Manager operates as one would expect to a real-world business; the owner implicitly trusts the manager and has given shared access to key functions.
     * Create, mint and revoke new Badges.
@@ -94,11 +92,11 @@ Although there has been a foundational framework of hooks and managers offered. 
 
 Out of the gate, Badger Organizations are empowered with the ability to have `Revokable` Badges under the control of Organization and Badge Managers (depending on the respective configuration of each.) Badger is designed to drive complex permissions and on-chain access policies with the addition of permission revocation: a critical feature to any permission system.
 
-Although Badges are designed to be revokable by default, a `_beforeRevokeHook` may be applied to a Badge to prevent revocation such as `BadgerRevokeForbidden.sol`. This is useful for Badges that are meant to be permanent and not revokable.
+Although Badges are designed to be revokable by default, a `RevokeHook` may be applied to a Badge to prevent revocation such as `BadgerRevokeForbidden.sol`. This is useful for Badges that are meant to be permanent and not revokable.
 
 ## Eternal Forfeits
 
-The final piece of semi-opinion included in the default operation of Badger is that token forfeiture is recommended and enabled by default however again by be prevented with a hook in `_beforeForfeitHook` such as `BadgerForfeitForbidden.sol`.
+The final piece of semi-opinion included in the default operation of Badger is that token forfeiture is recommended and enabled by default however again by be prevented with a hook in `ForfeitHook` such as `BadgerForfeitForbidden.sol`.
 
 > Notably, while the mechanism of permanent account binding is possible, it is not recommended. This is because the social contract of Badges is that they are not means of identity resolution and that a Badge holder may forfeit their Badge at any time.
 
@@ -117,7 +115,7 @@ Badger V6 is in the process of being audited. Responses will be made public once
 
 ## Testing the Contract
 
-It is important that we know the contract is healthy and fully covered with tests at all times. While 100% coverage does not mean there is no nuance to keep in mind, it does allow you to move forward with constant concern of being blindsided.
+It is important that we know the contract is healthy and fully covered with tests at all times. While 100% coverage does not mean there is no nuance to keep in mind, it does allow you to move forward without constant concern of being blindsided.
 
 ```bash
 Version
