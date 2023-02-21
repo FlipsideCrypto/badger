@@ -6,20 +6,7 @@ pragma solidity ^0.8.16;
 import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
 
 abstract contract BadgerMintHook is BadgerOrganizationHook {
-    ////////////////////////////////////////////////////////
-    ///                     GETTERS                      ///
-    ////////////////////////////////////////////////////////
-
-    /**
-     * See {IBadgerHook-executeSchema}.
-     */
-    function executeSchema()
-        public
-        pure
-        virtual
-        override
-        returns (string memory)
-    {
-        return "address,address,uint256,uint256,bytes";
-    }
+    /// @dev The schema used for the execute method.
+    string public constant override EXECUTE_SCHEMA =
+        "address,address,uint256,uint256,bytes";
 }

@@ -16,6 +16,9 @@ contract BadgerMintSelf is BadgerMintHook {
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
+    /// @dev The schema used for the config method.
+    string public constant override CONFIG_SCHEMA = "uint256,bool";
+
     /// @dev Mapping of token addresses to accountBound status.
     mapping(address => mapping(uint256 => bool)) public selfOperated;
 
@@ -51,22 +54,5 @@ contract BadgerMintSelf is BadgerMintHook {
             _operator == _to || operatorManaged,
             "BadgerMintSelfOperated::execute: Only mint to self"
         );
-    }
-
-    ////////////////////////////////////////////////////////
-    ///                     GETTERS                      ///
-    ////////////////////////////////////////////////////////
-
-    /**
-     * See {IBadgerHook-configSchema}.
-     */
-    function configSchema()
-        public
-        pure
-        virtual
-        override
-        returns (string memory)
-    {
-        return "uint256,bool";
     }
 }

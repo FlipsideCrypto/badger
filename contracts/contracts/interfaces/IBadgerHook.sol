@@ -12,6 +12,14 @@ pragma solidity ^0.8.16;
  */
 interface IBadgerHook {
     ////////////////////////////////////////////////////////
+    ///                      STATE                       ///
+    ////////////////////////////////////////////////////////
+
+    function CONFIG_SCHEMA() external view returns (string memory);
+
+    function EXECUTE_SCHEMA() external view returns (string memory);
+
+    ////////////////////////////////////////////////////////
     ///                     SETTERS                      ///
     ////////////////////////////////////////////////////////
 
@@ -26,18 +34,4 @@ interface IBadgerHook {
      * @param _data The data to execute the Hook.
      */
     function execute(bytes calldata _data) external;
-
-    ////////////////////////////////////////////////////////
-    ///                     GETTERS                      ///
-    ////////////////////////////////////////////////////////
-
-    /**
-     * @notice Get the schema for the Hook configuration.
-     */
-    function configSchema() external view returns (string memory);
-
-    /**
-     * @notice Get the schema for the Hook execution.
-     */
-    function executeSchema() external view returns (string memory);
 }

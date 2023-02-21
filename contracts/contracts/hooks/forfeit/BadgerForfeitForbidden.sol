@@ -15,6 +15,9 @@ contract BadgerForfeitForbidden is BadgerHookHook {
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
+    /// @dev The schema used for the config method.
+    string public constant override CONFIG_SCHEMA = "uint256,bool";
+
     /// @dev Mapping of Organization to Badge Id to forfeit forbidden status.
     mapping(address => mapping(uint256 => bool)) public forbidden;
 
@@ -47,22 +50,5 @@ contract BadgerForfeitForbidden is BadgerHookHook {
             !forbidden[msg.sender][_id],
             "BadgerForfeitforbidden::execute: Invalid permission to forfeit token."
         );
-    }
-
-    ////////////////////////////////////////////////////////
-    ///                     GETTERS                      ///
-    ////////////////////////////////////////////////////////
-
-    /**
-     * See {IBadgerHook-configSchema}.
-     */
-    function configSchema()
-        public
-        pure
-        virtual
-        override
-        returns (string memory)
-    {
-        return "uint256,bool";
     }
 }

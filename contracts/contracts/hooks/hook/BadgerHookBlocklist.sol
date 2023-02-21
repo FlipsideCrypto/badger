@@ -15,6 +15,9 @@ contract BadgerHookBlocklist is BadgerHookHook {
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
+    /// @dev The schema used for the config method.
+    string public constant override CONFIG_SCHEMA = "address";
+
     /// @dev Mapping of Organization to Hook to blocklisted status.
     mapping(address => mapping(address => bool)) public blocked;
 
@@ -50,22 +53,5 @@ contract BadgerHookBlocklist is BadgerHookHook {
             !_isHook || !blocked[msg.sender][_slotHook],
             "BadgerHookBlacklist::execute: Cannot enable blocklisted hook."
         );
-    }
-
-    ////////////////////////////////////////////////////////
-    ///                     GETTERS                      ///
-    ////////////////////////////////////////////////////////
-
-    /**
-     * See {IBadgerHook-configSchema}.
-     */
-    function configSchema()
-        public
-        pure
-        virtual
-        override
-        returns (string memory)
-    {
-        return "address";
     }
 }

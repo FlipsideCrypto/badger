@@ -15,6 +15,9 @@ contract BadgerMintMaxAllowance is BadgerMintHook {
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
+    /// @dev The schema used for the config method.
+    string public constant override CONFIG_SCHEMA = "uint256,uint256";
+
     /// @dev Mapping of token addresses to accountBound status.
     mapping(address => mapping(uint256 => uint256)) public maxMint;
 
@@ -61,22 +64,5 @@ contract BadgerMintMaxAllowance is BadgerMintHook {
             minted[msg.sender][_id][_operator] <= maxMint[msg.sender][_id],
             "BadgerMintMaxAllowance::execute: Max mint reached."
         );
-    }
-
-    ////////////////////////////////////////////////////////
-    ///                     GETTERS                      ///
-    ////////////////////////////////////////////////////////
-
-    /**
-     * See {IBadgerHook-configSchema}.
-     */
-    function configSchema()
-        public
-        pure
-        virtual
-        override
-        returns (string memory)
-    {
-        return "uint256,uint256";
     }
 }

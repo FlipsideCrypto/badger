@@ -18,6 +18,9 @@ contract BadgerTransferBlocklist is BadgerTransferHook {
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
+    /// @dev The schema used for the config method.
+    string public constant override CONFIG_SCHEMA = "address,bool";
+
     /// @dev Mapping of token addresses to accountBound status.
     mapping(address => mapping(address => bool)) public blocked;
 
@@ -51,22 +54,5 @@ contract BadgerTransferBlocklist is BadgerTransferHook {
             !blocked[msg.sender][_to],
             "BadgerTransferBlocklist::execute: Invalid permission to transfer token."
         );
-    }
-
-    ////////////////////////////////////////////////////////
-    ///                     GETTERS                      ///
-    ////////////////////////////////////////////////////////
-
-    /**
-     * See {IBadgerHook-configSchema}.
-     */
-    function configSchema()
-        public
-        pure
-        virtual
-        override
-        returns (string memory)
-    {
-        return "address,bool";
     }
 }

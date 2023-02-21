@@ -15,6 +15,9 @@ contract BadgerRevokeForbidden is BadgerHookHook {
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
+    /// @dev The schema used for the config method.
+    string public constant override CONFIG_SCHEMA = "uint256,bool";
+
     /// @dev Mapping of Organization to Badge Id to revoke forbidden status.
     mapping(address => mapping(uint256 => bool)) public forbidden;
 
@@ -48,22 +51,5 @@ contract BadgerRevokeForbidden is BadgerHookHook {
             !forbidden[msg.sender][_id],
             "BadgerRevokeForbidden::execute: Invalid permission to revoke token."
         );
-    }
-
-    ////////////////////////////////////////////////////////
-    ///                     GETTERS                      ///
-    ////////////////////////////////////////////////////////
-
-    /**
-     * See {IBadgerHook-configSchema}.
-     */
-    function configSchema()
-        public
-        pure
-        virtual
-        override
-        returns (string memory)
-    {
-        return "uint256,bool";
     }
 }

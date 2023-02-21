@@ -15,6 +15,9 @@ contract BadgerTransferBound is BadgerTransferHook {
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
+    /// @dev The schema used for the config method.
+    string public constant override CONFIG_SCHEMA = "uint256,bool";
+
     /// @dev Mapping of token addresses to accountBound status.
     mapping(address => mapping(uint256 => bool)) public accountBound;
 
@@ -56,22 +59,5 @@ contract BadgerTransferBound is BadgerTransferHook {
                 "BadgerTransferBound::execute: Invalid permission to transfer token."
             );
         }
-    }
-
-    ////////////////////////////////////////////////////////
-    ///                     GETTERS                      ///
-    ////////////////////////////////////////////////////////
-
-    /**
-     * See {IBadgerHook-configSchema}.
-     */
-    function configSchema()
-        public
-        pure
-        virtual
-        override
-        returns (string memory)
-    {
-        return "uint256,bool";
     }
 }

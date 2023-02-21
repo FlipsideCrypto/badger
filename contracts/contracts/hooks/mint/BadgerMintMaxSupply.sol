@@ -15,6 +15,9 @@ contract BadgerMintMaxSupply is BadgerMintHook {
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
+    /// @dev The schema used for the config method.
+    string public constant override CONFIG_SCHEMA = "uint256,uint256";
+
     /// @dev Mapping of Organization address to Badge Id to Max Supply.
     mapping(address => mapping(uint256 => uint256)) public maxSupply;
 
@@ -63,22 +66,5 @@ contract BadgerMintMaxSupply is BadgerMintHook {
             totalSupply[msg.sender][_id] <= maxSupply[msg.sender][_id],
             "BadgerMintMaxSupply::execute: Max supply exceeded."
         );
-    }
-
-    ////////////////////////////////////////////////////////
-    ///                     GETTERS                      ///
-    ////////////////////////////////////////////////////////
-
-    /**
-     * See {IBadgerHook-configSchema}.
-     */
-    function configSchema()
-        public
-        pure
-        virtual
-        override
-        returns (string memory)
-    {
-        return "uint256,uint256";
     }
 }
