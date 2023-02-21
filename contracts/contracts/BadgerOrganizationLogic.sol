@@ -299,6 +299,21 @@ contract BadgerOrganizationLogic is
         return _isBadgeManager(_id, _address);
     }
 
+    /**
+     * See {ERC165-supportsInterface}
+     */
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(BadgerOrganizationHooked, ERC1155)
+        returns (bool)
+    {
+        return
+            interfaceId == type(IBadgerOrganizationLogic).interfaceId ||
+            super.supportsInterface(interfaceId);
+    }
+
     ////////////////////////////////////////////////////////
     ///                 INTERNAL SETTERS                 ///
     ////////////////////////////////////////////////////////

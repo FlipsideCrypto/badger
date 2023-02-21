@@ -252,4 +252,19 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
     function contractURI() public view returns (string memory) {
         return organizationURI;
     }
+
+    /**
+     * See {ERC165-supportsInterface}
+     */
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
+        return
+            interfaceId == type(IBadgerOrganization).interfaceId ||
+            super.supportsInterface(interfaceId);
+    }
 }

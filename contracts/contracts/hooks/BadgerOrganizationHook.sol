@@ -13,7 +13,7 @@ import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
  */
 abstract contract BadgerOrganizationHook is IBadgerHook, ERC165 {
     /**
-     * @dev See {IERC165-supportsInterface}.
+     * @dev See {ERC165-supportsInterface}.
      */
     function supportsInterface(bytes4 interfaceId)
         public

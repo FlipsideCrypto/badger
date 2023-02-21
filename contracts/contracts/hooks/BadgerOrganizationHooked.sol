@@ -3,8 +3,9 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
+import {IBadgerOrganizationHooked} from "../interfaces/IBadgerOrganizationHooked.sol";
+import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {IBadgerHook} from "../interfaces/IBadgerHook.sol";
-import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 /// @dev Libraries.
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
@@ -23,7 +24,10 @@ import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerOrganizationHooked {
+abstract contract BadgerOrganizationHooked is
+    IBadgerOrganizationHooked,
+    ERC165
+{
     using EnumerableSet for EnumerableSet.AddressSet;
 
     ////////////////////////////////////////////////////////
@@ -57,6 +61,49 @@ contract BadgerOrganizationHooked {
     mapping(bytes32 => EnumerableSet.AddressSet) internal hooks;
 
     ////////////////////////////////////////////////////////
+    ///                     GETTERS                      ///
+    ////////////////////////////////////////////////////////
+
+    /**
+     * @dev See {IBadgerOrganizationHooked-getHooks}.
+     */
+    function getHooks(bytes32 _slot)
+        external
+        view
+        override
+        returns (address[] memory)
+    {
+        /// @dev Get the hooks for the specified slot.
+        EnumerableSet.AddressSet storage _hooks = hooks[_slot];
+
+        /// @dev Create an array to hold the hooks.
+        address[] memory _hookArray = new address[](_hooks.length());
+
+        /// @dev Loop through the hooks and add them to the array.
+        for (uint256 i = 0; i < _hooks.length(); i++) {
+            _hookArray[i] = _hooks.at(i);
+        }
+
+        /// @dev Return the array of hooks.
+        return _hookArray;
+    }
+
+    /**
+     * @dev See {ERC165-supportsInterface}.
+     */
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
+        return
+            interfaceId == type(IBadgerOrganizationHooked).interfaceId ||
+            super.supportsInterface(interfaceId);
+    }
+
+    ////////////////////////////////////////////////////////
     ///                 INTERNAL SETTERS                 ///
     ////////////////////////////////////////////////////////
 
@@ -73,7 +120,7 @@ contract BadgerOrganizationHooked {
     ) internal {
         /// @dev Make sure the hook is a BadgerHook.
         require(
-            IERC165(_slotHook).supportsInterface(type(IBadgerHook).interfaceId),
+            ERC165(_slotHook).supportsInterface(type(IBadgerHook).interfaceId),
             "BadgerHooks::_setHook: Hook does not implement IBadgerHook."
         );
 
