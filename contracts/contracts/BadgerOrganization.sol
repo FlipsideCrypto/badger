@@ -73,59 +73,6 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
     }
 
     /**
-     * @notice Allows Organization and Badge Managers to batch mint Badges.
-     * @dev This is an extremely gassy and bad implementation of batch processing
-     *      for Ethereum mainnet. However, because many organizations do not live on ETH
-     *      this function enables the user a simpler front-end experience.
-     * @dev If you are minting through a custom contract. Recommended usage is
-     *      to use the `mintBatch` function instead by doing 1 Badge at a time.
-     * @param _tos The addresses to mint the Badge to.
-     * @param _ids The ids of the Badges to mint.
-     * @param _amounts The amounts of the Badges to mint.
-     *
-     * Requirements:
-     * - `_tos`, `_ids`, and `_amounts` must be the same length.
-     * - `_msgSender` must be a Manager of the Badge or Organization.
-     */
-    function mintFullBatch(
-        address[] memory _tos,
-        uint256[] memory _ids,
-        uint256[] memory _amounts,
-        bytes memory _data
-    ) external virtual {
-        /// @dev Make sure that the supplied arrays are equal in length.
-        require(
-            _tos.length == _ids.length && _ids.length == _amounts.length,
-            "BadgerOrganization::mintFullBatch: _froms, _ids, and _amounts must be the same length."
-        );
-
-        /// @dev Load the stack.
-        address operator = _msgSender();
-        uint256 i;
-        uint256 id;
-
-        /// @dev Mint the Badge to all of the recipients with their given amount.
-        for (i; i < _tos.length; i++) {
-            id = _ids[i];
-
-            /// @dev Make sure the user has permission to mint this Badge.
-            require(
-                _isBadgeManager(id, _msgSender()),
-                "BadgerOrganization::mintFullBatch: Only a Manager of the Badge can mint."
-            );
-
-            /// @dev Mint the Badges to the users.
-            BadgerOrganizationLogic._mint(
-                operator,
-                _tos[i],
-                id,
-                _amounts[i],
-                _data
-            );
-        }
-    }
-
-    /**
      * See {IBadgerOrganization.revoke}
      */
     function revoke(
@@ -159,51 +106,6 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
         for (i; i < _froms.length; i++) {
             /// @dev Revoke the Badge from the user.
             _revoke(operator, _froms[i], _id, _amounts[i]);
-        }
-    }
-
-    /**
-     * @notice Allows Organization and Badge Managers to revoke Badges from a user.
-     * @dev This is an extremely gassy and bad implementation of batch processing
-     *      for Ethereum mainnet. However, because many organizations do not live on ETH
-     *      this function enables the user a simpler front-end experience.
-     * @dev If you are revoking through a custom contract. Recommended usage is
-     *      to use the `revokeBatch` function instead.
-     * @param _froms The addresses to revoke the Badge from.
-     * @param _ids The id of the Badge to revoke.
-     * @param _amounts The amount of the Badge to revoke.
-     *
-     * Requirements:
-     * - `_tos`, `_ids`, and `_amounts` must be the same length.
-     * - `_msgSender` must be a Manager of the Badge or Organization.
-     */
-    function revokeFullBatch(
-        address[] memory _froms,
-        uint256[] memory _ids,
-        uint256[] memory _amounts
-    ) external virtual {
-        /// @dev Make sure that the supplied arrays are equal in length.
-        require(
-            _froms.length == _ids.length && _ids.length == _amounts.length,
-            "BadgerOrganization::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
-        );
-
-        /// @dev Load the stack.
-        address operator = _msgSender();
-        uint256 i;
-        uint256 id;
-
-        for (i; i < _froms.length; i++) {
-            id = _ids[i];
-
-            /// @dev Make sure the user has permission to revoke this Badge.
-            require(
-                _isBadgeManager(id, _msgSender()),
-                "BadgerOrganization::revokeFullBatch: Only a Manager of the Badge can revoke."
-            );
-
-            /// @dev Revoke the badge from the user.
-            _revoke(operator, _froms[i], _ids[i], _amounts[i]);
         }
     }
 
