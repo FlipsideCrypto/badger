@@ -62,21 +62,6 @@ interface IBadgerOrganizationLogic {
     ) external;
 
     /**
-     * @notice Allow Organization Managers to control Badge Managers for multiple Badges.
-     * @param _ids The ids of the Badges.
-     * @param _managers The addresses of the Managers to update.
-     * @param _isManager The status of the Managers being updated.
-     *
-     * Requirements:
-     * - `_msgSender` must be an Organization Manager.
-     */
-    function setManagersBatch(
-        uint256[] calldata _ids,
-        address[] calldata _managers,
-        bool[] calldata _isManager
-    ) external;
-
-    /**
      * @notice Allow Organization Managers to configure Organization Hooks.
      * @dev The slot is used to differentiate between different types of hooks.
      * @param _slot The slot of the hook.
@@ -85,12 +70,6 @@ interface IBadgerOrganizationLogic {
      */
     function setHooks(
         bytes32 _slot,
-        address[] calldata _hooks,
-        bool[] calldata _isHook
-    ) external;
-
-    function setHooksBatch(
-        bytes32[] calldata _slots,
         address[] calldata _hooks,
         bool[] calldata _isHook
     ) external;

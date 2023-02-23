@@ -191,35 +191,6 @@ contract BadgerOrganizationLogic is
     }
 
     /**
-     * See {IBadgerOrganizationLogic.setManagersBatch}
-     */
-    function setManagersBatch(
-        uint256[] calldata _ids,
-        address[] calldata _managers,
-        bool[] calldata _isManager
-    ) public virtual override onlyOrganizationManager {
-        /// @dev Confirm the arrays provided are of the same length
-        require(
-            _ids.length == _managers.length &&
-                _managers.length == _isManager.length,
-            "BadgerScout::setManagersBatch: _ids, _managers, and _isManager must be the same length."
-        );
-
-        /// @dev Load the stack.
-        uint256 i;
-        bytes32 managerHash;
-
-        /// @dev Loop through the arrays and update the state of the Managers.
-        for (i; i < _managers.length; i++) {
-            /// @dev Calculate the hash for the Organization Manager.
-            managerHash = _badgeManagerHash(_ids[i], _managers[i]);
-
-            /// @dev Update the state of the Manager for the Badge.
-            _setManager(managerHash, _isManager[i]);
-        }
-    }
-
-    /**
      * See {IBadgerOrganizationLogic.setHooks}
      */
     function setHooks(
@@ -240,30 +211,6 @@ contract BadgerOrganizationLogic is
         for (i; i < _hooks.length; i++) {
             /// @dev Update the state of the Hook for the Organization.
             _setHook(_slot, _hooks[i], _isHook[i]);
-        }
-    }
-
-    /**
-     * See {IBadgerOrganizationLogic.setHooksBatch}
-     */
-    function setHooksBatch(
-        bytes32[] calldata _slots,
-        address[] calldata _hooks,
-        bool[] calldata _isHook
-    ) public virtual override onlyOrganizationManager {
-        /// @dev Confirm the arrays provided are of the same length.
-        require(
-            _slots.length == _hooks.length && _hooks.length == _isHook.length,
-            "BadgerScout::setHooksBatch: _hooks and _isHook must be the same length."
-        );
-
-        /// @dev Load the stack.
-        uint256 i;
-
-        /// @dev Loop through the arrays and update the state of the Hooks.
-        for (i; i < _hooks.length; i++) {
-            /// @dev Update the state of the Hook for the Organization.
-            _setHook(_slots[i], _hooks[i], _isHook[i]);
         }
     }
 

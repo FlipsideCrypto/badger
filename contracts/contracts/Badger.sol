@@ -10,8 +10,9 @@ import {BadgerOrganization} from "./BadgerOrganization.sol";
 /// @dev Libraries.
 import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
 
-// TODO: Implement multicall for BadgerOrganizationkls
-// TODO: Implement the ability to call config for extensions
+// TODO: Implement multicall for BadgerOrganizations
+// TODO: Implement the ability to call config for hooks and managers
+// TODO: Revert factory pattern to use MinimalProxyFactory instead of CREATE2
 
 /**
  * @dev Badger is a low-level primitive powering middle-out on-chain access policies
