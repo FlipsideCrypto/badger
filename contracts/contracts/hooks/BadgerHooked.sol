@@ -3,8 +3,11 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {IBadgerOrganizationHooked} from "../interfaces/IBadgerOrganizationHooked.sol";
-import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import {IBadgerHooked} from "../interfaces/IBadgerHooked.sol";
+import {BadgerNetwork} from "../BadgerNetwork.sol";
+
+/// @dev Helper dependencies.
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {IBadgerHook} from "../interfaces/IBadgerHook.sol";
 
 /// @dev Libraries.
@@ -24,10 +27,7 @@ import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-abstract contract BadgerOrganizationHooked is
-    IBadgerOrganizationHooked,
-    ERC165
-{
+abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
     using EnumerableSet for EnumerableSet.AddressSet;
 
     ////////////////////////////////////////////////////////
@@ -88,21 +88,6 @@ abstract contract BadgerOrganizationHooked is
         return _hookArray;
     }
 
-    /**
-     * @dev See {ERC165-supportsInterface}.
-     */
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
-        return
-            interfaceId == type(IBadgerOrganizationHooked).interfaceId ||
-            super.supportsInterface(interfaceId);
-    }
-
     ////////////////////////////////////////////////////////
     ///                 INTERNAL SETTERS                 ///
     ////////////////////////////////////////////////////////
@@ -120,7 +105,7 @@ abstract contract BadgerOrganizationHooked is
     ) internal {
         /// @dev Make sure the hook is a BadgerHook.
         require(
-            ERC165(_slotHook).supportsInterface(type(IBadgerHook).interfaceId),
+            IERC165(_slotHook).supportsInterface(type(IBadgerHook).interfaceId),
             "BadgerHooks::_setHook: Hook does not implement IBadgerHook."
         );
 
@@ -135,27 +120,32 @@ abstract contract BadgerOrganizationHooked is
             /// @dev If the hook is not active, remove it from the set.
             hooks[_slot].remove(_slotHook);
         }
+
+        /// @dev Announce updates to the hooks.
+        emit HookUpdated(_slot, _slotHook, _isHook);
     }
 
     /**
-     * @dev Configure a hook for a specified slot.
-     * @param _slot The slot to configure.
-     * @param _slotHook The hook to configure.
-     * @param _data The data to pass to the hook.
+     * @notice Packs the logic for updating the state of a Hook into a reusable function.
+     * @param _targetHook The address of the Hook.
+     * @param _key The key used to identify the Hook.
+     * @param _config The configuration of the Hook.
      */
     function _configHook(
-        bytes32 _slot,
-        address _slotHook,
-        bytes memory _data
-    ) internal {
-        /// @dev Require the the module is enabled in the slot.
+        address _targetHook,
+        bytes32 _key,
+        bytes calldata _config
+    ) internal virtual {
         require(
-            hooks[_slot].contains(_slotHook),
-            "BadgerHooks::_configHook: Hook is not enabled."
+            hooks[_key].contains(_targetHook),
+            "BadgerOrganizationHooked::_configHook: Hook is not enabled."
         );
 
-        /// @dev Make the low level call the hook using the supplied data.
-        IBadgerHook(_slotHook).config(_data);
+        /// @dev Configure the hook network object.
+        _configNetwork(_targetHook, _config);
+
+        /// @dev Announce the configuration of the hook.
+        emit HookConfigured(_key, _config);
     }
 
     /**

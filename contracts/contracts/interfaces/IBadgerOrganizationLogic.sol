@@ -10,14 +10,6 @@ interface IBadgerOrganizationLogic {
     /// @dev Event that announces when the Organization is updated.
     event OrganizationUpdated(string organizationURI);
 
-    /// @dev Event that announces when the state of a Manager changes.
-    event ManagerUpdated(bytes32 indexed managerKey, bool indexed isManager);
-
-    /// @dev Event that announces when the config of a Manager changes.
-    event ManagerConfigured(bytes32 indexed managerKey, bytes data);
-
-    event HookConfigured(bytes32 indexed hookKey, bytes data);
-
     ////////////////////////////////////////////////////////
     ///                     SETTERS                      ///
     ////////////////////////////////////////////////////////

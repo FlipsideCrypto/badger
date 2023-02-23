@@ -11,7 +11,7 @@ import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-abstract contract BadgerOrganizationHook is IBadgerHook, ERC165 {
+abstract contract BadgerHook is IBadgerHook, ERC165 {
     /**
      * @dev See {ERC165-supportsInterface}.
      */

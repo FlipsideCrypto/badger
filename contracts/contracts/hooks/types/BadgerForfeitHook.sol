@@ -3,9 +3,9 @@
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
-import {BadgerOrganizationHook} from "../BadgerOrganizationHook.sol";
+import {BadgerHook} from "../BadgerHook.sol";
 
-abstract contract BadgerForfeitHook is BadgerOrganizationHook {
+abstract contract BadgerForfeitHook is BadgerHook {
     /// @dev The schema used for the execute method.
     string public constant override EXECUTE_SCHEMA = "address,uint256,uint256";
 }

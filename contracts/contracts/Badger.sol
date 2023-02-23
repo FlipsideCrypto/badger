@@ -10,7 +10,7 @@ import {BadgerOrganization} from "./BadgerOrganization.sol";
 /// @dev Libraries.
 import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
 
-// TODO: Implement the ability to call config for hooks and managers
+// TODO: Implement the public interface functions to call config for hooks and managers
 // TODO: Implement multicall for BadgerOrganizations
 // TODO: Revert factory pattern to use MinimalProxyFactory instead of CREATE2
 

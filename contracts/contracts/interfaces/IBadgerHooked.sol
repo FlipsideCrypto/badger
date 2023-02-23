@@ -2,7 +2,17 @@
 
 pragma solidity ^0.8.16;
 
-interface IBadgerOrganizationHooked {
+interface IBadgerHooked {
+    ////////////////////////////////////////////////////////
+    ///                     EVENTS                       ///
+    ////////////////////////////////////////////////////////
+
+    /// @dev Event that announces when a hook is updated.
+    event HookUpdated(bytes32 indexed hookKey, address, bool indexed isHook);
+
+    /// @dev Event that announces when the config of a hook changes.
+    event HookConfigured(bytes32 indexed hookKey, bytes data);
+
     ////////////////////////////////////////////////////////
     ///                     GETTERS                      ///
     ////////////////////////////////////////////////////////

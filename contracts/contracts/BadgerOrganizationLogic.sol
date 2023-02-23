@@ -7,7 +7,8 @@ import {Badger} from "./Badger.sol";
 
 /// @dev Core dependencies.
 import {IBadgerOrganizationLogic} from "./interfaces/IBadgerOrganizationLogic.sol";
-import {BadgerOrganizationHooked} from "./hooks/BadgerOrganizationHooked.sol";
+import {BadgerManaged} from "./managers/BadgerManaged.sol";
+import {BadgerHooked} from "./hooks/BadgerHooked.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
@@ -21,7 +22,8 @@ import {IBadgerConfigured} from "./interfaces/IBadgerConfigured.sol";
  */
 contract BadgerOrganizationLogic is
     IBadgerOrganizationLogic,
-    BadgerOrganizationHooked,
+    BadgerHooked,
+    BadgerManaged,
     Ownable,
     ERC1155
 {
@@ -40,9 +42,6 @@ contract BadgerOrganizationLogic is
 
     /// @dev Mapping from token ID to Badge
     mapping(uint256 => string) public uris;
-
-    /// @dev Tracking the Managers of a Badge.
-    mapping(bytes32 => bool) public managerKeyToIsManager;
 
     ////////////////////////////////////////////////////////
     ///                   CONSTRUCTOR                    ///
@@ -256,7 +255,7 @@ contract BadgerOrganizationLogic is
         public
         view
         virtual
-        override(BadgerOrganizationHooked, ERC1155)
+        override
         returns (bool)
     {
         return
@@ -291,67 +290,6 @@ contract BadgerOrganizationLogic is
 
         /// @dev Announce the URI change for ERC1155 compliance.
         emit URI(_uri, _id);
-    }
-
-    /**
-     * @notice Packs the logic for updating the state of a Manager into a reusable function.
-     * @dev The key is a `keccak256` hash of the address of the Manager.
-     * @param _key The key used to identify the Manager.
-     * @param _isManager The state of the Manager.
-     */
-    function _setManager(bytes32 _key, bool _isManager) internal virtual {
-        /// @dev Save the Manager state based on the encoded key.
-        managerKeyToIsManager[_key] = _isManager;
-
-        /// @dev Announce the change of Manager state.
-        emit ManagerUpdated(_key, _isManager);
-    }
-
-    function _configNetwork(address _manager, bytes calldata _config)
-        internal
-        virtual
-    {
-        /// @dev Get the configured target that is being configured.
-        IBadgerConfigured target = IBadgerConfigured(_manager);
-
-        /// @dev Set the configuration for the target.
-        target.config(_config);
-    }
-
-    /**
-     * @notice Packs the logic for updating the config of a Manager into a reusable function.
-     * @param _manager The address of the Manager.
-     * @param _key The key used to identify the Manager.
-     * @param _config The configuration of the Manager.
-     */
-    function _configManager(
-        address _manager,
-        bytes32 _key,
-        bytes calldata _config
-    ) internal virtual {
-        /// @dev Configure the manager network object.
-        _configNetwork(_manager, _config);
-
-        /// @dev Announce the configuration of the manager.
-        emit ManagerConfigured(_key, _config);
-    }
-
-    /**
-     * @notice Packs the logic for updating the state of a Hook into a reusable function.
-     * @param _targetHook The address of the Hook.
-     * @param _key The key used to identify the Hook.
-     * @param _config The configuration of the Hook.
-     */
-    function _configHook(
-        address _targetHook,
-        bytes32 _key,
-        bytes calldata _config
-    ) internal virtual {
-        /// @dev Configure the hook network object.
-        _configNetwork(_targetHook, _config);
-
-        /// @dev Announce the configuration of the hook.
-        emit HookConfigured(_key, _config);
     }
 
     /**
