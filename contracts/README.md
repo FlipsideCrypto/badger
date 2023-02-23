@@ -29,11 +29,14 @@ contracts
 ─────├─ BadgerMintHook - "Type declaration of interface for a Mint Hook."
 ─────├─ BadgerRevokeHook - "Type declaration of interface for a Revoke Hook."
 ─────├─ BadgerTransferHook - "Type declaration of interface for a Transfer Hook."
-──├── BadgerOrganizationHook - "Minimal framework for a Badger Organization Hook."
-──├── BadgerOrganizationHooked - "Logic that drives the consumption of Organization Hooks."
+──├── BadgerHook - "Minimal framework for a Badger Organization Hook."
+──├── BadgerHooked - "Logic that drives the consumption of Organization Hooks."
 ├─ interfaces
 ──├── IBadger - "Interface to of Badger Factory to enable programatic Organization creation."
+──├── IBadgerConfigured - "Interface to a Badger Module that can be configured."
 ──├── IBadgerHook - "Interface of a Hook powering exogenous logic of an Organization."
+──├── IBadgerHooked - "Interface of the logic driving the consumption of Organization Hooks."
+──├── IBadgerManaged - "Interface of the logic driving the consumption of Organization Managers."
 ──├── IBadgerOrganization - "Non-admin interface for Badger Organization consumption."
 ──├── IBadgerOrganizationLogic - "Admin-level interface for the backend framework that drives an Organization."
 ├─ managers
@@ -43,6 +46,8 @@ contracts
 ──├── 🏷️ BadgerManagerPaidERC1155 - "Mint using ERC1155s as a Payment Token to mint Badges."
 ──├── 🏷️ BadgerManagerPaidNative - "Mint using native tokens as a Payment Token to mint Badges."
 ──├── 🏷️ BadgerManagerSignature - "Mint gated by a system signature when minting Badges."
+├─ Badger - "Factory that deploys new Badger Organizations and Badges."
+├─ BadgerNetwork - "Inline controller of configuring a Badger Module."
 ├─ BadgerOrganization - "The logic driving the non-admin functions of a Badger Organization."
 ├─ BadgerOrganizationLogic - "The state of the Organization and Badges and all admin-level functions an Organization has."
 ```
