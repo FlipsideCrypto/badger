@@ -11,6 +11,9 @@ import {BadgerOrganizationHooked} from "./hooks/BadgerOrganizationHooked.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
+/// @dev Configuration dependencies.
+import {IBadgerConfigured} from "./interfaces/IBadgerConfigured.sol";
+
 /**
  * @dev BadgerScout contains the back-end logic of a Badger Organization.
  * @author CHANCE (@nftchance)
@@ -302,6 +305,53 @@ contract BadgerOrganizationLogic is
 
         /// @dev Announce the change of Manager state.
         emit ManagerUpdated(_key, _isManager);
+    }
+
+    function _configNetwork(address _manager, bytes calldata _config)
+        internal
+        virtual
+    {
+        /// @dev Get the configured target that is being configured.
+        IBadgerConfigured target = IBadgerConfigured(_manager);
+
+        /// @dev Set the configuration for the target.
+        target.config(_config);
+    }
+
+    /**
+     * @notice Packs the logic for updating the config of a Manager into a reusable function.
+     * @param _manager The address of the Manager.
+     * @param _key The key used to identify the Manager.
+     * @param _config The configuration of the Manager.
+     */
+    function _configManager(
+        address _manager,
+        bytes32 _key,
+        bytes calldata _config
+    ) internal virtual {
+        /// @dev Configure the manager network object.
+        _configNetwork(_manager, _config);
+
+        /// @dev Announce the configuration of the manager.
+        emit ManagerConfigured(_key, _config);
+    }
+
+    /**
+     * @notice Packs the logic for updating the state of a Hook into a reusable function.
+     * @param _targetHook The address of the Hook.
+     * @param _key The key used to identify the Hook.
+     * @param _config The configuration of the Hook.
+     */
+    function _configHook(
+        address _targetHook,
+        bytes32 _key,
+        bytes calldata _config
+    ) internal virtual {
+        /// @dev Configure the hook network object.
+        _configNetwork(_targetHook, _config);
+
+        /// @dev Announce the configuration of the hook.
+        emit HookConfigured(_key, _config);
     }
 
     /**

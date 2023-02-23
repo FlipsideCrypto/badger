@@ -2,9 +2,6 @@
 
 pragma solidity ^0.8.16;
 
-/// @dev Core dependencies.
-import {IBadgerConfigured} from "./IBadgerConfigured.sol";
-
 /**
  * @notice Interface for a Badger Hook that can be configured and executed.
  * @dev It is critical to understand that Hooks should only ever be configured
@@ -13,20 +10,20 @@ import {IBadgerConfigured} from "./IBadgerConfigured.sol";
  *      expectation of things working a certain way, you should always test.
  *      AGAIN, DO NOT DIRECTLY INTERACT WITH HOOKS IT IS NOT SUPPORTED.
  */
-interface IBadgerHook is IBadgerConfigured {
+interface IBadgerConfigured {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
-    function EXECUTE_SCHEMA() external view returns (string memory);
+    function CONFIG_SCHEMA() external view returns (string memory);
 
     ////////////////////////////////////////////////////////
     ///                     SETTERS                      ///
     ////////////////////////////////////////////////////////
 
     /**
-     * @notice Execute the Hook.
-     * @param _data The data to execute the Hook.
+     * @notice Configure the Hook.
+     * @param _data The data to configure the Hook.
      */
-    function execute(bytes calldata _data) external;
+    function config(bytes calldata _data) external;
 }

@@ -28,7 +28,7 @@ contract BadgerManagerClaimable is BadgerManager {
     ////////////////////////////////////////////////////////
 
     /**
-     * See {IBadgerManager-config}.
+     * See {IBadgerConfigured-config}.
      */
     function config(bytes calldata _data) public virtual {
         /// @dev Decode the config data forwarded from the Organization.
