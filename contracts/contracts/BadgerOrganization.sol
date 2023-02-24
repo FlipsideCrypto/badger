@@ -5,6 +5,7 @@ pragma solidity ^0.8.16;
 /// @dev Core dependencies.
 import {IBadgerOrganization} from "./interfaces/IBadgerOrganization.sol";
 import {BadgerOrganizationLogic} from "./BadgerOrganizationLogic.sol";
+import {Multicallable} from "solady/src/utils/Multicallable.sol";
 
 /**
  * @dev Badger Organizations are localized ecosystems of members, managers and
@@ -16,37 +17,14 @@ import {BadgerOrganizationLogic} from "./BadgerOrganizationLogic.sol";
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
-    ////////////////////////////////////////////////////////
-    ///                   CONSTRUCTOR                    ///
-    ////////////////////////////////////////////////////////
-
-    constructor() BadgerOrganizationLogic() {}
-
+contract BadgerOrganization is
+    IBadgerOrganization,
+    BadgerOrganizationLogic,
+    Multicallable
+{
     ////////////////////////////////////////////////////////
     ///                     SETTERS                      ///
     ////////////////////////////////////////////////////////
-
-    function multicall(bytes[] memory _data)
-        external
-        virtual
-        returns (bytes[] memory results)
-    {
-        results = new bytes[](_data.length);
-
-        for (uint256 i = 0; i < _data.length; i++) {
-            (bool success, bytes memory result) = address(this).delegatecall(
-                _data[i]
-            );
-
-            require(
-                success,
-                "BadgerOrganization::multicall: Multicall failed."
-            );
-
-            results[i] = result;
-        }
-    }
 
     /**
      * See {IBadgerOrganization.mint}

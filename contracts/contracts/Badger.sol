@@ -5,7 +5,7 @@ pragma solidity ^0.8.16;
 /// @dev Core dependencies.
 import {IBadger} from "./interfaces/IBadger.sol";
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
-import {Multicallable} from "solady/src/utils/Multicallable.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 
 /// @dev Helper dependencies.
 import {BadgerOrganization} from "./BadgerOrganization.sol";
@@ -25,7 +25,7 @@ import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract Badger is IBadger, ERC165, Multicallable {
+contract Badger is IBadger, ERC165, Context {
     using Clones for address;
 
     ////////////////////////////////////////////////////////
@@ -75,9 +75,6 @@ contract Badger is IBadger, ERC165, Multicallable {
             organizationId = organizations++;
         }
 
-        /// @dev Set the hotslot for the last deployed organization.
-        organization = _organization;
-
         /// @dev Determine what the address will be.
         address organizationAddress = implementation.cloneDeterministic(
             keccak256(abi.encodePacked(organizationId))
@@ -92,7 +89,7 @@ contract Badger is IBadger, ERC165, Multicallable {
         /// @dev Announce the creation of the Organization.
         emit OrganizationCreated(
             badgerOrganization,
-            msg.sender,
+            _msgSender(),
             organizationId
         );
     }
@@ -118,14 +115,6 @@ contract Badger is IBadger, ERC165, Multicallable {
                     address(this)
                 )
             );
-    }
-
-    /**
-     * See {IBadger-getOrganizationURI}.
-     */
-    function getOrganizationURI() public view virtual returns (string memory) {
-        /// @dev Retrieve the value from the hotslot.
-        return organization.uri;
     }
 
     /**

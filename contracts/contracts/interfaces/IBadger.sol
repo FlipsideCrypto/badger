@@ -47,10 +47,4 @@ interface IBadger is IBadgerOrganizationStruct {
         external
         view
         returns (BadgerOrganization);
-
-    /**
-     * @dev Get the URI of the last deployed Organization.
-     * @return The URI of the last deployed Organization.
-     */
-    function getOrganizationURI() external view returns (string memory);
 }

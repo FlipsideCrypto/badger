@@ -47,21 +47,7 @@ contract BadgerOrganizationLogic is
     ///                   INITIALIZER                    ///
     ////////////////////////////////////////////////////////
 
-    constructor() {
-        /// @dev Initialize the contract.
-        Organization memory organization = Organization({
-            deployer: msg.sender,
-            name: "Badger",
-            symbol: "BDGR",
-            uri: "",
-            organizationURI: ""
-        });
-
-        /// @dev Initialize a not-to-be-used singleton.
-        initialize(organization);
-    }
-
-    function initialize(Organization memory _organization)
+    function initialize(Organization calldata _organization)
         public
         virtual
         initializer

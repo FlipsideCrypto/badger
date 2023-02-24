@@ -1,10 +1,5 @@
 [
   {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -667,7 +662,7 @@
     "inputs": [
       {
         "internalType": "bytes[]",
-        "name": "_data",
+        "name": "data",
         "type": "bytes[]"
       }
     ],
@@ -675,11 +670,11 @@
     "outputs": [
       {
         "internalType": "bytes[]",
-        "name": "results",
+        "name": "",
         "type": "bytes[]"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {

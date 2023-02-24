@@ -69,16 +69,23 @@ describe("Badger", function () {
             }
 
             await (
-                expect(
-                    badgerFactory.connect(owner).createOrganization(organization)
-                ).to.emit(
-                    badgerFactory, "OrganizationCreated"
-                )
+                expect(badgerFactory.connect(owner).createOrganization(organization)
+                ).to.emit(badgerFactory, "OrganizationCreated")
             );
         });
     });
 
     describe("BadgerOrganization.sol", async function () {
+        it("setOrganizationURI() success", async function () {
+            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(org.connect(owner).setOrganizationURI("ipfs/newuri"))
+                .to.emit(org, "OrganizationUpdated")
+                .withArgs("ipfs/newuri")
+            );
+        });
+
         it("mint() success", async function () {
             const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
 
@@ -89,14 +96,14 @@ describe("Badger", function () {
             );
         });
 
-        // it("getOrganization() success", async function () {
-        //     const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+        it("getOrganization() success", async function () {
+            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
 
-        //     await (
-        //         expect(await badgerFactory.getOrganization(1))
-        //             .to.be.equal(org.address)
-        //     )
-        // });
+            await (
+                expect(await badgerFactory.getOrganization(0))
+                    .to.be.equal(org.address)
+            )
+        });
     });
 
 
