@@ -217,7 +217,7 @@ contract BadgerOrganizationLogic is
     }
 
     /**
-     * See {IBadgerOrganizationLogic.configureManager}
+     * See {IBadgerOrganizationLogic.configManager}
      */
     function configManager(address _manager, bytes calldata _config)
         public
@@ -225,17 +225,19 @@ contract BadgerOrganizationLogic is
         override
         onlyOrganizationManager
     {
+        /// @dev Configure the Organization manager.
         _configManager(_manager, _managerHash(_manager), _config);
     }
 
     /**
-     * See {IBadgerOrganizationLogic.configureManager}
+     * See {IBadgerOrganizationLogic.configManager}
      */
     function configManager(
         uint256 _id,
         address _manager,
         bytes calldata _config
     ) public virtual override onlyBadgeManager(_id) {
+        /// @dev Configure the Badge manager.
         _configManager(_manager, _badgeManagerHash(_id, _manager), _config);
     }
 
