@@ -44,9 +44,21 @@ contract BadgerOrganizationLogic is
     mapping(uint256 => string) public uris;
 
     ////////////////////////////////////////////////////////
+    ///               BLOCKING CONSTRUCTOR               ///
+    ////////////////////////////////////////////////////////
+
+    constructor() {
+        _disableInitializers();
+    }
+
+    ////////////////////////////////////////////////////////
     ///                   INITIALIZER                    ///
     ////////////////////////////////////////////////////////
 
+    /**
+     * @notice Initialize the BadgerOrganizationLogic contract.
+     * @param _organization The Organization struct.
+     */
     function initialize(Organization calldata _organization)
         public
         virtual
