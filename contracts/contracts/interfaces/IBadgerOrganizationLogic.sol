@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 pragma solidity ^0.8.16;
 
@@ -87,6 +87,19 @@ interface IBadgerOrganizationLogic {
     function configManager(
         uint256 _id,
         address _manager,
+        bytes calldata _data
+    ) external;
+
+    /**
+     * @notice Allow Organization Managers to configure Organization Hooks.
+     * @dev The slot is used to differentiate between different types of hooks.
+     * @param _slot The slot of the hook.
+     * @param _hook The address of the hook to update.
+     * @param _data The data to configure the hook with.
+     */
+    function configHook(
+        bytes32 _slot,
+        address _hook,
         bytes calldata _data
     ) external;
 

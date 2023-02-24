@@ -241,6 +241,18 @@ contract BadgerOrganizationLogic is
         _configManager(_manager, _badgeManagerHash(_id, _manager), _config);
     }
 
+    /**
+     * See {IBadgerOrganizationLogic.configHook}
+     */
+    function configHook(
+        bytes32 _slot,
+        address _slotHook,
+        bytes calldata _config
+    ) public virtual override onlyOrganizationManager {
+        /// @dev Configure the Organization hook.
+        _configHook(_slotHook, _slot, _config);
+    }
+
     ////////////////////////////////////////////////////////
     ///                     GETTERS                      ///
     ////////////////////////////////////////////////////////

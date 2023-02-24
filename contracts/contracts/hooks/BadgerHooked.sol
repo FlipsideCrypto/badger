@@ -133,11 +133,12 @@ abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
      */
     function _configHook(
         address _targetHook,
-        bytes32 _key,
+        bytes32 _slot,
         bytes calldata _config
     ) internal virtual {
+        /// @dev Make sure the hook is enabled.
         require(
-            hooks[_key].contains(_targetHook),
+            hooks[_slot].contains(_targetHook),
             "BadgerOrganizationHooked::_configHook: Hook is not enabled."
         );
 
@@ -145,7 +146,7 @@ abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
         _configNetwork(_targetHook, _config);
 
         /// @dev Announce the configuration of the hook.
-        emit HookConfigured(_key, _config);
+        emit HookConfigured(_slot, _config);
     }
 
     /**

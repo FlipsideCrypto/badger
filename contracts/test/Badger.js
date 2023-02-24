@@ -17,11 +17,17 @@ describe("Badger", function () {
     async function deployBadgerFactory() {
         const [owner, otherAccount] = await ethers.getSigners();
 
-        const BadgerFactory = await ethers.getContractFactory("BadgerFactory");
+        const BadgerFactory = await ethers.getContractFactory("Badger");
         const badgerFactory = await BadgerFactory.deploy();
         await badgerFactory.deployed();
 
         return { badgerFactory, owner, otherAccount };
+    }
+
+    async function deployNewOrganization() {
+        const [owner] = await ethers.getSigners();
+
+        const org = await ethers.getContractFactory("Badger");
     }
 
     describe("Deploy", async function () {
