@@ -1,47 +1,70 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 pragma solidity ^0.8.16;
 
 /// @dev Core dependencies.
 import {IBadgerOrganization} from "./interfaces/IBadgerOrganization.sol";
-import {BadgerScout} from "./BadgerScout.sol";
+import {BadgerOrganizationLogic} from "./BadgerOrganizationLogic.sol";
 
 /**
  * @dev Badger Organizations are localized ecosystems of members, managers and
  *      badges. With a system of harmonious management, on-chain Organizations
  *      can unlock the power of secure permission systems and access policies
  *      by minting ERC1155 Badges to their members.
+ * @dev Explicit references to the `BadgerOrganizationLogic` contract are used
+ *      to improve developer experience, readability and enable call traces.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract BadgerOrganization is IBadgerOrganization, BadgerScout {
+contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
     ////////////////////////////////////////////////////////
     ///                   CONSTRUCTOR                    ///
     ////////////////////////////////////////////////////////
 
-    constructor() BadgerScout() {}
+    constructor() BadgerOrganizationLogic() {}
 
     ////////////////////////////////////////////////////////
     ///                     SETTERS                      ///
     ////////////////////////////////////////////////////////
 
+    function multicall(bytes[] memory _data)
+        external
+        virtual
+        returns (bytes[] memory results)
+    {
+        results = new bytes[](_data.length);
+
+        for (uint256 i = 0; i < _data.length; i++) {
+            (bool success, bytes memory result) = address(this).delegatecall(
+                _data[i]
+            );
+
+            require(
+                success,
+                "BadgerOrganization::multicall: Multicall failed."
+            );
+
+            results[i] = result;
+        }
+    }
+
     /**
-     * See {IBadgerOrganization.leaderMint}
+     * See {IBadgerOrganization.mint}
      */
-    function leaderMint(
+    function mint(
         address _to,
         uint256 _id,
         uint256 _amount,
         bytes memory _data
     ) external virtual override onlyBadgeManager(_id) {
         /// @dev Mint the Badge to the user.
-        _mint(_to, _id, _amount, _data);
+        BadgerOrganizationLogic._mint(_msgSender(), _to, _id, _amount, _data);
     }
 
     /**
-     * See {IBadgerOrganization.leaderMintBatch}
+     * See {IBadgerOrganization.mintBatch}
      */
-    function leaderMintBatch(
+    function mintBatch(
         address[] memory _tos,
         uint256 _id,
         uint256[] memory _amounts,
@@ -50,62 +73,23 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         /// @dev Make sure that the supplied arrays are equal in length.
         require(
             _tos.length == _amounts.length,
-            "BadgerOrganization::leaderMintBatch: _tos and _amounts must be the same length."
+            "BadgerOrganization::mintBatch: _tos and _amounts must be the same length."
         );
 
         /// @dev Load the stack.
+        address operator = _msgSender();
         uint256 i;
 
         /// @dev Mint the badge to all of the recipients with their given amount.
         for (i; i < _tos.length; i++) {
             /// @dev Mint the badges to the users.
-            _mint(_tos[i], _id, _amounts[i], _data);
-        }
-    }
-
-    /**
-     * @notice Allows Organization and Badge Managers to batch mint badges.
-     * @dev This is an extremely gassy and bad implementation of batch processing
-     *      for Ethereum mainnet. However, because many organizations do not live on ETH
-     *      this function enables the user a simpler front-end experience.
-     * @dev If you are minting through a custom contract. Recommended usage is
-     *      to use the `mintBatch` function instead by doing 1 Badge at a time.
-     * @param _tos The addresses to mint the Badge to.
-     * @param _ids The ids of the Badges to mint.
-     * @param _amounts The amounts of the Badges to mint.
-     *
-     * Requirements:
-     * - `_tos`, `_ids`, and `_amounts` must be the same length.
-     * - `_msgSender` must be a Manager of the Badge or Organization.
-     */
-    function leaderMintFullBatch(
-        address[] memory _tos,
-        uint256[] memory _ids,
-        uint256[] memory _amounts,
-        bytes memory _data
-    ) external virtual {
-        /// @dev Make sure that the supplied arrays are equal in length.
-        require(
-            _tos.length == _ids.length && _ids.length == _amounts.length,
-            "BadgerOrganization::leaderMintFullBatch: _froms, _ids, and _amounts must be the same length."
-        );
-
-        /// @dev Load the stack.
-        uint256 i;
-        uint256 id;
-
-        /// @dev Mint the Badge to all of the recipients with their given amount.
-        for (i; i < _tos.length; i++) {
-            id = _ids[i];
-
-            /// @dev Make sure the user has permission to mint this Badge.
-            require(
-                _isBadgeManager(id, _msgSender()),
-                "BadgerOrganization::leaderMintFullBatch: Only a Manager of the Badge can mint."
+            BadgerOrganizationLogic._mint(
+                operator,
+                _tos[i],
+                _id,
+                _amounts[i],
+                _data
             );
-
-            /// @dev Mint the Badges to the users.
-            _mint(_tos[i], id, _amounts[i], _data);
         }
     }
 
@@ -118,7 +102,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         uint256 _amount
     ) external virtual override onlyBadgeManager(_id) {
         /// @dev Revoke the Badge from the user.
-        _burn(_from, _id, _amount);
+        _revoke(_msgSender(), _from, _id, _amount);
     }
 
     /**
@@ -136,56 +120,13 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         );
 
         /// @dev Load the stack.
+        address operator = _msgSender();
         uint256 i;
 
         /// @dev Revoke the Badge from all of the recipients with their given amount.
         for (i; i < _froms.length; i++) {
             /// @dev Revoke the Badge from the user.
-            _burn(_froms[i], _id, _amounts[i]);
-        }
-    }
-
-    /**
-     * @notice Allows Organization and Badge Managers to revoke badges from a user.
-     * @dev This is an extremely gassy and bad implementation of batch processing
-     *      for Ethereum mainnet. However, because many organizations do not live on ETH
-     *      this function enables the user a simpler front-end experience.
-     * @dev If you are revoking through a custom contract. Recommended usage is
-     *      to use the `revokeBatch` function instead.
-     * @param _froms The addresses to revoke the Badge from.
-     * @param _ids The id of the Badge to revoke.
-     * @param _amounts The amount of the Badge to revoke.
-     *
-     * Requirements:
-     * - `_tos`, `_ids`, and `_amounts` must be the same length.
-     * - `_msgSender` must be a Manager of the Badge or Organization.
-     */
-    function revokeFullBatch(
-        address[] memory _froms,
-        uint256[] memory _ids,
-        uint256[] memory _amounts
-    ) external virtual {
-        /// @dev Make sure that the supplied arrays are equal in length.
-        require(
-            _froms.length == _ids.length && _ids.length == _amounts.length,
-            "BadgerOrganization::revokeFullBatch: _froms, _ids, and _amounts must be the same length."
-        );
-
-        /// @dev Load the stack.
-        uint256 i;
-        uint256 id;
-
-        for (i; i < _froms.length; i++) {
-            id = _ids[i];
-
-            /// @dev Make sure the user has permission to revoke this Badge.
-            require(
-                _isBadgeManager(id, _msgSender()),
-                "BadgerOrganization::revokeFullBatch: Only a Manager of the Badge can revoke."
-            );
-
-            /// @dev Revoke the badge from the user.
-            _burn(_froms[i], _ids[i], _amounts[i]);
+            _revoke(operator, _froms[i], _id, _amounts[i]);
         }
     }
 
@@ -195,15 +136,23 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
     function forfeit(
         uint256 _id,
         uint256 _amount,
-        bytes memory _data
+        bytes memory
     ) external virtual override {
         /// @dev Revoke the Badge from the user.
-        _burn(_msgSender(), _id, _amount);
+        _forfeit(_msgSender(), _id, _amount);
     }
 
     ////////////////////////////////////////////////////////
     ///                     GETTERS                      ///
     ////////////////////////////////////////////////////////
+
+    /**
+     * @notice Returns the metadata URI for the Organization.
+     * @return The metadata URI for the Organization.
+     */
+    function contractURI() public view returns (string memory) {
+        return organizationURI;
+    }
 
     /**
      * See {ERC1155.uri}
@@ -216,7 +165,7 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
         returns (string memory)
     {
         /// @dev Get the URI for the Badge.
-        string memory _uri = badges[_id].uri;
+        string memory _uri = uris[_id];
 
         /// @dev If a custom URI has been set for this Badge, return it.
         if (bytes(_uri).length > 0) {
@@ -228,10 +177,17 @@ contract BadgerOrganization is IBadgerOrganization, BadgerScout {
     }
 
     /**
-     * @notice Returns the metadata URI for the Organization.
-     * @return The metadata URI for the Organization.
+     * See {ERC165-supportsInterface}
      */
-    function contractURI() public view returns (string memory) {
-        return organizationURI;
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
+        return
+            interfaceId == type(IBadgerOrganization).interfaceId ||
+            super.supportsInterface(interfaceId);
     }
 }

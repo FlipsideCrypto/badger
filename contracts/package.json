@@ -25,7 +25,9 @@
     "mocha": "^10.0.0"
   },
   "dependencies": {
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
     "ganache-cli": "^6.12.2",
+    "solady": "^0.0.78",
     "solidity-coverage": "^0.8.2",
     "solmate": "^6.7.0"
   }

@@ -3,10 +3,9 @@
 pragma solidity ^0.8.16;
 
 interface IBadgerOrganization {
-    /*//////////////////////////////////////////////////////////////
-                                SETTERS
-    //////////////////////////////////////////////////////////////*/
-
+    ////////////////////////////////////////////////////////
+    ///                     SETTERS                      ///
+    ////////////////////////////////////////////////////////
     /**
      * @dev Allows a Manager of a Badge to mint to a user.
      * @param _to The address to mint the Badge to.
@@ -17,7 +16,7 @@ interface IBadgerOrganization {
      * Requirements:
      * - `_msgSender` must be a Manager of the Badge or Organization.
      */
-    function leaderMint(
+    function mint(
         address _to,
         uint256 _id,
         uint256 _amount,
@@ -37,7 +36,7 @@ interface IBadgerOrganization {
      * Requirements:
      * - `_msgSender` must be a Manager of the Badge or Organization.
      */
-    function leaderMintBatch(
+    function mintBatch(
         address[] memory _tos,
         uint256 _id,
         uint256[] memory _amounts,
