@@ -19,9 +19,13 @@ describe("Badger", function () {
     async function deployBadgerFactory() {
         const [owner] = await ethers.getSigners();
 
+        const BadgerOrgVersion = await ethers.getContractFactory("BadgerOrganization");
+        badgerOrgVersion = await BadgerOrgVersion.deploy();
+        badgerOrgVersion.deployed();
+
         const BadgerFactory = await ethers.getContractFactory("Badger");
-        const badgerFactory = await BadgerFactory.deploy();
-        await badgerFactory.deployed();
+        badgerFactory = await BadgerFactory.deploy(badgerOrgVersion.address);
+        badgerFactory = await badgerFactory.deployed();
 
         return { badgerFactory, owner };
     }
@@ -29,18 +33,19 @@ describe("Badger", function () {
     async function deployNewOrganization() {
         const { badgerFactory, owner } = await loadFixture(deployBadgerFactory);
 
-        organization = [
-            owner.address,
-            "ipfs/uri",
-            "ipfs/org",
-            "Badger",
-            "BADGER"
-        ]
+        const organization = {
+            deployer: owner.address,
+            uri: "ipfs/uri",
+            organizationURI: "ipfs/org",
+            name: "Badger",
+            symbol: "BADGER"
+        }
 
         const tx = await badgerFactory.connect(owner).createOrganization(organization);
         const receipt = await tx.wait();
 
-        const orgAddress = receipt.events[3].args['organization'];
+        console.log("receipt", receipt.events)
+        const orgAddress = receipt.events[4].args['organization'];
 
         const BadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
         const org = new ethers.Contract(
@@ -53,17 +58,51 @@ describe("Badger", function () {
     }
 
     describe("Badger.sol", async function () {
-        it("getOrganizationURI() can get organization URI.", async function () {
-            const { badgerFactory } = await loadFixture(deployNewOrganization);
+        it("createOrganization() success", async function () {
+            const { badgerFactory, owner } = await loadFixture(deployBadgerFactory);
 
-            organization = await badgerFactory.getOrganization(1);
-            await expect(organization).to.equal(org.address);
+            const organization = {
+                deployer: owner.address,
+                uri: "ipfs/uri",
+                organizationURI: "ipfs/org",
+                name: "Badger",
+                symbol: "BADGER"
+            }
+
+            await (
+                expect(
+                    badgerFactory.connect(owner).createOrganization(organization)
+                ).to.emit(
+                    badgerFactory, "OrganizationCreated"
+                )
+            );
         });
-        it("getOrganization() can get organization.", async function () {
+
+        it("")
+    });
+    describe("BadgerOrganization.sol", async function () {
+        it("mint() success", async function () {
             const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
 
-            organization = await badgerFactory.getOrganization(1);
-            await expect(organization).to.equal(org.address);
+            await (
+                expect(
+                    org.mint(
+                        owner.address,
+                        0,
+                        100,
+                        "0x"
+                    )
+                ).to.emit(
+                    org, "Transfer"
+                ).withArgs(
+                    ethers.constants.AddressZero, owner.address, 100
+                )
+            );
+        });
+
+        it("mint() fail", async function () {
+            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+
         });
     });
 });

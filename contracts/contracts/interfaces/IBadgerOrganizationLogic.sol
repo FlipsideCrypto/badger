@@ -2,7 +2,10 @@
 
 pragma solidity ^0.8.16;
 
-interface IBadgerOrganizationLogic {
+/// @dev Core dependencies.
+import {IBadgerOrganizationStruct} from "./IBadgerOrganizationStruct.sol";
+
+interface IBadgerOrganizationLogic is IBadgerOrganizationStruct {
     ////////////////////////////////////////////////////////
     ///                     EVENTS                       ///
     ////////////////////////////////////////////////////////

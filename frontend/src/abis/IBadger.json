@@ -54,7 +54,7 @@
             "type": "string"
           }
         ],
-        "internalType": "struct IBadger.Organization",
+        "internalType": "struct IBadgerOrganizationStruct.Organization",
         "name": "_organization",
         "type": "tuple"
       }

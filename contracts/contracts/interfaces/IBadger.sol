@@ -5,19 +5,10 @@ pragma solidity ^0.8.16;
 /// @dev Factory output.
 import {BadgerOrganization} from "../BadgerOrganization.sol";
 
-interface IBadger {
-    ////////////////////////////////////////////////////////
-    ///                      SCHEMA                      ///
-    ////////////////////////////////////////////////////////
+/// @dev Core dependencies.
+import {IBadgerOrganizationStruct} from "./IBadgerOrganizationStruct.sol";
 
-    struct Organization {
-        address deployer;
-        string uri;
-        string organizationURI;
-        string name;
-        string symbol;
-    }
-
+interface IBadger is IBadgerOrganizationStruct {
     ////////////////////////////////////////////////////////
     ///                     EVENTS                       ///
     ////////////////////////////////////////////////////////

@@ -9,8 +9,8 @@ import {Badger} from "./Badger.sol";
 import {IBadgerOrganizationLogic} from "./interfaces/IBadgerOrganizationLogic.sol";
 import {BadgerManaged} from "./managers/BadgerManaged.sol";
 import {BadgerHooked} from "./hooks/BadgerHooked.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {ERC1155Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 
 /// @dev Configuration dependencies.
 import {IBadgerConfigured} from "./interfaces/IBadgerConfigured.sol";
@@ -24,8 +24,8 @@ contract BadgerOrganizationLogic is
     IBadgerOrganizationLogic,
     BadgerHooked,
     BadgerManaged,
-    Ownable,
-    ERC1155
+    OwnableUpgradeable,
+    ERC1155Upgradeable
 {
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
@@ -44,28 +44,43 @@ contract BadgerOrganizationLogic is
     mapping(uint256 => string) public uris;
 
     ////////////////////////////////////////////////////////
-    ///                   CONSTRUCTOR                    ///
+    ///                   INITIALIZER                    ///
     ////////////////////////////////////////////////////////
 
-    constructor() ERC1155(Badger(_msgSender()).getOrganizationURI()) {
-        /// @dev Get the Organization details from the factory.
-        (
-            address _deployer,
-            ,
-            string memory _organizationURI,
-            string memory _name,
-            string memory _symbol
-        ) = Badger(_msgSender()).organization();
+    constructor() {
+        /// @dev Initialize the contract.
+        Organization memory organization = Organization({
+            deployer: msg.sender,
+            name: "Badger",
+            symbol: "BDGR",
+            uri: "",
+            organizationURI: ""
+        });
 
-        /// @dev Set ownership of the Organization.
-        transferOwnership(_deployer);
+        /// @dev Initialize a not-to-be-used singleton.
+        initialize(organization);
+    }
+
+    function initialize(Organization memory _organization)
+        public
+        virtual
+        initializer
+    {
+        /// @dev Initialize ERC1155.
+        __ERC1155_init(_organization.uri);
+
+        /// @dev Initialize Ownable.
+        __Ownable_init();
+
+        /// @dev Transfer ownership to the deployer.
+        transferOwnership(_organization.deployer);
 
         /// @dev Set the contract URI.
-        _setOrganizationURI(_organizationURI);
+        _setOrganizationURI(_organization.organizationURI);
 
         /// @dev Set the immutable name and symbol of the contract.
-        name = _name;
-        symbol = _symbol;
+        name = _organization.name;
+        symbol = _organization.symbol;
     }
 
     ////////////////////////////////////////////////////////
@@ -349,7 +364,7 @@ contract BadgerOrganizationLogic is
         _hook(BEFORE_MINT, abi.encode(_operator, _to, _id, _amount, _data));
 
         /// @dev Mint the Badge to the user.
-        ERC1155._mint(_to, _id, _amount, _data);
+        ERC1155Upgradeable._mint(_to, _id, _amount, _data);
     }
 
     /**
@@ -370,7 +385,7 @@ contract BadgerOrganizationLogic is
         _hook(BEFORE_REVOKE, abi.encode(_operator, _from, _id, _amount));
 
         /// @dev Revoke the Badge from the user.
-        ERC1155._burn(_from, _id, _amount);
+        ERC1155Upgradeable._burn(_from, _id, _amount);
     }
 
     /**
@@ -389,7 +404,7 @@ contract BadgerOrganizationLogic is
         _hook(BEFORE_FORFEIT, abi.encode(_from, _id, _amount));
 
         /// @dev Burn the Badge held by the user.
-        ERC1155._burn(_from, _id, _amount);
+        ERC1155Upgradeable._burn(_from, _id, _amount);
     }
 
     /**

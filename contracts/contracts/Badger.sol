@@ -9,9 +9,11 @@ import {Multicallable} from "solady/src/utils/Multicallable.sol";
 
 /// @dev Helper dependencies.
 import {BadgerOrganization} from "./BadgerOrganization.sol";
+import {IBadgerOrganization} from "./interfaces/IBadgerOrganization.sol";
+import {IBadgerOrganizationLogic} from "./interfaces/IBadgerOrganizationLogic.sol";
 
 /// @dev Libraries.
-import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
+import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
 
 /**
  * @dev Badger is a low-level primitive powering middle-out on-chain access policies
@@ -24,19 +26,37 @@ import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
  * @author masonthechain (@masonthechain)
  */
 contract Badger is IBadger, ERC165, Multicallable {
-    using Bytes32AddressLib for address;
-    using Bytes32AddressLib for bytes32;
+    using Clones for address;
 
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
-    /// @dev Keep track of how many organizations have been deployed for use
-    ///      as `salt` for the `create2` opcode.
-    uint256 organizations;
+    /// @dev The address of the implementation contract for the minimal proxy.
+    address public implementation;
+
+    /// @dev Keep track of how many organizations have been deployed.
+    uint256 public organizations;
 
     /// @dev Hotslot for the last deployed organization.
     Organization public organization;
+
+    ////////////////////////////////////////////////////////
+    ///                   CONSTRUCTOR                    ///
+    ////////////////////////////////////////////////////////
+
+    constructor(address _implementation) {
+        /// @dev Require the implementation is a BadgerOrganization.
+        require(
+            ERC165(_implementation).supportsInterface(
+                type(IBadgerOrganization).interfaceId
+            ),
+            "Badger::constructor: Implementation does not support IBadgerOrganization."
+        );
+
+        /// @dev Set the implementation address.
+        implementation = _implementation;
+    }
 
     ////////////////////////////////////////////////////////
     ///                     SETTERS                      ///
@@ -58,10 +78,16 @@ contract Badger is IBadger, ERC165, Multicallable {
         /// @dev Set the hotslot for the last deployed organization.
         organization = _organization;
 
-        /// @dev Deploy the new organization using the `create2` opcode.
-        badgerOrganization = new BadgerOrganization{
-            salt: bytes32(organizations)
-        }();
+        /// @dev Determine what the address will be.
+        address organizationAddress = implementation.cloneDeterministic(
+            keccak256(abi.encodePacked(organizationId))
+        );
+
+        /// @dev Interface with the Organization.
+        badgerOrganization = BadgerOrganization(organizationAddress);
+
+        /// @dev Initialize the Organization.
+        badgerOrganization.initialize(_organization);
 
         /// @dev Announce the creation of the Organization.
         emit OrganizationCreated(
@@ -87,23 +113,9 @@ contract Badger is IBadger, ERC165, Multicallable {
     {
         return
             BadgerOrganization(
-                payable(
-                    keccak256(
-                        abi.encodePacked(
-                            /// @dev Prefix of the contract.
-                            bytes1(0xff),
-                            /// @dev Address of the factory contract.
-                            address(this),
-                            /// @dev Salt used to deploy the contract.
-                            bytes32(_organizationId),
-                            /// @dev Hash of the contract bytecode.
-                            keccak256(
-                                abi.encodePacked(
-                                    type(BadgerOrganization).creationCode
-                                )
-                            )
-                        )
-                    ).fromLast20Bytes()
+                implementation.predictDeterministicAddress(
+                    keccak256(abi.encodePacked(_organizationId)),
+                    address(this)
                 )
             );
     }
