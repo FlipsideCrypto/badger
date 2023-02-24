@@ -44,7 +44,6 @@ describe("Badger", function () {
         const tx = await badgerFactory.connect(owner).createOrganization(organization);
         const receipt = await tx.wait();
 
-        console.log("receipt", receipt.events)
         const orgAddress = receipt.events[4].args['organization'];
 
         const BadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
@@ -77,8 +76,6 @@ describe("Badger", function () {
                 )
             );
         });
-
-        it("")
     });
     describe("BadgerOrganization.sol", async function () {
         it("mint() success", async function () {
@@ -98,11 +95,6 @@ describe("Badger", function () {
                     ethers.constants.AddressZero, owner.address, 100
                 )
             );
-        });
-
-        it("mint() fail", async function () {
-            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
-
         });
     });
 });
