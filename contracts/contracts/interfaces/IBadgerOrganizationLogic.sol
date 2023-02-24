@@ -71,6 +71,25 @@ interface IBadgerOrganizationLogic {
         bool[] calldata _isHook
     ) external;
 
+    /**
+     * @notice Allow Organization Managers to configure Organization Managers.
+     * @param _manager The address of the Manager to update.
+     * @param _data The data to configure the Manager with.
+     */
+    function configManager(address _manager, bytes calldata _data) external;
+
+    /**
+     * @notice Allow Organization Managers to configure Badge Managers.
+     * @param _id The id of the Badge.
+     * @param _manager The address of the Manager to update.
+     * @param _data The data to configure the Manager with.
+     */
+    function configManager(
+        uint256 _id,
+        address _manager,
+        bytes calldata _data
+    ) external;
+
     ////////////////////////////////////////////////////////
     ///                     GETTERS                      ///
     ////////////////////////////////////////////////////////
