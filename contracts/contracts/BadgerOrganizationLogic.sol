@@ -60,8 +60,7 @@ contract BadgerOrganizationLogic is
      * @param _organization The Organization struct.
      */
     function initialize(Organization calldata _organization)
-        public
-        virtual
+        external
         initializer
     {
         /// @dev Initialize ERC1155.

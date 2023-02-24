@@ -81,10 +81,40 @@ describe("Badger", function () {
 
             await (
                 expect(org.connect(owner).setOrganizationURI("ipfs/newuri"))
-                .to.emit(org, "OrganizationUpdated")
-                .withArgs("ipfs/newuri")
+                    .to.emit(org, "OrganizationUpdated")
+                    .withArgs("ipfs/newuri")
             );
         });
+
+        it("setOrganizationURI() fail", async function () {
+            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(org.connect(owner).setOrganizationURI(""))
+                    .to.be.revertedWith("BadgerScout::setOrganizationURI: URI must be set.")
+            );
+        });
+
+        it("setBadgeURI() success", async function () {
+            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(org.connect(owner).setBadgeURI(0, "ipfs/newuri"))
+                    .to.emit(org, "URI")
+                    .withArgs("ipfs/newuri", 0)
+            );
+        });
+
+        it("setBadgeURI() fail", async function () {
+            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(org.connect(owner).setBadgeURI(0, ""))
+                    .to.be.revertedWith("BadgerScout::setBadgeURI: URI must be set.")
+            );
+        });
+
+
 
         it("mint() success", async function () {
             const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
@@ -105,6 +135,4 @@ describe("Badger", function () {
             )
         });
     });
-
-
 });

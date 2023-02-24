@@ -4,7 +4,7 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "address",
+        "internalType": "contract BadgerOrganization",
         "name": "organization",
         "type": "address"
       },
