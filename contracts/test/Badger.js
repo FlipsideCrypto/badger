@@ -77,24 +77,27 @@ describe("Badger", function () {
             );
         });
     });
+
     describe("BadgerOrganization.sol", async function () {
         it("mint() success", async function () {
             const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
 
             await (
-                expect(
-                    org.mint(
-                        owner.address,
-                        0,
-                        100,
-                        "0x"
-                    )
-                ).to.emit(
-                    org, "Transfer"
-                ).withArgs(
-                    ethers.constants.AddressZero, owner.address, 100
-                )
+                expect(org.mint(owner.address, 0, 100, "0x"))
+                    .to.emit(org, "TransferSingle")
+                    .withArgs(owner.address, ethers.constants.AddressZero, owner.address, 0, 100)
             );
         });
+
+        // it("getOrganization() success", async function () {
+        //     const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+
+        //     await (
+        //         expect(await badgerFactory.getOrganization(1))
+        //             .to.be.equal(org.address)
+        //     )
+        // });
     });
+
+
 });
