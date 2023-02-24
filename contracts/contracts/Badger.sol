@@ -5,6 +5,9 @@ pragma solidity ^0.8.16;
 /// @dev Core dependencies.
 import {IBadger} from "./interfaces/IBadger.sol";
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import {Multicallable} from "solady/src/utils/Multicallable.sol";
+
+/// @dev Helper dependencies.
 import {BadgerOrganization} from "./BadgerOrganization.sol";
 
 /// @dev Libraries.
@@ -20,7 +23,7 @@ import {Bytes32AddressLib} from "solmate/src/utils/Bytes32AddressLib.sol";
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
-contract Badger is IBadger, ERC165 {
+contract Badger is IBadger, ERC165, Multicallable {
     using Bytes32AddressLib for address;
     using Bytes32AddressLib for bytes32;
 

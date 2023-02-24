@@ -11,29 +11,59 @@
 // Test multicall and other custom needs for front-end
 
 /// imports
+const { expect } = require("chai");
 const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
+
 
 describe("Badger", function () {
     async function deployBadgerFactory() {
-        const [owner, otherAccount] = await ethers.getSigners();
+        const [owner] = await ethers.getSigners();
 
         const BadgerFactory = await ethers.getContractFactory("Badger");
         const badgerFactory = await BadgerFactory.deploy();
         await badgerFactory.deployed();
 
-        return { badgerFactory, owner, otherAccount };
+        return { badgerFactory, owner };
     }
 
     async function deployNewOrganization() {
-        const [owner] = await ethers.getSigners();
+        const { badgerFactory, owner } = await loadFixture(deployBadgerFactory);
 
-        const org = await ethers.getContractFactory("Badger");
+        organization = [
+            owner.address,
+            "ipfs/uri",
+            "ipfs/org",
+            "Badger",
+            "BADGER"
+        ]
+
+        const tx = await badgerFactory.connect(owner).createOrganization(organization);
+        const receipt = await tx.wait();
+
+        const orgAddress = receipt.events[3].args['organization'];
+
+        const BadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
+        const org = new ethers.Contract(
+            orgAddress,
+            BadgerOrganization.interface,
+            owner
+        );
+
+        return { badgerFactory, org, owner };
     }
 
-    describe("Deploy", async function () {
-        it("Should have the right owner", async function () {
-            const { badgerFactory, owner } = await loadFixture(deployBadgerFactory);
-            expect(await badgerFactory.owner()).to.equal(owner.address);
+    describe("Badger.sol", async function () {
+        it("getOrganizationURI() can get organization URI.", async function () {
+            const { badgerFactory } = await loadFixture(deployNewOrganization);
+
+            organization = await badgerFactory.getOrganization(1);
+            await expect(organization).to.equal(org.address);
+        });
+        it("getOrganization() can get organization.", async function () {
+            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+
+            organization = await badgerFactory.getOrganization(1);
+            await expect(organization).to.equal(org.address);
         });
     });
 });

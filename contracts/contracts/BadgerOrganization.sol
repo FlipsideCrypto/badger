@@ -27,6 +27,27 @@ contract BadgerOrganization is IBadgerOrganization, BadgerOrganizationLogic {
     ///                     SETTERS                      ///
     ////////////////////////////////////////////////////////
 
+    function multicall(bytes[] memory _data)
+        external
+        virtual
+        returns (bytes[] memory results)
+    {
+        results = new bytes[](_data.length);
+
+        for (uint256 i = 0; i < _data.length; i++) {
+            (bool success, bytes memory result) = address(this).delegatecall(
+                _data[i]
+            );
+
+            require(
+                success,
+                "BadgerOrganization::multicall: Multicall failed."
+            );
+
+            results[i] = result;
+        }
+    }
+
     /**
      * See {IBadgerOrganization.mint}
      */

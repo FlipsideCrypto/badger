@@ -34,18 +34,62 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "uint256",
-        "name": "badgeId",
-        "type": "uint256"
+        "internalType": "bytes32",
+        "name": "hookKey",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "HookConfigured",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "hookKey",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       },
       {
         "indexed": true,
-        "internalType": "uint256",
-        "name": "config",
-        "type": "uint256"
+        "internalType": "bool",
+        "name": "isHook",
+        "type": "bool"
       }
     ],
-    "name": "BadgeUpdated",
+    "name": "HookUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "managerKey",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "ManagerConfigured",
     "type": "event"
   },
   {
@@ -193,24 +237,65 @@
     "type": "event"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "badges",
+    "inputs": [],
+    "name": "BEFORE_FORFEIT",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "config",
-        "type": "uint256"
-      },
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "BEFORE_MINT",
+    "outputs": [
       {
-        "internalType": "string",
-        "name": "uri",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "BEFORE_REVOKE",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "BEFORE_SET_HOOK",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "BEFORE_TRANSFER",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
       }
     ],
     "stateMutability": "view",
@@ -265,6 +350,70 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_slot",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "_slotHook",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_config",
+        "type": "bytes"
+      }
+    ],
+    "name": "configHook",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_manager",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_config",
+        "type": "bytes"
+      }
+    ],
+    "name": "configManager",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_manager",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_config",
+        "type": "bytes"
+      }
+    ],
+    "name": "configManager",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "contractURI",
     "outputs": [
@@ -291,7 +440,7 @@
       },
       {
         "internalType": "bytes",
-        "name": "_data",
+        "name": "",
         "type": "bytes"
       }
     ],
@@ -303,17 +452,17 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_id",
-        "type": "uint256"
+        "internalType": "bytes32",
+        "name": "_slot",
+        "type": "bytes32"
       }
     ],
-    "name": "getAccountBound",
+    "name": "getHooks",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "address[]",
         "name": "",
-        "type": "bool"
+        "type": "address[]"
       }
     ],
     "stateMutability": "view",
@@ -333,6 +482,49 @@
       }
     ],
     "name": "isApprovedForAll",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
+      }
+    ],
+    "name": "isBadgeManager",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
+      }
+    ],
+    "name": "isOrganizationManager",
     "outputs": [
       {
         "internalType": "bool",
@@ -421,28 +613,19 @@
   {
     "inputs": [
       {
-        "internalType": "address[]",
-        "name": "_tos",
-        "type": "address[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "_ids",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "_amounts",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "bytes",
+        "internalType": "bytes[]",
         "name": "_data",
-        "type": "bytes"
+        "type": "bytes[]"
       }
     ],
-    "name": "mintFullBatch",
-    "outputs": [],
+    "name": "multicall",
+    "outputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "results",
+        "type": "bytes[]"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -541,29 +724,6 @@
   {
     "inputs": [
       {
-        "internalType": "address[]",
-        "name": "_froms",
-        "type": "address[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "_ids",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "_amounts",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "revokeFullBatch",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "from",
         "type": "address"
@@ -653,34 +813,6 @@
         "type": "uint256"
       },
       {
-        "internalType": "bool",
-        "name": "_accountBound",
-        "type": "bool"
-      },
-      {
-        "internalType": "string",
-        "name": "_uri",
-        "type": "string"
-      },
-      {
-        "internalType": "address[]",
-        "name": "_managers",
-        "type": "address[]"
-      }
-    ],
-    "name": "setBadge",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_id",
-        "type": "uint256"
-      },
-      {
         "internalType": "string",
         "name": "_uri",
         "type": "string"
@@ -694,6 +826,29 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "_slot",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address[]",
+        "name": "_hooks",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bool[]",
+        "name": "_isHook",
+        "type": "bool[]"
+      }
+    ],
+    "name": "setHooks",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address[]",
         "name": "_managers",
         "type": "address[]"
@@ -728,29 +883,6 @@
       }
     ],
     "name": "setManagers",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "_ids",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "address[]",
-        "name": "_managers",
-        "type": "address[]"
-      },
-      {
-        "internalType": "bool[]",
-        "name": "_isManager",
-        "type": "bool[]"
-      }
-    ],
-    "name": "setManagersBatch",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -822,6 +954,25 @@
       }
     ],
     "name": "uri",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "uris",
     "outputs": [
       {
         "internalType": "string",

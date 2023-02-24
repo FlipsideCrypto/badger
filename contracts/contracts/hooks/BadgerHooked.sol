@@ -128,7 +128,7 @@ abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
     /**
      * @notice Packs the logic for updating the state of a Hook into a reusable function.
      * @param _targetHook The address of the Hook.
-     * @param _key The key used to identify the Hook.
+     * @param _slot The slot the hook lives in.
      * @param _config The configuration of the Hook.
      */
     function _configHook(
