@@ -38,9 +38,6 @@ contract Badger is IBadger, ERC165, Context {
     /// @dev Keep track of how many organizations have been deployed.
     uint256 public organizations;
 
-    /// @dev Hotslot for the last deployed organization.
-    Organization public organization;
-
     ////////////////////////////////////////////////////////
     ///                   CONSTRUCTOR                    ///
     ////////////////////////////////////////////////////////

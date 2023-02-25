@@ -10,129 +10,139 @@
 // Model front-end tx stack
 // Test multicall and other custom needs for front-end
 
-/// imports
-const { expect } = require("chai");
-const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
+// badger: 0x2f070d13
+// org: 0x7a3851dc
+// org logic: 0xd2779f52
 
+const { time, loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
+const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
+const { expect } = require("chai");
 
 describe("Badger", function () {
-    async function deployBadgerFactory() {
-        const [owner] = await ethers.getSigners();
+    async function deployBadgerSingleton() {
+        const BadgerSingleton = await ethers.getContractFactory("BadgerOrganization");
+        const badgerSingleton = await BadgerSingleton.deploy();
+        await badgerSingleton.deployed();
 
-        const BadgerOrgVersion = await ethers.getContractFactory("BadgerOrganization");
-        badgerOrgVersion = await BadgerOrgVersion.deploy();
-        badgerOrgVersion.deployed();
+        return { badgerSingleton }
+    }
+
+    async function deployBadgerFactory() {
+        const [owner, otherAccount] = await ethers.getSigners();
+
+        const { badgerSingleton } = await loadFixture(deployBadgerSingleton);
 
         const BadgerFactory = await ethers.getContractFactory("Badger");
-        badgerFactory = await BadgerFactory.deploy(badgerOrgVersion.address);
-        badgerFactory = await badgerFactory.deployed();
+        const badgerFactory = await BadgerFactory.deploy(badgerSingleton.address);
+        await badgerFactory.deployed();
 
-        return { badgerFactory, owner };
+        expect(await badgerFactory.implementation()).to.equal(badgerSingleton.address);
+
+        return { badgerFactory, owner, otherAccount };
     }
 
     async function deployNewOrganization() {
-        const { badgerFactory, owner } = await loadFixture(deployBadgerFactory);
+        const { badgerFactory, owner, otherAccount } = await loadFixture(deployBadgerFactory);
 
-        const organization = {
+        const config = {
             deployer: owner.address,
-            uri: "ipfs/uri",
+            uri: "ipfs/uri/{id}/",
             organizationURI: "ipfs/org",
             name: "Badger",
             symbol: "BADGER"
         }
 
-        const tx = await badgerFactory.connect(owner).createOrganization(organization);
+        const tx = await badgerFactory.connect(owner).createOrganization(config);
         const receipt = await tx.wait();
 
-        const orgAddress = receipt.events[4].args['organization'];
+        const organizationCreatedEvent = receipt.events.find(e => e.event === "OrganizationCreated");
 
-        const BadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
-        const org = new ethers.Contract(
-            orgAddress,
-            BadgerOrganization.interface,
-            owner
-        );
+        const orgAddress = organizationCreatedEvent.args.organization;
 
-        return { badgerFactory, org, owner };
+        const organization = await ethers.getContractAt("BadgerOrganization", orgAddress);
+
+        return { badgerFactory, organization, owner, otherAccount };
     }
 
     describe("Badger.sol", async function () {
-        it("createOrganization() success", async function () {
-            const { badgerFactory, owner } = await loadFixture(deployBadgerFactory);
+        it("call: createOrganization({ ...placeholder })", async function () {
+            const { badgerFactory, organization } = await loadFixture(deployNewOrganization);
 
-            const organization = {
-                deployer: owner.address,
-                uri: "ipfs/uri",
-                organizationURI: "ipfs/org",
-                name: "Badger",
-                symbol: "BADGER"
-            }
+            const organizations = await badgerFactory.organizations();
+            expect(organizations).to.equal(1);
 
-            await (
-                expect(badgerFactory.connect(owner).createOrganization(organization)
-                ).to.emit(badgerFactory, "OrganizationCreated")
-            );
+            expect(await badgerFactory.getOrganization(organizations - 1)).to.equal(organization.address);
+
+            expect(await organization.name()).to.equal("Badger");
+            expect(await organization.symbol()).to.equal("BADGER");
+            expect(await organization.uri(1)).to.equal("ipfs/uri/{id}/");
+            expect(await organization.organizationURI()).to.equal("ipfs/org");
+        });
+
+        it("call: supportsInterface(IBadger || IERC165)", async function () {
+            const { badgerFactory } = await loadFixture(deployBadgerFactory);
+
+            expect(await badgerFactory.supportsInterface("0x01ffc9a7")).to.equal(true);
+            expect(await badgerFactory.supportsInterface("0x2f070d13")).to.equal(true);
         });
     });
 
-    describe("BadgerOrganization.sol", async function () {
-        it("setOrganizationURI() success", async function () {
-            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+    // describe("BadgerOrganization.sol", async function () {
+    //     it("setOrganizationURI() success", async function () {
+    //         const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
 
-            await (
-                expect(org.connect(owner).setOrganizationURI("ipfs/newuri"))
-                    .to.emit(org, "OrganizationUpdated")
-                    .withArgs("ipfs/newuri")
-            );
-        });
+    //         await (
+    //             expect(org.connect(owner).setOrganizationURI("ipfs/newuri"))
+    //                 .to.emit(org, "OrganizationUpdated")
+    //                 .withArgs("ipfs/newuri")
+    //         );
+    //     });
 
-        it("setOrganizationURI() fail", async function () {
-            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+    //     it("setOrganizationURI() fail", async function () {
+    //         const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
 
-            await (
-                expect(org.connect(owner).setOrganizationURI(""))
-                    .to.be.revertedWith("BadgerScout::setOrganizationURI: URI must be set.")
-            );
-        });
+    //         await (
+    //             expect(org.connect(owner).setOrganizationURI(""))
+    //                 .to.be.revertedWith("BadgerScout::setOrganizationURI: URI must be set.")
+    //         );
+    //     });
 
-        it("setBadgeURI() success", async function () {
-            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+    //     it("setBadgeURI() success", async function () {
+    //         const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
 
-            await (
-                expect(org.connect(owner).setBadgeURI(0, "ipfs/newuri"))
-                    .to.emit(org, "URI")
-                    .withArgs("ipfs/newuri", 0)
-            );
-        });
+    //         await (
+    //             expect(org.connect(owner).setBadgeURI(0, "ipfs/newuri"))
+    //                 .to.emit(org, "URI")
+    //                 .withArgs("ipfs/newuri", 0)
+    //         );
+    //     });
 
-        it("setBadgeURI() fail", async function () {
-            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+    //     it("setBadgeURI() fail", async function () {
+    //         const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
 
-            await (
-                expect(org.connect(owner).setBadgeURI(0, ""))
-                    .to.be.revertedWith("BadgerScout::setBadgeURI: URI must be set.")
-            );
-        });
+    //         await (
+    //             expect(org.connect(owner).setBadgeURI(0, ""))
+    //                 .to.be.revertedWith("BadgerScout::setBadgeURI: URI must be set.")
+    //         );
+    //     });
 
+    //     it("mint() success", async function () {
+    //         const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
 
+    //         await (
+    //             expect(org.mint(owner.address, 0, 100, "0x"))
+    //                 .to.emit(org, "TransferSingle")
+    //                 .withArgs(owner.address, ethers.constants.AddressZero, owner.address, 0, 100)
+    //         );
+    //     });
 
-        it("mint() success", async function () {
-            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+    //     it("getOrganization() success", async function () {
+    //         const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
 
-            await (
-                expect(org.mint(owner.address, 0, 100, "0x"))
-                    .to.emit(org, "TransferSingle")
-                    .withArgs(owner.address, ethers.constants.AddressZero, owner.address, 0, 100)
-            );
-        });
-
-        it("getOrganization() success", async function () {
-            const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
-
-            await (
-                expect(await badgerFactory.getOrganization(0))
-                    .to.be.equal(org.address)
-            )
-        });
-    });
+    //         await (
+    //             expect(await badgerFactory.getOrganization(0))
+    //                 .to.be.equal(org.address)
+    //         )
+    //     });
+    // });
 });

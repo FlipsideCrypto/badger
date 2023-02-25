@@ -120,39 +120,6 @@
   },
   {
     "inputs": [],
-    "name": "organization",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "deployer",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "uri",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "organizationURI",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "symbol",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "organizations",
     "outputs": [
       {

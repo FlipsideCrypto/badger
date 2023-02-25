@@ -86,7 +86,7 @@ module.exports = {
                 settings: {
                     optimizer: { // Keeps the amount of gas used in check
                         enabled: true,
-                        runs: 1000
+                        runs: 1000000000
                     }
                 }
             }
