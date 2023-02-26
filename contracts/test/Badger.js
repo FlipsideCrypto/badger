@@ -86,62 +86,71 @@ describe("Badger", function () {
         });
     });
 
-    // describe("BadgerOrganization.sol", async function () {
-    //     it("setOrganizationURI() success", async function () {
-    //         const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+    describe("BadgerOrganization.sol", async function () {
+        it("call: setOrganizationURI('placeholder')", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
 
-    //         await (
-    //             expect(org.connect(owner).setOrganizationURI("ipfs/newuri"))
-    //                 .to.emit(org, "OrganizationUpdated")
-    //                 .withArgs("ipfs/newuri")
-    //         );
-    //     });
+            await (
+                expect(organization.setOrganizationURI("ipfs/newuri"))
+                    .to.emit(organization, "OrganizationUpdated")
+                    .withArgs("ipfs/newuri")
+            );
+        });
 
-    //     it("setOrganizationURI() fail", async function () {
-    //         const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+        it("revert: setOrganizationURI('')", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
 
-    //         await (
-    //             expect(org.connect(owner).setOrganizationURI(""))
-    //                 .to.be.revertedWith("BadgerScout::setOrganizationURI: URI must be set.")
-    //         );
-    //     });
+            await (
+                expect(organization.setOrganizationURI(""))
+                    .to.be.revertedWith("BadgerScout::setOrganizationURI: URI must be set.")
+            );
+        });
 
-    //     it("setBadgeURI() success", async function () {
-    //         const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+        it("revert: setOrganizationURI('placeholder') missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
-    //         await (
-    //             expect(org.connect(owner).setBadgeURI(0, "ipfs/newuri"))
-    //                 .to.emit(org, "URI")
-    //                 .withArgs("ipfs/newuri", 0)
-    //         );
-    //     });
+            await (
+                expect(organization.connect(otherAccount).setOrganizationURI("ipfs/newuri"))
+                    .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+            );
+        });
 
-    //     it("setBadgeURI() fail", async function () {
-    //         const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+        it("call: setBadgeURI(0, 'placeholder')", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
 
-    //         await (
-    //             expect(org.connect(owner).setBadgeURI(0, ""))
-    //                 .to.be.revertedWith("BadgerScout::setBadgeURI: URI must be set.")
-    //         );
-    //     });
+            await (
+                expect(organization.setBadgeURI(0, "ipfs/newuri"))
+                    .to.emit(organization, "URI")
+                    .withArgs("ipfs/newuri", 0)
+            );
+        });
 
-    //     it("mint() success", async function () {
-    //         const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+        it("revert: setBadgeURI(0, '')", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
 
-    //         await (
-    //             expect(org.mint(owner.address, 0, 100, "0x"))
-    //                 .to.emit(org, "TransferSingle")
-    //                 .withArgs(owner.address, ethers.constants.AddressZero, owner.address, 0, 100)
-    //         );
-    //     });
+            await (
+                expect(organization.setBadgeURI(0, ""))
+                    .to.be.revertedWith("BadgerScout::setBadgeURI: URI must be set.")
+            );
+        });
 
-    //     it("getOrganization() success", async function () {
-    //         const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+        // it("mint() success", async function () {
+        //     const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
 
-    //         await (
-    //             expect(await badgerFactory.getOrganization(0))
-    //                 .to.be.equal(org.address)
-    //         )
-    //     });
-    // });
+        //     await (
+        //         expect(org.mint(owner.address, 0, 100, "0x"))
+        //             .to.emit(org, "TransferSingle")
+        //             .withArgs(owner.address, ethers.constants.AddressZero, owner.address, 0, 100)
+        //     );
+        // });
+
+        // it("getOrganization() success", async function () {
+        //     const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+
+        //     await (
+        //         expect(await badgerFactory.getOrganization(0))
+        //             .to.be.equal(org.address)
+        //     )
+        // });
+    });
 });
