@@ -1,5 +1,4 @@
 // Things to do:
-// - use fixtures
 // - confirm that all the events are correct -- don't just run the transaction and assume things are ok
 // - layout organization variants (this is how we will find out what needs to be changed still)
 // - use module fixtures (once the base is tested)

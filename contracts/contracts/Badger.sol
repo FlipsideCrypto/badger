@@ -43,14 +43,6 @@ contract Badger is IBadger, ERC165, Context {
     ////////////////////////////////////////////////////////
 
     constructor(address _implementation) {
-        /// @dev Require the implementation is a BadgerOrganization.
-        require(
-            ERC165(_implementation).supportsInterface(
-                type(IBadgerOrganization).interfaceId
-            ),
-            "Badger::constructor: Implementation does not support IBadgerOrganization."
-        );
-
         /// @dev Set the implementation address.
         implementation = _implementation;
     }
@@ -74,7 +66,7 @@ contract Badger is IBadger, ERC165, Context {
 
         /// @dev Determine what the address will be.
         address organizationAddress = implementation.cloneDeterministic(
-            keccak256(abi.encodePacked(organizationId))
+            _organizationHash(organizationId)
         );
 
         /// @dev Interface with the Organization.
@@ -108,7 +100,7 @@ contract Badger is IBadger, ERC165, Context {
         return
             BadgerOrganization(
                 implementation.predictDeterministicAddress(
-                    keccak256(abi.encodePacked(_organizationId)),
+                    _organizationHash(_organizationId),
                     address(this)
                 )
             );
@@ -127,5 +119,17 @@ contract Badger is IBadger, ERC165, Context {
         return
             interfaceId == type(IBadger).interfaceId ||
             super.supportsInterface(interfaceId);
+    }
+
+    ////////////////////////////////////////////////////////
+    ///                INTERNAL GETTERS                  ///
+    ////////////////////////////////////////////////////////
+
+    function _organizationHash(uint256 _organizationId)
+        internal
+        pure
+        returns (bytes32)
+    {
+        return keccak256(abi.encodePacked(_organizationId));
     }
 }
