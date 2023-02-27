@@ -12,9 +12,6 @@ import {BadgerHooked} from "./hooks/BadgerHooked.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {ERC1155Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 
-/// @dev Configuration dependencies.
-import {IBadgerConfigured} from "./interfaces/IBadgerConfigured.sol";
-
 /**
  * @dev BadgerScout contains the back-end logic of a Badger Organization.
  * @author CHANCE (@nftchance)

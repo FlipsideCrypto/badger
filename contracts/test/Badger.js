@@ -12,10 +12,21 @@
 // badger: 0x2f070d13
 // org: 0x7a3851dc
 // org logic: 0xd2779f52
+// badger configured: 0x56dbdf14
 
 const { time, loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
+
+function getManagerKey(badgeId, manager) {
+    const encoded = ethers.utils.defaultAbiCoder.encode(["uint256", "address"], [badgeId, manager]);
+    return ethers.utils.solidityKeccak256(["bytes"], [encoded]);
+}
+
+function getOrgManagerKey(manager) {
+    const encoded = ethers.utils.defaultAbiCoder.encode(["address"], [manager]);
+    return ethers.utils.solidityKeccak256(["bytes"], [encoded]);
+}
 
 describe("Badger", function () {
     async function deployBadgerSingleton() {
@@ -67,6 +78,16 @@ describe("Badger", function () {
         const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
 
         // set organization manager to other account 
+    }
+
+    async function deployNewHook() {
+        const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+        const Hook = await ethers.getContractFactory("BadgerTransferBound");
+        hook = await Hook.deploy();
+        hook = await hook.deployed();
+
+        return { hook, organization, owner, otherAccount }
     }
 
     describe("Badger.sol", async function () {
@@ -228,7 +249,21 @@ describe("Badger", function () {
             );
         });
 
-        // TODO: test manager success
+        it("call: setBadgeURI(0, 'managerSuccess')", async function () {
+            const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await organization.connect(owner)['setManagers(uint256,address[],bool[])'](
+                0,
+                [otherAccount.address],
+                [true]
+            );
+
+            await (
+                expect(organization.connect(otherAccount).setBadgeURI(0, "ipfs/managerSuccess"))
+                    .to.emit(organization, "URI")
+                    .withArgs("ipfs/managerSuccess", 0)
+            );
+        });
 
         it("revert: setBadgeURI(0, '')", async function () {
             const { organization } = await loadFixture(deployNewOrganization);
@@ -247,5 +282,162 @@ describe("Badger", function () {
                     .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
             );
         });
+
+        it("revert: setManagers(0, [other], [true]) missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(organization.connect(otherAccount)['setManagers(uint256,address[],bool[])'](0, [otherAccount.address], [true]))
+                    .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+            );
+        });
+
+        it("revert: setManagers(0, [], [true]) arrays not equal", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(organization['setManagers(uint256,address[],bool[])'](0, [], [true]))
+                    .to.be.revertedWith("BadgerScout::setManagers: _managers and _isManager must be the same length.")
+            );
+        });
+
+        it("revert: setManagers([other], []) arrays not equal", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(organization['setManagers(address[],bool[])']([otherAccount.address], []))
+                    .to.be.revertedWith("BadgerScout::setManagers: _managers and _isManager must be the same length.")
+            );
+        });
+
+        it("call: setManagers(0, [other], [true])", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            const managerKey = getManagerKey(0, otherAccount.address);
+
+            await (
+                expect(organization['setManagers(uint256,address[],bool[])'](
+                    0, [otherAccount.address], [true]
+                )).to.emit(organization, "ManagerUpdated")
+                    .withArgs(managerKey, true)
+            );
+        });
+
+        it("call: setManagers([other], [true])", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            const managerKey = getOrgManagerKey(otherAccount.address);
+
+            await (
+                expect(organization['setManagers(address[],bool[])'](
+                    [otherAccount.address], [true]
+                )).to.emit(organization, "ManagerUpdated")
+                    .withArgs(managerKey, true)
+            );
+        });
+
+        // setHooks
+        it("revert: setHooks(0, [other], [true]) missing permission", async function () {
+            const { organization, hook, otherAccount } = await loadFixture(deployNewHook);
+
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, hook.address]);
+
+            await (
+                expect(organization.connect(otherAccount).setHooks(slot, [hook.address], [true]))
+                    .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+            );
+        });
+
+        it("revert: setHooks(0, [other], [true]) arrays wrong length", async function () {
+            const { organization, hook, owner } = await loadFixture(deployNewHook);
+
+            const target = ethers.Wallet.createRandom();
+
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, target.address]);
+
+            await (
+                expect(organization.connect(owner).setHooks(slot, [target.address], [true, true]))
+                    .to.be.revertedWith("BadgerScout::setHooks: _hooks and _isHook must be the same length.")
+            );
+        });
+
+        it("call: setHooks(0, [other], [true])", async function () {
+            const { organization, hook, owner } = await loadFixture(deployNewHook);
+
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, hook.address]);
+
+            const hookConfig = ethers.utils.defaultAbiCoder.encode(["uint256", "bool"], [0, true]);
+
+            const transactionsData = [
+                organization.interface.encodeFunctionData("setHooks", [slot, [hook.address], [true]]),
+                organization.interface.encodeFunctionData("configHook", [slot, hook.address, hookConfig])
+            ];
+
+            await expect(organization.connect(owner).multicall(transactionsData))
+                .to.emit(organization, "HookUpdated").withArgs(slot, hook.address, true)
+                .to.emit(organization, "HookConfigured").withArgs(slot, hookConfig);
+        });
+        // configHook
+
+        // configManager
+        // it.only("call: configManager(0, owner, 0, true)", async function () {
+        //     const { organization, owner, otherAccount, hook } = await loadFixture(deployNewHook);
+
+        //     const managerKey = getManagerKey(0, hook.address);
+
+        //     tx = await organization.connect(owner)['setManagers(uint256,address[],bool[])'](0, [hook.address], [true])
+        //     tx = await tx.wait();
+
+        //     await expect(organization['configManager(uint256,address,bytes)'](0, hook.address, "0x"))
+        //         .to.emit(organization, "ManagerConfigured").withArgs(managerKey, "0x");
+
+
+        //     // const transactions = [
+        //     //     organization.interface.encodeFunctionData('setManagers(uint256,address[],bool[])', [0, [otherAccount.address], [true]]),
+        //     //     organization.interface.encodeFunctionData("configManager(uint256,address,bytes)", [0, otherAccount.address, "0x"])
+        //     // ]
+
+        //     // await expect(organization.connect(owner).multicall(transactions))
+        //     //     .to.emit(organization, "ManagerUpdated").withArgs(managerKey, true)
+        //     //     .to.emit(organization, "ManagerConfigured").withArgs(managerKey, "0x");
+
+        // });
+
+        // configManager
+
+        // isOrganizationManager
+        it("call: isOrganizationManager(owner)", async function () {
+            const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+            const random = ethers.Wallet.createRandom();
+            const tx = await organization.connect(owner)['setManagers(address[],bool[])']([otherAccount.address], [true])
+            await tx.wait();
+
+            expect(await organization.isOrganizationManager(owner.address)).to.be.true;
+            expect(await organization.isOrganizationManager(otherAccount.address)).to.be.true;
+            expect(await organization.isOrganizationManager(random.address)).to.be.false;
+        });
+
+        // isBadgeManager
+        it("call: isBadgeManager(0, owner)", async function () {
+            const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+            const tx = await organization.connect(owner)['setManagers(uint256,address[],bool[])'](0, [otherAccount.address], [true])
+            await tx.wait();
+
+            const random = ethers.Wallet.createRandom();
+
+            expect(await organization.isBadgeManager(0, owner.address)).to.be.true;
+            expect(await organization.isBadgeManager(0, otherAccount.address)).to.be.true;
+            expect(await organization.isBadgeManager(0, random.address)).to.be.false;
+        });
+
+        // supportsInterface
+        it("call: supportsInterface(0xd2779f52)", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
+
+            expect(await organization.supportsInterface("0xd2779f52")).to.equal(true);
+        });
+
     });
 });
