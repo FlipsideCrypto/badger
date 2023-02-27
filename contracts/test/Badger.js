@@ -63,6 +63,12 @@ describe("Badger", function () {
         return { badgerFactory, organization, owner, otherAccount };
     }
 
+    async function deployNewManagedOrganization() {
+        const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+        // set organization manager to other account 
+    }
+
     describe("Badger.sol", async function () {
         it("call: createOrganization({ ...placeholder })", async function () {
             const { badgerFactory, organization } = await loadFixture(deployNewOrganization);
@@ -76,6 +82,7 @@ describe("Badger", function () {
             expect(await organization.symbol()).to.equal("BADGER");
             expect(await organization.uri(1)).to.equal("ipfs/uri/{id}/");
             expect(await organization.organizationURI()).to.equal("ipfs/org");
+            expect(await organization.contractURI()).to.equal("ipfs/org");
         });
 
         it("call: supportsInterface(IBadger || IERC165)", async function () {
@@ -87,6 +94,100 @@ describe("Badger", function () {
     });
 
     describe("BadgerOrganization.sol", async function () {
+        it("call: mint()", async function () {
+            const { organization, owner } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(organization.mint(owner.address, 0, 100, "0x"))
+                    .to.emit(organization, "TransferSingle")
+                    .withArgs(owner.address, ethers.constants.AddressZero, owner.address, 0, 100)
+            );
+        });
+
+        it("revert: mint() missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(organization.connect(otherAccount).mint(otherAccount.address, 0, 100, "0x"))
+                    .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+            );
+        });
+
+        it("call: mintBatch()", async function () {
+            const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(organization.mintBatch([owner.address, otherAccount.address], 1, [100, 200], "0x"))
+                    .to.emit(organization, "TransferSingle")
+                    .withArgs(owner.address, ethers.constants.AddressZero, owner.address, 1, 100)
+            );
+        });
+
+        it("revert: mintBatch() missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(organization.connect(otherAccount).mintBatch([otherAccount.address], 1, [100], "0x"))
+                    .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+            );
+        });
+
+        it("call: revoke()", async function () {
+            const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await organization.mint(otherAccount.address, 0, 100, "0x");
+
+            await (
+                expect(organization.revoke(otherAccount.address, 0, 100))
+                    .to.emit(organization, "TransferSingle")
+                    .withArgs(owner.address, otherAccount.address, ethers.constants.AddressZero, 0, 100)
+            );
+        });
+
+        it("revert: revoke() missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(organization.connect(otherAccount).revoke(otherAccount.address, 0, 100))
+                    .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+            );
+        });
+
+        it("call: revokeBatch()", async function () {
+            const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await organization.mintBatch([otherAccount.address], 1, [100], "0x");
+
+            await (
+                expect(organization.revokeBatch([otherAccount.address], 1, [100]))
+                    .to.emit(organization, "TransferSingle")
+                    .withArgs(owner.address, otherAccount.address, ethers.constants.AddressZero, 1, 100)
+            );
+        });
+
+        it("revert: revokeBatch() missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(organization.connect(otherAccount).revokeBatch([otherAccount.address], 1, [100]))
+                    .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+            );
+        });
+
+        it("call: forfeit()", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await organization.mint(otherAccount.address, 0, 100, "0x");
+
+            await (
+                expect(organization.connect(otherAccount).forfeit(0, 100, "0x"))
+                    .to.emit(organization, "TransferSingle")
+                    .withArgs(otherAccount.address, otherAccount.address, ethers.constants.AddressZero, 0, 100)
+            );
+        });
+    });
+
+    describe("BadgerOrganizationLogic.sol", async function () {
         it("call: setOrganizationURI('placeholder')", async function () {
             const { organization } = await loadFixture(deployNewOrganization);
 
@@ -96,6 +197,8 @@ describe("Badger", function () {
                     .withArgs("ipfs/newuri")
             );
         });
+
+        // todo: test organization manager success
 
         it("revert: setOrganizationURI('')", async function () {
             const { organization } = await loadFixture(deployNewOrganization);
@@ -125,6 +228,8 @@ describe("Badger", function () {
             );
         });
 
+        // TODO: test manager success
+
         it("revert: setBadgeURI(0, '')", async function () {
             const { organization } = await loadFixture(deployNewOrganization);
 
@@ -134,23 +239,13 @@ describe("Badger", function () {
             );
         });
 
-        // it("mint() success", async function () {
-        //     const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
+        it("revert: setBadgeURI(0, 'placeholder') missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
-        //     await (
-        //         expect(org.mint(owner.address, 0, 100, "0x"))
-        //             .to.emit(org, "TransferSingle")
-        //             .withArgs(owner.address, ethers.constants.AddressZero, owner.address, 0, 100)
-        //     );
-        // });
-
-        // it("getOrganization() success", async function () {
-        //     const { badgerFactory, org, owner } = await loadFixture(deployNewOrganization);
-
-        //     await (
-        //         expect(await badgerFactory.getOrganization(0))
-        //             .to.be.equal(org.address)
-        //     )
-        // });
+            await (
+                expect(organization.connect(otherAccount).setBadgeURI(0, "ipfs/newuri"))
+                    .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+            );
+        });
     });
 });
