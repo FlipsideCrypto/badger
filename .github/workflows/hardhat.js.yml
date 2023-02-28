@@ -40,7 +40,7 @@ jobs:
         run: npm install
 
       - name: Test smart contract and run automated auditors
-        run: npx hardhat test
+        run: REPORT_GAS=true npx hardhat test
 
       - name: Save the gas report
         uses: stefanzweifel/git-auto-commit-action@v4
