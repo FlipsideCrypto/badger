@@ -1,4 +1,4 @@
-name: Build smart contract
+name: Build smart contract utils
 
 on:
   pull_request:
