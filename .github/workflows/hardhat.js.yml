@@ -36,13 +36,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Test smart contract and run automated auditors
+      - name: Run Harhdat smart contract tests
         run: REPORT_GAS=true npx hardhat test
 
-      - name: C4udit
+      - name: Run automated low-complexity C4udit worker
         run: cd build && git clone https://github.com/byterocket/c4udit && cd c4udit && go build . && cd .. && ./c4udit/c4udit -s ../contracts/
 
-      - name: Save the gas report
+      - name: Save the build outputs
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "fix: smart contract build"
