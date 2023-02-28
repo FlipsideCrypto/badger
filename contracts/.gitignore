@@ -6,3 +6,4 @@ cache
 coverage/
 deployments/
 coverage.json
+gasReporterOutput.json
