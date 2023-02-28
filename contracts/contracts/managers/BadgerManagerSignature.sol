@@ -81,10 +81,9 @@ contract BadgerManagerSignature is BadgerManager {
                 msg.sender,
                 _id,
                 _amount,
-                _data,
                 _nonce,
                 _deadline,
-                address(this)
+                _targetOrganization
             )
         );
 
@@ -96,7 +95,7 @@ contract BadgerManagerSignature is BadgerManager {
 
         /// @dev Validate the signer.
         require(
-            signer == signers[msg.sender][_id],
+            signer == signers[_targetOrganization][_id],
             "BadgerManagerSignature::mint: Invalid signer."
         );
 
