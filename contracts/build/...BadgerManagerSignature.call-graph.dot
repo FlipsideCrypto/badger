@@ -1,35 +1,35 @@
 strict digraph {
-subgraph cluster_2786_ERC165 {
-label = "ERC165"
-"2786_supportsInterface" [label="supportsInterface"]
-}subgraph cluster_6086_IBadgerConfigured {
+subgraph cluster_6468_IBadgerConfigured {
 label = "IBadgerConfigured"
-"6086_config" [label="config"]
-"6086_CONFIG_SCHEMA" [label="CONFIG_SCHEMA"]
-}subgraph cluster_2798_IERC165 {
-label = "IERC165"
-"2798_supportsInterface" [label="supportsInterface"]
-}subgraph cluster_6682_BadgerManagerSignature {
+"6468_CONFIG_SCHEMA" [label="CONFIG_SCHEMA"]
+"6468_config" [label="config"]
+}subgraph cluster_3081_ERC165 {
+label = "ERC165"
+"3081_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_7091_BadgerManagerSignature {
 label = "BadgerManagerSignature"
-"6682_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
-"6682_mint" [label="mint"]
-"6682_config" [label="config"]
-}subgraph cluster_6431_BadgerManager {
+"7091_mint" [label="mint"]
+"7091_config" [label="config"]
+"7091_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
+}subgraph cluster_3093_IERC165 {
+label = "IERC165"
+"3093_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_6840_BadgerManager {
 label = "BadgerManager"
-"6431_supportsInterface" [label="supportsInterface"]
-"6431_supportsInterface" -> "6431_supportsInterface"
+"6840_supportsInterface" [label="supportsInterface"]
+"6840_supportsInterface" -> "6840_supportsInterface"
 }subgraph cluster_solidity {
 label = "[Solidity]"
-"require(bool,string)" 
-"keccak256(bytes)" 
-"type()" 
 "abi.decode()" 
+"keccak256(bytes)" 
 "abi.encodePacked()" 
-"2786_supportsInterface" -> "type()"
-"6682_mint" -> "require(bool,string)"
-"6682_mint" -> "abi.encodePacked()"
-"6682_config" -> "abi.decode()"
-"6682_mint" -> "keccak256(bytes)"
-"6431_supportsInterface" -> "type()"
+"require(bool,string)" 
+"type()" 
+"7091_config" -> "abi.decode()"
+"3081_supportsInterface" -> "type()"
+"7091_mint" -> "abi.encodePacked()"
+"7091_mint" -> "keccak256(bytes)"
+"7091_mint" -> "require(bool,string)"
+"6840_supportsInterface" -> "type()"
 }
 }

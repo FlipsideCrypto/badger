@@ -156,12 +156,18 @@ module.exports = {
             gasPrice: 'auto'
         },
     },
-    abiExporter: {
+    abiExporter: [{
+        path: './build/abis/',
+        runOnCompile: true,
+        clear: true,
+        flat: true,
+        format: "json"
+    }, {
         path: '../frontend/src/abis/',
         runOnCompile: true,
         clear: true,
         flat: true,
-        spacing: 2,
+        spacing: 4,
         format: "json"
-    }
+    }]
 };

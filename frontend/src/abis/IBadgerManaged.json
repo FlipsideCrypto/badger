@@ -1,40 +1,40 @@
 [
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "managerKey",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "name": "ManagerConfigured",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "managerKey",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "bool",
-        "name": "isManager",
-        "type": "bool"
-      }
-    ],
-    "name": "ManagerUpdated",
-    "type": "event"
-  }
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "managerKey",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+            }
+        ],
+        "name": "ManagerConfigured",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "managerKey",
+                "type": "bytes32"
+            },
+            {
+                "indexed": true,
+                "internalType": "bool",
+                "name": "isManager",
+                "type": "bool"
+            }
+        ],
+        "name": "ManagerUpdated",
+        "type": "event"
+    }
 ]

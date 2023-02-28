@@ -1,36 +1,36 @@
 strict digraph {
-subgraph cluster_2786_ERC165 {
-label = "ERC165"
-"2786_supportsInterface" [label="supportsInterface"]
-}subgraph cluster_6086_IBadgerConfigured {
+subgraph cluster_6468_IBadgerConfigured {
 label = "IBadgerConfigured"
-"6086_config" [label="config"]
-"6086_CONFIG_SCHEMA" [label="CONFIG_SCHEMA"]
-}subgraph cluster_2798_IERC165 {
-label = "IERC165"
-"2798_supportsInterface" [label="supportsInterface"]
-}subgraph cluster_5970_BadgerTransferBoundManaged {
+"6468_CONFIG_SCHEMA" [label="CONFIG_SCHEMA"]
+"6468_config" [label="config"]
+}subgraph cluster_3081_ERC165 {
+label = "ERC165"
+"3081_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_6352_BadgerTransferBoundManaged {
 label = "BadgerTransferBoundManaged"
-"5970_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
-"5970_execute" [label="execute"]
-"5970_config" [label="config"]
-}subgraph cluster_4601_BadgerHook {
-label = "BadgerHook"
-"4601_supportsInterface" [label="supportsInterface"]
-"4601_supportsInterface" -> "4601_supportsInterface"
-}subgraph cluster_6106_IBadgerHook {
+"6352_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
+"6352_config" [label="config"]
+"6352_execute" [label="execute"]
+}subgraph cluster_3093_IERC165 {
+label = "IERC165"
+"3093_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_6488_IBadgerHook {
 label = "IBadgerHook"
-"6106_execute" [label="execute"]
-"6106_EXECUTE_SCHEMA" [label="EXECUTE_SCHEMA"]
+"6488_execute" [label="execute"]
+"6488_EXECUTE_SCHEMA" [label="EXECUTE_SCHEMA"]
+}subgraph cluster_4956_BadgerHook {
+label = "BadgerHook"
+"4956_supportsInterface" [label="supportsInterface"]
+"4956_supportsInterface" -> "4956_supportsInterface"
 }subgraph cluster_solidity {
 label = "[Solidity]"
 "abi.decode()" 
-"type()" 
 "require(bool,string)" 
-"2786_supportsInterface" -> "type()"
-"5970_execute" -> "abi.decode()"
-"5970_config" -> "abi.decode()"
-"5970_execute" -> "require(bool,string)"
-"4601_supportsInterface" -> "type()"
+"type()" 
+"3081_supportsInterface" -> "type()"
+"6352_execute" -> "require(bool,string)"
+"4956_supportsInterface" -> "type()"
+"6352_execute" -> "abi.decode()"
+"6352_config" -> "abi.decode()"
 }
 }
