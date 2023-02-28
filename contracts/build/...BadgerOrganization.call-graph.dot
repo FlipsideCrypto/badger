@@ -1,0 +1,313 @@
+strict digraph {
+subgraph cluster_4567_BadgerOrganizationLogic {
+label = "BadgerOrganizationLogic"
+"4567_supportsInterface" [label="supportsInterface"]
+"4567__setBadgeURI" [label="_setBadgeURI"]
+"4567_setBadgeURI" [label="setBadgeURI"]
+"4567_setManagers" [label="setManagers"]
+"4567_setOrganizationURI" [label="setOrganizationURI"]
+"4567__isOrganizationManager" [label="_isOrganizationManager"]
+"4567__setOrganizationURI" [label="_setOrganizationURI"]
+"4567__mint" [label="_mint"]
+"4567__forfeit" [label="_forfeit"]
+"4567__beforeTokenTransfer" [label="_beforeTokenTransfer"]
+"4567_configHook" [label="configHook"]
+"4567_initialize" [label="initialize"]
+"4567_isOrganizationManager" [label="isOrganizationManager"]
+"4567__isBadgeManager" [label="_isBadgeManager"]
+"4567__badgeManagerHash" [label="_badgeManagerHash"]
+"4567_setHooks" [label="setHooks"]
+"4567_configManager" [label="configManager"]
+"4567__revoke" [label="_revoke"]
+"4567_isBadgeManager" [label="isBadgeManager"]
+"4567__managerHash" [label="_managerHash"]
+"4567_constructor" [label="constructor"]
+"4567_isOrganizationManager" -> "4567__isOrganizationManager"
+"4567_setBadgeURI" -> "4567_onlyBadgeManager"
+"4567__isOrganizationManager" -> "4567__managerHash"
+"4567__beforeTokenTransfer" -> "4567__hook"
+"4567_setHooks" -> "4567__setHook"
+"4567__mint" -> "4567__hook"
+"4567_configManager" -> "4567__managerHash"
+"4567__revoke" -> "4567__hook"
+"4567_setManagers" -> "4567_onlyOrganizationManager"
+"4567_configManager" -> "4567_onlyBadgeManager"
+"4567_initialize" -> "4567_transferOwnership"
+"4567_configManager" -> "4567__badgeManagerHash"
+"4567_initialize" -> "4567_initializer"
+"4567_initialize" -> "4567___ERC1155_init"
+"4567_configHook" -> "4567_onlyOrganizationManager"
+"4567__revoke" -> "4567__burn"
+"4567__forfeit" -> "4567__hook"
+"4567_setHooks" -> "4567_onlyOrganizationManager"
+"4567_setOrganizationURI" -> "4567_onlyOrganizationManager"
+"4567__isBadgeManager" -> "4567__isOrganizationManager"
+"4567_supportsInterface" -> "4567_supportsInterface"
+"4567_setManagers" -> "4567_onlyOwner"
+"4567_setManagers" -> "4567__setManager"
+"4567_initialize" -> "4567___Ownable_init"
+"4567_isBadgeManager" -> "4567__isBadgeManager"
+"4567_configHook" -> "4567__configHook"
+"4567_setManagers" -> "4567__badgeManagerHash"
+"4567_configManager" -> "4567_onlyOrganizationManager"
+"4567_setBadgeURI" -> "4567__setBadgeURI"
+"4567__isOrganizationManager" -> "4567_owner"
+"4567_initialize" -> "4567__setOrganizationURI"
+"4567__forfeit" -> "4567__burn"
+"4567_configManager" -> "4567__configManager"
+"4567_constructor" -> "4567__disableInitializers"
+"4567__mint" -> "4567__mint"
+"4567_setOrganizationURI" -> "4567__setOrganizationURI"
+"4567__isBadgeManager" -> "4567__badgeManagerHash"
+"4567_setManagers" -> "4567__managerHash"
+}subgraph cluster_131_OwnableUpgradeable {
+label = "OwnableUpgradeable"
+"131__transferOwnership" [label="_transferOwnership"]
+"131___Ownable_init" [label="__Ownable_init"]
+"131_owner" [label="owner"]
+"131_renounceOwnership" [label="renounceOwnership"]
+"131__checkOwner" [label="_checkOwner"]
+"131___Ownable_init_unchained" [label="__Ownable_init_unchained"]
+"131_transferOwnership" [label="transferOwnership"]
+"131_transferOwnership" -> "131_onlyOwner"
+"131___Ownable_init_unchained" -> "131__transferOwnership"
+"131_renounceOwnership" -> "131__transferOwnership"
+"131__checkOwner" -> "131__msgSender"
+"131___Ownable_init_unchained" -> "131__msgSender"
+"131___Ownable_init_unchained" -> "131_onlyInitializing"
+"131___Ownable_init" -> "131_onlyInitializing"
+"131_transferOwnership" -> "131__transferOwnership"
+"131___Ownable_init" -> "131___Ownable_init_unchained"
+"131__checkOwner" -> "131_owner"
+"131_renounceOwnership" -> "131_onlyOwner"
+}subgraph cluster_3588_BadgerNetwork {
+label = "BadgerNetwork"
+"3588__configNetwork" [label="_configNetwork"]
+}subgraph cluster_6212_IBadgerOrganization {
+label = "IBadgerOrganization"
+"6212_forfeit" [label="forfeit"]
+"6212_revokeBatch" [label="revokeBatch"]
+"6212_revoke" [label="revoke"]
+"6212_mint" [label="mint"]
+"6212_mintBatch" [label="mintBatch"]
+}subgraph cluster_1990_ContextUpgradeable {
+label = "ContextUpgradeable"
+"1990__msgSender" [label="_msgSender"]
+"1990__msgData" [label="_msgData"]
+"1990___Context_init" [label="__Context_init"]
+"1990___Context_init_unchained" [label="__Context_init_unchained"]
+"1990___Context_init_unchained" -> "1990_onlyInitializing"
+"1990___Context_init" -> "1990_onlyInitializing"
+}subgraph cluster_4858_BadgerHooked {
+label = "BadgerHooked"
+"4858__setHook" [label="_setHook"]
+"4858__configHook" [label="_configHook"]
+"4858_getHooks" [label="getHooks"]
+"4858__hook" [label="_hook"]
+"4858__configHook" -> "4858__configNetwork"
+"4858__setHook" -> "4858__hook"
+}subgraph cluster_1705_IERC1155MetadataURIUpgradeable {
+label = "IERC1155MetadataURIUpgradeable"
+"1705_uri" [label="uri"]
+}subgraph cluster_6698_Multicallable {
+label = "Multicallable"
+"6698_multicall" [label="multicall"]
+}subgraph cluster_282_Initializable {
+label = "Initializable"
+"282__disableInitializers" [label="_disableInitializers"]
+}subgraph cluster_3863_BadgerOrganization {
+label = "BadgerOrganization"
+"3863_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
+"3863_supportsInterface" [label="supportsInterface"]
+"3863_uri" [label="uri"]
+"3863_contractURI" [label="contractURI"]
+"3863_revokeBatch" [label="revokeBatch"]
+"3863_mintBatch" [label="mintBatch"]
+"3863_revoke" [label="revoke"]
+"3863_mint" [label="mint"]
+"3863_forfeit" [label="forfeit"]
+"3863_supportsInterface" -> "3863_supportsInterface"
+"3863_mintBatch" -> "3863__mint"
+"3863_revoke" -> "3863_onlyBadgeManager"
+"3863_mintBatch" -> "3863__msgSender"
+"3863_mintBatch" -> "3863_onlyBadgeManager"
+"3863_revoke" -> "3863__revoke"
+"3863_revokeBatch" -> "3863__msgSender"
+"3863_mint" -> "3863__mint"
+"3863_mint" -> "3863__msgSender"
+"3863_revoke" -> "3863__msgSender"
+"3863_forfeit" -> "3863__forfeit"
+"3863_uri" -> "3863_uri"
+"3863_mint" -> "3863_onlyBadgeManager"
+"3863_forfeit" -> "3863__msgSender"
+"3863_revokeBatch" -> "3863_onlyBadgeManager"
+"3863_revokeBatch" -> "3863__revoke"
+}subgraph cluster_6318_IBadgerOrganizationLogic {
+label = "IBadgerOrganizationLogic"
+"6318_configManager" [label="configManager"]
+"6318_setHooks" [label="setHooks"]
+"6318_setBadgeURI" [label="setBadgeURI"]
+"6318_isOrganizationManager" [label="isOrganizationManager"]
+"6318_setManagers" [label="setManagers"]
+"6318_isBadgeManager" [label="isBadgeManager"]
+"6318_configHook" [label="configHook"]
+"6318_setOrganizationURI" [label="setOrganizationURI"]
+}subgraph cluster_2034_ERC165Upgradeable {
+label = "ERC165Upgradeable"
+"2034___ERC165_init" [label="__ERC165_init"]
+"2034_supportsInterface" [label="supportsInterface"]
+"2034___ERC165_init_unchained" [label="__ERC165_init_unchained"]
+"2034___ERC165_init_unchained" -> "2034_onlyInitializing"
+"2034___ERC165_init" -> "2034_onlyInitializing"
+}subgraph cluster_6134_IBadgerHooked {
+label = "IBadgerHooked"
+"6134_getHooks" [label="getHooks"]
+}subgraph cluster_1527_ERC1155Upgradeable {
+label = "ERC1155Upgradeable"
+"1527__burn" [label="_burn"]
+"1527__setURI" [label="_setURI"]
+"1527__mintBatch" [label="_mintBatch"]
+"1527__mint" [label="_mint"]
+"1527___ERC1155_init" [label="__ERC1155_init"]
+"1527__safeBatchTransferFrom" [label="_safeBatchTransferFrom"]
+"1527___ERC1155_init_unchained" [label="__ERC1155_init_unchained"]
+"1527__asSingletonArray" [label="_asSingletonArray"]
+"1527_safeBatchTransferFrom" [label="safeBatchTransferFrom"]
+"1527__beforeTokenTransfer" [label="_beforeTokenTransfer"]
+"1527_isApprovedForAll" [label="isApprovedForAll"]
+"1527__setApprovalForAll" [label="_setApprovalForAll"]
+"1527__safeTransferFrom" [label="_safeTransferFrom"]
+"1527_uri" [label="uri"]
+"1527_balanceOf" [label="balanceOf"]
+"1527__doSafeBatchTransferAcceptanceCheck" [label="_doSafeBatchTransferAcceptanceCheck"]
+"1527__doSafeTransferAcceptanceCheck" [label="_doSafeTransferAcceptanceCheck"]
+"1527__afterTokenTransfer" [label="_afterTokenTransfer"]
+"1527_setApprovalForAll" [label="setApprovalForAll"]
+"1527_supportsInterface" [label="supportsInterface"]
+"1527_safeTransferFrom" [label="safeTransferFrom"]
+"1527_balanceOfBatch" [label="balanceOfBatch"]
+"1527__burnBatch" [label="_burnBatch"]
+"1527_safeBatchTransferFrom" -> "1527__msgSender"
+"1527___ERC1155_init_unchained" -> "1527_onlyInitializing"
+"1527_safeTransferFrom" -> "1527__msgSender"
+"1527___ERC1155_init_unchained" -> "1527__setURI"
+"1527__mint" -> "1527__msgSender"
+"1527__safeBatchTransferFrom" -> "1527__beforeTokenTransfer"
+"1527__safeBatchTransferFrom" -> "1527__afterTokenTransfer"
+"1527__burnBatch" -> "1527__msgSender"
+"1527__mintBatch" -> "1527__msgSender"
+"1527__mintBatch" -> "1527__afterTokenTransfer"
+"1527___ERC1155_init" -> "1527_onlyInitializing"
+"1527__burn" -> "1527__afterTokenTransfer"
+"1527__mintBatch" -> "1527__beforeTokenTransfer"
+"1527__safeTransferFrom" -> "1527__beforeTokenTransfer"
+"1527__burn" -> "1527__msgSender"
+"1527___ERC1155_init" -> "1527___ERC1155_init_unchained"
+"1527__safeTransferFrom" -> "1527__afterTokenTransfer"
+"1527_safeBatchTransferFrom" -> "1527__safeBatchTransferFrom"
+"1527__safeTransferFrom" -> "1527__msgSender"
+"1527__burnBatch" -> "1527__afterTokenTransfer"
+"1527_balanceOfBatch" -> "1527_balanceOf"
+"1527__burnBatch" -> "1527__beforeTokenTransfer"
+"1527_setApprovalForAll" -> "1527__msgSender"
+"1527__safeBatchTransferFrom" -> "1527__doSafeBatchTransferAcceptanceCheck"
+"1527__burn" -> "1527__asSingletonArray"
+"1527_setApprovalForAll" -> "1527__setApprovalForAll"
+"1527__mint" -> "1527__afterTokenTransfer"
+"1527_safeTransferFrom" -> "1527__safeTransferFrom"
+"1527__safeTransferFrom" -> "1527__asSingletonArray"
+"1527__mint" -> "1527__doSafeTransferAcceptanceCheck"
+"1527__mint" -> "1527__beforeTokenTransfer"
+"1527_supportsInterface" -> "1527_supportsInterface"
+"1527__safeTransferFrom" -> "1527__doSafeTransferAcceptanceCheck"
+"1527_safeBatchTransferFrom" -> "1527_isApprovedForAll"
+"1527__mintBatch" -> "1527__doSafeBatchTransferAcceptanceCheck"
+"1527__mint" -> "1527__asSingletonArray"
+"1527_safeTransferFrom" -> "1527_isApprovedForAll"
+"1527__burn" -> "1527__beforeTokenTransfer"
+"1527__safeBatchTransferFrom" -> "1527__msgSender"
+}subgraph cluster_1690_IERC1155Upgradeable {
+label = "IERC1155Upgradeable"
+"1690_balanceOfBatch" [label="balanceOfBatch"]
+"1690_isApprovedForAll" [label="isApprovedForAll"]
+"1690_safeBatchTransferFrom" [label="safeBatchTransferFrom"]
+"1690_safeTransferFrom" [label="safeTransferFrom"]
+"1690_setApprovalForAll" [label="setApprovalForAll"]
+"1690_balanceOf" [label="balanceOf"]
+}subgraph cluster_6398_BadgerManaged {
+label = "BadgerManaged"
+"6398__configManager" [label="_configManager"]
+"6398__setManager" [label="_setManager"]
+"6398__configManager" -> "6398__configNetwork"
+}subgraph cluster_2046_IERC165Upgradeable {
+label = "IERC165Upgradeable"
+"2046_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_solidity {
+label = "[Solidity]"
+"mstore(uint256,uint256)" 
+"calldatacopy(uint256,uint256,uint256)" 
+"mload(uint256)" 
+"returndatasize()" 
+"calldataload(uint256)" 
+"delegatecall(uint256,uint256,uint256,uint256,uint256,uint256)" 
+"require(bool,string)" 
+"keccak256(bytes)" 
+"revert(uint256,uint256)" 
+"return(uint256,uint256)" 
+"abi.encode()" 
+"returndatacopy(uint256,uint256,uint256)" 
+"type()" 
+"gas()" 
+"revert(string)" 
+"1527__doSafeBatchTransferAcceptanceCheck" -> "revert(string)"
+"1527_supportsInterface" -> "type()"
+"1527__burnBatch" -> "require(bool,string)"
+"6698_multicall" -> "revert(uint256,uint256)"
+"4567__forfeit" -> "abi.encode()"
+"4567__beforeTokenTransfer" -> "abi.encode()"
+"1527_safeBatchTransferFrom" -> "require(bool,string)"
+"6698_multicall" -> "returndatacopy(uint256,uint256,uint256)"
+"4567__managerHash" -> "keccak256(bytes)"
+"1527__mint" -> "require(bool,string)"
+"1527__safeTransferFrom" -> "require(bool,string)"
+"2034_supportsInterface" -> "type()"
+"1527_safeTransferFrom" -> "require(bool,string)"
+"4567_setBadgeURI" -> "require(bool,string)"
+"3863_revokeBatch" -> "require(bool,string)"
+"6698_multicall" -> "mstore(uint256,uint256)"
+"131__checkOwner" -> "require(bool,string)"
+"3863_mintBatch" -> "require(bool,string)"
+"282__disableInitializers" -> "require(bool,string)"
+"3863_slitherConstructorConstantVariables" -> "keccak256(bytes)"
+"4567__badgeManagerHash" -> "abi.encode()"
+"4858__configHook" -> "require(bool,string)"
+"4858__setHook" -> "abi.encode()"
+"6698_multicall" -> "calldataload(uint256)"
+"1527__setApprovalForAll" -> "require(bool,string)"
+"6698_multicall" -> "return(uint256,uint256)"
+"4858__setHook" -> "type()"
+"6698_multicall" -> "gas()"
+"4567__managerHash" -> "abi.encode()"
+"6698_multicall" -> "calldatacopy(uint256,uint256,uint256)"
+"1527__safeBatchTransferFrom" -> "require(bool,string)"
+"4858__setHook" -> "require(bool,string)"
+"4567_setHooks" -> "require(bool,string)"
+"4567__revoke" -> "abi.encode()"
+"4567__badgeManagerHash" -> "keccak256(bytes)"
+"6698_multicall" -> "returndatasize()"
+"1527_balanceOf" -> "require(bool,string)"
+"1527_balanceOfBatch" -> "require(bool,string)"
+"131_transferOwnership" -> "require(bool,string)"
+"6698_multicall" -> "mload(uint256)"
+"4567__mint" -> "abi.encode()"
+"3863_supportsInterface" -> "type()"
+"1527__mintBatch" -> "require(bool,string)"
+"1527__burn" -> "require(bool,string)"
+"1527__doSafeTransferAcceptanceCheck" -> "revert(string)"
+"4567_supportsInterface" -> "type()"
+"4567_setManagers" -> "require(bool,string)"
+"6698_multicall" -> "delegatecall(uint256,uint256,uint256,uint256,uint256,uint256)"
+"4567_setOrganizationURI" -> "require(bool,string)"
+"6398__configManager" -> "require(bool,string)"
+}
+}

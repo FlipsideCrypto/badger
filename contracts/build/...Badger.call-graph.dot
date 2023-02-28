@@ -1,0 +1,39 @@
+strict digraph {
+subgraph cluster_2786_ERC165 {
+label = "ERC165"
+"2786_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_2148_Context {
+label = "Context"
+"2148__msgSender" [label="_msgSender"]
+"2148__msgData" [label="_msgData"]
+}subgraph cluster_3561_Badger {
+label = "Badger"
+"3561__organizationHash" [label="_organizationHash"]
+"3561_supportsInterface" [label="supportsInterface"]
+"3561_createOrganization" [label="createOrganization"]
+"3561_getOrganization" [label="getOrganization"]
+"3561_constructor" [label="constructor"]
+"3561_getOrganization" -> "3561__organizationHash"
+"3561_supportsInterface" -> "3561_supportsInterface"
+"3561_createOrganization" -> "3561__organizationHash"
+"3561_createOrganization" -> "3561__msgSender"
+}subgraph cluster_2798_IERC165 {
+label = "IERC165"
+"2798_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_6070_IBadger {
+label = "IBadger"
+"6070_createOrganization" [label="createOrganization"]
+"6070_getOrganization" [label="getOrganization"]
+}subgraph cluster_solidity {
+label = "[Solidity]"
+"keccak256(bytes)" 
+"type()" 
+"abi.encodePacked()" 
+"require(bool,string)" 
+"3561__organizationHash" -> "keccak256(bytes)"
+"2786_supportsInterface" -> "type()"
+"3561_constructor" -> "require(bool,string)"
+"3561__organizationHash" -> "abi.encodePacked()"
+"3561_supportsInterface" -> "type()"
+}
+}

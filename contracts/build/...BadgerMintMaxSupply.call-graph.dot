@@ -1,0 +1,37 @@
+strict digraph {
+subgraph cluster_2786_ERC165 {
+label = "ERC165"
+"2786_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_6086_IBadgerConfigured {
+label = "IBadgerConfigured"
+"6086_config" [label="config"]
+"6086_CONFIG_SCHEMA" [label="CONFIG_SCHEMA"]
+}subgraph cluster_2798_IERC165 {
+label = "IERC165"
+"2798_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_4601_BadgerHook {
+label = "BadgerHook"
+"4601_supportsInterface" [label="supportsInterface"]
+"4601_supportsInterface" -> "4601_supportsInterface"
+}subgraph cluster_6106_IBadgerHook {
+label = "IBadgerHook"
+"6106_execute" [label="execute"]
+"6106_EXECUTE_SCHEMA" [label="EXECUTE_SCHEMA"]
+}subgraph cluster_5406_BadgerMintMaxSupply {
+label = "BadgerMintMaxSupply"
+"5406_execute" [label="execute"]
+"5406_config" [label="config"]
+"5406_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
+}subgraph cluster_solidity {
+label = "[Solidity]"
+"abi.decode()" 
+"type()" 
+"require(bool,string)" 
+"2786_supportsInterface" -> "type()"
+"4601_supportsInterface" -> "type()"
+"5406_config" -> "require(bool,string)"
+"5406_execute" -> "require(bool,string)"
+"5406_execute" -> "abi.decode()"
+"5406_config" -> "abi.decode()"
+}
+}

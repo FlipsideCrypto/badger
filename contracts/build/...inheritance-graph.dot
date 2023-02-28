@@ -1,0 +1,157 @@
+digraph "" {
+OwnableUpgradeable -> Initializable [ label="1" ];
+OwnableUpgradeable -> ContextUpgradeable [ label="2" ];
+OwnableUpgradeable[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>OwnableUpgradeable</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    owner()</TD></TR><TR><TD align="left">    renounceOwnership()</TD></TR><TR><TD align="left">    transferOwnership(address)</TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    __Ownable_init()</TD></TR><TR><TD align="left">    __Ownable_init_unchained()</TD></TR><TR><TD align="left">    _checkOwner()</TD></TR><TR><TD align="left">    _transferOwnership(address)</TD></TR><TR><TD align="left"><I>Modifiers:</I></TD></TR><TR><TD align="left">    onlyOwner()</TD></TR><TR><TD align="left"><I>Private Variables:</I></TD></TR><TR><TD align="left">    _owner</TD></TR><TR><TD align="left"><font color="red">    __gap</font></TD></TR></TABLE> >];
+
+Initializable[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>Initializable</B></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    _disableInitializers()</TD></TR><TR><TD align="left"><I>Modifiers:</I></TD></TR><TR><TD align="left">    initializer()</TD></TR><TR><TD align="left">    reinitializer(uint8)</TD></TR><TR><TD align="left">    onlyInitializing()</TD></TR><TR><TD align="left"><I>Private Variables:</I></TD></TR><TR><TD align="left">    _initialized</TD></TR><TR><TD align="left">    _initializing</TD></TR></TABLE> >];
+
+ERC1155Upgradeable -> Initializable [ label="1" ];
+ERC1155Upgradeable -> ContextUpgradeable [ label="2" ];
+ERC1155Upgradeable -> ERC165Upgradeable [ label="3" ];
+ERC1155Upgradeable -> IERC1155Upgradeable [ label="4" ];
+ERC1155Upgradeable -> IERC1155MetadataURIUpgradeable [ label="5" ];
+ERC1155Upgradeable[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>ERC1155Upgradeable</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    supportsInterface(bytes4)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    uri(uint256)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    balanceOf(address,uint256)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    balanceOfBatch(address[],uint256[])</font></TD></TR><TR><TD align="left"><font color="#FFA500">    setApprovalForAll(address,bool)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    isApprovedForAll(address,address)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    safeTransferFrom(address,address,uint256,uint256,bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)</font></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    __ERC1155_init(string)</TD></TR><TR><TD align="left">    __ERC1155_init_unchained(string)</TD></TR><TR><TD align="left">    _safeTransferFrom(address,address,uint256,uint256,bytes)</TD></TR><TR><TD align="left">    _safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)</TD></TR><TR><TD align="left">    _setURI(string)</TD></TR><TR><TD align="left">    _mint(address,uint256,uint256,bytes)</TD></TR><TR><TD align="left">    _mintBatch(address,uint256[],uint256[],bytes)</TD></TR><TR><TD align="left">    _burn(address,uint256,uint256)</TD></TR><TR><TD align="left">    _burnBatch(address,uint256[],uint256[])</TD></TR><TR><TD align="left">    _setApprovalForAll(address,address,bool)</TD></TR><TR><TD align="left">    _beforeTokenTransfer(address,address,address,uint256[],uint256[],bytes)</TD></TR><TR><TD align="left">    _afterTokenTransfer(address,address,address,uint256[],uint256[],bytes)</TD></TR><TR><TD align="left">    _doSafeTransferAcceptanceCheck(address,address,address,uint256,uint256,bytes)</TD></TR><TR><TD align="left">    _doSafeBatchTransferAcceptanceCheck(address,address,address,uint256[],uint256[],bytes)</TD></TR><TR><TD align="left">    _asSingletonArray(uint256)</TD></TR><TR><TD align="left"><I>Private Variables:</I></TD></TR><TR><TD align="left">    _balances</TD></TR><TR><TD align="left">    _operatorApprovals</TD></TR><TR><TD align="left">    _uri</TD></TR><TR><TD align="left"><font color="red">    __gap</font></TD></TR></TABLE> >];
+
+IERC1155ReceiverUpgradeable -> IERC165Upgradeable;
+IERC1155ReceiverUpgradeable[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>IERC1155ReceiverUpgradeable</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    onERC1155Received(address,address,uint256,uint256,bytes)</TD></TR><TR><TD align="left">    onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)</TD></TR></TABLE> >];
+
+IERC1155Upgradeable -> IERC165Upgradeable;
+IERC1155Upgradeable[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>IERC1155Upgradeable</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    balanceOf(address,uint256)</TD></TR><TR><TD align="left">    balanceOfBatch(address[],uint256[])</TD></TR><TR><TD align="left">    setApprovalForAll(address,bool)</TD></TR><TR><TD align="left">    isApprovedForAll(address,address)</TD></TR><TR><TD align="left">    safeTransferFrom(address,address,uint256,uint256,bytes)</TD></TR><TR><TD align="left">    safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)</TD></TR></TABLE> >];
+
+IERC1155MetadataURIUpgradeable -> IERC1155Upgradeable;
+IERC1155MetadataURIUpgradeable[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>IERC1155MetadataURIUpgradeable</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    uri(uint256)</TD></TR></TABLE> >];
+
+AddressUpgradeable[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>AddressUpgradeable</B></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    isContract(address)</TD></TR><TR><TD align="left">    sendValue(address,uint256)</TD></TR><TR><TD align="left">    functionCall(address,bytes)</TD></TR><TR><TD align="left">    functionCall(address,bytes,string)</TD></TR><TR><TD align="left">    functionCallWithValue(address,bytes,uint256)</TD></TR><TR><TD align="left">    functionCallWithValue(address,bytes,uint256,string)</TD></TR><TR><TD align="left">    functionStaticCall(address,bytes)</TD></TR><TR><TD align="left">    functionStaticCall(address,bytes,string)</TD></TR><TR><TD align="left">    verifyCallResult(bool,bytes,string)</TD></TR></TABLE> >];
+
+ContextUpgradeable -> Initializable;
+ContextUpgradeable[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>ContextUpgradeable</B></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    __Context_init()</TD></TR><TR><TD align="left">    __Context_init_unchained()</TD></TR><TR><TD align="left">    _msgSender()</TD></TR><TR><TD align="left">    _msgData()</TD></TR><TR><TD align="left"><I>Private Variables:</I></TD></TR><TR><TD align="left">    __gap</TD></TR></TABLE> >];
+
+ERC165Upgradeable -> Initializable [ label="1" ];
+ERC165Upgradeable -> IERC165Upgradeable [ label="2" ];
+ERC165Upgradeable[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>ERC165Upgradeable</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    supportsInterface(bytes4)</font></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    __ERC165_init()</TD></TR><TR><TD align="left">    __ERC165_init_unchained()</TD></TR><TR><TD align="left"><I>Private Variables:</I></TD></TR><TR><TD align="left">    __gap</TD></TR></TABLE> >];
+
+IERC165Upgradeable[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>IERC165Upgradeable</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    supportsInterface(bytes4)</TD></TR></TABLE> >];
+
+Clones[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>Clones</B></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    clone(address)</TD></TR><TR><TD align="left">    cloneDeterministic(address,bytes32)</TD></TR><TR><TD align="left">    predictDeterministicAddress(address,bytes32,address)</TD></TR><TR><TD align="left">    predictDeterministicAddress(address,bytes32)</TD></TR></TABLE> >];
+
+Context[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>Context</B></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    _msgSender()</TD></TR><TR><TD align="left">    _msgData()</TD></TR></TABLE> >];
+
+Strings[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>Strings</B></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    toString(uint256)</TD></TR><TR><TD align="left">    toHexString(uint256)</TD></TR><TR><TD align="left">    toHexString(uint256,uint256)</TD></TR><TR><TD align="left">    toHexString(address)</TD></TR><TR><TD align="left"><I>Private Variables:</I></TD></TR><TR><TD align="left">    _HEX_SYMBOLS</TD></TR><TR><TD align="left">    _ADDRESS_LENGTH</TD></TR></TABLE> >];
+
+ECDSA[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>ECDSA</B></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    _throwError(ECDSA.RecoverError)</TD></TR><TR><TD align="left">    tryRecover(bytes32,bytes)</TD></TR><TR><TD align="left">    recover(bytes32,bytes)</TD></TR><TR><TD align="left">    tryRecover(bytes32,bytes32,bytes32)</TD></TR><TR><TD align="left">    recover(bytes32,bytes32,bytes32)</TD></TR><TR><TD align="left">    tryRecover(bytes32,uint8,bytes32,bytes32)</TD></TR><TR><TD align="left">    recover(bytes32,uint8,bytes32,bytes32)</TD></TR><TR><TD align="left">    toEthSignedMessageHash(bytes32)</TD></TR><TR><TD align="left">    toEthSignedMessageHash(bytes)</TD></TR><TR><TD align="left">    toTypedDataHash(bytes32,bytes32)</TD></TR></TABLE> >];
+
+ERC165 -> IERC165;
+ERC165[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>ERC165</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    supportsInterface(bytes4)</font></TD></TR></TABLE> >];
+
+IERC165[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>IERC165</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    supportsInterface(bytes4)</TD></TR></TABLE> >];
+
+EnumerableSet[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>EnumerableSet</B></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    _add(EnumerableSet.Set,bytes32)</TD></TR><TR><TD align="left">    _remove(EnumerableSet.Set,bytes32)</TD></TR><TR><TD align="left">    _contains(EnumerableSet.Set,bytes32)</TD></TR><TR><TD align="left">    _length(EnumerableSet.Set)</TD></TR><TR><TD align="left">    _at(EnumerableSet.Set,uint256)</TD></TR><TR><TD align="left">    _values(EnumerableSet.Set)</TD></TR><TR><TD align="left">    add(EnumerableSet.Bytes32Set,bytes32)</TD></TR><TR><TD align="left">    remove(EnumerableSet.Bytes32Set,bytes32)</TD></TR><TR><TD align="left">    contains(EnumerableSet.Bytes32Set,bytes32)</TD></TR><TR><TD align="left">    length(EnumerableSet.Bytes32Set)</TD></TR><TR><TD align="left">    at(EnumerableSet.Bytes32Set,uint256)</TD></TR><TR><TD align="left">    values(EnumerableSet.Bytes32Set)</TD></TR><TR><TD align="left">    add(EnumerableSet.AddressSet,address)</TD></TR><TR><TD align="left">    remove(EnumerableSet.AddressSet,address)</TD></TR><TR><TD align="left">    contains(EnumerableSet.AddressSet,address)</TD></TR><TR><TD align="left">    length(EnumerableSet.AddressSet)</TD></TR><TR><TD align="left">    at(EnumerableSet.AddressSet,uint256)</TD></TR><TR><TD align="left">    values(EnumerableSet.AddressSet)</TD></TR><TR><TD align="left">    add(EnumerableSet.UintSet,uint256)</TD></TR><TR><TD align="left">    remove(EnumerableSet.UintSet,uint256)</TD></TR><TR><TD align="left">    contains(EnumerableSet.UintSet,uint256)</TD></TR><TR><TD align="left">    length(EnumerableSet.UintSet)</TD></TR><TR><TD align="left">    at(EnumerableSet.UintSet,uint256)</TD></TR><TR><TD align="left">    values(EnumerableSet.UintSet)</TD></TR></TABLE> >];
+
+Badger -> IBadger [ label="1" ];
+Badger -> ERC165 [ label="2" ];
+Badger -> Context [ label="3" ];
+Badger[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>Badger</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    createOrganization(IBadgerOrganizationStruct.Organization)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    getOrganization(uint256)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    supportsInterface(bytes4)</font></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    _organizationHash(uint256)</TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    implementation</TD></TR><TR><TD align="left">    organizations</TD></TR></TABLE> >];
+
+BadgerNetwork[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerNetwork</B></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    _configNetwork(address,bytes)</TD></TR></TABLE> >];
+
+BadgerOrganization -> IBadgerOrganization [ label="1" ];
+BadgerOrganization -> BadgerOrganizationLogic [ label="2" ];
+BadgerOrganization -> Multicallable [ label="3" ];
+BadgerOrganization[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerOrganization</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    mint(address,uint256,uint256,bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    mintBatch(address[],uint256,uint256[],bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    revoke(address,uint256,uint256)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    revokeBatch(address[],uint256,uint256[])</font></TD></TR><TR><TD align="left"><font color="#FFA500">    forfeit(uint256,uint256,bytes)</font></TD></TR><TR><TD align="left">    contractURI()</TD></TR><TR><TD align="left"><font color="#FFA500">    uri(uint256)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    supportsInterface(bytes4)</font></TD></TR></TABLE> >];
+
+BadgerOrganizationLogic -> IBadgerOrganizationLogic [ label="1" ];
+BadgerOrganizationLogic -> BadgerHooked [ label="2" ];
+BadgerOrganizationLogic -> BadgerManaged [ label="3" ];
+BadgerOrganizationLogic -> OwnableUpgradeable [ label="4" ];
+BadgerOrganizationLogic -> ERC1155Upgradeable [ label="5" ];
+BadgerOrganizationLogic[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerOrganizationLogic</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    initialize(IBadgerOrganizationStruct.Organization)</TD></TR><TR><TD align="left"><font color="#FFA500">    setOrganizationURI(string)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    setBadgeURI(uint256,string)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    setManagers(address[],bool[])</font></TD></TR><TR><TD align="left"><font color="#FFA500">    setManagers(uint256,address[],bool[])</font></TD></TR><TR><TD align="left"><font color="#FFA500">    setHooks(bytes32,address[],bool[])</font></TD></TR><TR><TD align="left"><font color="#FFA500">    configManager(address,bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    configManager(uint256,address,bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    configHook(bytes32,address,bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    isOrganizationManager(address)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    isBadgeManager(uint256,address)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    supportsInterface(bytes4)</font></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    _setOrganizationURI(string)</TD></TR><TR><TD align="left">    _setBadgeURI(uint256,string)</TD></TR><TR><TD align="left">    _mint(address,address,uint256,uint256,bytes)</TD></TR><TR><TD align="left">    _revoke(address,address,uint256,uint256)</TD></TR><TR><TD align="left">    _forfeit(address,uint256,uint256)</TD></TR><TR><TD align="left"><font color="#FFA500">    _beforeTokenTransfer(address,address,address,uint256[],uint256[],bytes)</font></TD></TR><TR><TD align="left">    _isOrganizationManager(address)</TD></TR><TR><TD align="left">    _isBadgeManager(uint256,address)</TD></TR><TR><TD align="left">    _managerHash(address)</TD></TR><TR><TD align="left">    _badgeManagerHash(uint256,address)</TD></TR><TR><TD align="left"><I>Modifiers:</I></TD></TR><TR><TD align="left">    onlyOrganizationManager()</TD></TR><TR><TD align="left">    onlyBadgeManager(uint256)</TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    name</TD></TR><TR><TD align="left">    symbol</TD></TR><TR><TD align="left">    organizationURI</TD></TR><TR><TD align="left">    uris</TD></TR></TABLE> >];
+
+BadgerHook -> IBadgerHook [ label="1" ];
+BadgerHook -> ERC165 [ label="2" ];
+BadgerHook[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerHook</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    supportsInterface(bytes4)</font></TD></TR></TABLE> >];
+
+BadgerHooked -> IBadgerHooked [ label="1" ];
+BadgerHooked -> BadgerNetwork [ label="2" ];
+BadgerHooked[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerHooked</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    getHooks(bytes32)</font></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    _setHook(bytes32,address,bool)</TD></TR><TR><TD align="left">    _configHook(address,bytes32,bytes)</TD></TR><TR><TD align="left">    _hook(bytes32,bytes)</TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    BEFORE_SET_HOOK</TD></TR><TR><TD align="left">    BEFORE_MINT</TD></TR><TR><TD align="left">    BEFORE_REVOKE</TD></TR><TR><TD align="left">    BEFORE_FORFEIT</TD></TR><TR><TD align="left">    BEFORE_TRANSFER</TD></TR><TR><TD align="left"><I>Private Variables:</I></TD></TR><TR><TD align="left">    hooks</TD></TR></TABLE> >];
+
+BadgerForfeitForbidden -> BadgerForfeitHook;
+BadgerForfeitForbidden[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerForfeitForbidden</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    config(bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    execute(bytes)</font></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    CONFIG_SCHEMA</TD></TR><TR><TD align="left">    forbidden</TD></TR></TABLE> >];
+
+BadgerHookBlocklist -> BadgerHookHook;
+BadgerHookBlocklist[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerHookBlocklist</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    config(bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    execute(bytes)</font></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    CONFIG_SCHEMA</TD></TR><TR><TD align="left">    blocked</TD></TR></TABLE> >];
+
+BadgerMintMax -> BadgerMintHook;
+BadgerMintMax[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerMintMax</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    config(bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    execute(bytes)</font></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    CONFIG_SCHEMA</TD></TR><TR><TD align="left">    maxMint</TD></TR><TR><TD align="left">    minted</TD></TR></TABLE> >];
+
+BadgerMintMaxAllowance -> BadgerMintHook;
+BadgerMintMaxAllowance[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerMintMaxAllowance</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    config(bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    execute(bytes)</font></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    CONFIG_SCHEMA</TD></TR><TR><TD align="left">    maxMint</TD></TR><TR><TD align="left">    minted</TD></TR></TABLE> >];
+
+BadgerMintMaxSupply -> BadgerMintHook;
+BadgerMintMaxSupply[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerMintMaxSupply</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    config(bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    execute(bytes)</font></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    CONFIG_SCHEMA</TD></TR><TR><TD align="left">    maxSupply</TD></TR><TR><TD align="left">    totalSupply</TD></TR></TABLE> >];
+
+BadgerMintSelf -> BadgerMintHook;
+BadgerMintSelf[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerMintSelf</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    config(bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    execute(bytes)</font></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    CONFIG_SCHEMA</TD></TR><TR><TD align="left">    selfOperated</TD></TR></TABLE> >];
+
+BadgerRevokeForbidden -> BadgerRevokeHook;
+BadgerRevokeForbidden[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerRevokeForbidden</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    config(bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    execute(bytes)</font></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    CONFIG_SCHEMA</TD></TR><TR><TD align="left">    forbidden</TD></TR></TABLE> >];
+
+BadgerTransferBlocklist -> BadgerTransferHook;
+BadgerTransferBlocklist[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerTransferBlocklist</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    config(bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    execute(bytes)</font></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    CONFIG_SCHEMA</TD></TR><TR><TD align="left">    blocked</TD></TR></TABLE> >];
+
+BadgerTransferBound -> BadgerTransferHook;
+BadgerTransferBound[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerTransferBound</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    config(bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    execute(bytes)</font></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    CONFIG_SCHEMA</TD></TR><TR><TD align="left">    accountBound</TD></TR></TABLE> >];
+
+BadgerTransferBoundManaged -> BadgerTransferHook;
+BadgerTransferBoundManaged[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerTransferBoundManaged</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    config(bytes)</font></TD></TR><TR><TD align="left"><font color="#FFA500">    execute(bytes)</font></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    CONFIG_SCHEMA</TD></TR><TR><TD align="left">    accountBound</TD></TR></TABLE> >];
+
+BadgerForfeitHook -> BadgerHook;
+BadgerForfeitHook[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerForfeitHook</B></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    EXECUTE_SCHEMA</TD></TR></TABLE> >];
+
+BadgerHookHook -> BadgerHook;
+BadgerHookHook[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerHookHook</B></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    EXECUTE_SCHEMA</TD></TR></TABLE> >];
+
+BadgerMintHook -> BadgerHook;
+BadgerMintHook[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerMintHook</B></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    EXECUTE_SCHEMA</TD></TR></TABLE> >];
+
+BadgerRevokeHook -> BadgerHook;
+BadgerRevokeHook[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerRevokeHook</B></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    EXECUTE_SCHEMA</TD></TR></TABLE> >];
+
+BadgerTransferHook -> BadgerHook;
+BadgerTransferHook[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerTransferHook</B></TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    EXECUTE_SCHEMA</TD></TR></TABLE> >];
+
+IBadger -> IBadgerOrganizationStruct;
+IBadger[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>IBadger</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    createOrganization(IBadgerOrganizationStruct.Organization)</TD></TR><TR><TD align="left">    getOrganization(uint256)</TD></TR></TABLE> >];
+
+IBadgerConfigured[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>IBadgerConfigured</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    CONFIG_SCHEMA()</TD></TR><TR><TD align="left">    config(bytes)</TD></TR></TABLE> >];
+
+IBadgerHook -> IBadgerConfigured;
+IBadgerHook[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>IBadgerHook</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    EXECUTE_SCHEMA()</TD></TR><TR><TD align="left">    execute(bytes)</TD></TR></TABLE> >];
+
+IBadgerHooked[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>IBadgerHooked</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    getHooks(bytes32)</TD></TR></TABLE> >];
+
+IBadgerManaged[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>IBadgerManaged</B></TD></TR></TABLE> >];
+
+IBadgerOrganization[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>IBadgerOrganization</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    mint(address,uint256,uint256,bytes)</TD></TR><TR><TD align="left">    mintBatch(address[],uint256,uint256[],bytes)</TD></TR><TR><TD align="left">    revoke(address,uint256,uint256)</TD></TR><TR><TD align="left">    revokeBatch(address[],uint256,uint256[])</TD></TR><TR><TD align="left">    forfeit(uint256,uint256,bytes)</TD></TR></TABLE> >];
+
+IBadgerOrganizationLogic -> IBadgerOrganizationStruct;
+IBadgerOrganizationLogic[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>IBadgerOrganizationLogic</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    setOrganizationURI(string)</TD></TR><TR><TD align="left">    setBadgeURI(uint256,string)</TD></TR><TR><TD align="left">    setManagers(address[],bool[])</TD></TR><TR><TD align="left">    setManagers(uint256,address[],bool[])</TD></TR><TR><TD align="left">    setHooks(bytes32,address[],bool[])</TD></TR><TR><TD align="left">    configManager(address,bytes)</TD></TR><TR><TD align="left">    configManager(uint256,address,bytes)</TD></TR><TR><TD align="left">    configHook(bytes32,address,bytes)</TD></TR><TR><TD align="left">    isOrganizationManager(address)</TD></TR><TR><TD align="left">    isBadgeManager(uint256,address)</TD></TR></TABLE> >];
+
+IBadgerOrganizationStruct[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>IBadgerOrganizationStruct</B></TD></TR></TABLE> >];
+
+BadgerManaged -> IBadgerManaged [ label="1" ];
+BadgerManaged -> BadgerNetwork [ label="2" ];
+BadgerManaged[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerManaged</B></TD></TR><TR><TD align="left"><I>Private Functions:</I></TD></TR><TR><TD align="left">    _setManager(bytes32,bool)</TD></TR><TR><TD align="left">    _configManager(address,bytes32,bytes)</TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    managerKeyToIsManager</TD></TR></TABLE> >];
+
+BadgerManager -> IBadgerConfigured [ label="1" ];
+BadgerManager -> ERC165 [ label="2" ];
+BadgerManager[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerManager</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    supportsInterface(bytes4)</font></TD></TR></TABLE> >];
+
+BadgerManagerClaimable -> BadgerManager;
+BadgerManagerClaimable[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerManagerClaimable</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    config(bytes)</font></TD></TR><TR><TD align="left">    mint(address,uint256,bytes)</TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    CONFIG_SCHEMA</TD></TR><TR><TD align="left">    amounts</TD></TR></TABLE> >];
+
+BadgerManagerSignature -> BadgerManager;
+BadgerManagerSignature[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>BadgerManagerSignature</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left"><font color="#FFA500">    config(bytes)</font></TD></TR><TR><TD align="left">    mint(address,uint256,uint256,bytes,bytes,uint256,uint256)</TD></TR><TR><TD align="left"><I>Public Variables:</I></TD></TR><TR><TD align="left">    CONFIG_SCHEMA</TD></TR><TR><TD align="left">    signers</TD></TR><TR><TD align="left"><I>Private Variables:</I></TD></TR><TR><TD align="left">    nonces</TD></TR></TABLE> >];
+
+Multicallable[shape="box"label=< <TABLE border="0"><TR><TD align="center"><B>Multicallable</B></TD></TR><TR><TD align="left"><I>Public Functions:</I></TD></TR><TR><TD align="left">    multicall(bytes[])</TD></TR></TABLE> >];
+
+}

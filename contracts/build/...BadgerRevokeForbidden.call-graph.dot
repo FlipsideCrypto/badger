@@ -1,0 +1,36 @@
+strict digraph {
+subgraph cluster_2786_ERC165 {
+label = "ERC165"
+"2786_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_6086_IBadgerConfigured {
+label = "IBadgerConfigured"
+"6086_config" [label="config"]
+"6086_CONFIG_SCHEMA" [label="CONFIG_SCHEMA"]
+}subgraph cluster_2798_IERC165 {
+label = "IERC165"
+"2798_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_5594_BadgerRevokeForbidden {
+label = "BadgerRevokeForbidden"
+"5594_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
+"5594_config" [label="config"]
+"5594_execute" [label="execute"]
+}subgraph cluster_4601_BadgerHook {
+label = "BadgerHook"
+"4601_supportsInterface" [label="supportsInterface"]
+"4601_supportsInterface" -> "4601_supportsInterface"
+}subgraph cluster_6106_IBadgerHook {
+label = "IBadgerHook"
+"6106_execute" [label="execute"]
+"6106_EXECUTE_SCHEMA" [label="EXECUTE_SCHEMA"]
+}subgraph cluster_solidity {
+label = "[Solidity]"
+"abi.decode()" 
+"type()" 
+"require(bool,string)" 
+"2786_supportsInterface" -> "type()"
+"5594_config" -> "abi.decode()"
+"5594_execute" -> "abi.decode()"
+"5594_execute" -> "require(bool,string)"
+"4601_supportsInterface" -> "type()"
+}
+}

@@ -1,0 +1,35 @@
+strict digraph {
+subgraph cluster_2786_ERC165 {
+label = "ERC165"
+"2786_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_6086_IBadgerConfigured {
+label = "IBadgerConfigured"
+"6086_config" [label="config"]
+"6086_CONFIG_SCHEMA" [label="CONFIG_SCHEMA"]
+}subgraph cluster_2798_IERC165 {
+label = "IERC165"
+"2798_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_6682_BadgerManagerSignature {
+label = "BadgerManagerSignature"
+"6682_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
+"6682_mint" [label="mint"]
+"6682_config" [label="config"]
+}subgraph cluster_6431_BadgerManager {
+label = "BadgerManager"
+"6431_supportsInterface" [label="supportsInterface"]
+"6431_supportsInterface" -> "6431_supportsInterface"
+}subgraph cluster_solidity {
+label = "[Solidity]"
+"require(bool,string)" 
+"keccak256(bytes)" 
+"type()" 
+"abi.decode()" 
+"abi.encodePacked()" 
+"2786_supportsInterface" -> "type()"
+"6682_mint" -> "require(bool,string)"
+"6682_mint" -> "abi.encodePacked()"
+"6682_config" -> "abi.decode()"
+"6682_mint" -> "keccak256(bytes)"
+"6431_supportsInterface" -> "type()"
+}
+}

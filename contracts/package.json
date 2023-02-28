@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "author": "flipsidecrypto",
   "license": "AGPL-3.0-or-later",
-  "description": "",
+  "description": "Badge-based credentials powering on-chain access controls.",
+  "scripts": { 
+    "build": "rmdir /s /q build && mkdir build && npx hardhat test && cd build && c4udit -s ../contracts/ && slither .. --print call-graph && slither .. --print inheritance-graph"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.1.1",
     "@nomiclabs/hardhat-etherscan": "^3.1.0",
