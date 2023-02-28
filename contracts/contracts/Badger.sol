@@ -33,7 +33,7 @@ contract Badger is IBadger, ERC165, Context {
     ////////////////////////////////////////////////////////
 
     /// @dev The address of the implementation contract for the minimal proxy.
-    address public implementation;
+    address public immutable implementation;
 
     /// @dev Keep track of how many organizations have been deployed.
     uint256 public organizations;
@@ -43,6 +43,12 @@ contract Badger is IBadger, ERC165, Context {
     ////////////////////////////////////////////////////////
 
     constructor(address _implementation) {
+        /// @dev Confirm that the implementation address is not the zero address.
+        require(
+            _implementation != address(0),
+            "Badger::constructor: _implementation cannot be the zero address."
+        );
+
         /// @dev Set the implementation address.
         implementation = _implementation;
     }
