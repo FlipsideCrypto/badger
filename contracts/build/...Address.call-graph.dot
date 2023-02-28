@@ -1,41 +1,41 @@
 strict digraph {
 subgraph cluster_2421_Address {
 label = "Address"
+"2421_functionCallWithValue" [label="functionCallWithValue"]
 "2421_sendValue" [label="sendValue"]
 "2421_functionDelegateCall" [label="functionDelegateCall"]
 "2421_functionCall" [label="functionCall"]
-"2421_verifyCallResult" [label="verifyCallResult"]
 "2421_isContract" [label="isContract"]
+"2421_verifyCallResult" [label="verifyCallResult"]
 "2421_functionStaticCall" [label="functionStaticCall"]
-"2421_functionCallWithValue" [label="functionCallWithValue"]
 "2421_functionCall" -> "2421_functionCall"
-"2421_functionDelegateCall" -> "2421_isContract"
+"2421_functionCall" -> "2421_functionCallWithValue"
 "2421_functionDelegateCall" -> "2421_verifyCallResult"
-"2421_functionDelegateCall" -> "2421_functionDelegateCall"
 "2421_functionStaticCall" -> "2421_isContract"
 "2421_functionStaticCall" -> "2421_verifyCallResult"
 "2421_functionCallWithValue" -> "2421_verifyCallResult"
-"2421_functionCallWithValue" -> "2421_functionCallWithValue"
 "2421_functionStaticCall" -> "2421_functionStaticCall"
 "2421_functionCallWithValue" -> "2421_isContract"
-"2421_functionCall" -> "2421_functionCallWithValue"
+"2421_functionDelegateCall" -> "2421_functionDelegateCall"
+"2421_functionCallWithValue" -> "2421_functionCallWithValue"
+"2421_functionDelegateCall" -> "2421_isContract"
 }subgraph cluster_solidity {
 label = "[Solidity]"
-"code(address)" 
-"balance(address)" 
 "mload(uint256)" 
+"balance(address)" 
+"revert(string)" 
 "require(bool,string)" 
 "revert(uint256,uint256)" 
-"revert(string)" 
-"2421_verifyCallResult" -> "revert(string)"
-"2421_functionDelegateCall" -> "require(bool,string)"
-"2421_verifyCallResult" -> "revert(uint256,uint256)"
-"2421_verifyCallResult" -> "mload(uint256)"
-"2421_functionCallWithValue" -> "balance(address)"
-"2421_functionStaticCall" -> "require(bool,string)"
-"2421_sendValue" -> "balance(address)"
-"2421_functionCallWithValue" -> "require(bool,string)"
+"code(address)" 
 "2421_sendValue" -> "require(bool,string)"
+"2421_sendValue" -> "balance(address)"
+"2421_verifyCallResult" -> "mload(uint256)"
 "2421_isContract" -> "code(address)"
+"2421_functionCallWithValue" -> "balance(address)"
+"2421_functionCallWithValue" -> "require(bool,string)"
+"2421_functionStaticCall" -> "require(bool,string)"
+"2421_functionDelegateCall" -> "require(bool,string)"
+"2421_verifyCallResult" -> "revert(string)"
+"2421_verifyCallResult" -> "revert(uint256,uint256)"
 }
 }
