@@ -1,18 +1,9 @@
-// Things to do:
-// - confirm that all the events are correct -- don't just run the transaction and assume things are ok
-// - layout organization variants (this is how we will find out what needs to be changed still)
-// - use module fixtures (once the base is tested)
-// - implement organization variants using modules in /variants/ which will be specific configurations
-// - confirm that we have tested coverage of non-configured managers, and configured hooks and managers
-//   of organizations so that this file can be used to test the core functionality of the organization
-
-// Model front-end tx stack
-// Test multicall and other custom needs for front-end
-
 // badger: 0x2f070d13
 // org: 0x7a3851dc
 // org logic: 0xd2779f52
 // badger configured: 0x56dbdf14
+// hook: 0x6847c1d5
+// manager: 0x56dbdf14
 // ierc165: 0x01ffc9a7
 
 const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
@@ -382,13 +373,22 @@ describe("Badger", function () {
             );
         });
 
-        it("revert: setHooks(0, [address0], [true])", async function () {
+        it("revert: setHooks(0, [address0], [true]) zero address", async function () {
             const { organization, owner } = await loadFixture(deployNewOrganization);
 
             const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, ethers.constants.AddressZero]);
 
             await expect(organization.connect(owner).setHooks(slot, [ethers.constants.AddressZero], [true]))
                     .to.be.revertedWith("BadgerScout::setHooks: Hook cannot be the zero address.")
+        });
+
+        it("revert: setHooks(0, [other], [true]) not a contract", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, otherAccount.address]);
+
+            await expect(organization.setHooks(slot, [otherAccount.address], [true]))
+                    .to.be.revertedWith("BadgerOrganizationHooked::_configManager: Manager is not a contract.")
         });
 
         it("call: setHooks(0, [other], [true])", async function () {
@@ -476,6 +476,53 @@ describe("Badger", function () {
 
             await expect(organization.connect(otherAccount)["configManager(uint256,address,bytes)"](0, manager.address, config))
                 .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+        });
+
+        it("revert: configManager(manager, config) Manager not enabled", async function () {
+            const { manager, organization } = await loadFixture(deployNewManagedOrganization);
+
+            const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
+
+            await expect(organization["configManager(address,bytes)"](manager.address, config))
+                .to.be.revertedWith("BadgerOrganizationHooked::_configManager: Manager is not enabled.")
+        });
+
+
+        it("revert: configManager(manager, config) Not configurable module", async function () {
+            const { manager, organization, otherAccount } = await loadFixture(deployNewManagedOrganization);
+
+            const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
+
+            await expect(organization.connect(otherAccount)["configManager(address,bytes)"](manager.address, config))
+                .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+        });
+
+        it("revert: configManager(manager, config) Manager not contract", async function () {
+            const { owner, organization, otherAccount } = await loadFixture(deployNewManagedOrganization);
+
+            const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
+
+            const transactions = [
+                organization.interface.encodeFunctionData("setManagers(address[],bool[])", [[otherAccount.address], [true]]),
+                organization.interface.encodeFunctionData("configManager(address,bytes)", [otherAccount.address, config])
+            ]
+
+            await expect(organization.connect(owner).multicall(transactions))
+                .to.be.revertedWith("BadgerOrganizationHooked::_configManager: Manager is not a contract.")
+        });
+
+        it("revert: configManager(manager, config) Manager not configured module", async function () {
+            const { badgerFactory, owner, organization } = await loadFixture(deployNewOrganization);
+
+            const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
+
+            const transactions = [
+                organization.interface.encodeFunctionData("setManagers(address[],bool[])", [[badgerFactory.address], [true]]),
+                organization.interface.encodeFunctionData("configManager(address,bytes)", [badgerFactory.address, config])
+            ]
+
+            await expect(organization.connect(owner).multicall(transactions))
+                .to.be.revertedWith("BadgerOrganizationHooked::_configManager: Manager is not a configured Badger module.")
         });
 
         // isOrganizationManager
@@ -590,12 +637,7 @@ describe("Badger", function () {
             expect(await hook.supportsInterface("0x7cc2d017")).to.equal(false);
             expect(await hook.supportsInterface("0x6847c1d5")).to.equal(true); //IBadgerHook interface
             expect(await hook.supportsInterface("0x01ffc9a7")).to.equal(true); // IERC165
+            expect(await hook.supportsInterface("0x56dbdf14")).to.equal(true); // IBadgerConfigured
         });
     });
-
-    // describe("BadgerManaged.sol", async function () {
-    //     it("call: setManagerConfig(manager, config)", async function () {
-
-    //     });
-    // });
 });

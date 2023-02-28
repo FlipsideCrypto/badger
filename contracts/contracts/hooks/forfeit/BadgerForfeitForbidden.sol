@@ -48,7 +48,7 @@ contract BadgerForfeitForbidden is BadgerForfeitHook {
         ///         a module that may be reverting or otherwise blocking.
         require(
             !forbidden[msg.sender][_id],
-            "BadgerForfeitforbidden::execute: Invalid permission to forfeit token."
+            "BadgerForfeitForbidden::execute: Invalid permission to forfeit token."
         );
     }
 }
