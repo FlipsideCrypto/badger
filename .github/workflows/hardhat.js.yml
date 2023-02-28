@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Harhdat smart contract tests
+      - name: Run Hardhat smart contract tests
         run: REPORT_GAS=true npx hardhat test
 
       - name: Install C4udit worker
