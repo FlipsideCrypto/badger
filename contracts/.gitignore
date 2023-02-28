@@ -3,6 +3,7 @@ artifacts
 cache
 .env
 
+coverage/
 deployments/
 coverage.json
 gasReporterOutput.json
