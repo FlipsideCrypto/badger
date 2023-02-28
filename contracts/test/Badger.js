@@ -380,28 +380,26 @@ describe("Badger", function () {
         // configHook
 
         // configManager
-        // it.only("call: configManager(0, owner, 0, true)", async function () {
-        //     const { organization, owner, otherAccount, hook } = await loadFixture(deployNewHook);
+        it.only("call: configManager(0, owner, 0, true)", async function () {
+            const { organization, owner, otherAccount, hook } = await loadFixture(deployNewHook);
 
-        //     const managerKey = getManagerKey(0, hook.address);
+            const managerKey = getManagerKey(0, hook.address);
+            // tx = await organization.connect(owner)['setManagers(uint256,address[],bool[])'](0, [hook.address], [true])
+            // tx = await tx.wait();
 
-        //     tx = await organization.connect(owner)['setManagers(uint256,address[],bool[])'](0, [hook.address], [true])
-        //     tx = await tx.wait();
+            // await expect(organization['configManager(uint256,address,bytes)'](0, hook.address, "0x"))
+            //     .to.emit(organization, "ManagerConfigured").withArgs(managerKey, "0x");
 
-        //     await expect(organization['configManager(uint256,address,bytes)'](0, hook.address, "0x"))
-        //         .to.emit(organization, "ManagerConfigured").withArgs(managerKey, "0x");
+            const transactions = [
+                organization.interface.encodeFunctionData('setManagers(uint256,address[],bool[])', [0, [hook.address], [true]]),
+                organization.interface.encodeFunctionData("configManager(uint256,address,bytes)", [0, hook.address, "0x"])
+            ]
 
+            await expect(organization.connect(owner).multicall(transactions))
+                .to.emit(organization, "ManagerUpdated").withArgs(managerKey, true)
+                .to.emit(organization, "ManagerConfigured").withArgs(managerKey, "0x");
 
-        //     // const transactions = [
-        //     //     organization.interface.encodeFunctionData('setManagers(uint256,address[],bool[])', [0, [otherAccount.address], [true]]),
-        //     //     organization.interface.encodeFunctionData("configManager(uint256,address,bytes)", [0, otherAccount.address, "0x"])
-        //     // ]
-
-        //     // await expect(organization.connect(owner).multicall(transactions))
-        //     //     .to.emit(organization, "ManagerUpdated").withArgs(managerKey, true)
-        //     //     .to.emit(organization, "ManagerConfigured").withArgs(managerKey, "0x");
-
-        // });
+        });
 
         // configManager
 
