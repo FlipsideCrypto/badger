@@ -39,14 +39,17 @@ jobs:
       - name: Run Harhdat smart contract tests
         run: REPORT_GAS=true npx hardhat test
 
+      - name: Install C4udit worker
+        run: cd build && git clone https://github.com/byterocket/c4udit && cd c4udit && go build .
+
       - name: Run automated low-complexity C4udit worker
-        run: cd build && git clone https://github.com/byterocket/c4udit && cd c4udit && go build . && cd .. && ./c4udit/c4udit -s ../contracts/
+        run: cd build && ./c4udit/c4udit -s ../contracts/
 
       - name: Install Slither
         run: cd build && pip install slither-analyzer
 
-      - name: Run Slither
-        run: cd build && slither .. --print call-graph
+      - name: Run Slither to build Graphs
+        run: cd build && slither .. --print call-graph && slither .. --print inheritance-graph"
 
       - name: Save the build outputs
         uses: stefanzweifel/git-auto-commit-action@v4
