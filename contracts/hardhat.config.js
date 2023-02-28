@@ -96,6 +96,8 @@ module.exports = {
         coinmarketcap: process.env.COINMARKETCAP_API_KEY,
         showMethodSig: true,
         showTimeSpent: true,
+        noColors: true,
+        outputFile: 'build/gas-report.md'
     },
     watcher: {
         compilation: {
