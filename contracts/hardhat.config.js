@@ -3,9 +3,9 @@ require('hardhat-deploy');
 require("hardhat-watcher");
 require("hardhat-tracer");
 require("hardhat-abi-exporter");
-require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require('solidity-coverage');
+require('@nomicfoundation/hardhat-chai-matchers')
 require("dotenv").config();
 
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -126,9 +126,10 @@ module.exports = {
             gasPrice: "auto",
             saveDeployments: false,
             mining: {
-                auto: false,
-                order: 'fifo',
-                interval: 1500,
+                auto: true
+                // auto: false,
+                // order: 'fifo',
+                // interval: 1500,
             }
         },
         goerli: {

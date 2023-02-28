@@ -14,8 +14,7 @@
 // org logic: 0xd2779f52
 // badger configured: 0x56dbdf14
 
-const { time, loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
-const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
+const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 const { expect } = require("chai");
 
 function getManagerKey(badgeId, manager) {
