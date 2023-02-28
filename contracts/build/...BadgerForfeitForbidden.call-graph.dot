@@ -1,16 +1,16 @@
 strict digraph {
 subgraph cluster_6468_IBadgerConfigured {
 label = "IBadgerConfigured"
-"6468_CONFIG_SCHEMA" [label="CONFIG_SCHEMA"]
 "6468_config" [label="config"]
+"6468_CONFIG_SCHEMA" [label="CONFIG_SCHEMA"]
 }subgraph cluster_3081_ERC165 {
 label = "ERC165"
 "3081_supportsInterface" [label="supportsInterface"]
 }subgraph cluster_5324_BadgerForfeitForbidden {
 label = "BadgerForfeitForbidden"
+"5324_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
 "5324_execute" [label="execute"]
 "5324_config" [label="config"]
-"5324_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
 }subgraph cluster_3093_IERC165 {
 label = "IERC165"
 "3093_supportsInterface" [label="supportsInterface"]
@@ -24,12 +24,12 @@ label = "BadgerHook"
 "4956_supportsInterface" -> "4956_supportsInterface"
 }subgraph cluster_solidity {
 label = "[Solidity]"
-"abi.decode()" 
 "require(bool,string)" 
+"abi.decode()" 
 "type()" 
-"4956_supportsInterface" -> "type()"
 "5324_execute" -> "abi.decode()"
 "5324_execute" -> "require(bool,string)"
+"4956_supportsInterface" -> "type()"
 "3081_supportsInterface" -> "type()"
 "5324_config" -> "abi.decode()"
 }
