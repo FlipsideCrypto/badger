@@ -121,8 +121,8 @@ Badger V6 is in the process of being audited. Responses will be made public once
 In the meantime, you can find resources of due diligence below:
 
 * [c4udit](./build/c4udit-report.md) - "A low-complexity audit of the Badger contracts utilizing the C4 model."
-* [call graph](./build/...all_contracts.call-graph.dot) - "A graph of the function calls of the Badger contracts."
-* [inheritance graph](./build/...inheritance-graph.dot) - "A graph of the inheritance relationships of the Badger contracts."
+* [gas report](./build/gas-report.txt) - "Gas usage of the Badger contracts."
+* [abis](./build/abis/) - "ABI files of the Badger contracts."
 
 ## Testing the Contract
 
