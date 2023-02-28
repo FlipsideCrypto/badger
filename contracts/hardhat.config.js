@@ -97,7 +97,7 @@ module.exports = {
         showMethodSig: true,
         showTimeSpent: true,
         noColors: true,
-        outputFile: 'build/gas-report.md'
+        outputFile: 'build/gas-report.txt'
     },
     watcher: {
         compilation: {
