@@ -35,5 +35,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build
+      - name: Test smart contract and run automated auditors
         run: npm run build
