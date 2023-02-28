@@ -75,12 +75,6 @@ contract BadgerManagerSignature is BadgerManager {
             "BadgerManagerSignature::mint: Invalid nonce."
         );
 
-        /// @dev Confirm the signature is valid.
-        require(
-            _signature.length == 65,
-            "BadgerManagerSignature::mint: Invalid signature length."
-        );
-
         /// @dev Recover the signer from the signature.
         bytes32 message = keccak256(
             abi.encodePacked(

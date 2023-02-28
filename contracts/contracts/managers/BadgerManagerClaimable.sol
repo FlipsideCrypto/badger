@@ -35,7 +35,7 @@ contract BadgerManagerClaimable is BadgerManager {
         (uint256 _id, uint256 _amount) = abi.decode(_data, (uint256, uint256));
 
         require(
-            _amount > 0,
+            _amount != 0,
             "BadgerManagerClaimable::config: Amount must be greater than zero."
         );
 

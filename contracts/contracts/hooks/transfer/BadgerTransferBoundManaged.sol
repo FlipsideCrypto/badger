@@ -60,9 +60,10 @@ contract BadgerTransferBoundManaged is BadgerTransferHook {
         /// @dev Load the stack.
         uint256 i;
         uint256 id;
+        uint256 idsLength = _ids.length;
 
         /// @dev Loop through all of the tokens moving.
-        for (i; i < _ids.length; i++) {
+        for (i; i < idsLength; i++) {
             /// @dev Load the token ID.
             id = _ids[i];
 

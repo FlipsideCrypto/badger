@@ -48,9 +48,10 @@ contract BadgerTransferBound is BadgerTransferHook {
 
         /// @dev Load the stack.
         uint256 i;
+        uint256 idsLength = _ids.length;
 
         /// @dev Loop through all of the tokens moving.
-        for (i; i < _ids.length; i++) {
+        for (i; i < idsLength; i++) {
             /// @dev Require the transfer to be from or to the zero address.
             require(
                 _from == address(0) ||

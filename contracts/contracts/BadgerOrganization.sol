@@ -48,18 +48,18 @@ contract BadgerOrganization is
         uint256[] memory _amounts,
         bytes memory _data
     ) external virtual override onlyBadgeManager(_id) {
-        /// @dev Make sure that the supplied arrays are equal in length.
-        require(
-            _tos.length == _amounts.length,
-            "BadgerOrganization::mintBatch: _tos and _amounts must be the same length."
-        );
-
         /// @dev Load the stack.
         address operator = _msgSender();
         uint256 i;
+        uint256 tosLength = _tos.length;
+
+        require(
+            tosLength == _amounts.length,
+            "BadgerOrganization::mintBatch: _tos and _amounts must be the same length."
+        );
 
         /// @dev Mint the badge to all of the recipients with their given amount.
-        for (i; i < _tos.length; i++) {
+        for (i; i < tosLength; i++) {
             /// @dev Mint the badges to the users.
             BadgerOrganizationLogic._mint(
                 operator,
@@ -91,18 +91,18 @@ contract BadgerOrganization is
         uint256 _id,
         uint256[] memory _amounts
     ) external virtual override onlyBadgeManager(_id) {
-        /// @dev Make sure that the supplied arrays are equal in length.
-        require(
-            _froms.length == _amounts.length,
-            "BadgerOrganization::revokeBatch: _from and _amounts must be the same length."
-        );
-
         /// @dev Load the stack.
         address operator = _msgSender();
         uint256 i;
+        uint256 fromsLength = _froms.length;
+
+        require(
+            fromsLength == _amounts.length,
+            "BadgerOrganization::revokeBatch: _from and _amounts must be the same length."
+        );
 
         /// @dev Revoke the Badge from all of the recipients with their given amount.
-        for (i; i < _froms.length; i++) {
+        for (i; i < fromsLength; i++) {
             /// @dev Revoke the Badge from the user.
             _revoke(operator, _froms[i], _id, _amounts[i]);
         }
@@ -146,7 +146,7 @@ contract BadgerOrganization is
         string memory _uri = uris[_id];
 
         /// @dev If a custom URI has been set for this Badge, return it.
-        if (bytes(_uri).length > 0) {
+        if (bytes(_uri).length != 0) {
             return _uri;
         }
 

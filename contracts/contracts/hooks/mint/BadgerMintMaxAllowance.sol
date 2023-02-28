@@ -38,7 +38,7 @@ contract BadgerMintMaxAllowance is BadgerMintHook {
 
         /// @dev Require the max to be greater than zero.
         require(
-            _max > 0,
+            _max != 0,
             "BadgerMintMaxAllowance::config: Max must be greater than zero."
         );
 

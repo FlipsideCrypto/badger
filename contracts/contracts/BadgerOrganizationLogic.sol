@@ -119,7 +119,7 @@ contract BadgerOrganizationLogic is
     {
         /// @dev Confirm a valid URI was provided.
         require(
-            bytes(_uri).length > 0,
+            bytes(_uri).length != 0,
             "BadgerScout::setOrganizationURI: URI must be set."
         );
 
@@ -138,7 +138,7 @@ contract BadgerOrganizationLogic is
     {
         /// @dev Confirm a valid URI was provided.
         require(
-            bytes(_uri).length > 0,
+            bytes(_uri).length != 0,
             "BadgerScout::setBadgeURI: URI must be set."
         );
 
@@ -153,18 +153,18 @@ contract BadgerOrganizationLogic is
         address[] calldata _managers,
         bool[] calldata _isManager
     ) public virtual override onlyOwner {
-        /// @dev Confirm the arrays provided are of the same length.
-        require(
-            _managers.length == _isManager.length,
-            "BadgerScout::setManagers: _managers and _isManager must be the same length."
-        );
-
         /// @dev Load the stack.
         uint256 i;
         bytes32 managerHash;
+        uint256 managersLength = _managers.length;
+
+        require(
+            managersLength == _isManager.length,
+            "BadgerScout::setManagers: _managers and _isManager must be the same length."
+        );
 
         /// @dev Loop through the arrays and update the state of the Managers.
-        for (i; i < _managers.length; i++) {
+        for (i; i < managersLength; i++) {
             /// @dev Calculate the hash for the Organization Manager.
             managerHash = _managerHash(_managers[i]);
 
@@ -181,18 +181,18 @@ contract BadgerOrganizationLogic is
         address[] calldata _managers,
         bool[] calldata _isManager
     ) public virtual override onlyOrganizationManager {
-        /// @dev Confirm the arrays provided are of the same length.
-        require(
-            _managers.length == _isManager.length,
-            "BadgerScout::setManagers: _managers and _isManager must be the same length."
-        );
-
         /// @dev Load the stack.
         uint256 i;
         bytes32 managerHash;
+        uint256 managersLength = _managers.length;
+
+        require(
+            managersLength == _isManager.length,
+            "BadgerScout::setManagers: _managers and _isManager must be the same length."
+        );
 
         /// @dev Loop through the arrays and update the state of the Managers.
-        for (i; i < _managers.length; i++) {
+        for (i; i < managersLength; i++) {
             /// @dev Calculate the hash for the Organization Manager.
             managerHash = _badgeManagerHash(_id, _managers[i]);
 
@@ -209,17 +209,17 @@ contract BadgerOrganizationLogic is
         address[] calldata _hooks,
         bool[] calldata _isHook
     ) public virtual override onlyOrganizationManager {
-        /// @dev Confirm the arrays provided are of the same length.
+        /// @dev Load the stack.
+        uint256 i;
+        uint256 hooksLength = _hooks.length;
+
         require(
-            _hooks.length == _isHook.length,
+            hooksLength == _isHook.length,
             "BadgerScout::setHooks: _hooks and _isHook must be the same length."
         );
 
-        /// @dev Load the stack.
-        uint256 i;
-
         /// @dev Loop through the arrays and update the state of the Hooks.
-        for (i; i < _hooks.length; i++) {
+        for (i; i < hooksLength; i++) {
             /// @dev Update the state of the Hook for the Organization.
             _setHook(_slot, _hooks[i], _isHook[i]);
         }

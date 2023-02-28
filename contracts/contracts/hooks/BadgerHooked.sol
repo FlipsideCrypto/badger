@@ -76,11 +76,15 @@ abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
         /// @dev Get the hooks for the specified slot.
         EnumerableSet.AddressSet storage _hooks = hooks[_slot];
 
+        /// Load the stack.
+        uint256 i;
+        uint256 hooksLength = _hooks.length();
+
         /// @dev Create an array to hold the hooks.
-        address[] memory _hookArray = new address[](_hooks.length());
+        address[] memory _hookArray = new address[](hooksLength);
 
         /// @dev Loop through the hooks and add them to the array.
-        for (uint256 i = 0; i < _hooks.length(); i++) {
+        for (i; i < hooksLength; i++) {
             _hookArray[i] = _hooks.at(i);
         }
 
@@ -160,9 +164,10 @@ abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
 
         /// @dev Load the stack.
         uint256 i;
+        uint256 slotHooksLength = slotHooks.length;
 
         /// @dev Loop through the hooks and call them.
-        for (i; i < slotHooks.length; i++) {
+        for (i; i < slotHooksLength; i++) {
             /// @dev Make the execution call to the hook.
             IBadgerHook(slotHooks[i]).execute(_data);
         }
