@@ -1,0 +1,601 @@
+strict digraph {
+subgraph cluster_5890_BadgerMintSelf {
+label = "BadgerMintSelf"
+"5890_execute" [label="execute"]
+"5890_config" [label="config"]
+}subgraph cluster_131_OwnableUpgradeable {
+label = "OwnableUpgradeable"
+"131_owner" [label="owner"]
+"131___Ownable_init" [label="__Ownable_init"]
+"131__transferOwnership" [label="_transferOwnership"]
+"131_transferOwnership" [label="transferOwnership"]
+"131___Ownable_init_unchained" [label="__Ownable_init_unchained"]
+"131__checkOwner" [label="_checkOwner"]
+"131_renounceOwnership" [label="renounceOwnership"]
+"131_transferOwnership" -> "131__transferOwnership"
+"131___Ownable_init" -> "131_onlyInitializing"
+"131_renounceOwnership" -> "131__transferOwnership"
+"131___Ownable_init_unchained" -> "131__transferOwnership"
+"131___Ownable_init" -> "131___Ownable_init_unchained"
+"131__checkOwner" -> "131__msgSender"
+"131___Ownable_init_unchained" -> "131_onlyInitializing"
+"131___Ownable_init_unchained" -> "131__msgSender"
+"131__checkOwner" -> "131_owner"
+"131_transferOwnership" -> "131_onlyOwner"
+"131_renounceOwnership" -> "131_onlyOwner"
+}subgraph cluster_3081_ERC165 {
+label = "ERC165"
+"3081_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_2443_Context {
+label = "Context"
+"2443__msgData" [label="_msgData"]
+"2443__msgSender" [label="_msgSender"]
+}subgraph cluster_6926_BadgerManagerClaimable {
+label = "BadgerManagerClaimable"
+"6926_mint" [label="mint"]
+"6926_config" [label="config"]
+}subgraph cluster_3856_Badger {
+label = "Badger"
+"3856__organizationHash" [label="_organizationHash"]
+"3856_constructor" [label="constructor"]
+"3856_createOrganization" [label="createOrganization"]
+"3856_getOrganization" [label="getOrganization"]
+"3856_supportsInterface" [label="supportsInterface"]
+"3856_createOrganization" -> "3856__msgSender"
+"3856_createOrganization" -> "3856__organizationHash"
+"3856_supportsInterface" -> "3856_supportsInterface"
+"3856_getOrganization" -> "3856__organizationHash"
+}subgraph cluster_3093_IERC165 {
+label = "IERC165"
+"3093_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_6807_BadgerManaged {
+label = "BadgerManaged"
+"6807__setManager" [label="_setManager"]
+"6807__configManager" [label="_configManager"]
+"6807__configManager" -> "6807__configNetwork"
+}subgraph cluster_1690_IERC1155Upgradeable {
+label = "IERC1155Upgradeable"
+"1690_isApprovedForAll" [label="isApprovedForAll"]
+"1690_balanceOf" [label="balanceOf"]
+"1690_setApprovalForAll" [label="setApprovalForAll"]
+"1690_safeBatchTransferFrom" [label="safeBatchTransferFrom"]
+"1690_safeTransferFrom" [label="safeTransferFrom"]
+"1690_balanceOfBatch" [label="balanceOfBatch"]
+}subgraph cluster_282_Initializable {
+label = "Initializable"
+"282__disableInitializers" [label="_disableInitializers"]
+}subgraph cluster_5788_BadgerMintMaxSupply {
+label = "BadgerMintMaxSupply"
+"5788_config" [label="config"]
+"5788_execute" [label="execute"]
+}subgraph cluster_1948_AddressUpgradeable {
+label = "AddressUpgradeable"
+"1948_functionCallWithValue" [label="functionCallWithValue"]
+"1948_functionCall" [label="functionCall"]
+"1948_sendValue" [label="sendValue"]
+"1948_isContract" [label="isContract"]
+"1948_verifyCallResult" [label="verifyCallResult"]
+"1948_functionStaticCall" [label="functionStaticCall"]
+"1948_functionCall" -> "1948_functionCall"
+"1948_functionStaticCall" -> "1948_functionStaticCall"
+"1948_functionCallWithValue" -> "1948_verifyCallResult"
+"1948_functionStaticCall" -> "1948_isContract"
+"1948_functionCallWithValue" -> "1948_functionCallWithValue"
+"1948_functionCall" -> "1948_functionCallWithValue"
+"1948_functionCallWithValue" -> "1948_isContract"
+"1948_functionStaticCall" -> "1948_verifyCallResult"
+}subgraph cluster_5664_BadgerMintMaxAllowance {
+label = "BadgerMintMaxAllowance"
+"5664_execute" [label="execute"]
+"5664_config" [label="config"]
+}subgraph cluster_5537_BadgerMintMax {
+label = "BadgerMintMax"
+"5537_execute" [label="execute"]
+"5537_config" [label="config"]
+}subgraph cluster_5410_BadgerHookBlocklist {
+label = "BadgerHookBlocklist"
+"5410_execute" [label="execute"]
+"5410_config" [label="config"]
+}subgraph cluster_1568_IERC1155ReceiverUpgradeable {
+label = "IERC1155ReceiverUpgradeable"
+"1568_onERC1155BatchReceived" [label="onERC1155BatchReceived"]
+"1568_onERC1155Received" [label="onERC1155Received"]
+}subgraph cluster_1705_IERC1155MetadataURIUpgradeable {
+label = "IERC1155MetadataURIUpgradeable"
+"1705_uri" [label="uri"]
+}subgraph cluster_3883_BadgerNetwork {
+label = "BadgerNetwork"
+"3883__configNetwork" [label="_configNetwork"]
+}subgraph cluster_6700_IBadgerOrganizationLogic {
+label = "IBadgerOrganizationLogic"
+"6700_setOrganizationURI" [label="setOrganizationURI"]
+"6700_setBadgeURI" [label="setBadgeURI"]
+"6700_setHooks" [label="setHooks"]
+"6700_configHook" [label="configHook"]
+"6700_isBadgeManager" [label="isBadgeManager"]
+"6700_configManager" [label="configManager"]
+"6700_setManagers" [label="setManagers"]
+"6700_isOrganizationManager" [label="isOrganizationManager"]
+}subgraph cluster_4913_BadgerOrganizationLogic {
+label = "BadgerOrganizationLogic"
+"4913_setManagers" [label="setManagers"]
+"4913__managerHash" [label="_managerHash"]
+"4913__isOrganizationManager" [label="_isOrganizationManager"]
+"4913_setHooks" [label="setHooks"]
+"4913__mint" [label="_mint"]
+"4913__isBadgeManager" [label="_isBadgeManager"]
+"4913__forfeit" [label="_forfeit"]
+"4913__beforeTokenTransfer" [label="_beforeTokenTransfer"]
+"4913_configManager" [label="configManager"]
+"4913__setBadgeURI" [label="_setBadgeURI"]
+"4913_isBadgeManager" [label="isBadgeManager"]
+"4913_configHook" [label="configHook"]
+"4913_initialize" [label="initialize"]
+"4913__revoke" [label="_revoke"]
+"4913_supportsInterface" [label="supportsInterface"]
+"4913__badgeManagerHash" [label="_badgeManagerHash"]
+"4913__setOrganizationURI" [label="_setOrganizationURI"]
+"4913_constructor" [label="constructor"]
+"4913_setOrganizationURI" [label="setOrganizationURI"]
+"4913_setBadgeURI" [label="setBadgeURI"]
+"4913_isOrganizationManager" [label="isOrganizationManager"]
+"4913__revoke" -> "4913__burn"
+"4913_initialize" -> "4913___ERC1155_init"
+"4913_setHooks" -> "4913_onlyOrganizationManager"
+"4913_setOrganizationURI" -> "4913__setOrganizationURI"
+"4913__forfeit" -> "4913__burn"
+"4913_initialize" -> "4913_transferOwnership"
+"4913_isOrganizationManager" -> "4913__isOrganizationManager"
+"4913_setManagers" -> "4913__setManager"
+"4913__revoke" -> "4913__hook"
+"4913__mint" -> "4913__mint"
+"4913__isBadgeManager" -> "4913__badgeManagerHash"
+"4913_configManager" -> "4913_onlyOrganizationManager"
+"4913_setOrganizationURI" -> "4913_onlyOrganizationManager"
+"4913_configManager" -> "4913__badgeManagerHash"
+"4913_supportsInterface" -> "4913_supportsInterface"
+"4913_configManager" -> "4913__configManager"
+"4913_setHooks" -> "4913__setHook"
+"4913_setManagers" -> "4913__managerHash"
+"4913_configManager" -> "4913_onlyBadgeManager"
+"4913_configHook" -> "4913_onlyOrganizationManager"
+"4913__isOrganizationManager" -> "4913__managerHash"
+"4913_configHook" -> "4913__configHook"
+"4913__forfeit" -> "4913__hook"
+"4913_setBadgeURI" -> "4913_onlyBadgeManager"
+"4913_setManagers" -> "4913_onlyOwner"
+"4913_constructor" -> "4913__disableInitializers"
+"4913_initialize" -> "4913_initializer"
+"4913__isOrganizationManager" -> "4913_owner"
+"4913_setManagers" -> "4913_onlyOrganizationManager"
+"4913_initialize" -> "4913___Ownable_init"
+"4913_initialize" -> "4913__setOrganizationURI"
+"4913_setManagers" -> "4913__badgeManagerHash"
+"4913_configManager" -> "4913__managerHash"
+"4913__isBadgeManager" -> "4913__isOrganizationManager"
+"4913__mint" -> "4913__hook"
+"4913_isBadgeManager" -> "4913__isBadgeManager"
+"4913__beforeTokenTransfer" -> "4913__hook"
+"4913_setBadgeURI" -> "4913__setBadgeURI"
+}subgraph cluster_7091_BadgerManagerSignature {
+label = "BadgerManagerSignature"
+"7091_mint" [label="mint"]
+"7091_config" [label="config"]
+}subgraph cluster_6452_IBadger {
+label = "IBadger"
+"6452_createOrganization" [label="createOrganization"]
+"6452_getOrganization" [label="getOrganization"]
+}subgraph cluster_6068_BadgerTransferBlocklist {
+label = "BadgerTransferBlocklist"
+"6068_execute" [label="execute"]
+"6068_config" [label="config"]
+}subgraph cluster_6840_BadgerManager {
+label = "BadgerManager"
+"6840_supportsInterface" [label="supportsInterface"]
+"6840_supportsInterface" -> "6840_supportsInterface"
+}subgraph cluster_6200_BadgerTransferBound {
+label = "BadgerTransferBound"
+"6200_execute" [label="execute"]
+"6200_config" [label="config"]
+}subgraph cluster_4158_BadgerOrganization {
+label = "BadgerOrganization"
+"4158_revoke" [label="revoke"]
+"4158_forfeit" [label="forfeit"]
+"4158_revokeBatch" [label="revokeBatch"]
+"4158_mintBatch" [label="mintBatch"]
+"4158_uri" [label="uri"]
+"4158_mint" [label="mint"]
+"4158_supportsInterface" [label="supportsInterface"]
+"4158_contractURI" [label="contractURI"]
+"4158_revoke" -> "4158__revoke"
+"4158_revokeBatch" -> "4158__msgSender"
+"4158_mint" -> "4158__mint"
+"4158_forfeit" -> "4158__msgSender"
+"4158_revoke" -> "4158_onlyBadgeManager"
+"4158_mintBatch" -> "4158_onlyBadgeManager"
+"4158_revokeBatch" -> "4158__revoke"
+"4158_revokeBatch" -> "4158_onlyBadgeManager"
+"4158_forfeit" -> "4158__forfeit"
+"4158_uri" -> "4158_uri"
+"4158_mint" -> "4158_onlyBadgeManager"
+"4158_supportsInterface" -> "4158_supportsInterface"
+"4158_revoke" -> "4158__msgSender"
+"4158_mint" -> "4158__msgSender"
+"4158_mintBatch" -> "4158__msgSender"
+"4158_mintBatch" -> "4158__mint"
+}subgraph cluster_6594_IBadgerOrganization {
+label = "IBadgerOrganization"
+"6594_forfeit" [label="forfeit"]
+"6594_mint" [label="mint"]
+"6594_mintBatch" [label="mintBatch"]
+"6594_revoke" [label="revoke"]
+"6594_revokeBatch" [label="revokeBatch"]
+}subgraph cluster_7107_Multicallable {
+label = "Multicallable"
+"7107_multicall" [label="multicall"]
+}subgraph cluster_6468_IBadgerConfigured {
+label = "IBadgerConfigured"
+"6468_config" [label="config"]
+"6468_CONFIG_SCHEMA" [label="CONFIG_SCHEMA"]
+}subgraph cluster_1990_ContextUpgradeable {
+label = "ContextUpgradeable"
+"1990___Context_init_unchained" [label="__Context_init_unchained"]
+"1990__msgData" [label="_msgData"]
+"1990__msgSender" [label="_msgSender"]
+"1990___Context_init" [label="__Context_init"]
+"1990___Context_init_unchained" -> "1990_onlyInitializing"
+"1990___Context_init" -> "1990_onlyInitializing"
+}subgraph cluster_5324_BadgerForfeitForbidden {
+label = "BadgerForfeitForbidden"
+"5324_config" [label="config"]
+"5324_execute" [label="execute"]
+}subgraph cluster_2126_Clones {
+label = "Clones"
+"2126_predictDeterministicAddress" [label="predictDeterministicAddress"]
+"2126_cloneDeterministic" [label="cloneDeterministic"]
+"2126_clone" [label="clone"]
+"2126_predictDeterministicAddress" -> "2126_predictDeterministicAddress"
+}subgraph cluster_6352_BadgerTransferBoundManaged {
+label = "BadgerTransferBoundManaged"
+"6352_execute" [label="execute"]
+"6352_config" [label="config"]
+}subgraph cluster_6488_IBadgerHook {
+label = "IBadgerHook"
+"6488_execute" [label="execute"]
+"6488_EXECUTE_SCHEMA" [label="EXECUTE_SCHEMA"]
+}subgraph cluster_5976_BadgerRevokeForbidden {
+label = "BadgerRevokeForbidden"
+"5976_config" [label="config"]
+"5976_execute" [label="execute"]
+}subgraph cluster_4956_BadgerHook {
+label = "BadgerHook"
+"4956_supportsInterface" [label="supportsInterface"]
+"4956_supportsInterface" -> "4956_supportsInterface"
+}subgraph cluster_3692_EnumerableSet {
+label = "EnumerableSet"
+"3692_contains" [label="contains"]
+"3692__remove" [label="_remove"]
+"3692_add" [label="add"]
+"3692_at" [label="at"]
+"3692_remove" [label="remove"]
+"3692__contains" [label="_contains"]
+"3692_values" [label="values"]
+"3692__values" [label="_values"]
+"3692__add" [label="_add"]
+"3692_length" [label="length"]
+"3692__at" [label="_at"]
+"3692__length" [label="_length"]
+"3692_add" -> "3692__add"
+"3692__add" -> "3692__contains"
+"3692_at" -> "3692__at"
+"3692_length" -> "3692__length"
+"3692_remove" -> "3692__remove"
+"3692_contains" -> "3692__contains"
+"3692_values" -> "3692__values"
+}subgraph cluster_2669_Strings {
+label = "Strings"
+"2669_toHexString" [label="toHexString"]
+"2669_toString" [label="toString"]
+"2669_toHexString" -> "2669_toHexString"
+}subgraph cluster_3057_ECDSA {
+label = "ECDSA"
+"3057__throwError" [label="_throwError"]
+"3057_tryRecover" [label="tryRecover"]
+"3057_toEthSignedMessageHash" [label="toEthSignedMessageHash"]
+"3057_recover" [label="recover"]
+"3057_toTypedDataHash" [label="toTypedDataHash"]
+"3057_recover" -> "3057__throwError"
+"3057_tryRecover" -> "3057_tryRecover"
+"3057_recover" -> "3057_tryRecover"
+}subgraph cluster_2034_ERC165Upgradeable {
+label = "ERC165Upgradeable"
+"2034_supportsInterface" [label="supportsInterface"]
+"2034___ERC165_init" [label="__ERC165_init"]
+"2034___ERC165_init_unchained" [label="__ERC165_init_unchained"]
+"2034___ERC165_init" -> "2034_onlyInitializing"
+"2034___ERC165_init_unchained" -> "2034_onlyInitializing"
+}subgraph cluster_6516_IBadgerHooked {
+label = "IBadgerHooked"
+"6516_getHooks" [label="getHooks"]
+}subgraph cluster_2421_Address {
+label = "Address"
+"2421_functionDelegateCall" [label="functionDelegateCall"]
+"2421_isContract" [label="isContract"]
+"2421_functionCall" [label="functionCall"]
+"2421_functionCallWithValue" [label="functionCallWithValue"]
+"2421_verifyCallResult" [label="verifyCallResult"]
+"2421_functionStaticCall" [label="functionStaticCall"]
+"2421_sendValue" [label="sendValue"]
+"2421_functionCallWithValue" -> "2421_isContract"
+"2421_functionCall" -> "2421_functionCall"
+"2421_functionStaticCall" -> "2421_isContract"
+"2421_functionStaticCall" -> "2421_verifyCallResult"
+"2421_functionCall" -> "2421_functionCallWithValue"
+"2421_functionCallWithValue" -> "2421_verifyCallResult"
+"2421_functionDelegateCall" -> "2421_verifyCallResult"
+"2421_functionStaticCall" -> "2421_functionStaticCall"
+"2421_functionCallWithValue" -> "2421_functionCallWithValue"
+"2421_functionDelegateCall" -> "2421_isContract"
+"2421_functionDelegateCall" -> "2421_functionDelegateCall"
+}subgraph cluster_1527_ERC1155Upgradeable {
+label = "ERC1155Upgradeable"
+"1527__burn" [label="_burn"]
+"1527__doSafeTransferAcceptanceCheck" [label="_doSafeTransferAcceptanceCheck"]
+"1527__doSafeBatchTransferAcceptanceCheck" [label="_doSafeBatchTransferAcceptanceCheck"]
+"1527_isApprovedForAll" [label="isApprovedForAll"]
+"1527__setURI" [label="_setURI"]
+"1527_supportsInterface" [label="supportsInterface"]
+"1527_setApprovalForAll" [label="setApprovalForAll"]
+"1527_balanceOfBatch" [label="balanceOfBatch"]
+"1527__beforeTokenTransfer" [label="_beforeTokenTransfer"]
+"1527__safeTransferFrom" [label="_safeTransferFrom"]
+"1527___ERC1155_init" [label="__ERC1155_init"]
+"1527__burnBatch" [label="_burnBatch"]
+"1527__mintBatch" [label="_mintBatch"]
+"1527__afterTokenTransfer" [label="_afterTokenTransfer"]
+"1527_uri" [label="uri"]
+"1527__asSingletonArray" [label="_asSingletonArray"]
+"1527_balanceOf" [label="balanceOf"]
+"1527__setApprovalForAll" [label="_setApprovalForAll"]
+"1527_safeBatchTransferFrom" [label="safeBatchTransferFrom"]
+"1527_safeTransferFrom" [label="safeTransferFrom"]
+"1527___ERC1155_init_unchained" [label="__ERC1155_init_unchained"]
+"1527__mint" [label="_mint"]
+"1527__safeBatchTransferFrom" [label="_safeBatchTransferFrom"]
+"1527_safeBatchTransferFrom" -> "1527_isApprovedForAll"
+"1527__safeTransferFrom" -> "1527__doSafeTransferAcceptanceCheck"
+"1527__mint" -> "1527__beforeTokenTransfer"
+"1527__safeBatchTransferFrom" -> "1527__msgSender"
+"1527_safeBatchTransferFrom" -> "1527__msgSender"
+"1527__burn" -> "1527__beforeTokenTransfer"
+"1527__burnBatch" -> "1527__beforeTokenTransfer"
+"1527__burnBatch" -> "1527__msgSender"
+"1527___ERC1155_init" -> "1527_onlyInitializing"
+"1527_setApprovalForAll" -> "1527__setApprovalForAll"
+"1527__safeTransferFrom" -> "1527__msgSender"
+"1527__mintBatch" -> "1527__doSafeBatchTransferAcceptanceCheck"
+"1527_safeTransferFrom" -> "1527__msgSender"
+"1527__safeBatchTransferFrom" -> "1527__doSafeBatchTransferAcceptanceCheck"
+"1527__safeBatchTransferFrom" -> "1527__beforeTokenTransfer"
+"1527_safeTransferFrom" -> "1527__safeTransferFrom"
+"1527__safeTransferFrom" -> "1527__afterTokenTransfer"
+"1527__mint" -> "1527__msgSender"
+"1527__mintBatch" -> "1527__msgSender"
+"1527__safeBatchTransferFrom" -> "1527__afterTokenTransfer"
+"1527_balanceOfBatch" -> "1527_balanceOf"
+"1527__mint" -> "1527__afterTokenTransfer"
+"1527_supportsInterface" -> "1527_supportsInterface"
+"1527__safeTransferFrom" -> "1527__asSingletonArray"
+"1527___ERC1155_init_unchained" -> "1527_onlyInitializing"
+"1527_setApprovalForAll" -> "1527__msgSender"
+"1527__mint" -> "1527__doSafeTransferAcceptanceCheck"
+"1527_safeBatchTransferFrom" -> "1527__safeBatchTransferFrom"
+"1527__mintBatch" -> "1527__afterTokenTransfer"
+"1527__burn" -> "1527__msgSender"
+"1527__burn" -> "1527__asSingletonArray"
+"1527___ERC1155_init_unchained" -> "1527__setURI"
+"1527__burn" -> "1527__afterTokenTransfer"
+"1527___ERC1155_init" -> "1527___ERC1155_init_unchained"
+"1527__burnBatch" -> "1527__afterTokenTransfer"
+"1527__mintBatch" -> "1527__beforeTokenTransfer"
+"1527__safeTransferFrom" -> "1527__beforeTokenTransfer"
+"1527__mint" -> "1527__asSingletonArray"
+"1527_safeTransferFrom" -> "1527_isApprovedForAll"
+}subgraph cluster_5240_BadgerHooked {
+label = "BadgerHooked"
+"5240__configHook" [label="_configHook"]
+"5240_getHooks" [label="getHooks"]
+"5240__setHook" [label="_setHook"]
+"5240__hook" [label="_hook"]
+"5240__setHook" -> "5240__hook"
+"5240__configHook" -> "5240__configNetwork"
+}subgraph cluster_2046_IERC165Upgradeable {
+label = "IERC165Upgradeable"
+"2046_supportsInterface" [label="supportsInterface"]
+}subgraph cluster_solidity {
+label = "[Solidity]"
+"calldataload(uint256)" 
+"calldatacopy(uint256,uint256,uint256)" 
+"abi.decode()" 
+"revert(string)" 
+"type()" 
+"byte(uint256,uint256)" 
+"delegatecall(uint256,uint256,uint256,uint256,uint256,uint256)" 
+"mload(uint256)" 
+"require(bool,string)" 
+"mstore(uint256,uint256)" 
+"return(uint256,uint256)" 
+"keccak256(bytes)" 
+"abi.encode()" 
+"gas()" 
+"create(uint256,uint256,uint256)" 
+"returndatacopy(uint256,uint256,uint256)" 
+"ecrecover(bytes32,uint8,bytes32,bytes32)" 
+"create2(uint256,uint256,uint256,uint256)" 
+"code(address)" 
+"revert(uint256,uint256)" 
+"keccak256(uint256,uint256)" 
+"returndatasize()" 
+"abi.encodePacked()" 
+"balance(address)" 
+"1527__mint" -> "require(bool,string)"
+"2421_functionDelegateCall" -> "require(bool,string)"
+"2126_cloneDeterministic" -> "mstore(uint256,uint256)"
+"4913__badgeManagerHash" -> "abi.encode()"
+"5240__setHook" -> "type()"
+"7107_multicall" -> "returndatasize()"
+"1948_isContract" -> "code(address)"
+"7107_multicall" -> "return(uint256,uint256)"
+"4956_supportsInterface" -> "type()"
+"1948_verifyCallResult" -> "revert(uint256,uint256)"
+"4913_setHooks" -> "require(bool,string)"
+"5537_execute" -> "require(bool,string)"
+"5410_execute" -> "abi.decode()"
+"7107_multicall" -> "gas()"
+"6200_execute" -> "require(bool,string)"
+"2421_functionCallWithValue" -> "require(bool,string)"
+"5976_config" -> "abi.decode()"
+"7107_multicall" -> "mstore(uint256,uint256)"
+"5324_execute" -> "require(bool,string)"
+"1948_functionCallWithValue" -> "balance(address)"
+"5240__setHook" -> "require(bool,string)"
+"6926_config" -> "require(bool,string)"
+"2126_predictDeterministicAddress" -> "keccak256(uint256,uint256)"
+"4913__managerHash" -> "keccak256(bytes)"
+"2126_cloneDeterministic" -> "require(bool,string)"
+"6200_execute" -> "abi.decode()"
+"1527__burnBatch" -> "require(bool,string)"
+"7091_config" -> "abi.decode()"
+"4158_revokeBatch" -> "require(bool,string)"
+"1527_safeTransferFrom" -> "require(bool,string)"
+"2421_functionCallWithValue" -> "balance(address)"
+"4913__badgeManagerHash" -> "keccak256(bytes)"
+"2421_verifyCallResult" -> "revert(string)"
+"5890_execute" -> "abi.decode()"
+"3057_toEthSignedMessageHash" -> "abi.encodePacked()"
+"3057_toTypedDataHash" -> "keccak256(bytes)"
+"1527__burn" -> "require(bool,string)"
+"5240__configHook" -> "type()"
+"131__checkOwner" -> "require(bool,string)"
+"1948_sendValue" -> "require(bool,string)"
+"2126_cloneDeterministic" -> "create2(uint256,uint256,uint256,uint256)"
+"7107_multicall" -> "delegatecall(uint256,uint256,uint256,uint256,uint256,uint256)"
+"5410_config" -> "abi.decode()"
+"4913__revoke" -> "abi.encode()"
+"2421_sendValue" -> "require(bool,string)"
+"6068_config" -> "abi.decode()"
+"2421_functionStaticCall" -> "require(bool,string)"
+"3856_supportsInterface" -> "type()"
+"5890_execute" -> "require(bool,string)"
+"3057_toEthSignedMessageHash" -> "keccak256(bytes)"
+"6068_execute" -> "require(bool,string)"
+"1527__safeTransferFrom" -> "require(bool,string)"
+"6807__configManager" -> "require(bool,string)"
+"5324_execute" -> "abi.decode()"
+"2126_cloneDeterministic" -> "mload(uint256)"
+"5537_execute" -> "abi.decode()"
+"131_transferOwnership" -> "require(bool,string)"
+"4913_setBadgeURI" -> "require(bool,string)"
+"5537_config" -> "abi.decode()"
+"7091_mint" -> "abi.encodePacked()"
+"5976_execute" -> "require(bool,string)"
+"3081_supportsInterface" -> "type()"
+"1948_sendValue" -> "balance(address)"
+"1948_verifyCallResult" -> "revert(string)"
+"3057_toTypedDataHash" -> "abi.encodePacked()"
+"2669_toHexString" -> "require(bool,string)"
+"1948_functionCallWithValue" -> "require(bool,string)"
+"3057__throwError" -> "revert(string)"
+"1527__safeBatchTransferFrom" -> "require(bool,string)"
+"6200_config" -> "abi.decode()"
+"5976_execute" -> "abi.decode()"
+"1527_safeBatchTransferFrom" -> "require(bool,string)"
+"5240__configHook" -> "require(bool,string)"
+"3057_tryRecover" -> "ecrecover(bytes32,uint8,bytes32,bytes32)"
+"6926_config" -> "abi.decode()"
+"1948_functionStaticCall" -> "require(bool,string)"
+"2421_sendValue" -> "balance(address)"
+"1527_balanceOf" -> "require(bool,string)"
+"1948_verifyCallResult" -> "mload(uint256)"
+"5890_config" -> "abi.decode()"
+"2421_verifyCallResult" -> "revert(uint256,uint256)"
+"4158_mintBatch" -> "require(bool,string)"
+"4913_setOrganizationURI" -> "require(bool,string)"
+"6352_execute" -> "require(bool,string)"
+"6840_supportsInterface" -> "type()"
+"1527__setApprovalForAll" -> "require(bool,string)"
+"4913__mint" -> "abi.encode()"
+"5788_execute" -> "abi.decode()"
+"2126_predictDeterministicAddress" -> "mload(uint256)"
+"3856_constructor" -> "require(bool,string)"
+"2126_clone" -> "require(bool,string)"
+"4913_supportsInterface" -> "type()"
+"2126_clone" -> "mstore(uint256,uint256)"
+"7107_multicall" -> "mload(uint256)"
+"5240__setHook" -> "abi.encode()"
+"4913__managerHash" -> "abi.encode()"
+"2034_supportsInterface" -> "type()"
+"1527__doSafeBatchTransferAcceptanceCheck" -> "revert(string)"
+"5410_execute" -> "require(bool,string)"
+"6807__configManager" -> "type()"
+"3856__organizationHash" -> "keccak256(bytes)"
+"7107_multicall" -> "revert(uint256,uint256)"
+"7107_multicall" -> "calldataload(uint256)"
+"5324_config" -> "abi.decode()"
+"3057_tryRecover" -> "byte(uint256,uint256)"
+"5664_execute" -> "require(bool,string)"
+"3856__organizationHash" -> "abi.encodePacked()"
+"5788_execute" -> "require(bool,string)"
+"2421_isContract" -> "code(address)"
+"5664_config" -> "require(bool,string)"
+"7107_multicall" -> "returndatacopy(uint256,uint256,uint256)"
+"5664_config" -> "abi.decode()"
+"4913_setManagers" -> "require(bool,string)"
+"2126_clone" -> "create(uint256,uint256,uint256)"
+"1527__doSafeTransferAcceptanceCheck" -> "revert(string)"
+"4913__forfeit" -> "abi.encode()"
+"5788_config" -> "abi.decode()"
+"6352_config" -> "abi.decode()"
+"1527_supportsInterface" -> "type()"
+"282__disableInitializers" -> "require(bool,string)"
+"5788_config" -> "require(bool,string)"
+"4158_supportsInterface" -> "type()"
+"1527__mintBatch" -> "require(bool,string)"
+"4913__beforeTokenTransfer" -> "abi.encode()"
+"2421_verifyCallResult" -> "mload(uint256)"
+"6068_execute" -> "abi.decode()"
+"3057_tryRecover" -> "mload(uint256)"
+"5537_config" -> "require(bool,string)"
+"5664_execute" -> "abi.decode()"
+"6352_execute" -> "abi.decode()"
+"1527_balanceOfBatch" -> "require(bool,string)"
+"7091_mint" -> "keccak256(bytes)"
+"2126_clone" -> "mload(uint256)"
+"7107_multicall" -> "calldatacopy(uint256,uint256,uint256)"
+"7091_mint" -> "require(bool,string)"
+"2126_predictDeterministicAddress" -> "mstore(uint256,uint256)"
+}"1527__doSafeBatchTransferAcceptanceCheck" -> "1568_onERC1155BatchReceived"
+"6352_execute" -> "4913_isBadgeManager"
+"3856_createOrganization" -> "4158_initialize"
+"6807__configManager" -> "2421_isContract"
+"7091_mint" -> "4158_mint"
+"5240__configHook" -> "3093_supportsInterface"
+"3856_createOrganization" -> "2126_cloneDeterministic"
+"5240__hook" -> "3692_values"
+"5240__setHook" -> "3692_remove"
+"5240__setHook" -> "3093_supportsInterface"
+"5240__setHook" -> "3692_add"
+"5240_getHooks" -> "3692_length"
+"5240__configHook" -> "2421_isContract"
+"1527__doSafeTransferAcceptanceCheck" -> "1568_onERC1155Received"
+"5240__hook" -> "6488_execute"
+"3057_toEthSignedMessageHash" -> "2669_toString"
+"7091_mint" -> "3057_toEthSignedMessageHash"
+"5240_getHooks" -> "3692_at"
+"5240__configHook" -> "3692_contains"
+"6926_mint" -> "4158_mint"
+"3883__configNetwork" -> "6468_config"
+"6807__configManager" -> "3093_supportsInterface"
+"7091_mint" -> "3057_recover"
+"3856_getOrganization" -> "2126_predictDeterministicAddress"
+}
