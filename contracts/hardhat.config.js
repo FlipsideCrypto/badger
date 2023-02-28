@@ -106,7 +106,7 @@ module.exports = {
             verbose: true,
         },
         ci: {
-            tasks: ["clean", { command: "compile", params: { quiet: true } }, { command: "test", params: { noCompile: true, testFiles: ["testfile.ts"] } }],
+            tasks: ["clean", { command: "compile", params: { quiet: true } }, { command: "test", params: { noCompile: true, testFiles: ["./test/"] } }],
         }
     },
     etherscan: {
