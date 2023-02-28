@@ -40,9 +40,9 @@ jobs:
         run: REPORT_GAS=true npx hardhat test
 
       - name: C4udit
-        run: cd build && git clone https://github.com/byterocket/c4udit && cd c4udit && go build . && ./c4udit -s ../../contracts/
+        run: cd build && git clone https://github.com/byterocket/c4udit && cd c4udit && go build . && cd .. && ./c4udit/c4udit -s ../../contracts/
 
       - name: Save the gas report
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "fix: gas report"
+          commit_message: "fix: smart contract build"
