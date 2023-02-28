@@ -9,8 +9,8 @@ label = "ERC165"
 }subgraph cluster_6926_BadgerManagerClaimable {
 label = "BadgerManagerClaimable"
 "6926_config" [label="config"]
-"6926_mint" [label="mint"]
 "6926_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
+"6926_mint" [label="mint"]
 }subgraph cluster_3093_IERC165 {
 label = "IERC165"
 "3093_supportsInterface" [label="supportsInterface"]
@@ -20,12 +20,12 @@ label = "BadgerManager"
 "6840_supportsInterface" -> "6840_supportsInterface"
 }subgraph cluster_solidity {
 label = "[Solidity]"
-"type()" 
 "require(bool,string)" 
 "abi.decode()" 
+"type()" 
 "6840_supportsInterface" -> "type()"
-"6926_config" -> "require(bool,string)"
 "3081_supportsInterface" -> "type()"
 "6926_config" -> "abi.decode()"
+"6926_config" -> "require(bool,string)"
 }
 }

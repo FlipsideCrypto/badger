@@ -24,13 +24,13 @@ label = "BadgerHook"
 "4956_supportsInterface" -> "4956_supportsInterface"
 }subgraph cluster_solidity {
 label = "[Solidity]"
-"type()" 
 "require(bool,string)" 
 "abi.decode()" 
-"3081_supportsInterface" -> "type()"
-"6068_execute" -> "abi.decode()"
-"4956_supportsInterface" -> "type()"
+"type()" 
 "6068_execute" -> "require(bool,string)"
+"6068_execute" -> "abi.decode()"
 "6068_config" -> "abi.decode()"
+"3081_supportsInterface" -> "type()"
+"4956_supportsInterface" -> "type()"
 }
 }

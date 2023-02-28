@@ -1,8 +1,8 @@
 strict digraph {
 subgraph cluster_5890_BadgerMintSelf {
 label = "BadgerMintSelf"
-"5890_config" [label="config"]
 "5890_execute" [label="execute"]
+"5890_config" [label="config"]
 "5890_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
 }subgraph cluster_6468_IBadgerConfigured {
 label = "IBadgerConfigured"
@@ -24,13 +24,13 @@ label = "BadgerHook"
 "4956_supportsInterface" -> "4956_supportsInterface"
 }subgraph cluster_solidity {
 label = "[Solidity]"
-"type()" 
 "require(bool,string)" 
 "abi.decode()" 
+"type()" 
+"5890_execute" -> "require(bool,string)"
+"5890_execute" -> "abi.decode()"
 "5890_config" -> "abi.decode()"
 "3081_supportsInterface" -> "type()"
-"5890_execute" -> "require(bool,string)"
 "4956_supportsInterface" -> "type()"
-"5890_execute" -> "abi.decode()"
 }
 }
