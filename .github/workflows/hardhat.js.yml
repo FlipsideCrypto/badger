@@ -39,6 +39,9 @@ jobs:
       - name: Test smart contract and run automated auditors
         run: REPORT_GAS=true npx hardhat test
 
+      - name: Run c4udit
+        run: go install github.com/byterocket/c4udit@latest && cd build && c4udit -s ../contracts/
+
       - name: Save the gas report
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
