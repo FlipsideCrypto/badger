@@ -1,9 +1,9 @@
 strict digraph {
 subgraph cluster_5410_BadgerHookBlocklist {
 label = "BadgerHookBlocklist"
-"5410_execute" [label="execute"]
 "5410_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
 "5410_config" [label="config"]
+"5410_execute" [label="execute"]
 }subgraph cluster_6468_IBadgerConfigured {
 label = "IBadgerConfigured"
 "6468_CONFIG_SCHEMA" [label="CONFIG_SCHEMA"]
@@ -27,10 +27,10 @@ label = "[Solidity]"
 "abi.decode()" 
 "require(bool,string)" 
 "type()" 
+"5410_execute" -> "require(bool,string)"
+"4956_supportsInterface" -> "type()"
+"5410_config" -> "abi.decode()"
 "3081_supportsInterface" -> "type()"
 "5410_execute" -> "abi.decode()"
-"5410_config" -> "abi.decode()"
-"4956_supportsInterface" -> "type()"
-"5410_execute" -> "require(bool,string)"
 }
 }

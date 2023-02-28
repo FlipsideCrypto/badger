@@ -8,9 +8,9 @@ label = "ERC165"
 "3081_supportsInterface" [label="supportsInterface"]
 }subgraph cluster_5324_BadgerForfeitForbidden {
 label = "BadgerForfeitForbidden"
-"5324_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
-"5324_config" [label="config"]
 "5324_execute" [label="execute"]
+"5324_config" [label="config"]
+"5324_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
 }subgraph cluster_3093_IERC165 {
 label = "IERC165"
 "3093_supportsInterface" [label="supportsInterface"]
@@ -27,10 +27,10 @@ label = "[Solidity]"
 "abi.decode()" 
 "require(bool,string)" 
 "type()" 
-"5324_execute" -> "require(bool,string)"
-"3081_supportsInterface" -> "type()"
 "4956_supportsInterface" -> "type()"
 "5324_execute" -> "abi.decode()"
+"5324_execute" -> "require(bool,string)"
+"3081_supportsInterface" -> "type()"
 "5324_config" -> "abi.decode()"
 }
 }

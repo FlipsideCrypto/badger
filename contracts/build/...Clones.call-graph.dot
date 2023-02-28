@@ -1,28 +1,28 @@
 strict digraph {
 subgraph cluster_2126_Clones {
 label = "Clones"
-"2126_predictDeterministicAddress" [label="predictDeterministicAddress"]
 "2126_cloneDeterministic" [label="cloneDeterministic"]
+"2126_predictDeterministicAddress" [label="predictDeterministicAddress"]
 "2126_clone" [label="clone"]
 "2126_predictDeterministicAddress" -> "2126_predictDeterministicAddress"
 }subgraph cluster_solidity {
 label = "[Solidity]"
-"mload(uint256)" 
 "create(uint256,uint256,uint256)" 
 "keccak256(uint256,uint256)" 
 "create2(uint256,uint256,uint256,uint256)" 
-"require(bool,string)" 
 "mstore(uint256,uint256)" 
-"2126_cloneDeterministic" -> "create2(uint256,uint256,uint256,uint256)"
+"mload(uint256)" 
+"require(bool,string)" 
+"2126_predictDeterministicAddress" -> "keccak256(uint256,uint256)"
 "2126_clone" -> "mstore(uint256,uint256)"
 "2126_cloneDeterministic" -> "mstore(uint256,uint256)"
-"2126_clone" -> "mload(uint256)"
 "2126_predictDeterministicAddress" -> "mload(uint256)"
-"2126_predictDeterministicAddress" -> "keccak256(uint256,uint256)"
-"2126_clone" -> "require(bool,string)"
+"2126_clone" -> "mload(uint256)"
 "2126_predictDeterministicAddress" -> "mstore(uint256,uint256)"
 "2126_cloneDeterministic" -> "mload(uint256)"
-"2126_cloneDeterministic" -> "require(bool,string)"
+"2126_cloneDeterministic" -> "create2(uint256,uint256,uint256,uint256)"
 "2126_clone" -> "create(uint256,uint256,uint256)"
+"2126_cloneDeterministic" -> "require(bool,string)"
+"2126_clone" -> "require(bool,string)"
 }
 }
