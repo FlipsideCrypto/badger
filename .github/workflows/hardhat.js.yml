@@ -43,7 +43,7 @@ jobs:
         run: REPORT_GAS=true npx hardhat test
 
       - name: Run c4udit
-        run: cd build && ./c4udit -s ../contracts/
+        run: cd build && c4udit -s ../contracts/
 
       - name: Save the gas report
         uses: stefanzweifel/git-auto-commit-action@v4
