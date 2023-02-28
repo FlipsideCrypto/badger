@@ -157,6 +157,7 @@ contract BadgerOrganizationLogic is
         uint256 i;
         bytes32 managerHash;
         uint256 managersLength = _managers.length;
+        address manager;
 
         require(
             managersLength == _isManager.length,
@@ -165,8 +166,17 @@ contract BadgerOrganizationLogic is
 
         /// @dev Loop through the arrays and update the state of the Managers.
         for (i; i < managersLength; i++) {
+            /// @dev Load the loop stack.
+            manager = _managers[i];
+
+            /// @dev Confirm a valid address was provided.
+            require(
+                manager != address(0),
+                "BadgerScout::setManagers: Manager cannot be the zero address."
+            );
+
             /// @dev Calculate the hash for the Organization Manager.
-            managerHash = _managerHash(_managers[i]);
+            managerHash = _managerHash(manager);
 
             /// @dev Update the state of the Manager for the Organization.
             _setManager(managerHash, _isManager[i]);
@@ -185,6 +195,7 @@ contract BadgerOrganizationLogic is
         uint256 i;
         bytes32 managerHash;
         uint256 managersLength = _managers.length;
+        address manager;
 
         require(
             managersLength == _isManager.length,
@@ -193,8 +204,17 @@ contract BadgerOrganizationLogic is
 
         /// @dev Loop through the arrays and update the state of the Managers.
         for (i; i < managersLength; i++) {
+            /// @dev Load the loop stack.
+            manager = _managers[i];
+
+            /// @dev Confirm a valid address was provided.
+            require(
+                manager != address(0),
+                "BadgerScout::setManagers: Manager cannot be the zero address."
+            );
+
             /// @dev Calculate the hash for the Organization Manager.
-            managerHash = _badgeManagerHash(_id, _managers[i]);
+            managerHash = _badgeManagerHash(_id, manager);
 
             /// @dev Update the state of the Manager for the Badge.
             _setManager(managerHash, _isManager[i]);
@@ -212,6 +232,7 @@ contract BadgerOrganizationLogic is
         /// @dev Load the stack.
         uint256 i;
         uint256 hooksLength = _hooks.length;
+        address hook;
 
         require(
             hooksLength == _isHook.length,
@@ -220,8 +241,17 @@ contract BadgerOrganizationLogic is
 
         /// @dev Loop through the arrays and update the state of the Hooks.
         for (i; i < hooksLength; i++) {
+            /// @dev Load the loop stack.
+            hook = _hooks[i];
+
+            /// @dev Confirm a valid address was provided.
+            require(
+                hook != address(0),
+                "BadgerScout::setHooks: Hook cannot be the zero address."
+            );
+
             /// @dev Update the state of the Hook for the Organization.
-            _setHook(_slot, _hooks[i], _isHook[i]);
+            _setHook(_slot, hook, _isHook[i]);
         }
     }
 
