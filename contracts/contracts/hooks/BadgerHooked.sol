@@ -110,17 +110,23 @@ abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
         address _slotHook,
         bool _isHook
     ) internal {
+        /// @dev Confirm the hook being configured is a contract.
+        require(
+            _slotHook.isContract(),
+            "BadgerOrganizationHooked::_configManager: Manager is not a contract."
+        );
+        
         /// @dev Make sure the hook is a BadgerHook.
         require(
             IERC165(_slotHook).supportsInterface(type(IBadgerHook).interfaceId),
             "BadgerHooks::_setHook: Hook does not implement IBadgerHook."
         );
 
+        /// @dev Run any hooks.
+        _hook(BEFORE_SET_HOOK, abi.encode(_slot, _slotHook, _isHook));
+
         /// @dev If the hook is active, add it to the set.
         if (_isHook) {
-            /// @dev Before setting a new hook, process any Organization hooks.
-            _hook(BEFORE_SET_HOOK, abi.encode(_slot, _slotHook, _isHook));
-
             /// @dev Add the hook to the set.
             hooks[_slot].add(_slotHook);
         } else {
@@ -147,20 +153,6 @@ abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
         require(
             hooks[_slot].contains(_targetHook),
             "BadgerOrganizationHooked::_configHook: Hook is not enabled."
-        );
-
-        /// @dev Confirm the hook being configured is a contract.
-        require(
-            _targetHook.isContract(),
-            "BadgerOrganizationHooked::_configManager: Manager is not a contract."
-        );
-
-        /// @dev Confirm the address is a configured badger module.
-        require(
-            IERC165(_targetHook).supportsInterface(
-                type(IBadgerConfigured).interfaceId
-            ),
-            "BadgerOrganizationHooked::_configManager: Manager is not a configured Badger module."
         );
 
         /// @dev Configure the hook network object.
