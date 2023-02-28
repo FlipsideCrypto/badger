@@ -5,9 +5,11 @@ pragma solidity ^0.8.16;
 /// @dev Core dependencies.
 import {IBadgerHooked} from "../interfaces/IBadgerHooked.sol";
 import {BadgerNetwork} from "../BadgerNetwork.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 
 /// @dev Helper dependencies.
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import {IBadgerConfigured} from "../interfaces/IBadgerConfigured.sol";
 import {IBadgerHook} from "../interfaces/IBadgerHook.sol";
 
 /// @dev Libraries.
@@ -28,6 +30,7 @@ import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet
  * @author masonthechain (@masonthechain)
  */
 abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
+    using Address for address;
     using EnumerableSet for EnumerableSet.AddressSet;
 
     ////////////////////////////////////////////////////////
@@ -144,6 +147,20 @@ abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
         require(
             hooks[_slot].contains(_targetHook),
             "BadgerOrganizationHooked::_configHook: Hook is not enabled."
+        );
+
+        /// @dev Confirm the hook being configured is a contract.
+        require(
+            _targetHook.isContract(),
+            "BadgerOrganizationHooked::_configManager: Manager is not a contract."
+        );
+
+        /// @dev Confirm the address is a configured badger module.
+        require(
+            IERC165(_targetHook).supportsInterface(
+                type(IBadgerConfigured).interfaceId
+            ),
+            "BadgerOrganizationHooked::_configManager: Manager is not a configured Badger module."
         );
 
         /// @dev Configure the hook network object.

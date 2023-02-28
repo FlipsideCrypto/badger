@@ -5,11 +5,16 @@ pragma solidity ^0.8.16;
 /// @dev Core dependencies.
 import {IBadgerManaged} from "../interfaces/IBadgerManaged.sol";
 import {BadgerNetwork} from "../BadgerNetwork.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 
 /// @dev Helper dependencies.
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+
 import {IBadgerConfigured} from "../interfaces/IBadgerConfigured.sol";
 
 contract BadgerManaged is IBadgerManaged, BadgerNetwork {
+    using Address for address;
+
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
@@ -46,9 +51,24 @@ contract BadgerManaged is IBadgerManaged, BadgerNetwork {
         bytes32 _key,
         bytes calldata _config
     ) internal virtual {
+        /// @dev Confirm the manager is active.
         require(
             managerKeyToIsManager[_key],
             "BadgerOrganizationHooked::_configManager: Manager is not enabled."
+        );
+
+        /// @dev Confirm the manager being configured is a contract.
+        require(
+            _manager.isContract(),
+            "BadgerOrganizationHooked::_configManager: Manager is not a contract."
+        );
+
+        /// @dev Confirm the address is a configured badger module.
+        require(
+            IERC165(_manager).supportsInterface(
+                type(IBadgerConfigured).interfaceId
+            ),
+            "BadgerOrganizationHooked::_configManager: Manager is not a configured Badger module."
         );
 
         /// @dev Configure the manager network object.
