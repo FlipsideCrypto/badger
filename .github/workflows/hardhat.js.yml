@@ -49,7 +49,7 @@ jobs:
         run: cd build && pip install slither-analyzer
 
       - name: Run Slither to build Graphs
-        run: cd build && slither .. --print call-graph && slither .. --print inheritance-graph"
+        run: cd build && slither .. --print call-graph && slither .. --print inheritance-graph
 
       - name: Save the build outputs
         uses: stefanzweifel/git-auto-commit-action@v4
