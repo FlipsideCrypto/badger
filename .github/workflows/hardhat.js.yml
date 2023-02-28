@@ -41,4 +41,4 @@ jobs:
         run: npm install
 
       - name: Test smart contract and run automated auditors
-        run: npm run build
+        run: npx hardhat test
