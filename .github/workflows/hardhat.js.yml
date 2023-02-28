@@ -36,11 +36,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install c4udit
-        run: go install github.com/byterocket/c4udit@latest
-
       - name: Test smart contract and run automated auditors
         run: REPORT_GAS=true npx hardhat test
+
+      - name: Build c4udit
+        run: cd build && git clone https://github.com/byterocket/c4udit && cd c4udit && go build .
 
       - name: Run c4udit
         run: cd build && c4udit -s ../contracts/
