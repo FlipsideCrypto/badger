@@ -42,6 +42,9 @@ jobs:
       - name: Run automated low-complexity C4udit worker
         run: cd build && ./c4udit/c4udit -s ../contracts/
 
+      - name: Calculate and build website for contract test coverage
+        run: npx hardhat coverage
+
       - name: Save the build outputs
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
