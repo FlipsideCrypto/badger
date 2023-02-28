@@ -61,6 +61,7 @@ contract BadgerTransferBoundManaged is BadgerTransferHook {
         uint256 i;
         uint256 id;
         uint256 idsLength = _ids.length;
+        bool isZero = _from == address(0) || _to == address(0);
 
         /// @dev Loop through all of the tokens moving.
         for (i; i < idsLength; i++) {
@@ -69,8 +70,7 @@ contract BadgerTransferBoundManaged is BadgerTransferHook {
 
             /// @dev Require the transfer to be from or to the zero address.
             require(
-                _from == address(0) ||
-                    _to == address(0) ||
+                isZero ||
                     !accountBound[msg.sender][id] ||
                     BadgerOrganizationLogic(msg.sender).isBadgeManager(
                         id,

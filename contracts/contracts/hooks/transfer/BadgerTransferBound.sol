@@ -49,13 +49,13 @@ contract BadgerTransferBound is BadgerTransferHook {
         /// @dev Load the stack.
         uint256 i;
         uint256 idsLength = _ids.length;
+        bool isZero = _from == address(0) || _to == address(0);
 
         /// @dev Loop through all of the tokens moving.
         for (i; i < idsLength; i++) {
             /// @dev Require the transfer to be from or to the zero address.
             require(
-                _from == address(0) ||
-                    _to == address(0) ||
+                isZero ||
                     !accountBound[msg.sender][_ids[i]],
                 "BadgerTransferBound::execute: Invalid permission to transfer token."
             );
