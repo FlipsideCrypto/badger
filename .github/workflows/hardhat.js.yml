@@ -42,8 +42,12 @@ jobs:
       - name: Run automated low-complexity C4udit worker
         run: cd build && git clone https://github.com/byterocket/c4udit && cd c4udit && go build . && cd .. && ./c4udit/c4udit -s ../contracts/
 
-      - name: Run Slither to build .dot files
-        run: cd build && git clone https://github.com/crytic/slither.git && cd slither && python3 setup.py install && slither ../.. --print call-graph
+      # Install slither from pip
+      - name: Install Slither
+        run: pip install slither-analyzer
+
+      - name: Run Slither
+        run: slither .. --print call-graph
 
       - name: Save the build outputs
         uses: stefanzweifel/git-auto-commit-action@v4
