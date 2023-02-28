@@ -1,8 +1,8 @@
 strict digraph {
 subgraph cluster_1568_IERC1155ReceiverUpgradeable {
 label = "IERC1155ReceiverUpgradeable"
-"1568_onERC1155Received" [label="onERC1155Received"]
 "1568_onERC1155BatchReceived" [label="onERC1155BatchReceived"]
+"1568_onERC1155Received" [label="onERC1155Received"]
 }subgraph cluster_2046_IERC165Upgradeable {
 label = "IERC165Upgradeable"
 "2046_supportsInterface" [label="supportsInterface"]

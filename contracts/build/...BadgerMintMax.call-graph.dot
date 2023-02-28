@@ -2,8 +2,8 @@ strict digraph {
 subgraph cluster_5537_BadgerMintMax {
 label = "BadgerMintMax"
 "5537_execute" [label="execute"]
-"5537_config" [label="config"]
 "5537_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
+"5537_config" [label="config"]
 }subgraph cluster_6468_IBadgerConfigured {
 label = "IBadgerConfigured"
 "6468_config" [label="config"]
@@ -24,14 +24,14 @@ label = "BadgerHook"
 "4956_supportsInterface" -> "4956_supportsInterface"
 }subgraph cluster_solidity {
 label = "[Solidity]"
+"type()" 
 "require(bool,string)" 
 "abi.decode()" 
-"type()" 
+"3081_supportsInterface" -> "type()"
 "5537_config" -> "abi.decode()"
 "4956_supportsInterface" -> "type()"
-"3081_supportsInterface" -> "type()"
+"5537_config" -> "require(bool,string)"
 "5537_execute" -> "require(bool,string)"
 "5537_execute" -> "abi.decode()"
-"5537_config" -> "require(bool,string)"
 }
 }

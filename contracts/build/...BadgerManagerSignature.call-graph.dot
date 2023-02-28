@@ -8,9 +8,9 @@ label = "ERC165"
 "3081_supportsInterface" [label="supportsInterface"]
 }subgraph cluster_7091_BadgerManagerSignature {
 label = "BadgerManagerSignature"
-"7091_config" [label="config"]
-"7091_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
 "7091_mint" [label="mint"]
+"7091_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
+"7091_config" [label="config"]
 }subgraph cluster_3093_IERC165 {
 label = "IERC165"
 "3093_supportsInterface" [label="supportsInterface"]
@@ -22,14 +22,14 @@ label = "BadgerManager"
 label = "[Solidity]"
 "require(bool,string)" 
 "abi.decode()" 
-"type()" 
 "abi.encodePacked()" 
+"type()" 
 "keccak256(bytes)" 
 "7091_config" -> "abi.decode()"
-"6840_supportsInterface" -> "type()"
-"7091_mint" -> "require(bool,string)"
 "3081_supportsInterface" -> "type()"
-"7091_mint" -> "abi.encodePacked()"
+"7091_mint" -> "require(bool,string)"
 "7091_mint" -> "keccak256(bytes)"
+"6840_supportsInterface" -> "type()"
+"7091_mint" -> "abi.encodePacked()"
 }
 }

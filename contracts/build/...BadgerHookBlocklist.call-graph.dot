@@ -1,9 +1,9 @@
 strict digraph {
 subgraph cluster_5410_BadgerHookBlocklist {
 label = "BadgerHookBlocklist"
-"5410_config" [label="config"]
-"5410_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
 "5410_execute" [label="execute"]
+"5410_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
+"5410_config" [label="config"]
 }subgraph cluster_6468_IBadgerConfigured {
 label = "IBadgerConfigured"
 "6468_config" [label="config"]
@@ -24,13 +24,13 @@ label = "BadgerHook"
 "4956_supportsInterface" -> "4956_supportsInterface"
 }subgraph cluster_solidity {
 label = "[Solidity]"
+"type()" 
 "require(bool,string)" 
 "abi.decode()" 
-"type()" 
-"5410_config" -> "abi.decode()"
-"5410_execute" -> "require(bool,string)"
-"4956_supportsInterface" -> "type()"
 "3081_supportsInterface" -> "type()"
+"4956_supportsInterface" -> "type()"
+"5410_execute" -> "require(bool,string)"
+"5410_config" -> "abi.decode()"
 "5410_execute" -> "abi.decode()"
 }
 }

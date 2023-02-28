@@ -8,9 +8,9 @@ label = "ERC165"
 "3081_supportsInterface" [label="supportsInterface"]
 }subgraph cluster_6068_BadgerTransferBlocklist {
 label = "BadgerTransferBlocklist"
-"6068_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
 "6068_config" [label="config"]
 "6068_execute" [label="execute"]
+"6068_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
 }subgraph cluster_3093_IERC165 {
 label = "IERC165"
 "3093_supportsInterface" [label="supportsInterface"]
@@ -24,13 +24,13 @@ label = "BadgerHook"
 "4956_supportsInterface" -> "4956_supportsInterface"
 }subgraph cluster_solidity {
 label = "[Solidity]"
+"type()" 
 "require(bool,string)" 
 "abi.decode()" 
-"type()" 
-"6068_config" -> "abi.decode()"
-"4956_supportsInterface" -> "type()"
 "3081_supportsInterface" -> "type()"
-"6068_execute" -> "require(bool,string)"
 "6068_execute" -> "abi.decode()"
+"4956_supportsInterface" -> "type()"
+"6068_execute" -> "require(bool,string)"
+"6068_config" -> "abi.decode()"
 }
 }
