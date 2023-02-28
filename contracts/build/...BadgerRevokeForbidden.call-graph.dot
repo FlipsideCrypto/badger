@@ -8,8 +8,8 @@ label = "ERC165"
 "3081_supportsInterface" [label="supportsInterface"]
 }subgraph cluster_5976_BadgerRevokeForbidden {
 label = "BadgerRevokeForbidden"
-"5976_config" [label="config"]
 "5976_execute" [label="execute"]
+"5976_config" [label="config"]
 "5976_slitherConstructorConstantVariables" [label="slitherConstructorConstantVariables"]
 }subgraph cluster_3093_IERC165 {
 label = "IERC165"
@@ -27,10 +27,10 @@ label = "[Solidity]"
 "abi.decode()" 
 "require(bool,string)" 
 "type()" 
-"5976_execute" -> "require(bool,string)"
-"3081_supportsInterface" -> "type()"
 "4956_supportsInterface" -> "type()"
+"5976_execute" -> "require(bool,string)"
 "5976_execute" -> "abi.decode()"
 "5976_config" -> "abi.decode()"
+"3081_supportsInterface" -> "type()"
 }
 }
