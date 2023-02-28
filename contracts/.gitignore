@@ -7,3 +7,5 @@ coverage/
 deployments/
 coverage.json
 gasReporterOutput.json
+
+build/c4udit/
