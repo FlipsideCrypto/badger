@@ -76,7 +76,8 @@ const Story = () => {
                         <div className="background">
                             <div className="blobs">
                                 {Array.from({ length: Math.floor(Math.random() * 5) + 1 }, (o, i) => (
-                                    <div className="blob" style={{ background: i % 2 === 0 ? story.attributes.color : story.attributes.color_dark }}></div>
+                                    <div className="blob" key={i}
+                                        style={{ background: i % 2 === 0 ? story.attributes.color : story.attributes.color_dark }} />
                                 ))}
                             </div>
 
