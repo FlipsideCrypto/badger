@@ -56,8 +56,8 @@ const Footer = () => {
                 <div className="legal">
                     <h4>Resources</h4>
                     <div>
-                        <Link to="/privacy/">Privacy Policy</Link>
-                        <Link to="/terms/">Terms of Service</Link>
+                        {/* <Link to="/privacy/">Privacy Policy</Link>
+                        <Link to="/terms/">Terms of Service</Link> */}
                         <Link to="/media/">Media Kit</Link>
                     </div>
 
