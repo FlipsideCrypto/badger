@@ -1,20 +1,3 @@
-.logo__icon {
-    max-height: fit-content;
-    display: grid;
-    grid-template-rows: 1fr;
-    grid-template-columns: 20px 1fr;
-    align-items: center;
-    gap: 12px;
-}
-
-.logo__icon .logo__image {
-    height: 16px;
-    width: 16px;
-    background-color: black;
-    border-radius: 50%;
-}
-
-.logo__icon .logo__name {
-    margin: 0;
-    font-size: 18px;
+img.logoIcon {
+    max-height: 24px;
 }

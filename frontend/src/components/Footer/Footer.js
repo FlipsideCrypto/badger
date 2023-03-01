@@ -10,7 +10,7 @@ const Footer = () => {
             <div className="container">
                 <div className="grid">
                     <div className="logo">
-                        <LogoIcon name="Badger" logo={""} />
+                        <Link to="/"><LogoIcon /></Link>
                         <p>Unlocking the power of onchain badges for every person.</p>
                     </div>
 
