@@ -71,25 +71,25 @@ const Landing = () => {
                 <StoryPreview story={talentdao} className="left" />
 
                 <div className="container section left">
-                    <h2>Optimized to secure the next decade of on-chain protocols and builders.</h2>
+                    <h2>Optimized to secure the next decade of onchain protocols and builders.</h2>
 
                     <div className="content">
-                        <p>Badger powers a world of better onchain operations by streamlining the way permissions are managed and accessed.</p>
+                        <p>Step into the 21st century of the blockchain with access permissions and experience a world of secure, simple-to-manage and decentralized access management.</p>
 
-                        <Link className="cta" to="/dashboard/">Create your Badges now</Link>
+                        <Link className="cta" to="/dashboard/">Issue Badges now</Link>
 
                         <Accordion start={0} items={[{
                             icon: ['fal', 'bolt'],
                             title: 'Power Complex Permissions',
-                            content: 'With unopinionated Badges you can create organizations with nested permissions and even smart contract AND/OR access gates.'
+                            content: 'Forget the days of not being able to keep a smart contract secure without explicit writes. Create nested permissions using AND/OR logic with Badges and unlock the power of a network.'
                         }, {
                             icon: ['fal', 'lock'],
-                            title: 'Secure onchain Activity',
-                            content: 'The simple access control system of Badges lets you define rules for your team and mint badges that can be used to secure any onchain activity.'
+                            title: 'Secure Onchain Activity',
+                            content: 'Keep unwanted guests out while keeping your protocol and Organization nimble. With Badges, access permissions can be managed onchain, offchain and even respond to the state of a protocol.'
                         }, {
                             icon: ['fal', 'tasks'],
                             title: 'Optimize Permission Management',
-                            content: 'Forget the days of struggling to manage private keys and multi-sigs. With Badger organizations can unlock a world of more effective onchain operations.'
+                            content: 'Stop struggling to manage private keys, multi-sigs, assigning permission in 10 places. With Badger, update a single location and instantly all gates will follow.'
                         }]} />
                     </div>
 
@@ -114,7 +114,7 @@ const Landing = () => {
                     <div className="container">
                         <div className="title">
                             <h2>We're here to help you get started.</h2>
-                            <p>Bring your Organization onchain with Badger and harness the power your network.</p>
+                            <p>Unlock the power of onchain Badges and permissions with Badger and harness the power your network today.</p>
                         </div>
 
                         <div className="card learn">
@@ -124,7 +124,7 @@ const Landing = () => {
                             <ArrowLink href="https://flipside-crypto.gitbook.io/badger/help/integration-tutorials/guild">Use Badges with Guild to control Discord</ArrowLink>
                             <ArrowLink href="https://flipside-crypto.gitbook.io/badger/help/integration-tutorials/snapshot">Empower operating pods with Snapshot votes</ArrowLink>
                             <ArrowLink href="https://flipside-crypto.gitbook.io/badger/help/integration-tutorials/jokedao">Run an onchain contest for Badge holders on JokeDAO</ArrowLink>
-                            <ArrowLink href="https://flipside-crypto.gitbook.io/badger/help/integration-tutorials/opensea">Monetize the future of your organization with Badges</ArrowLink>
+                            <ArrowLink href="https://flipside-crypto.gitbook.io/badger/help/integration-tutorials/protocol-level">Programatically mint and revoke Badges in a protocol</ArrowLink>
                         </div>
 
                         <div className="card explore">
@@ -138,7 +138,7 @@ const Landing = () => {
 
                         <div className="card expert">
                             <h3><ArrowLink>Hire an Expert</ArrowLink></h3>
-                            <p>The Badger Dashboard lets you deploy an Organization and build any use of dreams you can imagine.</p>
+                            <p>Don't have the time or team to build a solution? We can help you get up and running faster without a headache.</p>
                         </div>
                     </div>
                 </div>
