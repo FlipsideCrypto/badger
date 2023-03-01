@@ -28,7 +28,7 @@ Taptive was inspired to start using Badger because they were looking for an easy
 IMAGE_NEEDED
 
 Before Badger, Taptive would simply convey rewards socially such as announcing winners in their Discord. However, with Badger, they are now able to recognize competition winners with an on-chain NFT that they can hold onto and share with others.
-
+ 
 ## The easiest way to issue badges
 
 After reviewing a number of options ranging from sophisticated reputation management protocols and NFT minting apps, Taptive chose Badger as their tool of choice. While other options may appear to have extra features or appear simpler, Grant found that Badger's simple interface was the best tool for the job and gave recipients the extensibility necessary.
