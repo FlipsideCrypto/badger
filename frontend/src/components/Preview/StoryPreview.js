@@ -11,7 +11,7 @@ const StoryPreview = ({ story, className }) => {
                         <h4>“{story.attributes.quote}”</h4>
 
                         <div className="author">
-                            <img className="avatar" src={story.attributes.quoter_image} />
+                            <img className="avatar" src={story.attributes.quoter_image} alt={story.attributes.quoter} />
 
                             <p><strong>{story.attributes.quoter}</strong><br />{story.attributes.quoter_title}</p>
 
@@ -21,7 +21,7 @@ const StoryPreview = ({ story, className }) => {
                         </div>
                     </div>
 
-                    <img className="logo" src={story.attributes.logo} />
+                    <img className="logo" src={story.attributes.logo} alt={story.filename} />
                 </>}
             </div>
         </div>
