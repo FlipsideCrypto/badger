@@ -23,17 +23,19 @@ stat_2_value: 30+
 >
 > **GRANT NISSLY, FOUNDER**
 
-Taptive was inspired to start using Badger because they were looking for an easy way to issue onchain rewards to participants who completed their cohorts. With Badger, Taptive is able to easily issue NFTs for their cohort participants. 
+[Taptive](https://taptive.xyz) was inspired to start using [Badger](/) because they were looking for an easy way to issue onchain rewards to participants who completed their cohorts. With Badger, Taptive is able to easily issue NFTs for their cohort participants. 
 
 ![](/story-assets/taptive/accomplishments.png)
 
-Before Badger, Taptive would simply convey rewards socially such as announcing winners in their Discord. However, with Badger, they are now able to recognize competition winners with an onchain NFT that they can hold onto and share with others.
+Before Badger, Taptive would simply convey rewards socially such as announcing winners in their Discord. But, if someone wasn't around to experience the glamor and communicty excitement it was easy to miss the culture building opportunity. 
+
+Now, with Badger they are now able to recognize competition winners with an onchain Badge that they can hold onto and [share with others](/stories/mdao/#meaningful-representation-of-achievement).
  
 ## The easiest way to issue badges
 
 After reviewing a number of options ranging from sophisticated reputation management protocols and NFT minting apps, Taptive chose Badger as their tool of choice. While other options may appear to have extra features or appear simpler, Grant found that Badger's simple interface was the best tool for the job and gave recipients the extensibility necessary.
 
-Taptive is able to distribute account bound credentials with the click of the button. 
+[Taptive is able to distribute account bound credentials with the click of the button.](https://flipside-crypto.gitbook.io/badger/our-vision)
 
 ## Mobilizing recognition across communities
 
@@ -43,4 +45,4 @@ Taptive is able to distribute account bound credentials with the click of the bu
 
 ![](/story-assets/taptive/collab.png) 
 
-Taptive plans to continue to utilize Badger in the future by recognizing winners of cohort competitions, creating a large network of writers who are recognized with Taptive credentials onchain. By integrating Badger into their communities, participants of Taptive's cohorts can take their engagement from Taptive and demonstrate their skills locally within their home community.
+Taptive plans to continue to utilize [Badger](/) in the future by recognizing winners of cohort competitions, creating a large network of writers who are recognized with Taptive credentials onchain. By integrating Badger into their communities, participants of Taptive's cohorts can take their engagement from Taptive and demonstrate their skills locally within their home community.
