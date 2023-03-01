@@ -54,16 +54,16 @@ describe("Badger", function () {
         hook = await Hook.deploy();
         hook = await hook.deployed();
 
-        const BlacklistHook = await ethers.getContractFactory("BadgerForfeitForbidden");
-        blacklistHook = await BlacklistHook.deploy();
-        blacklistHook = await blacklistHook.deployed();
+        const BlocklistHook = await ethers.getContractFactory("BadgerForfeitForbidden");
+        blocklistHook = await BlocklistHook.deploy();
+        blocklistHook = await blocklistHook.deployed();
 
         const GoodHook = await ethers.getContractFactory("BadgerTransferBound");
         goodHook = await GoodHook.deploy();
         goodHook = await goodHook.deployed();
 
         const BEFORE_SET_SLOT = await organization.BEFORE_SET_HOOK();
-        const hookConfig = ethers.utils.defaultAbiCoder.encode(["address"], [blacklistHook.address]);
+        const hookConfig = ethers.utils.defaultAbiCoder.encode(["address"], [blocklistHook.address]);
 
         const transactions = [
             organization.interface.encodeFunctionData("setHooks", [BEFORE_SET_SLOT, [hook.address], [true]]),
@@ -74,7 +74,7 @@ describe("Badger", function () {
             .to.emit(organization, "HookUpdated").withArgs(BEFORE_SET_SLOT, hook.address, true)
             .to.emit(organization, "HookConfigured").withArgs(BEFORE_SET_SLOT, hookConfig)
 
-        return { hook, blacklistHook, goodHook, organization, owner, otherAccount }
+        return { hook, blocklistHook, goodHook, organization, owner, otherAccount }
     }
 
     describe("BadgerHookBlocklist.sol", async function () {
@@ -95,15 +95,37 @@ describe("Badger", function () {
                 .to.emit(organization, "HookConfigured").withArgs(BEFORE_TRANSFER_SLOT, hookConfig)
         });
 
+        it("call: setHooks() isHook false", async function () {
+            const { organization, hook, blocklistHook, owner } = await loadFixture(deployNewHooksOrganization);
+
+            const BEFORE_TRANSFER_SLOT = await organization.BEFORE_TRANSFER();
+
+            await expect(organization.connect(owner).setHooks(BEFORE_TRANSFER_SLOT, [hook.address], [false]))
+                .to.emit(organization, "HookUpdated").withArgs(BEFORE_TRANSFER_SLOT, hook.address, false)
+
+
+            const BEFORE_FORFEIT_SLOT = await organization.BEFORE_FORFEIT();
+            const hookConfig = ethers.utils.defaultAbiCoder.encode(["address"], [blocklistHook.address]);
+
+            const transactions = [
+                organization.interface.encodeFunctionData("setHooks", [BEFORE_FORFEIT_SLOT, [hook.address], [true]]),
+                organization.interface.encodeFunctionData("configHook", [BEFORE_FORFEIT_SLOT, hook.address, hookConfig]),
+            ]
+
+            await expect(organization.connect(owner).multicall(transactions))
+                    .to.emit(organization, "HookUpdated").withArgs(BEFORE_FORFEIT_SLOT, hook.address, true)
+                    .to.emit(organization, "HookConfigured").withArgs(BEFORE_FORFEIT_SLOT, hookConfig)
+        });
+
         it("revert: setHooks() blocklisted hook", async function () {
-            const { organization, hook, blacklistHook, otherAccount, owner } = await loadFixture(deployNewHooksOrganization);
+            const { organization, hook, blocklistHook, otherAccount, owner } = await loadFixture(deployNewHooksOrganization);
 
             const BEFORE_FORFEIT_SLOT = await organization.BEFORE_FORFEIT();
             const hookConfig = ethers.utils.defaultAbiCoder.encode(["uint256", "bool"], [0, true]);
 
             const transactions = [
-                organization.interface.encodeFunctionData("setHooks", [BEFORE_FORFEIT_SLOT, [blacklistHook.address], [true]]),
-                organization.interface.encodeFunctionData("configHook", [BEFORE_FORFEIT_SLOT, blacklistHook.address, hookConfig]),
+                organization.interface.encodeFunctionData("setHooks", [BEFORE_FORFEIT_SLOT, [blocklistHook.address], [true]]),
+                organization.interface.encodeFunctionData("configHook", [BEFORE_FORFEIT_SLOT, blocklistHook.address, hookConfig]),
             ]
 
             await expect(organization.connect(owner).multicall(transactions))
