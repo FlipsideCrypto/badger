@@ -169,5 +169,12 @@ module.exports = {
         flat: true,
         spacing: 4,
         format: "json"
+    }, {
+        path: '../api/abis/',
+        runOnCompile: true,
+        clear: true,
+        flat: true,
+        spacing: 4,
+        format: "json"
     }]
 };
