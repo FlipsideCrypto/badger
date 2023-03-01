@@ -54,7 +54,7 @@
 .story .hero .container .background img {
     height: 100%;
     width: auto;
-    max-height: 400px;
+    max-height: 500px;
     align-self: center;
     position: relative;
     z-index: 2;
@@ -240,4 +240,15 @@ h4 {
     background-image: url(../../static/images/hero-noise.png);
     background-size: 960px 540px;
     z-index: -1;
+}
+
+@media (max-width: 1024px) {
+    .story .hero .container {
+        grid-template-columns: 1fr;
+    }
+
+    .story .hero .container .background {
+        margin-top: 40px;
+        height: auto;
+    }
 }

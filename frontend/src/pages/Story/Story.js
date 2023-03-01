@@ -24,17 +24,9 @@ const Story = () => {
         facebook: `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
     }
 
-    const handleScroll = () => setSticky(window.scrollY > 200);
-
     const handleCopy = () => {
         navigator.clipboard.writeText(window.location.href);
     }
-
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     return (
         <>
@@ -88,7 +80,7 @@ const Story = () => {
 
                 <div className="body container">
                     <div className="share">
-                        <div className={`items ${sticky ? 'sticky' : ''}`}>
+                        <div className="items">
                             <a href={links.twitter} target="_blank" rel="noreferrer"><FontAwesomeIcon icon={['fab', 'twitter']} /></a>
                             <a href={links.linkedin} target="_blank" rel="noreferrer"><FontAwesomeIcon icon={['fab', 'linkedin-in']} /></a>
                             <a href={links.facebook} target="_blank" rel="noreferrer"><FontAwesomeIcon icon={['fab', 'facebook-f']} /></a>
