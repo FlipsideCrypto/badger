@@ -21,7 +21,7 @@ const Landing = () => {
                 <LandingHero className="slim">
                     <div className="container">
                         <h1>The no-code solution unlocking the power of onchain Badges.</h1>
-                        <p>Unlock the power faster by creating your Organization and Badges in seconds with the help of an extremely simple interface.</p>
+                        <p>Experience the power of on Organization and Badges in seconds with the help of an extremely simple interface.</p>
 
                         <Link to="/dashboard/">
                             <button className="primary">
