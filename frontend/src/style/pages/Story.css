@@ -163,14 +163,20 @@ h4 {
     transform: translateY(-3px);
 }
 
+.story .content .markdown h1,
+.story .content .markdown h2,
+.story .content .markdown h3,
+.story .content .markdown h4 {
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+
 .story .content .markdown h2 {
     font-size: 32px;
-    margin-top: 80px;
 }
 
 .story .content .markdown h3 {
     font-size: 24px;
-    margin-top: 0px;
 }
 
 .story .content .markdown h4 {
@@ -186,7 +192,7 @@ h4 {
     max-width: 100%;
     height: auto;
     position: relative;
-    margin-top: 80px;
+    margin-block: 20px;
 }
 
 .story .content .markdown p {

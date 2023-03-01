@@ -35,7 +35,7 @@ Pine was unable to sustainably manage permissions and to properly route opportun
 
 Pine uses Badger alongside no-code DAO tools like Guild and JokeDAO to service analytics partners. By managing their community with these permissionless tools, Pine is able to access a global community.
 
-![](https://github.com/drakedanner/image-hosting/blob/main/pine%20guild.png?raw=true)
+<div class="blobs">![](https://github.com/drakedanner/image-hosting/blob/main/pine%20guild.png?raw=true)<div class="blob" style="background: #31c77f"></div></div>
 
 ## Central access to decentralized workforces
 To scale their community, Pine uses Badger as a single access control point across many functionalities and applications. This empowers them to manage and reward their community members in a single front-end, rather than requiring the creation of an authentication system for each app. 

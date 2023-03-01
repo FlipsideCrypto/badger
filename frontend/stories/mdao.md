@@ -25,7 +25,7 @@ When MetricsDAO started managing their education initiative with Badger, they re
 
 ![](https://i.seadn.io/gcs/files/4dd29ffbba7808eaa6252a7889595584.png?auto=format&w=300)
 
-# Meaningful representation of achievement
+## Meaningful representation of achievement
 
 > Students ask me if the badges can be shown on LinkedIn; people are taking MetricsDAO Academy Badges as a real sign of achievement. 
 > 
