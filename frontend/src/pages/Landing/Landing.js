@@ -138,7 +138,7 @@ const Landing = () => {
 
                         <div className="card expert">
                             <h3><ArrowLink>Hire an Expert</ArrowLink></h3>
-                            <p>Don't have the time or team to build a solution? We can help you get up and running faster without a headache.</p>
+                            <p>Don't have the time or team to build a solution? We can solve your problem and save you the headache.</p>
                         </div>
                     </div>
                 </div>
