@@ -26,7 +26,7 @@ TalentDAO's vision is to create a world where people can work freely, on their o
 
 To achieve their vision, TalentDAO has created a community of like-minded individuals who conduct scientific research to [help DAOs thrive and educate the public on the benefits of a decentralized future of work](/stories/taptive/#Mobilizing-recognition-across-communities).
 
-![](/story-assets/talentdao/behaviors.png)
+<div className="blobs">![](/story-assets/talentdao/behaviors.png)<div className="blob" style="background: #f10606"></div><div className="blob" style="background: #b41c2e"></div><div className="blob" style="background: #f10606"></div></div>
 
 ## DAO Leadership behaviors that drive outcomes
 

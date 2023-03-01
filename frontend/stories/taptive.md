@@ -25,7 +25,7 @@ stat_2_value: 30+
 
 [Taptive](https://taptive.xyz) was inspired to start using [Badger](/) because they were looking for an easy way to issue onchain rewards to participants who completed their cohorts. With Badger, Taptive is able to easily issue NFTs for their cohort participants. 
 
-![](/story-assets/taptive/accomplishments.png)
+<div className="blobs">![](/story-assets/taptive/accomplishments.png)<div className="blob" style="background: #615df5"></div><div className="blob" style="background: #5a55f4"></div></div>
 
 Before Badger, Taptive would simply convey rewards socially such as announcing winners in their Discord. But, if someone wasn't around to experience the glamor and communicty excitement it was easy to miss the culture building opportunity. 
 
