@@ -36,7 +36,7 @@ const Landing = () => {
                 </div>
 
                 <div className="container section">
-                    <h2>Badger is a decentralized solution streamlining onchain access policies with Badges - <span className="blue">no coding needed.</span></h2>
+                    <h2>Badger is a protocol streamlining onchain access policies with Badges - <span className="blue">no coding needed.</span></h2>
 
                     <div className="context">
                         <div className="blobs">
