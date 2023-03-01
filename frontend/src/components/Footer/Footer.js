@@ -11,7 +11,7 @@ const Footer = () => {
                 <div className="grid">
                     <div className="logo">
                         <Link to="/"><LogoIcon /></Link>
-                        <p>Unlocking the power of onchain badges for every person.</p>
+                        <p>Unlocking the power of onchain Badges and access for every person in Web3.</p>
                     </div>
 
                     <div className="links">
