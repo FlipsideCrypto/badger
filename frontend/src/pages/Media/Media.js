@@ -29,9 +29,9 @@ const Media = () => {
 
                     <p>Badger is an open-source efficiency-first EVM-based badge primitive. It is a simple, flexible, and scalable way to issue and manage badges on Ethereum.</p>
 
-                    <p>With a couple clicks, you can deploy an organization, issue a badge to anyone on Ethereum, and secure the future of your on-chain operations with ease. Badges can be used to represent anything, from a membership to a certification to a badge of honor.</p>
+                    <p>With a couple clicks, you can deploy an organization, issue a badge to anyone on Ethereum, and secure the future of your onchain operations with ease. Badges can be used to represent anything, from a membership to a certification to a badge of honor.</p>
 
-                    <p><strong>Our mission is simple:</strong> Lower the barrier of efficient on-chain credential management and use for everyone.</p>
+                    <p><strong>Our mission is simple:</strong> Lower the barrier of efficient onchain credential management and use for everyone.</p>
                 </div>
 
                 <div className="granular">

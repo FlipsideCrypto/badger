@@ -34,7 +34,7 @@ const Org = () => {
 
                 {badges && badges.length === 0 && <Empty
                     title="No Badges in the Organization yet!"
-                    body="You are one step closer to having the credentials of your on-chain Organization.
+                    body="You are one step closer to having the credentials of your onchain Organization.
                     Now you can create and distribute your badges that act as keys throughout the ecosystem in a matter of seconds."
                     button="CREATE BADGE"
                     url={`/dashboard/organization/${orgId}/badge/new/`}

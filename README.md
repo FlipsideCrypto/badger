@@ -2,9 +2,9 @@
 
 # Badger
 
-Badger is a primitive driving seamless on-chain creation of Organizations and Badges that can be used to turbocharge the granular power of on-chain access for every member. With a unique model in place, an Organization can mint Badges that act as keys to access all of the existing Web3 gates and locks using a forward-looking and secure access policy implementation.
+Badger is a primitive driving seamless onchain creation of Organizations and Badges that can be used to turbocharge the granular power of onchain access for every member. With a unique model in place, an Organization can mint Badges that act as keys to access all of the existing Web3 gates and locks using a forward-looking and secure access policy implementation.
 
-Built on the standard [ERC-1155](https://eips.ethereum.org/EIPS/eip-1155), Badges allow for middle-out management of any on-chain organization. With this capability, every consumer of Badger has the ability to choose if their organization will be top-down, middle-out or bottom-up in nature.
+Built on the standard [ERC-1155](https://eips.ethereum.org/EIPS/eip-1155), Badges allow for middle-out management of any onchain organization. With this capability, every consumer of Badger has the ability to choose if their organization will be top-down, middle-out or bottom-up in nature.
 
 ## Running The Dapp
 

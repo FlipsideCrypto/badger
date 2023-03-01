@@ -8,10 +8,10 @@ const description = "Badger is a EVM-Based smart contract factory that deploys n
 const FAQ = () => {
     const faqs = [{
         title: "What problem of mine does Badger solve?",
-        content: "For so long, the ability to deploy and manage an on-chain organization has been limited to developers and highly-technical individuals. Badger lowers the barrier and empowers every individual with the ability to issue, manage and revoke on-chain permissions in seconds for free.",
+        content: "For so long, the ability to deploy and manage an onchain organization has been limited to developers and highly-technical individuals. Badger lowers the barrier and empowers every individual with the ability to issue, manage and revoke onchain permissions in seconds for free.",
     }, {
         title: "Who is Badger for?",
-        content: "Badger was specifically designed for normal people like you. Avoiding the land of complexity, Badger is focused on bringing the power of on-chain organization management to every person while removing the mountainous technical and investment barrier.",
+        content: "Badger was specifically designed for normal people like you. Avoiding the land of complexity, Badger is focused on bringing the power of onchain organization management to every person while removing the mountainous technical and investment barrier.",
     }, {
         title: "What can I use a Badge for?",
         content: "Once you have deployed Badges with Badger, your team can integrate with the leading solutions in Web3 management. Take a look at our [integration docs](https://flipside-crypto.gitbook.io/badger/help/integration-tutorials) to learn more.",
@@ -35,7 +35,7 @@ const FAQ = () => {
         content: "Namely, you can choose from Otterspace which is heavily focused on consensual minting due to their tokens being true-soulbound, Rep3 who is focused on tracking individual contributions such as work, and Sismo leading with a privacy-driven approach."
     }, {
         title: "What is the hardest part of using Badger?",
-        content: "Like any DAO, the hardest part of using Badger is finding people for your Organization and designing a structure. Badger can help you bring your organization design on-chain and enable you to access tools available to networked organizations."
+        content: "Like any DAO, the hardest part of using Badger is finding people for your Organization and designing a structure. Badger can help you bring your organization design onchain and enable you to access tools available to networked organizations."
     }, {
         title: "What type of tokens are the minted Badges?",
         content: "Badger is built using ERC-1155 tokens designed to serve as credential badges."
@@ -111,7 +111,7 @@ const FAQ = () => {
             <div className="faq">
                 <LandingHero className="slim">
                     <div className="container">
-                        <h2>Have questions about how Badger is the on-chain badging solution for you?</h2>
+                        <h2>Have questions about how Badger is the onchain badging solution for you?</h2>
                     </div>
                 </LandingHero>
 

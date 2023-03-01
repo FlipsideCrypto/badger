@@ -17,17 +17,17 @@ stat_1_value: 2+
 stat_2_title: Badges Minted
 stat_2_value: 30+
 ---
-## Immortalizing accomplishments on-chain
+## Immortalizing accomplishments onchain
 
-> Issuing NFTs through Badger has improved the experienceof participants because they leave with recognition from Taptive of their accomplishments. Having on-chain Badges has also increased engagement because cohort participants know there is an award at the end of the cohort. 
+> Issuing NFTs through Badger has improved the experienceof participants because they leave with recognition from Taptive of their accomplishments. Having onchain Badges has also increased engagement because cohort participants know there is an award at the end of the cohort. 
 >
 > **GRANT NISSLY, FOUNDER**
 
-Taptive was inspired to start using Badger because they were looking for an easy way to issue on-chain rewards to participants who completed their cohorts. With Badger, Taptive is able to easily issue NFTs for their cohort participants. 
+Taptive was inspired to start using Badger because they were looking for an easy way to issue onchain rewards to participants who completed their cohorts. With Badger, Taptive is able to easily issue NFTs for their cohort participants. 
 
 IMAGE_NEEDED
 
-Before Badger, Taptive would simply convey rewards socially such as announcing winners in their Discord. However, with Badger, they are now able to recognize competition winners with an on-chain NFT that they can hold onto and share with others.
+Before Badger, Taptive would simply convey rewards socially such as announcing winners in their Discord. However, with Badger, they are now able to recognize competition winners with an onchain NFT that they can hold onto and share with others.
  
 ## The easiest way to issue badges
 
@@ -42,4 +42,4 @@ Taptive is able to distribute account bound credentials with the click of the bu
 > **GRANT NISSLY, FOUNDER**
 IMAGE_NEEDED 
 
-Taptive plans to continue to utilize Badger in the future by recognizing winners of cohort competitions, creating a large network of writers who are recognized with Taptive credentials on-chain. By integrating Badger into their communities, participants of Taptive's cohorts can take their engagement from Taptive and demonstrate their skills locally within their home community.
+Taptive plans to continue to utilize Badger in the future by recognizing winners of cohort competitions, creating a large network of writers who are recognized with Taptive credentials onchain. By integrating Badger into their communities, participants of Taptive's cohorts can take their engagement from Taptive and demonstrate their skills locally within their home community.

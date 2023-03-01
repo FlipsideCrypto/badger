@@ -1,7 +1,7 @@
 title: Driving The Academy of MetricsDAO with Badger
 date: Feb. 23, 2023
 author: danner and Patrick and Aaron
-description: MetricsDAO Academy helps students learn about analytics and web3 so that they can be become crypto analysts. As a part of MetricsDAO, the Academy plays an important role in educating the next generation of on-chain analysts.
+description: MetricsDAO Academy helps students learn about analytics and web3 so that they can be become crypto analysts. As a part of MetricsDAO, the Academy plays an important role in educating the next generation of onchain analysts.
 partner: MetricsDAO
 partner_url: https://metricsdao.xyz
 quote: Having Badger available to drive the credentials and completion certificates for MetricsDAO educational courses has changed the way we approach creating material.
@@ -37,7 +37,7 @@ Badges now serve multiple purposes in MetricsDAO Academy including creating acce
 
 ## Reaching the right people
 
- Badges represent student achievements on-chain and are used alongside Guild to gate access to various Discord channels. Instructors and facilitators use these purpose driven spaces to get the right content to the right people at the right time. While Discord permissions may become overwhelming in large organizations, Badger's simple interface makes it easy to empower coordinators to add new students to the right channels.
+ Badges represent student achievements onchain and are used alongside Guild to gate access to various Discord channels. Instructors and facilitators use these purpose driven spaces to get the right content to the right people at the right time. While Discord permissions may become overwhelming in large organizations, Badger's simple interface makes it easy to empower coordinators to add new students to the right channels.
 
 ## Students become teachers
 
@@ -45,4 +45,4 @@ Badges now serve multiple purposes in MetricsDAO Academy including creating acce
 
  ![](https://i.seadn.io/gcs/files/875893effb1e6fbb6c7100bc01090fd9.png?auto=format&w=300)
 
-As students have reacted positively to the Badges, MetricsDAO is now increasing its focus on education and has already minted over 3000 Badges. As their students learn new skills and receive Badges, MetricsDAO is able to reach the right people through on-chain identifiers and empower them to become contributors in future education initiatives or to provide other work opportunities to them.
+As students have reacted positively to the Badges, MetricsDAO is now increasing its focus on education and has already minted over 3000 Badges. As their students learn new skills and receive Badges, MetricsDAO is able to reach the right people through onchain identifiers and empower them to become contributors in future education initiatives or to provide other work opportunities to them.

@@ -5,7 +5,7 @@ import { LandingHero, SEO, StoryCard } from "@components";
 import "@style/pages/Stories.css"
 
 const title = "Customer Stories | Badger"
-const description = "Badger powers many very impactful organizations of Web3 without concern for scale. Read their stories and see what Badger can do for your on-chain organization today."
+const description = "Badger powers many very impactful organizations of Web3 without concern for scale. Read their stories and see what Badger can do for your onchain organization today."
 
 const Stories = () => {
     const { stories } = useStories();
@@ -17,7 +17,7 @@ const Stories = () => {
             <LandingHero className="slim">
                 <div className="container">
                     <h2>Explore the success stories of Badger champions.</h2>
-                    <p>Badger powers many very impactful organizations of Web3 without concern for scale. Read their stories and see what Badger can do for your on-chain organization today.</p>
+                    <p>Badger powers many very impactful organizations of Web3 without concern for scale. Read their stories and see what Badger can do for your onchain organization today.</p>
                 </div>
             </LandingHero>
 

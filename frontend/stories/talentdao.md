@@ -25,11 +25,11 @@ TalentDAO's vision is to create a world where people can work freely, on their o
 
 ## Driving sub-DAO autonomy
 
-One of the challenges TalentDAO faced was how to manage their sub-DAOs effectively. While many on-chain communities are bottom-up, they found that traditional employment networks were too top-down for their needs. That's where Badger came in.
+One of the challenges TalentDAO faced was how to manage their sub-DAOs effectively. While many onchain communities are bottom-up, they found that traditional employment networks were too top-down for their needs. That's where Badger came in.
 
-Badger is a web3 credential tool that enables organizations to decentralize using open data and a permissionless protocol. By using Badger, TalentDAO was able to provide distinct on-chain representations of their sub-DAOs. This allowed each group to manage their collaboration spaces on Discord, voting spaces on Snapshot, and access other tools, all with their own governance processes in place.
+Badger is a web3 credential tool that enables organizations to decentralize using open data and a permissionless protocol. By using Badger, TalentDAO was able to provide distinct onchain representations of their sub-DAOs. This allowed each group to manage their collaboration spaces on Discord, voting spaces on Snapshot, and access other tools, all with their own governance processes in place.
 
-For example, TalentDAO's Research Guild and Marketing Guild have both been represented on-chain with Badger. Each guild has its own governance process in Snapshot, which allows members to propose and vote on decisions. This gives each guild a level of autonomy, while still being part of the larger TalentDAO community.
+For example, TalentDAO's Research Guild and Marketing Guild have both been represented onchain with Badger. Each guild has its own governance process in Snapshot, which allows members to propose and vote on decisions. This gives each guild a level of autonomy, while still being part of the larger TalentDAO community.
 
 ## Open data and permissionless primitives
 

@@ -11,19 +11,19 @@ const Footer = () => {
                 <div className="grid">
                     <div className="logo">
                         <LogoIcon name="Badger" logo={""} />
-                        <p>Unlocking the power of on-chain badges for every person.</p>
+                        <p>Unlocking the power of onchain badges for every person.</p>
                     </div>
 
                     <div className="links">
                         <div className="list features">
                             <h4>Features</h4>
-                            
+
                             <div>
                                 <Link>Badge Managers</Link>
                                 <Link>CSV Bulk Mint</Link>
                                 <Link>Claimables</Link>
                             </div>
-                            
+
                         </div>
 
                         <div className="list features__extended">
@@ -60,7 +60,7 @@ const Footer = () => {
                         <Link to="/terms/">Terms of Service</Link>
                         <Link to="/media/">Media Kit</Link>
                     </div>
-                    
+
                     <p>Built by <span><a href="https://cosanostra.gg" target="_blank" rel="noreferrer"> cosanostra </a></span> {`// © Badger 2023`}</p>
                 </div>
             </div>

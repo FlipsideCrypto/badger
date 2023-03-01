@@ -31,7 +31,7 @@ As Pine developed a system to recognize and reward their participants, they real
 
 ## Unlocking DAO tools with Badger
 
-Pine was unable to sustainably manage permissions and to properly route opportunities in their community until they adopted Badger. In addition to managing access to various workspaces, Pine uses on-chain credentials to ensure users are able to participate in activities tailored to their skills and interests.
+Pine was unable to sustainably manage permissions and to properly route opportunities in their community until they adopted Badger. In addition to managing access to various workspaces, Pine uses onchain credentials to ensure users are able to participate in activities tailored to their skills and interests.
 
 Pine uses Badger alongside no-code DAO tools like Guild and JokeDAO to service analytics partners. By managing their community with these permissionless tools, Pine is able to access a global community.
 

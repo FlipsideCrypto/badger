@@ -14,7 +14,7 @@ import "@style/App.css"
 library.add(fal, fab)
 
 const title = "The Web3 Organization Key Solution | Badger";
-const description = "Level up the access-controls of your on-chain organization and enjoy the benefits of a Web3 focused key solution."
+const description = "Level up the access-controls of your onchain organization and enjoy the benefits of a Web3 focused key solution."
 
 function App() {
     return (

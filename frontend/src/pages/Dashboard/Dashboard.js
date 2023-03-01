@@ -10,7 +10,7 @@ import { Badge, BadgeForm, Home, Org, OrgForm } from "@pages";
 import "@style/Dashboard/Dashboard.css";
 
 const title = "Dashboard | Badger";
-const description = "Badger is a decentralized, open-source, and community-driven platform for creating, managing, and sharing on-chain organizations and badges.";
+const description = "Badger is a decentralized, open-source, and community-driven platform for creating, managing, and sharing onchain organizations and badges.";
 
 const Dashboard = () => {
     const { isAuthenticated, isConnected, isLoaded, isWrongNetwork, primaryChain } = useUser();
