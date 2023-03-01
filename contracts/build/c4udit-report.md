@@ -67,7 +67,7 @@ Issue Information: [G002](https://github.com/byterocket/c4-common-issues/blob/ma
 ../contracts/BadgerOrganizationLogic.sol::238 => hooksLength == _isHook.length,
 ../contracts/BadgerOrganizationLogic.sol::239 => "BadgerScout::setHooks: _hooks and _isHook must be the same length."
 ../contracts/hooks/BadgerHooked.sol::84 => uint256 hooksLength = _hooks.length();
-../contracts/hooks/BadgerHooked.sol::184 => uint256 slotHooksLength = slotHooks.length;
+../contracts/hooks/BadgerHooked.sol::176 => uint256 slotHooksLength = slotHooks.length;
 ../contracts/hooks/transfer/BadgerTransferBound.sol::51 => uint256 idsLength = _ids.length;
 ../contracts/hooks/transfer/BadgerTransferBoundManaged.sol::63 => uint256 idsLength = _ids.length;
 ```
@@ -132,11 +132,10 @@ Issue Information: [G007](https://github.com/byterocket/c4-common-issues/blob/ma
 ../contracts/hooks/BadgerHooked.sol::11 => import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 ../contracts/hooks/BadgerHooked.sol::12 => import {IBadgerConfigured} from "../interfaces/IBadgerConfigured.sol";
 ../contracts/hooks/BadgerHooked.sol::16 => import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-../contracts/hooks/BadgerHooked.sol::116 => "BadgerHooks::_setHook: Hook does not implement IBadgerHook."
-../contracts/hooks/BadgerHooked.sol::149 => "BadgerOrganizationHooked::_configHook: Hook is not enabled."
-../contracts/hooks/BadgerHooked.sol::155 => "BadgerOrganizationHooked::_configManager: Manager is not a contract."
-../contracts/hooks/BadgerHooked.sol::163 => "BadgerOrganizationHooked::_configManager: Manager is not a configured Badger module."
-../contracts/hooks/forfeit/BadgerForfeitForbidden.sol::51 => "BadgerForfeitforbidden::execute: Invalid permission to forfeit token."
+../contracts/hooks/BadgerHooked.sol::116 => "BadgerOrganizationHooked::_configManager: Manager is not a contract."
+../contracts/hooks/BadgerHooked.sol::122 => "BadgerHooks::_setHook: Hook does not implement IBadgerHook."
+../contracts/hooks/BadgerHooked.sol::155 => "BadgerOrganizationHooked::_configHook: Hook is not enabled."
+../contracts/hooks/forfeit/BadgerForfeitForbidden.sol::51 => "BadgerForfeitForbidden::execute: Invalid permission to forfeit token."
 ../contracts/hooks/hook/BadgerHookBlocklist.sol::54 => "BadgerHookBlacklist::execute: Cannot enable blocklisted hook."
 ../contracts/hooks/mint/BadgerMintMax.sol::42 => "BadgerMintMax::config: Max must be greater than zero."
 ../contracts/hooks/mint/BadgerMintMax.sol::65 => "BadgerMintMax::execute: Max mint reached."
@@ -164,7 +163,7 @@ Issue Information: [G007](https://github.com/byterocket/c4-common-issues/blob/ma
 ../contracts/managers/BadgerManagerSignature.sol::10 => import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 ../contracts/managers/BadgerManagerSignature.sol::69 => "BadgerManagerSignature::mint: Signature expired."
 ../contracts/managers/BadgerManagerSignature.sol::75 => "BadgerManagerSignature::mint: Invalid nonce."
-../contracts/managers/BadgerManagerSignature.sol::100 => "BadgerManagerSignature::mint: Invalid signer."
+../contracts/managers/BadgerManagerSignature.sol::99 => "BadgerManagerSignature::mint: Invalid signer."
 ```
 #### Tools used
 [c4udit](https://github.com/byterocket/c4udit)
