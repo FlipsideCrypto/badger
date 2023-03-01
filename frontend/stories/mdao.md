@@ -8,8 +8,8 @@ quote: Having Badger available to drive the credentials and completion certifica
 quoter: Aaron Lamphere
 quoter_title: Head of Growth and Retention
 quoter_image: https://pbs.twimg.com/profile_images/1469356718597423105/-C4aOTnz_400x400.jpg
-logo: https://raw.githubusercontent.com/FlipsideCrypto/badger/feat-badger-day/frontend/public/mdao.png
-image: https://raw.githubusercontent.com/FlipsideCrypto/badger/2c46e6fd18b5a0dda316ad37b717d0ff8651e6c1/frontend/public/mdao-app.png
+logo: /story-assets/mdao/logo.png
+image: /story-assets/mdao/app.png
 color: #a8f1f2
 color_dark: #0ea5e9
 stat_1_title: Badges Minted
@@ -23,7 +23,7 @@ When MetricsDAO started managing their education initiative with Badger, they re
 > 
 > **MARINA, PROJECT LEAD**
 
-![](https://i.seadn.io/gcs/files/4dd29ffbba7808eaa6252a7889595584.png?auto=format&w=300)
+![Screenshot of LinkedIn with a Badge](/story-assets/mdao/linkedin.png)
 
 ## Meaningful representation of achievement
 
@@ -43,6 +43,6 @@ Badges now serve multiple purposes in MetricsDAO Academy including creating acce
 
  As students have graduated from various courses, the team has used Badger to maintain communication with top students and to build out their teaching assistant network. The public nature of Badger networks and permissionless interface makes it easy for new instructors to move from Badge holder to operator. By using Badger to identify their cohorts, MetricsDAO Academy laid the foundation for network evolution and empowered their cohort participants to manage their own cohorts.
 
- ![](https://i.seadn.io/gcs/files/875893effb1e6fbb6c7100bc01090fd9.png?auto=format&w=300)
+ ![Graduating into an Instructor](/story-assets/mdao/graduates.png)
 
 As students have reacted positively to the Badges, MetricsDAO is now increasing its focus on education and has already minted over 3000 Badges. As their students learn new skills and receive Badges, MetricsDAO is able to reach the right people through onchain identifiers and empower them to become contributors in future education initiatives or to provide other work opportunities to them.

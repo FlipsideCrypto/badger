@@ -62,12 +62,12 @@ const Media = () => {
 
                 <div className="images">
                     <img src="/opengraph.png" />
-                    <img src="/logo-opengraph.png" />
-                    <img src="/empty-opengraph.png" />
-                    <img src="/interoperable.png" />
-                    <img src="/interoperable-simple.png" />
-                    <img src="/badges-example.png" />
-                    <img src="/manual-actions.png" />
+                    <img src="/media-kit/logo-opengraph.png" />
+                    <img src="/media-kit/empty-opengraph.png" />
+                    <img src="/media-kit/interoperable.png" />
+                    <img src="/media-kit/interoperable-simple.png" />
+                    <img src="/media-kit/badges-example.png" />
+                    <img src="/media-kit/manual-actions.png" />
                 </div>
             </div>
         </div>

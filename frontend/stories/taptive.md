@@ -8,8 +8,8 @@ quote: Digital certificates and awards given off chain are easily lost and rarel
 quoter: Grant Nissly
 quoter_title: Founder
 quoter_image: https://pbs.twimg.com/profile_images/1469356718597423105/-C4aOTnz_400x400.jpg
-logo: https://raw.githubusercontent.com/FlipsideCrypto/badger/f656b9032d7508151cebd42edcc95afec481438d/frontend/public/taptive.png
-image: https://raw.githubusercontent.com/FlipsideCrypto/badger/f656b9032d7508151cebd42edcc95afec481438d/frontend/public/taptive-app.png
+logo: /story-assets/taptive/logo.png
+image: /story-assets/taptive/app.png
 color: #615df5
 color_dark: #5a55f4
 stat_1_title: Cohorts Badged
@@ -25,7 +25,7 @@ stat_2_value: 30+
 
 Taptive was inspired to start using Badger because they were looking for an easy way to issue onchain rewards to participants who completed their cohorts. With Badger, Taptive is able to easily issue NFTs for their cohort participants. 
 
-IMAGE_NEEDED
+![](/story-assets/taptive/accomplishments.png)
 
 Before Badger, Taptive would simply convey rewards socially such as announcing winners in their Discord. However, with Badger, they are now able to recognize competition winners with an onchain NFT that they can hold onto and share with others.
  
@@ -40,6 +40,7 @@ Taptive is able to distribute account bound credentials with the click of the bu
 > When we issue awards on chain, participants are able to bring their reputation and accomplishments with them wherever they go. 
 >
 > **GRANT NISSLY, FOUNDER**
-IMAGE_NEEDED 
+
+![](/story-assets/taptive/collab.png) 
 
 Taptive plans to continue to utilize Badger in the future by recognizing winners of cohort competitions, creating a large network of writers who are recognized with Taptive credentials onchain. By integrating Badger into their communities, participants of Taptive's cohorts can take their engagement from Taptive and demonstrate their skills locally within their home community.

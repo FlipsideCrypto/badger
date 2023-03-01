@@ -8,8 +8,8 @@ quote: I've been looking at a lot of reputation and credentialing tools; Badger 
 quoter: banklesschick.eth
 quoter_title: Founder
 quoter_image: https://pbs.twimg.com/profile_images/1621238477336580097/rbMlQ1dd_400x400.jpg
-logo: https://raw.githubusercontent.com/FlipsideCrypto/badger/8eba03cd31582cd916a1893f5b1ec725e7bea442/frontend/public/talentdao.png
-image: https://raw.githubusercontent.com/FlipsideCrypto/badger/2c46e6fd18b5a0dda316ad37b717d0ff8651e6c1/frontend/public/talentdao-app.png
+logo: /story-assets/talentdao/logo.png
+image: /story-assets/talentdao/app.png
 color: #f10606
 color_dark: #b41c2e
 stat_1_title: Organizations Created
@@ -23,6 +23,8 @@ Decentralization has become a buzzword in recent years, and for good reason. Tra
 
 TalentDAO's vision is to create a world where people can work freely, on their own terms, without relying on third-party institutions. They believe that traditional approaches to work have led to human coordination failures, and that knowledge should be open-source. To achieve their vision, TalentDAO has created a community of like-minded individuals who conduct scientific research to help DAOs thrive and educate the public on the benefits of a decentralized future of work.
 
+![](/story-assets/talentdao/behaviors.png)
+
 ## Driving sub-DAO autonomy
 
 One of the challenges TalentDAO faced was how to manage their sub-DAOs effectively. While many onchain communities are bottom-up, they found that traditional employment networks were too top-down for their needs. That's where Badger came in.
@@ -34,3 +36,9 @@ For example, TalentDAO's Research Guild and Marketing Guild have both been repre
 ## Open data and permissionless primitives
 
 By using Badger, TalentDAO has been able to create a middle-out management approach that empowers its members. Badger enables teams to design middle-out networks because anyone can create a network, and networks are public. This means that TalentDAO can create a more decentralized approach to work, where each member has a say in how the community is run.
+
+![](/story-assets/talentdao/leading-change.png)
+
+## Leading Change with Cohorts
+
+TalentDAO has also been using Badger to create cohorts of people who are interested in learning about decentralized work. These cohorts are a way for TalentDAO to educate people on the benefits of decentralized work, and to help them get started with their own DAOs. Cohorts are a great way to onboard new members into a community, and Badger makes it easy to do so.
