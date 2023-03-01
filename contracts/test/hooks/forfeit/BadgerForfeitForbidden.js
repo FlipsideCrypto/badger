@@ -69,7 +69,7 @@ describe("Badger", function () {
                 organization.interface.encodeFunctionData("configHook", [BEFORE_FORFEIT_SLOT, hook.address, hookConfig]),
                 organization.interface.encodeFunctionData("mint", [otherAccount.address, 0, 100, "0x"])
             ]
-            await expect(organization.connect(owner).multicall(transactions))
+            await organization.connect(owner).multicall(transactions)
 
             await expect(organization.connect(otherAccount).forfeit(0, 100, "0x"))
                 .to.emit(organization, "TransferSingle").withArgs(otherAccount.address, otherAccount.address, ethers.constants.AddressZero, 0, 100)

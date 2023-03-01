@@ -71,8 +71,8 @@ describe("Badger", function () {
         it("call: mint()", async function () {
             const { manager, organization, otherAccount } = await loadFixture(deployNewSignatureManagedOrganization);
 
-            const [,,random] = await ethers.getSigners();
-            
+            const [, , random] = await ethers.getSigners();
+
             /// get current timestamp from ethers
             const _deadline = await time.latest() + 1000;
             const _nonce = 0;
@@ -89,15 +89,15 @@ describe("Badger", function () {
             expect(await manager.connect(random).mint(
                 organization.address, 0, 1000, _data, _signature, _nonce, _deadline
             ))
-            .to.emit(organization, "TransferSingle")
-            .withArgs(ethers.constants.AddressZero, ethers.constants.AddressZero, otherAccount.address, 0, 1000);
+                .to.emit(organization, "TransferSingle")
+                .withArgs(ethers.constants.AddressZero, ethers.constants.AddressZero, otherAccount.address, 0, 1000);
         });
 
-        it("revert: mint() -- invalid signer", async function () {
+        it("revert: mint() invalid signer", async function () {
             const { manager, organization, owner, otherAccount } = await loadFixture(deployNewSignatureManagedOrganization);
 
-            const [,,random] = await ethers.getSigners();
-            
+            const [, , random] = await ethers.getSigners();
+
             /// get current timestamp from ethers
             const _deadline = await time.latest() + 1000;
             const _nonce = 0;
@@ -116,11 +116,11 @@ describe("Badger", function () {
             )).to.be.revertedWith("BadgerManagerSignature::mint: Invalid signer.");
         });
 
-        it("revert: mint() -- invalid nonce", async function () {
+        it("revert: mint() invalid nonce", async function () {
             const { manager, organization, otherAccount } = await loadFixture(deployNewSignatureManagedOrganization);
 
-            const [,,random] = await ethers.getSigners();
-            
+            const [, , random] = await ethers.getSigners();
+
             /// get current timestamp from ethers
             const _deadline = await time.latest() + 1000;
             const _nonce = 1;
@@ -139,11 +139,11 @@ describe("Badger", function () {
             )).to.be.revertedWith("BadgerManagerSignature::mint: Invalid nonce.");
         });
 
-        it("revert: mint() -- invalid deadline", async function () {
+        it("revert: mint() invalid deadline", async function () {
             const { manager, organization, otherAccount } = await loadFixture(deployNewSignatureManagedOrganization);
 
-            const [,,random] = await ethers.getSigners();
-            
+            const [, , random] = await ethers.getSigners();
+
             /// get current timestamp from ethers
             const _deadline = await time.latest() - 1000;
             const _nonce = 0;
