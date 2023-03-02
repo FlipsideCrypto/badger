@@ -44,10 +44,6 @@ class Extractor:
 
             contract = self.contracts[event_address]
 
-            event_data.append({
-                'event': event_name,
-                'data': contract.events[event_name]().processLog(event),
-                'block': event['blockNumber']
-            })
+            event_data.append(contract.events[event_name]().processLog(event))
 
         return event_data

@@ -11,11 +11,16 @@ w3 = Web3(Web3.WebsocketProvider(settings.WS_POLYGON_PROVIDER))
 
 User = get_user_model()
 
+"""
+[AttributeDict({'args': AttributeDict({'organization': '0x4d51C82b2dFDEdE754447974C488708465943790', 'owner': '0x75ee82787C548daeaC58Af6cBA5bd2A9Ff863d28', 'organizationId': 0}), 'event': 'OrganizationCreated', 'logIndex': 226, 'transactionIndex': 53, 'transactionHash': HexBytes('0xdb405198a6ad743a52ade5347b249fb2268ec82a17b02172176c050979c4125e'), 'address': '0x72b03C649953CA95B920f60A5687e4d2DACf45c0', 'blockHash': HexBytes('0xaf9bb5d77f585c446417420e68f9c6508f6f85f2e0d54d4df03b35226046fa2d'), 'blockNumber': 39865246})]
+"""
+
 class Loader:
     def __init__(self):
         self.loader_mapping = {
             # Factory events
             "OrganizationCreated": [self.handle_organization_created],
+            # Organization events
             "BadgeUpdated": [self.handle_badge_updated],
             "DelegateUpdated": [self.handle_delegate_updated],
             "OrganizationUpdated": [self.handle_organization_updated],
@@ -25,20 +30,25 @@ class Loader:
             "TransferBatch": [self.handle_transfer_batch],
             "URI": [self.handle_uri],
         }
+
         self.contracts = {}
 
+    """
+    Helper function to handle the creation and return of Users from an ethereum address.
+    """
     def _handle_users(self, ethereum_address):
         if not Web3.isChecksumAddress(ethereum_address):
             ethereum_address = Web3.toChecksumAddress(ethereum_address)
 
         if not User.objects.filter(ethereum_address=ethereum_address).exists():
-            return User.objects.create_user(
-                ethereum_address=ethereum_address)
-        return User.objects.get(
-            ethereum_address=ethereum_address)
+            return User.objects.create_user(ethereum_address=ethereum_address)
+        return User.objects.get(ethereum_address=ethereum_address)
 
-    def _handle_badge_user_balance_changes(self, badge, user, balance):
-        if balance.amount > 0:
+    """
+    Helper function that handles `.users` when a balance changes.
+    """
+    def _handle_badge_user_balance_changes(self, badge, user, amount):
+        if amount > 0:
             if user.ethereum_address != "0x0000000000000000000000000000000000000000":
                 badge.users.add(user)
                 badge.save()
@@ -50,10 +60,9 @@ class Loader:
         badge.save()
 
     def _handle_user_balance(self, i, event, organization, address_field):
-        # get the from user
         user = self._handle_users(event['args'][address_field])
 
-        # get the balance
+        # Get the token ids and values from the event and wrap them in lists if they are not already
         if event['event'] == "TransferSingle":
             token_ids = [event['args']['id']]
             values = [event['args']['value']]
@@ -78,10 +87,17 @@ class Loader:
             if transaction not in balance.transactions.all():
                 # apply the balance change if not a mint from 0x0
                 change = values[i]
+                
+                # Decrease the balance of the sender if a transfer from
                 if address_field == "from":
                     change *= - 1
+                    # Exclude address(0) because we are not tracking the balance of that address
                     if event['args']['from'] == "0x0000000000000000000000000000000000000000":
                         change = -0
+
+                # If the badge doesn't exist, skip this balance for now
+                if not organization.badges.filter(token_id=token_id).exists():
+                    continue
 
                 balance.transactions.add(transaction)
                 balance.amount += change
@@ -90,12 +106,9 @@ class Loader:
                 # Add the user to the badge if not already in it if the balance is > 0
                 badge = organization.badges.get(token_id=token_id)
 
-                if badge is None:
-                    badge = self.handle_badge_created(event, None)
-
                 # Add the user to the badge if not already in it if the balance is > 0
                 # or remove them if the balance is 0
-                self._handle_badge_user_balance_changes(badge, user, balance)
+                self._handle_badge_user_balance_changes(badge, user, balance.amount)
 
     def get_organization_contract(self, ethereum_address, version):
         if not Web3.isChecksumAddress(ethereum_address):
@@ -333,14 +346,14 @@ class Loader:
         response = None
         for event in events:
             response = None
+
             if 'event' in event:
                 if event['event'] in self.loader_mapping:
                     for handler in self.loader_mapping[event['event']]:
                         response = handler(event, response)
                         event_responses.append(response)
                 else:
-                    event_responses.append(
-                        ("Event not handled", event['event'], event['args']))
+                    event_responses.append(("Event not handled", event['event'], event['args']))
             else:
                 event_responses.append(("Event not decoded", event))
 

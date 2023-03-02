@@ -1,7 +1,6 @@
 import time
 
 from .extractor import *
-from .transformer import *
 from .loader import *
 
 from django.conf import settings
@@ -14,14 +13,13 @@ POLL_INTERVAL = 5
 class Backfill:
     def __init__(self):
         self.extractor = Extractor()
-        self.transformer = Transformer()
         self.loader = Loader()
 
     def etl(self, queryset, abi, topics):
         while True:
             contract_addresses = queryset.values_list('ethereum_address', flat=True)
 
-            last_block = w3.eth.blockNumber
+            # last_block = w3.eth.blockNumber
 
             events = w3.eth.getLogs({
                 'fromBlock': 39865246,
