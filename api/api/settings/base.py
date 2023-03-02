@@ -8,8 +8,10 @@ from siwe_auth.custom_groups.erc721 import ERC721OwnerManager
 load_dotenv()
 
 from abis import (
-    FACTORY,
-    ORGANIZATION,
+    FACTORY_ABI,
+    FACTORY_EVENTS,
+    ORGANIZATION_ABI,
+    ORGANIZATION_EVENTS,
 ) 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -158,5 +160,8 @@ PINATA_INDEXER_URL = os.getenv("API_PINATA_INDEXER_URL", "https://badger.mypinat
 FACTORY_ADDRESS = os.getenv("FACTORY_ADDRESS", "0x218B3C623FfB9c5E4DBb9142E6Ca6f6559F1c2D6")
 
 # Dictionary of the version abis
-FACTORY_ABI = FACTORY
-ORGANIZATION_ABI = ORGANIZATION
+FACTORY_ABI = FACTORY_ABI
+FACTORY_EVENTS = FACTORY_EVENTS
+
+ORGANIZATION_ABI = ORGANIZATION_ABI
+ORGANIZATION_EVENTS = ORGANIZATION_EVENTS

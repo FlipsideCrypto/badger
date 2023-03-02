@@ -4,12 +4,6 @@ from .loader import *
 
 from django.conf import settings
 
-from abis import (
-    FACTORY as FACTORY_ABI,
-    ORGANIZATION as ORGANIZATION_ABI,
-    FACTORY_EVENTS,
-    ORGANIZATION_EVENTS
-)
 from job.models import ContractListener
 from organization.models import Organization
 
@@ -26,6 +20,10 @@ class Backfill:
             contract.ethereum_address,
             contract.last_block
         ] for contract in queryset if contract.ethereum_address]
+
+        print(contracts, abi, filters)
+
+        return
 
         # Get the events for the QuerySet of contracts
         [events, last_block] = self.extractor.handle_contracts(contracts, abi, filters)
@@ -47,15 +45,10 @@ class Backfill:
         return event_responses
 
     def backfill_factories(self):
-        print("Backfilling factories now baby")
-        return self.etl
-        # return self.etl(
-        #     ContractListener.objects.filter(
-        #         is_active=True
-        #     ), 
-        #     FACTORY_ABI, 
-        #     FACTORY_EVENTS
-        # )
+        return self.etl(
+            ContractListener.objects.filter(is_active=True), 
+            settings.FACTORY_ABI, settings.FACTORY_EVENTS
+        )
         
     def backfill_organizations(self):
         print("Backfill organizations")

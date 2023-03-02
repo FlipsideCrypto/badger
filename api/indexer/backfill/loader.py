@@ -7,8 +7,6 @@ from django.contrib.auth import get_user_model
 from balance.models import Balance, Transaction
 from organization.models import Organization
 
-from abis import ORGANIZATION as ORGANIZATION_ABI
-
 w3 = Web3(Web3.WebsocketProvider(settings.WS_POLYGON_PROVIDER))
 
 User = get_user_model()
@@ -106,7 +104,7 @@ class Loader:
         if ethereum_address not in self.contracts:
             self.contracts[ethereum_address] = w3.eth.contract(
                 address=ethereum_address,
-                abi=ORGANIZATION_ABI[version]
+                abi=settings.ORGANIZATION_ABI[version]
             )
         return self.contracts[ethereum_address]
 
