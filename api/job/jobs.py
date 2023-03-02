@@ -6,17 +6,9 @@ from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
 from django_apscheduler import util
 
-from indexer.backfill.backfill import Backfill
-
 scheduler = BackgroundScheduler()
 
 scheduled_jobs_map = {}
-
-backfill = Backfill()
-
-def backfill_factories(max_age=86400):
-    backfill.backfill_factories()
-    backfill.backfill_organizations()
 
 @util.close_old_connections
 def delete_old_job_executions(max_age=60 * 60):
@@ -43,13 +35,6 @@ class JobManager:
         minutes = "*/2"
         if settings.DEBUG:
             minutes = "*/59"
-        scheduler.add_job(
-            backfill_factories,
-            trigger=CronTrigger(minute=minutes),
-            id="backfill_factories",
-            max_instances=1,
-            replace_existing=True,
-        )
 
         try:
             print("Starting scheduler...")
