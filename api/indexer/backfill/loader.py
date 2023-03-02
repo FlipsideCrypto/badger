@@ -31,6 +31,9 @@ class Loader:
 
         self.contracts = {}
 
+    """
+    Helper function to handle the creation and return of Organizations from an ethereum address.
+    """
     def _organization(event):
         address = event['address']
 
@@ -43,6 +46,9 @@ class Loader:
 
         return organization
     
+    """
+    Helper function to handle the creation and return of Badges from an organization and token id.
+    """
     def _badge(organization, event):
         token_id = event['args']['id']
 
@@ -64,6 +70,7 @@ class Loader:
                 address=ethereum_address,
                 abi=settings.ORGANIZATION_ABI_FULL
             )
+
         return self.contracts[ethereum_address]
 
     """
