@@ -49,18 +49,9 @@ class Backfill:
             ContractListener.objects.filter(is_active=True), 
             settings.FACTORY_ABI, settings.FACTORY_EVENTS
         )
-        
+    
     def backfill_organizations(self):
-        print("Backfill organizations")
-        # for version in settings.VERSIONS:
-        #     print('running version  ', version)
-        #     return self.etl(
-        #         version,
-        #         Organization.objects.filter(
-        #             is_active=True,
-        #             version=version, 
-        #             updated__gte=django.utils.timezone.now() - django.utils.timezone.timedelta(days=30)
-        #         ), 
-        #         ORGANIZATION_ABI[version], 
-        #         ORGANIZATION_EVENTS[version]
-        #     )
+        return self.etl(
+            Organization.objects.filter(is_active=True), 
+            settings.ORGANIZATION_ABI, settings.ORGANIZATION_EVENTS
+        )
