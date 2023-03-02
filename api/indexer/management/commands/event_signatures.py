@@ -3,6 +3,8 @@ import json
 
 from web3 import Web3
 
+from django.core.management.base import BaseCommand
+
 EVENT_TOPICS = [
     "event OrganizationCreated(address indexed,address indexed,address indexed)",
     "event OwnershipTransferred(address indexed,address indexed)",
@@ -18,14 +20,15 @@ EVENT_TOPICS = [
     "event URI(string,uint256 indexed)",
 ]
 
-CLEANED_TOPICS = [
-    topic.replace("event ", "").replace(" indexed", "") for topic in EVENT_TOPICS
-]
+class Command(BaseCommand):
+    def handle(self, **options):
+        CLEANED_TOPICS = [
+            topic.replace("event ", "").replace(" indexed", "") for topic in EVENT_TOPICS
+        ]
 
-def hex_signature(string):
-    return Web3.keccak(text=string).hex()
+        def hex_signature(string):
+            return Web3.keccak(text=string).hex()
 
-TOPIC_SIGNATURES = {topic: hex_signature(topic) for topic in CLEANED_TOPICS}
+        TOPIC_SIGNATURES = {topic: hex_signature(topic) for topic in CLEANED_TOPICS}
 
-# print formatted json
-print(json.dumps(TOPIC_SIGNATURES, indent=4, sort_keys=True))
+        print(json.dumps(TOPIC_SIGNATURES, indent=4, sort_keys=True))

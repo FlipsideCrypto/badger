@@ -19,7 +19,7 @@ class Backfill:
         self.transformer = Transformer()
         self.loader = Loader()
 
-    def etl(self,queryset, abi, contract_events):
+    def etl(self, queryset, abi, filters):
         # Build the list of contracts to get event updates for
         contracts = [[
             contract.chain.lower(), 
@@ -28,7 +28,7 @@ class Backfill:
         ] for contract in queryset if contract.ethereum_address]
 
         # Get the events for the QuerySet of contracts
-        [events, last_block] = self.extractor.handle_contracts(contracts, abi, contract_events)
+        [events, last_block] = self.extractor.handle_contracts(contracts, abi, filters)
 
         events = self.transformer.handle_events(events)
         event_responses = self.loader.handle_events(events)
@@ -48,6 +48,7 @@ class Backfill:
 
     def backfill_factories(self):
         print("Backfilling factories now baby")
+        return self.etl
         # return self.etl(
         #     ContractListener.objects.filter(
         #         is_active=True
