@@ -38,26 +38,18 @@ class Backfill:
 
             print(events)
 
-            return
-
-            event_responses = self.loader.handle_events(events)
+            event_responses = self.loader.load(events)
 
             print(event_responses)
 
             if not isinstance(extracting_obj, list):
-                queryset = extracting_obj.objects.filter(ethereum_address__in=contracts)
-
-                for contract in queryset:
-                    contract.last_block = to_block
-                    contract.save()
+                extracting_obj.objects.filter(ethereum_address__in=contracts).update(last_block=to_block)
 
             if not to_block:
                 return
 
             time.sleep(POLL_INTERVAL)
 
-            continue
-    
     def backfill_factories(self):
         self.etl(
             [settings.FACTORY_ADDRESS], 

@@ -27,7 +27,6 @@ class Loader:
             # Factory events
             "OrganizationCreated": [self.handle_organization_created],
             # Organization events
-            "BadgeUpdated": [self.handle_badge_updated],
             "OrganizationUpdated": [self.handle_organization_updated],
             "OwnershipTransferred": [self.handle_ownership_transferred],
             "TransferSingle": [self.handle_transfer_single],
@@ -238,30 +237,21 @@ class Loader:
 
         return ("Balance updated", event['args'])
 
-    def handle_badge_updated(self, event):
-        token_id = event['args']['badgeId'] if 'badgeId' in event['args'] else event['args']['id']
+    def handle_uri(self, event):
+        uri = event['args']['value']
+        token_id = event['args']['id']
 
         organization = self._organization(event)
 
         badge = self._badge(organization, event)
 
-        response = "Badge updated"
+        needs_metadata = not badge.name or not badge.description
+        needs_image = not badge.image_hash or badge.token_uri != uri
 
-        if not badge.token_uri:
-            badge.is_active = True
-
-            organization_contract = self._organization_contract(organization.ethereum_address)
-            badge.token_uri = organization_contract.functions.uri(token_id).call()
-
-            badge.save()
-
-            response = "Badge created"
-
-        if not badge.name or not badge.description or not badge.image_hash:
-            # use the 1155 uri spec to replace id with the token id
+        if needs_metadata or needs_image:
             url = f"{badge.token_uri}".replace("{id}", str(token_id))
 
-            if "http" not in url:
+            if "http" not in url: # if http is not in, assume it to be an ipfs hash
                 url = f"{settings.PINATA_INDEXER_URL}{url}"
 
             response = requests.get(url)
@@ -269,38 +259,25 @@ class Loader:
                 data = response.json()
                 badge.name = data["name"]
                 badge.description = data["description"]
+                # TODO: This will break if someone uses a custom image url
                 badge.image_hash = data["image"].split("/ipfs/")[1]
-
-                badge.save()
 
                 response = "Badge details updated"
 
-        return (response, event['args'])
+        badge.token_uri = uri
 
-    def handle_uri(self, event):
-        organization = self._organization(event)
-
-        badge = self._badge(organization, event)
-
-        if badge is None:
-            return ("Badge does not exist", event['args'])
-
-        badge.token_uri = event['args']['value']
         badge.save()
 
         return ("Badge uri updated", event['args'])
 
-    def handle_events(self, events):
+    def load(self, events):
         event_responses = []
 
-        response = None
         for event in events:
-            response = None
-
             if 'event' in event:
                 if event['event'] in self.loader_mapping:
                     for handler in self.loader_mapping[event['event']]:
-                        event_responses.append(handler(event, response))
+                        event_responses.append(handler(event))
                 else:
                     event_responses.append(("Event not handled", event['event'], event['args']))
             else:
