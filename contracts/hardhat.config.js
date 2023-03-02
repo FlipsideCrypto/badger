@@ -21,39 +21,42 @@ task("deploy", "Deploys the protocol")
     .setAction(async (taskArgs, hre) => {
         // Compiling all of the contracts again just in case
         await hre.run('compile');
-
+        
         const [deployer] = await ethers.getSigners();
-        console.log(`✅ Connected to ${deployer.address}`);
-
-        const chainId = await getChainId()
-
-        // Deploying the primitive master BadgerOrganization contract that is used for clones
-        const BadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
-        organizationMaster = await BadgerOrganization.deploy();
-        organizationMaster = await organizationMaster.deployed();
-        console.log("✅ Organization Implementation Deployed.")
-
+        const balance = ethers.utils.formatEther(await deployer.getBalance());
+    
+        console.table({
+            "Deployer Address": deployer.address,
+            "Deployer Balance": balance,
+        })
+        
+        const BadgerSingleton = await ethers.getContractFactory("BadgerOrganization");
+        badgerSingleton = await BadgerSingleton.deploy();
+        badgerSingleton = await badgerSingleton.deployed();
+        console.log("✅ Organization Implementation Deployed.");
+        
+        const chainId = await getChainId();
         organizationDeployment = {
             "Chain ID": chainId,
             "Deployer": deployer.address,
-            "Organization Implementation Address": organizationMaster.address,
+            "Organization Implementation Address": badgerSingleton.address,
             "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
-        }
-        console.table(organizationDeployment)
+        };
+        console.table(organizationDeployment);
 
         // Deploy the protocol
-        const Badger = await ethers.getContractFactory("Badger");
-        badger = await Badger.deploy(organizationMaster.address);
-        badger = await badger.deployed();
-        console.log("✅ Badger Deployed.")
+        const BadgerFactory = await ethers.getContractFactory("Badger");
+        badgerFactory = await BadgerFactory.deploy(badgerSingleton.address);
+        badgerFactory = await badgerFactory.deployed();
+        console.log("✅ Badger Deployed.");
 
         badgerDeployment = {
             "Chain ID": chainId,
             "Deployer": deployer.address,
-            "Badger Address": badger.address,
+            "Badger Address": badgerFactory.address,
             "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
         }
-        console.table(badgerDeployment)
+        console.table(badgerDeployment);
 
         // Verifying
         if (taskArgs.verify !== false && chainId != '31337') {
