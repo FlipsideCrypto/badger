@@ -1,1963 +1,643 @@
-const { assert } = require('chai')
+// badger: 0x2f070d13
+// org: 0x7a3851dc
+// org logic: 0xd2779f52
+// badger configured: 0x56dbdf14
+// hook: 0x6847c1d5
+// manager: 0x56dbdf14
+// ierc165: 0x01ffc9a7
 
-var chai = require('chai')
-    .use(require('chai-as-promised'))
-    .should()
+const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
+const { expect } = require("chai");
 
-const { ethers } = require("hardhat");
+function getManagerKey(badgeId, manager) {
+    const encoded = ethers.utils.defaultAbiCoder.encode(["uint256", "address"], [badgeId, manager]);
+    return ethers.utils.solidityKeccak256(["bytes"], [encoded]);
+}
+
+function getOrgManagerKey(manager) {
+    const encoded = ethers.utils.defaultAbiCoder.encode(["address"], [manager]);
+    return ethers.utils.solidityKeccak256(["bytes"], [encoded]);
+}
 
 describe("Badger", function () {
-    before(async () => {
-        [owner, signer1, userSigner, leaderSigner, sigSigner] = await ethers.getSigners();
+    async function deployBadgerSingleton() {
+        const BadgerSingleton = await ethers.getContractFactory("BadgerOrganization");
+        const badgerSingleton = await BadgerSingleton.deploy();
+        await badgerSingleton.deployed();
 
-        // Deploy the base Organization
-        const BadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
-        organizationMaster = await BadgerOrganization.deploy();
-        organizationMaster = await organizationMaster.deployed();
+        return { badgerSingleton }
+    }
 
-        // Deploy the base Badger
-        const Badger = await ethers.getContractFactory("Badger");
-        badger = await Badger.deploy(organizationMaster.address);
-        badger = await badger.deployed();
+    async function deployBadgerFactory() {
+        const [owner, otherAccount] = await ethers.getSigners();
 
-        const Mock1155 = await ethers.getContractFactory("MockERC1155");
-        mock1155 = await Mock1155.deploy("testuri");
-        mock1155 = await mock1155.deployed();
+        const { badgerSingleton } = await loadFixture(deployBadgerSingleton);
 
-        const Mock20 = await ethers.getContractFactory("MockERC20");
-        mock20 = await Mock20.deploy("testtoken", "test");
-        mock20 = await mock20.deployed();
+        const BadgerFactory = await ethers.getContractFactory("Badger");
+        const badgerFactory = await BadgerFactory.deploy(badgerSingleton.address);
+        await badgerFactory.deployed();
 
-        const Mock721 = await ethers.getContractFactory("MockERC721");
-        mock721 = await Mock721.deploy("name", "symbol");
-        mock721 = await mock721.deployed();
+        expect(await badgerFactory.implementation()).to.equal(badgerSingleton.address);
 
-        // Deploy an Organization for testing through Badger
-        childOrganizationTx = await badger.connect(owner).createOrganization(
-            organizationMaster.address,
-            owner.address,
-            "baseuri",
-            "contractURI",
-            "name",
-            "symbol",
-        );
-        childOrganizationTx = await childOrganizationTx.wait();
+        return { badgerFactory, owner, otherAccount };
+    }
 
-        childOrganizationAddress = childOrganizationTx.events[4].args['organization']
-        childOrganization = await organizationMaster.attach(childOrganizationAddress);
+    async function deployNewOrganization() {
+        const { badgerFactory, owner, otherAccount } = await loadFixture(deployBadgerFactory);
 
-        assert.equal(await childOrganization.owner(), owner.address);
+        const config = {
+            deployer: owner.address,
+            uri: "ipfs/uri/{id}/",
+            organizationURI: "ipfs/org",
+            name: "Badger",
+            symbol: "BADGER"
+        }
 
-        const DOLPHIN_ETH = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+        const tx = await badgerFactory.connect(owner).createOrganization(config);
+        const receipt = await tx.wait();
 
-        paymentKeyETH = ethers.utils.solidityKeccak256(
-            ["address", "uint256"],
-            [DOLPHIN_ETH, 0]
-        )
+        const organizationCreatedEvent = receipt.events.find(e => e.event === "OrganizationCreated");
 
-        paymentKey20 = ethers.utils.solidityKeccak256(
-            ["address", "uint256"],
-            [mock20.address, 0]
-        )
+        const orgAddress = organizationCreatedEvent.args.organization;
 
-        // bytes32 encode token address and token id using the contract and use as paymentKey
-        paymentKey1155 = ethers.utils.solidityKeccak256(
-            ["address", "uint256"],
-            [mock1155.address, 0]
-        );
+        const organization = await ethers.getContractAt("BadgerOrganization", orgAddress);
 
-        paymentKey721 = ethers.utils.solidityKeccak256(
-            ["address", "uint256"],
-            [mock721.address, 0]
-        );
+        return { badgerFactory, organization, owner, otherAccount };
+    }
 
-        paymentAmount = 0;
+    async function deployNewManagedOrganization() {
+        const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
 
-        paymentTokenETH = [
-            paymentKeyETH,
-            ethers.utils.parseEther("1")
-        ]
+        // set organization manager to other account 
+        const Manager = await ethers.getContractFactory("BadgerManagerClaimable");
+        const manager = await Manager.deploy();
+        await manager.deployed();
 
-        paymentToken20 = [
-            paymentKey20,
-            1
-        ]
+        return { manager, organization, owner, otherAccount }
+    }
 
-        paymentToken1155 = [
-            paymentKey1155,
-            paymentAmount
-        ]
+    async function deployNewHook() {
+        const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
 
-        paymentToken721 = [
-            paymentKey721,
-            1
-        ]
+        const Hook = await ethers.getContractFactory("BadgerTransferBound");
+        hook = await Hook.deploy();
+        hook = await hook.deployed();
 
-    });
+        return { hook, organization, owner, otherAccount }
+    }
 
-    describe("Badger: Badger.sol", async () => {
-        it('Should deploy the Badger contract', async () => {
-            assert.equal(await badger.owner(), owner.address);
+    describe("Badger.sol", async function () {
+        it("call: createOrganization({ ...placeholder })", async function () {
+            const { badgerFactory, organization } = await loadFixture(deployNewOrganization);
+
+            const organizations = await badgerFactory.organizations();
+            expect(organizations).to.equal(1);
+
+            expect(await badgerFactory.getOrganization(organizations - 1)).to.equal(organization.address);
+
+            expect(await organization.name()).to.equal("Badger");
+            expect(await organization.symbol()).to.equal("BADGER");
+            expect(await organization.uri(1)).to.equal("ipfs/uri/{id}/");
+            expect(await organization.organizationURI()).to.equal("ipfs/org");
+            expect(await organization.contractURI()).to.equal("ipfs/org");
         });
 
-        // createOrganization() tests
-        it('createOrganization() success', async () => {
-            cloneTx = await badger.connect(owner).createOrganization(
-                organizationMaster.address,
-                owner.address,
-                "uri",
-                "contractURI",
-                "name",
-                "symbol",
-            );
-            cloneTx = await cloneTx.wait();
+        it("call: supportsInterface(IBadger || IERC165)", async function () {
+            const { badgerFactory } = await loadFixture(deployBadgerFactory);
 
-            organizationAddress = cloneTx.events[4].args['organization']
-            organization = await organizationMaster.attach(organizationAddress);
-
-            assert.equal(await organization.owner(), owner.address);
+            expect(await badgerFactory.supportsInterface("0x01ffc9a7")).to.equal(true);
+            expect(await badgerFactory.supportsInterface("0x2f070d13")).to.equal(true);
         });
 
-        it('createOrganization() success: payable', async () => {
-            // mint 10 of the mock1155 to signer1
-            await mock1155.connect(owner).mint(signer1.address, 0, 10, "0x");
+        it("revert: constructor(0x00) cannot be zero address", async function () {
+            const BadgerFactory = await ethers.getContractFactory("Badger");
 
-            // set the new version using an 1155 as payment
-            await badger.connect(owner).setVersion(
-                organizationMaster.address,
-                owner.address,
-                mock1155.address,
-                0,
-                10,
-                false
-            );
-
-            transferData = ethers.utils.defaultAbiCoder.encode(
-                ["address"],
-                [organizationMaster.address]
-            )
-
-            // transfer the 1155 into the contract
-            await mock1155.connect(signer1).safeTransferFrom(
-                signer1.address, 
-                badger.address, 
-                0, 
-                10, 
-                transferData
-            );
-
-            // create the organization
-            cloneTx = await badger.connect(signer1).createOrganization(
-                organizationMaster.address,
-                owner.address,
-                "uri",
-                "contractURI",
-                "name",
-                "symbol",
-            );
-            cloneTx = await cloneTx.wait();
-
-            organizationAddress = cloneTx.events[4].args['organization']
-            organization = await organizationMaster.attach(organizationAddress);
-
-            assert.equal(await organization.owner(), owner.address);
-        })
-
-        it("createOrganization() fail: insufficient funding", async() => { 
-            // create the organization
-            await badger.connect(owner).createOrganization(
-                organizationMaster.address,
-                owner.address,
-                "uri",
-                "contractURI",
-                "name",
-                "symbol",
-            ).should.be.rejected;
-        })
-
-        it("onERC1155Received() fail: invalid payment token", async() => {
-            const Mock1155 = await ethers.getContractFactory("MockERC1155");
-            mock11552 = await Mock1155.connect(leaderSigner).deploy("testuri");
-            mock11552 = await mock11552.deployed();
-
-            // transfering fails
-            transferData = ethers.utils.defaultAbiCoder.encode(
-                ["address"],
-                [organizationMaster.address]
-                )
-
-            // mint the 11552 to signer1
-            await mock11552.connect(owner).mint(signer1.address, 0, 10, "0x");
-
-            // make sure the two 1155 contracts arent equal
-            assert.notEqual(mock1155.address, mock11552.address);
-
-            // transfer the 1155 into the contract
-            await mock11552.connect(signer1).safeTransferFrom(
-                signer1.address, 
-                badger.address, 
-                0, 
-                10, 
-                transferData
-            ).should.be.revertedWith("Badger::onERC1155Received: Invalid license key.");
-        })
-    });
-
-    describe('Badger: BadgerVersions.sol', async () => {
-        // setVersion() tests
-        it('setVersion() success', async () => {
-            await badger.connect(owner).setVersion(
-                organizationMaster.address,
-                owner.address,
-                "0x0000000000000000000000000000000000000000",
-                0,
-                0,
-                false
-            );
-        });
-
-        it('setVersion() success: exogenous', async () => {
-            await badger.connect(sigSigner).setVersion(
-                "0x0000000000000000000000000000000000000012",
-                sigSigner.address,
-                "0x0000000000000000000000000000000000000000",
-                0,
-                0,
-                false
-            );
-
-            // setting payment token fails
-            await badger.connect(sigSigner).setVersion(
-                "0x0000000000000000000000000000000000000012",
-                sigSigner.address,
-                "0x0000000000000000000000000000000000000000",
-                1,
-                0,
-                true
-            ).should.be.rejectedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.");
-        });
-
-        it('setVersion() fail: not owner', async () => {
-            await badger.connect(signer1).setVersion(
-                organizationMaster.address,
-                owner.address,
-                "0x0000000000000000000000000000000000000000",
-                0,
-                0,
-                false
-            ).should.be.revertedWith("BadgerVersions::_setVersion: You do not have permission to edit this version.")
-        })
-
-        it('setVersion() fail: locked', async () => {
-            await badger.connect(owner).setVersion(
-                organizationMaster.address,
-                owner.address,
-                "0x0000000000000000000000000000000000000000",
-                0,
-                0,
-                true
-            );
-
-            await badger.connect(owner).setVersion(
-                organizationMaster.address,
-                owner.address,
-                "0x0000000000000000000000000000000000000000",
-                0,
-                0,
-                false
-            ).should.be.revertedWith("BadgerVersions::_setVersion: Cannot update a locked version.");
-        })
-
-        it('setVersion() fail: not allowed to set payment token', async () => {
-            await badger.connect(signer1).setVersion(
-                "0x0000000000000000000000000000000000000001",
-                owner.address,
-                "0x0000000000000000000000000000000000000001",
-                0,
-                0,
-                false
-            ).should.be.revertedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.")
-
-            await badger.connect(signer1).setVersion(
-                "0x0000000000000000000000000000000000000001",
-                owner.address,
-                "0x0000000000000000000000000000000000000000",
-                1,
-                0,
-                false
-            ).should.be.revertedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.")
-
-            await badger.connect(signer1).setVersion(
-                "0x0000000000000000000000000000000000000001",
-                owner.address,
-                "0x0000000000000000000000000000000000000000",
-                0,
-                1,
-                false
-            ).should.be.revertedWith("BadgerVersions::_setVersion: You do not have permission to set a payment token.")
-        })
-
-        // getVersionKey() tests
-        it('getVersionKey() success', async () => {
-            assert.equal(
-                await badger.getVersionKey(
-                    organizationMaster.address,
-                ),
-                "0xa86d54e9aab41ae5e520ff0062ff1b4cbd0b2192bb01080a058bb170d84e6457"
-            );
-        });
-
-        // getLicenseKey() tests
-        it('getLicenseKey() success', async () => {
-            assert.equal(
-                await badger.getLicenseKey(
-                    "0xa86d54e9aab41ae5e520ff0062ff1b4cbd0b2192bb01080a058bb170d84e6457",
-                    "0x0000000000000000000000000000000000000000"
-                ), "0xc2eaf2f7d95b44216efc92a0ebad6e5757dddba9e9bbeadcec3eb9b83b5bb8b9"
-            )
-        })
-
-        it('execTransaction() success', async () => {
-            // mint a mock to the contract
-            await mock1155.connect(owner).mint(
-                badger.address, 0, 1, "0x");
-
-            // build the transfer transaction
-            const transferTx = await mock1155.populateTransaction.safeTransferFrom(
-                badger.address, owner.address, 0, 1, "0x");
-
-            // Transfer mock1155 to signer1
-            await badger.connect(owner).execTransaction(
-                mock1155.address,
-                transferTx.data,
-                0,
-            )
-        })
-
-        it('execTransaction() fail: is not built', async () => {
-            await badger.connect(owner).execTransaction(
-                organizationMaster.address,
-                "0x0000000000000000000000000000000000000000",
-                0
-            ).should.be.reverted;
-        });
-
-        it('execTranscation() fail: is not owner', async () => {
-            await badger.connect(signer1).execTransaction(
-                badger.address,
-                "0x00000000",
-                0
-            ).should.be.revertedWith("Ownable: caller is not the owner")
-        });
-
-        // supportsInterface() tests
-        it('supportsInterface() success', async () => {
-            // Test ERC1155HolderUpgradeable
-            assert.equal(
-                await badger.supportsInterface(
-                    "0x4e2312e0"
-                ), true
-            )
-
-            // Test BadgerInterface
-            assert.equal(
-                await badger.supportsInterface(
-                    "0x7b366213"
-                ), true
-            )
-
-            // Test BadgerVersionsInterface
-            assert.equal(
-                await badger.supportsInterface(
-                    "0x52550d16"
-                ), true
-            )
+            await expect(BadgerFactory.deploy(ethers.constants.AddressZero))
+                    .to.be.revertedWith("Badger::constructor: _implementation cannot be the zero address.");
         });
     });
 
-    describe("Badger: BadgerScout.sol", async () => {
-        it("initialize() fail: cannot call twice", async() => { 
-            await childOrganization.connect(signer1).initialize(
-                signer1.address,
-                "uri",
-                "contracturi",
-                "name",
-                "symbol"
-            ).should.be.revertedWith("Initializable: contract is already initialized");
-        })
+    describe("BadgerOrganization.sol", async function () {
+        it("call: mint()", async function () {
+            const { organization, owner } = await loadFixture(deployNewOrganization);
 
-        it('setOrganizationURI() success', async () => {
-            await childOrganization.connect(owner).setOrganizationURI(
-                "newURI"
-            );
-        })
-
-        it('setOrganizationURI() fail: not owner', async () => {
-            await childOrganization.connect(signer1).setOrganizationURI(
-                "newURI"
-            ).should.be.revertedWith("Ownable: caller is not the owner")
-        })
-
-        it('setBadge() success', async () => {
-            await childOrganization.connect(owner).setBadge(
-                0,
-                false,
-                true,
-                owner.address,
-                "uri",
-                paymentToken1155,
-                []
-            )
-
-            signer = await childOrganization.getSigner(0);
-
-            assert.equal(
-                signer,
-                owner.address
-            );
-        })
-
-        it('setBadge() fail: not leader', async () => {
-            await childOrganization.connect(signer1).setBadge(
-                0,
-                false,
-                true,
-                owner.address,
-                "uri",
-                paymentToken1155,
-                []
-            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
-        })
-
-        it('setBadge() fail: uri cannot be empty', async () => {
-            await childOrganization.connect(owner).setBadge(
-                0,
-                false,
-                true,
-                owner.address,
-                "",
-                paymentToken1155,
-                []
-            ).should.be.revertedWith("BadgerScout::setBadge: URI must be set.")
-        })
-
-        it('setBadge() success', async () => {
-            await childOrganization.connect(owner).setBadge(
-                0,
-                false,
-                true,
-                owner.address,
-                "uri",
-                paymentToken1155,
-                [leaderSigner.address]
-            )
-        })
-
-        it('setClaimable() success', async () => {
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
-            )
-
-            assert.equal(
-                await childOrganization.getClaimable(0),
-                true
-            );
-        })
-
-        it('setClaimable() fail: not real badge', async () => {
-            await childOrganization.connect(owner).setClaimable(
-                1,
-                true
-            ).should.be.revertedWith("BadgerScout::onlyRealBadge: Can only call this for setup badges.")
-        })
-
-        it('setClaimable() fail: not leader', async () => {
-            await childOrganization.connect(signer1).setClaimable(
-                0,
-                true
-            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
+            await expect(organization.mint(owner.address, 0, 100, "0x"))
+                    .to.emit(organization, "TransferSingle")
+                    .withArgs(owner.address, ethers.constants.AddressZero, owner.address, 0, 100)
         });
 
-        it('setAccountBound() success', async () => {
-            await childOrganization.connect(owner).setAccountBound(
-                0,
-                true
-            )
+        it("revert: mint() missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
-            assert.equal(
-                await childOrganization.getAccountBound(0),
-                true
+            await expect(organization.connect(otherAccount).mint(otherAccount.address, 0, 100, "0x"))
+                    .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+        });
+
+        it("call: mintBatch()", async function () {
+            const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.mintBatch([owner.address, otherAccount.address], 1, [100, 200], "0x"))
+                    .to.emit(organization, "TransferSingle")
+                    .withArgs(owner.address, ethers.constants.AddressZero, owner.address, 1, 100)
+        });
+
+        it("revert: mintBatch() missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.connect(otherAccount).mintBatch([otherAccount.address], 1, [100], "0x"))
+                    .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+        });
+
+        it("revert: mintBatch() invalid array lengths", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.mintBatch([otherAccount.address], 1, [100, 100], "0x"))
+                    .to.be.revertedWith("BadgerOrganization::mintBatch: _tos and _amounts must be the same length.")
+        });
+
+        it("call: revoke()", async function () {
+            const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await organization.mint(otherAccount.address, 0, 100, "0x");
+
+            await expect(organization.revoke(otherAccount.address, 0, 100))
+                    .to.emit(organization, "TransferSingle")
+                    .withArgs(owner.address, otherAccount.address, ethers.constants.AddressZero, 0, 100)
+        });
+
+        it("revert: revoke() missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.connect(otherAccount).revoke(otherAccount.address, 0, 100))
+                    .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+        });
+
+        it("call: revokeBatch()", async function () {
+            const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await organization.mintBatch([otherAccount.address], 1, [100], "0x");
+
+            await expect(organization.revokeBatch([otherAccount.address], 1, [100]))
+                    .to.emit(organization, "TransferSingle")
+                    .withArgs(owner.address, otherAccount.address, ethers.constants.AddressZero, 1, 100)
+        });
+
+        it("revert: revokeBatch() missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.connect(otherAccount).revokeBatch([otherAccount.address], 1, [100]))
+                    .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+        });
+
+        it("revert: revokeBatch() invalid array lengths", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.revokeBatch([otherAccount.address], 1, [100, 200]))
+                    .to.be.revertedWith("BadgerOrganization::revokeBatch: _from and _amounts must be the same length.")
+        });
+
+        it("call: forfeit()", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await organization.mint(otherAccount.address, 0, 100, "0x");
+
+            await expect(organization.connect(otherAccount).forfeit(0, 100, "0x"))
+                    .to.emit(organization, "TransferSingle")
+                    .withArgs(otherAccount.address, otherAccount.address, ethers.constants.AddressZero, 0, 100)
+        });
+
+        it("call: uri()", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
+
+            expect(await organization.uri(0)).to.equal("ipfs/uri/{id}/");
+        });
+    });
+
+    describe("BadgerOrganizationLogic.sol", async function () {
+        it("call: setOrganizationURI('placeholder')", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.setOrganizationURI("ipfs/newuri"))
+                    .to.emit(organization, "OrganizationUpdated")
+                    .withArgs("ipfs/newuri")
+        });
+
+        // todo: test organization manager success
+
+        it("revert: setOrganizationURI('')", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.setOrganizationURI(""))
+                    .to.be.revertedWith("BadgerScout::setOrganizationURI: URI must be set.")
+        });
+
+        it("revert: setOrganizationURI('placeholder') missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.connect(otherAccount).setOrganizationURI("ipfs/newuri"))
+                    .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+        });
+
+        it("call: setBadgeURI(0, 'placeholder')", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
+
+            await (
+                expect(organization.setBadgeURI(0, "ipfs/newuri"))
+                    .to.emit(organization, "URI")
+                    .withArgs("ipfs/newuri", 0)
             );
 
-            await childOrganization.connect(owner).setAccountBound(
-                0,
-                false
-            )
-
-            assert.equal(
-                await childOrganization.getAccountBound(0),
-                false
-            );
-        })
-
-        it('setAccountBound() fail: not real badge', async () => {
-            await childOrganization.connect(owner).setAccountBound(
-                1,
-                true
-            ).should.be.revertedWith("BadgerScout::onlyRealBadge: Can only call this for setup badges.")
-        })
-
-        it('setAccountBound() fail: not leader', async () => {
-            await childOrganization.connect(signer1).setAccountBound(
-                0,
-                true
-            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
+            expect(await organization.uri(0)).to.equal("ipfs/newuri");
         });
 
-        it('setSigner() success', async () => {
-            await childOrganization.connect(owner).setSigner(
+        it("call: setBadgeURI(0, 'managerSuccess')", async function () {
+            const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await organization.connect(owner)['setManagers(uint256,address[],bool[])'](
                 0,
-                owner.address
-            )
-
-            assert.equal(
-                await childOrganization.getSigner(0),
-                owner.address
-            );
-
-            await childOrganization.connect(owner).setSigner(
-                0,
-                "0x0000000000000000000000000000000000000000"
-            )
-
-            assert.equal(
-                await childOrganization.getSigner(0),
-                "0x0000000000000000000000000000000000000000"
-            );
-        })
-
-        it('setSigner() fail: not real badge', async () => {
-            await childOrganization.connect(owner).setSigner(
-                1,
-                owner.address
-            ).should.be.revertedWith("BadgerScout::onlyRealBadge: Can only call this for setup badges.")
-        })
-
-        it('setSigner() fail: not leader', async () => {
-            await childOrganization.connect(signer1).setSigner(
-                0,
-                owner.address
-            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
-        });
-
-        it('setBadgeURI() success', async () => {
-            await childOrganization.connect(owner).setBadgeURI(
-                0,
-                "uri"
-            )
-        })
-
-        it('setBadgeURI() fail: not real badge', async () => {
-            await childOrganization.connect(owner).setBadgeURI(
-                1000,
-                "uri"
-            ).should.be.revertedWith("BadgerScout::onlyRealBadge: Can only call this for setup badges.")
-        })
-
-        it('setBadgeURI() fail: not leader', async () => {
-            await childOrganization.connect(signer1).setBadgeURI(
-                0,
-                "uri"
-            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
-        });
-
-        it('setBadgeURI() fail: uri cannot be empty', async () => {
-            await childOrganization.connect(owner).setBadgeURI(
-                0,
-                ""
-            ).should.be.revertedWith("BadgerScout::setBadgeURI: URI must be set.")
-        });
-
-        it('setPaymentToken() success', async () => {
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentToken1155
-            )
-        })
-
-        it('setPaymentToken() fail: not real badge', async () => {
-            await childOrganization.connect(owner).setPaymentToken(
-                1000,
-                paymentToken1155
-            ).should.be.revertedWith("BadgerScout::onlyRealBadge: Can only call this for setup badges.")
-        })
-
-        it('setPaymentToken() fail: not leader', async () => {
-            await childOrganization.connect(signer1).setPaymentToken(
-                0,
-                paymentToken1155
-            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
-        });
-
-        it('setDelegates() success', async () => {
-            await childOrganization.connect(owner).setDelegates(
-                0,
-                [leaderSigner.address],
+                [otherAccount.address],
                 [true]
-            )
-
-            assert.equal(
-                await childOrganization.isDelegate(0, leaderSigner.address),
-                true
             );
 
-            await childOrganization.connect(leaderSigner).setSigner(
-                0,
-                leaderSigner.address
-            )
+            await expect(organization.connect(otherAccount).setBadgeURI(0, "ipfs/managerSuccess"))
+                .to.emit(organization, "URI")
+                .withArgs("ipfs/managerSuccess", 0)
 
-            assert.equal(
-                await childOrganization.getSigner(0),
-                leaderSigner.address
-            );
-        })
-
-        it('setDelegates() fail: not real badge', async () => {
-            await childOrganization.connect(owner).setDelegates(
-                1000,
-                [leaderSigner.address],
-                [true]
-            ).should.be.revertedWith("BadgerScout::onlyRealBadge: Can only call this for setup badges.")
-        })
-
-        it('setDelegates() fail: not leader', async () => {
-            await childOrganization.connect(signer1).setDelegates(
-                0,
-                [leaderSigner.address],
-                [true]
-            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
+            expect(await organization.uri(0)).to.equal("ipfs/managerSuccess");
         });
 
-        it('setDelegates() fail: arrays not equal length', async () => {
-            await childOrganization.connect(owner).setDelegates(
-                0,
-                [leaderSigner.address],
-                [true, false]
-            ).should.be.revertedWith("BadgerScout::setDelegates: _delegates and _isDelegate arrays must be the same length.")
+        it("revert: setBadgeURI(0, '')", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
+
+            expect(organization.setBadgeURI(0, ""))
+                .to.be.revertedWith("BadgerScout::setBadgeURI: URI must be set.")
         });
 
-        it('setDelegatesBatch() success', async () => {
-            await childOrganization.connect(owner).setDelegatesBatch(
-                [0, 0],
-                [leaderSigner.address, leaderSigner.address],
-                [true, false]
-            )
+        it("revert: setBadgeURI(0, 'placeholder') missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
-            assert.equal(
-                await childOrganization.isDelegate(0, leaderSigner.address),
-                false
-            );
-        })
-
-        it('setDelegatesBatch() fail: not real badge', async () => {
-            await childOrganization.connect(owner).setDelegatesBatch(
-                [1000, 1000],
-                [leaderSigner.address, leaderSigner.address],
-                [true, false]
-            ).should.be.revertedWith("BadgerScout::_verifyFullBatch: Can only call this for setup badges.")
-        })
-
-        it('setDelegatesBatch() fail: not leader', async () => {
-            await childOrganization.connect(signer1).setDelegatesBatch(
-                [0, 0],
-                [leaderSigner.address, leaderSigner.address],
-                [true, false]
-            ).should.be.revertedWith("BadgerScout::_verifyFullBatch: Only leaders can call this.")
+            expect(organization.connect(otherAccount).setBadgeURI(0, "ipfs/newuri"))
+                .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
         });
 
-        it('setDelegatesBatch() fail: arrays not equal length', async () => {
-            await childOrganization.connect(owner).setDelegatesBatch(
-                [0, 0],
-                [leaderSigner.address, leaderSigner.address],
-                [true]
-            ).should.be.revertedWith("BadgerScout::setDelegatesBatch: _ids, _delegates, and _isDelegate must be the same length.")
+        it("revert: setManagers(0, [other], [true]) missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.connect(otherAccount)['setManagers(uint256,address[],bool[])'](0, [otherAccount.address], [true]))
+                    .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
         });
 
-        it('execTransaction() success', async () => {
-            // mint a mock to the contract
-            await mock1155.connect(owner).mint(
-                childOrganization.address, 0, 11, "0x");
+        it("revert: setManagers(0, [], [true]) arrays not equal", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
 
-            // build the transfer transaction
-            const transferTx = await mock1155.populateTransaction.safeTransferFrom(
-                childOrganization.address, owner.address, 0, 1, "0x");
-
-            // Transfer mock1155 to signer1
-            await childOrganization.connect(owner).execTransaction(
-                mock1155.address,
-                transferTx.data,
-                0,
-            )
-        })
-
-        it('execTransaction() fail: is not built', async () => {
-            await childOrganization.connect(owner).execTransaction(
-                organizationMaster.address,
-                "0x0000000000000000000000000000000000000000",
-                0
-            ).should.be.reverted;
+            await expect(organization['setManagers(uint256,address[],bool[])'](0, [], [true]))
+                    .to.be.revertedWith("BadgerScout::setManagers: _managers and _isManager must be the same length.")
         });
 
-        it('execTranscation() fail: is not owner', async () => {
-            await childOrganization.connect(signer1).execTransaction(
-                badger.address,
-                "0x00000000",
-                0
-            ).should.be.revertedWith("Ownable: caller is not the owner")
-        });
-    })
+        it("revert: setManagers([other], []) arrays not equal", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
-    describe("Badger: BadgerOrganization.sol", async () => {
-        it("leaderMint() success", async () => {
-            await childOrganization.connect(owner).leaderMint(
-                signer1.address,
-                0,
-                1,
-                "0x"
-            )
-        })
-
-        it("leaderMint() fail: not real badge", async () => {
-            await childOrganization.connect(owner).leaderMint(
-                signer1.address,
-                1000,
-                1,
-                "0x"
-            ).should.be.revertedWith("BadgerScout::onlyRealBadge: Can only call this for setup badges.")
+            await expect(organization['setManagers(address[],bool[])']([otherAccount.address], []))
+                    .to.be.revertedWith("BadgerScout::setManagers: _managers and _isManager must be the same length.")
         });
 
-        it("leaderMint() fail: not leader", async () => {
-            await childOrganization.connect(signer1).leaderMint(
-                signer1.address,
-                0,
-                1,
-                "0x"
-            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
+        it("revert: setManagers([other], [true]) missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.connect(otherAccount)['setManagers(address[],bool[])']([otherAccount.address], [true]))
+                    .to.be.revertedWith("Ownable: caller is not the owner")
         });
 
-        it("leaderMintBatch() success", async () => {
-            await childOrganization.connect(owner).leaderMintBatch(
-                [signer1.address, leaderSigner.address],
-                0,
-                [1, 1],
-                "0x"
-            )
-        })
+        it("revert: setManagers([address0], [true])", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
 
-        it("leaderMintBatch() fail: not real badge", async () => {
-            await childOrganization.connect(owner).leaderMintBatch(
-                [signer1.address, leaderSigner.address],
-                1000,
-                [1, 1],
-                "0x"
-            ).should.be.revertedWith("BadgerScout::onlyRealBadge: Can only call this for setup badges.")
+            await expect(organization['setManagers(address[],bool[])']([ethers.constants.AddressZero], [true]))
+                    .to.be.revertedWith("BadgerScout::setManagers: Manager cannot be the zero address.")
         });
 
-        it("leaderMintBatch() fail: not leader", async () => {
-            await childOrganization.connect(signer1).leaderMintBatch(
-                [signer1.address, leaderSigner.address],
-                0,
-                [1, 1],
-                "0x"
-            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
+        it("revert: setManagers(0, [address0], [true])", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
+
+            await expect(organization['setManagers(uint256,address[],bool[])'](0, [ethers.constants.AddressZero], [true]))
+                    .to.be.revertedWith("BadgerScout::setManagers: Manager cannot be the zero address.")
         });
 
-        it("leaderMintBatch() fail: arrays not equal length", async () => {
-            await childOrganization.connect(owner).leaderMintBatch(
-                [signer1.address, leaderSigner.address],
-                0,
-                [1, 1, 1],
-                "0x"
-            ).should.be.revertedWith("BadgerOrganization::leaderMintBatch: _tos and _amounts must be the same length.")
-        });
-
-        it("leaderMintFullBatch() success", async () => {
-            await childOrganization.connect(owner).leaderMintFullBatch(
-                [signer1.address, leaderSigner.address],
-                [0, 0],
-                [1, 1],
-                "0x"
-            )
-        })
-
-        it("leaderMintFullBatch() success: delegate", async() => { 
-            await childOrganization.connect(owner).setDelegates(
-                0,
-                [leaderSigner.address],
-                [true]
-            )
-
-            await childOrganization.connect(leaderSigner).leaderMintFullBatch(
-                [signer1.address, leaderSigner.address],
-                [0, 0],
-                [1, 1],
-                "0x"
-            )
-        })
-
-        it("leaderMintFullBatch() fail: not real badge", async () => {
-            await childOrganization.connect(owner).leaderMintFullBatch(
-                [signer1.address, leaderSigner.address],
-                [1000, 1000],
-                [1, 1],
-                "0x"
-            ).should.be.revertedWith("BadgerScout::_verifyFullBatch: Can only call this for setup badges.")
-        });
-
-        it("leaderMintFullBatch() fail: not leader", async () => {
-            await childOrganization.connect(signer1).leaderMintFullBatch(
-                [signer1.address, leaderSigner.address],
-                [0, 0],
-                [1, 1],
-                "0x"
-            ).should.be.revertedWith("BadgerScout::_verifyFullBatch: Only leaders can call this.")
-        });
-
-        it("leaderMintFullBatch() fail: arrays not equal length", async () => {
-            await childOrganization.connect(owner).leaderMintFullBatch(
-                [signer1.address, leaderSigner.address],
-                [0, 0],
-                [1, 1, 1],
-                "0x"
-            ).should.be.revertedWith("BadgerOrganization::leaderMintFullBatch: _froms, _ids, and _amounts must be the same length.")
-        });
-
-        it("revoke() success", async () => {
-            await childOrganization.connect(owner).revoke(
-                signer1.address,
-                0,
-                1,
-            )
-        })
-
-        it("revoke() fail: insufficient balance", async () => {
-            await childOrganization.connect(owner).revoke(
-                signer1.address,
-                1000,
-                1,
-            ).should.be.revertedWith("ERC1155: burn amount exceeds balance")
-        });
-
-        it("revoke() fail: not leader", async () => {
-            await childOrganization.connect(signer1).revoke(
-                signer1.address,
-                0,
-                1,
-            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
-        });
-
-        it('revokeBatch()', async () => {
-            // mint 10 badge 0s to signer1
-            await childOrganization.connect(owner).leaderMint(
-                signer1.address,
-                0,
-                10,
-                "0x"
-            )
-
-            await childOrganization.connect(owner).revokeBatch(
-                [signer1.address, leaderSigner.address],
-                0,
-                [1, 1],
-            )
-        })
-
-        it("revokeBatch() fail: not leader", async () => {
-            await childOrganization.connect(signer1).revokeBatch(
-                [signer1.address, leaderSigner.address],
-                0,
-                [1, 1],
-            ).should.be.revertedWith("BadgerScout::onlyLeader: Only leaders can call this.")
-        });
-
-        it("revokeBatch() fail: arrays not equal length", async () => {
-            await childOrganization.connect(owner).revokeBatch(
-                [signer1.address, leaderSigner.address],
-                0,
-                [1, 1, 1],
-            ).should.be.revertedWith("BadgerOrganization::revokeBatch: _from and _amounts must be the same length.")
-        });
-
-        it("revokeFullBatch() success", async () => {
-            await childOrganization.connect(owner).revokeFullBatch(
-                [signer1.address, leaderSigner.address],
-                [0, 0],
-                [1, 1],
-            )
-        })
-
-        it("revokeFullBatch() success: delegate", async () => {
-            await childOrganization.connect(owner).setDelegates(
-                0,
-                [leaderSigner.address],
-                [true]
-            )
-
-            await childOrganization.connect(leaderSigner).revokeFullBatch(
-                [signer1.address],
-                [0],
-                [1],
-            )
-        })
-
-        it('revokeFullBatch() fail: insufficient balance', async () => {
-            await childOrganization.connect(owner).revokeFullBatch(
-                [signer1.address, leaderSigner.address],
-                [1000, 1000],
-                [1, 1],
-            ).should.be.revertedWith("ERC1155: burn amount exceeds balance")
-        })
-
-        it("revokeFullBatch() fail: not leader", async () => {
-            await childOrganization.connect(signer1).revokeFullBatch(
-                [signer1.address, leaderSigner.address],
-                [0, 0],
-                [1, 1],
-            ).should.be.revertedWith("BadgerOrganization::_verifyFullBatch: Only leaders can call this.")
-        });
-
-        it("revokeFullBatch() fail: arrays not equal length", async () => {
-            await childOrganization.connect(owner).revokeFullBatch(
-                [signer1.address, leaderSigner.address],
-                [0, 0],
-                [1, 1, 1],
-            ).should.be.revertedWith("BadgerOrganization::revokeFullBatch: _froms, _ids, and _amounts must be the same length.")
-        });
-
-        it("forfeit() success", async () => {
-            await childOrganization.connect(signer1).forfeit(
-                0,
-                1,
-                "0x"
-            )
-        });
-
-        it("forfeit() fail: insufficient balance", async () => {
-            await childOrganization.connect(signer1).forfeit(
-                0,
-                10000,
-                "0x"
-            ).should.be.revertedWith("ERC1155: burn amount exceeds balance")
-        })
-
-        it("safeTransferFrom() success", async () => {
-            // Set the account bound token to be transferable
-            await childOrganization.connect(owner).setAccountBound(
-                0,
-                false
-            );
-
-            assert.equal(
-                await childOrganization.getAccountBound(0),
-                false
-            )
-
-            // Try and transfer the account bound token to another account will succeed
-            await childOrganization.connect(signer1).safeTransferFrom(
-                signer1.address,
-                userSigner.address,
-                0,
-                1,
-                "0x"
-            )
-        })
-
-        it('safeTransferFrom() success: leader can transfer account bound', async () => {
-            // Set this badge as account bound
-            await childOrganization.connect(owner).setAccountBound(
-                0,
-                true
-            );
-
-            assert.equal(
-                await childOrganization.getAccountBound(0),
-                true
-            )
-
-            // mint a token to the owner to test transferring
-            await childOrganization.connect(owner).leaderMint(
-                owner.address,
-                0,
-                2,
-                "0x"
-            )
-
-            // Try and transfer the account bound token to another account will succeed
-            await childOrganization.connect(owner).safeTransferFrom(
-                owner.address,
-                userSigner.address,
-                0,
-                1,
-                "0x"
-            )
-        })
-
-        it("safeTransferFrom() success: delegate can transfer account bound", async () => {
-            // Set this badge as account bound
-            await childOrganization.connect(owner).setAccountBound(
-                0,
-                true
-            );
-
-            assert.equal(
-                await childOrganization.getAccountBound(0),
-                true
-            )
-
-            // mint a token to the owner to test transferring
-            await childOrganization.connect(owner).leaderMint(
-                leaderSigner.address,
-                0,
-                2,
-                "0x"
-            )
-
-            // Set the delegate
-            await childOrganization.connect(owner).setDelegates(
-                0,
-                [leaderSigner.address],
-                [true]
-            )
-
-            // Try and transfer the account bound token to another account will succeed
-            await childOrganization.connect(leaderSigner).safeTransferFrom(
-                leaderSigner.address,
-                userSigner.address,
-                0,
-                1,
-                "0x"
-            )
-        });
-
-        it("safeTransferFrom() success: can transfer to contract", async () => {
-            // mint a token to the owner to test transferring
-            await childOrganization.connect(owner).leaderMint(
-                signer1.address,
-                0,
-                2,
-                "0x"
-            )
-
-            // Try and transfer the account bound token to another account will succeed
-            await childOrganization.connect(signer1).safeTransferFrom(
-                signer1.address,
-                childOrganization.address,
-                0,
-                1,
-                "0x"
-            )
-        })
-
-        it("safeTransferFrom() fail: transferring out of contract as user", async () => {
-            await childOrganization.connect(signer1).safeTransferFrom(
-                childOrganization.address,
-                userSigner.address,
-                0,
-                1,
-                "0x"
-            ).should.be.revertedWith("ERC1155: caller is not token owner nor approved")
-        })
-
-        it("safeTransferFrom() fail: account bound", async () => {
-            // Set this badge as account bound
-            await childOrganization.connect(owner).setAccountBound(
-                0,
-                true
-            );
-
-            // mint a stand in
-            await childOrganization.connect(owner).leaderMint(
-                signer1.address,
-                0,
-                1,
-                "0x"
-            )
-
-            // Try and transfer the account bound token to another account will fail
-            await childOrganization.connect(signer1).safeTransferFrom(
-                signer1.address,
-                userSigner.address,
-                0,
-                1,
-                "0x"
-            ).should.be.revertedWith("BadgerScout::_verifyTransfer: Missing the proper transfer permissions.")
-        })
-
-        it("safeBatchTransferFrom() success", async () => {
-            // Set the account bound token to be transferable
-            await childOrganization.connect(owner).setAccountBound(
-                0,
-                false
-            );
-
-            assert.equal(
-                await childOrganization.getAccountBound(0),
-                false
-            )
-
-            // Try and transfer the account bound token to another account will succeed
-            await childOrganization.connect(signer1).safeBatchTransferFrom(
-                signer1.address,
-                userSigner.address,
-                [0, 0],
-                [1, 1],
-                "0x"
-            )
-        })
-
-        it('safeBatchTransferFrom() success: leader can transfer account bound', async () => {
-            // Set this badge as account bound
-            await childOrganization.connect(owner).setAccountBound(
-                0,
-                true
-            );
-
-            assert.equal(
-                await childOrganization.getAccountBound(0),
-                true
-            )
-
-            // mint a token to the owner to test transferring
-            await childOrganization.connect(owner).leaderMint(
-                owner.address,
-                0,
-                2,
-                "0x"
-            )
-
-            // Try and transfer the account bound token to another account will succeed
-            await childOrganization.connect(owner).safeBatchTransferFrom(
-                owner.address,
-                userSigner.address,
-                [0, 0],
-                [1, 1],
-                "0x"
-            )
-        })
-
-        it("safeBatchTransferFrom() success: delegate can transfer account bound", async () => {
-            // Set this badge as account bound
-            await childOrganization.connect(owner).setAccountBound(
-                0,
-                true
-            );
-
-            assert.equal(
-                await childOrganization.getAccountBound(0),
-                true
-            )
-
-            // mint a token to the owner to test transferring
-            await childOrganization.connect(owner).leaderMint(
-                leaderSigner.address,
-                0,
-                2,
-                "0x"
-            )
-
-            // Set the delegate
-            await childOrganization.connect(owner).setDelegates(
-                0,
-                [leaderSigner.address],
-                [true]
-            )
-
-            // Try and transfer the account bound token to another account will succeed
-            await childOrganization.connect(leaderSigner).safeBatchTransferFrom(
-                leaderSigner.address,
-                userSigner.address,
-                [0, 0],
-                [1, 1],
-                "0x"
-            )
-        });
-
-        it("safeBatchTransferFrom() success: can transfer to contract", async () => {
-            // mint a token to the owner to test transferring
-            await childOrganization.connect(owner).leaderMint(
-                signer1.address,
-                0,
-                2,
-                "0x"
-            )
-
-            // Try and transfer the account bound token to another account will succeed
-            await childOrganization.connect(signer1).safeBatchTransferFrom(
-                signer1.address,
-                childOrganization.address,
-                [0, 0],
-                [1, 1],
-                "0x"
-            )
-        })
-
-        it("safeBatchTransferFrom() fail: transferring out of contract as user", async () => {
-            await childOrganization.connect(signer1).safeBatchTransferFrom(
-                childOrganization.address,
-                userSigner.address,
-                [0, 0],
-                [1, 1],
-                "0x"
-            ).should.be.revertedWith("ERC1155: caller is not token owner nor approved")
-        })
-
-        it("safeBatchTransferFrom() fail: account bound", async () => {
-            // Set this badge as account bound
-            await childOrganization.connect(owner).setAccountBound(
-                0,
-                true
-            );
-
-            // mint a stand in
-            await childOrganization.connect(owner).leaderMint(
-                signer1.address,
-                0,
-                1,
-                "0x"
-            )
-
-            // Try and transfer the account bound token to another account will fail
-            await childOrganization.connect(signer1).safeBatchTransferFrom(
-                signer1.address,
-                userSigner.address,
-                [0, 0],
-                [1, 1],
-                "0x"
-            ).should.be.revertedWith("BadgerScout::_verifyTransfer: Missing the proper transfer permissions.")
-        })
-
-        it("depositETH() success", async () => {
-            /// set claimable to true
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
-            )
-
-            // set 1 ETH as the payment token 
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentTokenETH
-            );
-
-            // deposit the eth
-            await childOrganization.connect(signer1).depositETH(0, {
-                value: ethers.utils.parseEther("1")
-            })
-        })
-
-        it('depositETH() fail: not real badge', async () => {
-            await childOrganization.connect(signer1).depositETH(1000, {
-                value: ethers.utils.parseEther("1")
-            }).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for setup badges.")
-        })
-
-        it("depositETH() fail: not claimable", async () => {
-            // set signer to none
-            await childOrganization.connect(owner).setSigner(
-                0,
-                "0x0000000000000000000000000000000000000000"
-            )
-
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                false
-            );
-
-            await childOrganization.connect(signer1).depositETH(0, {
-                value: ethers.utils.parseEther("1")
-            }).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for claimable badges.")
-        })
-
-        it("depositETH() fail: invalid payment token", async () => {
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentToken1155
-            )
-
-            // set the badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
-            );
-
-            await childOrganization.connect(signer1).depositETH(0, {
-                value: ethers.utils.parseEther("1")
-            }).should.be.revertedWith("BadgerScout::_verifyPayment: Invalid payment token.")
-        })
-
-        it('depositERC20() success', async () => {
-            // set the badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
-            );
-
-            // set the payment token
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentToken20
-            );
-
-            // mint some tokens to the signer
-            await mock20.connect(owner).mint(
-                signer1.address,
-                1000
-            )
-
-            // approve the contract to spend the tokens
-            await mock20.connect(signer1).approve(
-                childOrganization.address,
-                1000
-            )
-
-            // deposit the tokens
-            await childOrganization.connect(signer1).depositERC20(
-                0,
-                mock20.address,
-                1
-            )
-        })
-
-        it('depositERC20() fail: not real badge', async () => {
-            await childOrganization.connect(signer1).depositERC20(
-                1000,
-                mock20.address,
-                1
-            ).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for setup badges.")
-        })
-
-        it('depositERC20() fail: not claimable', async () => {
-            // set the badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                false
-            );
-
-            await childOrganization.connect(signer1).depositERC20(
-                0,
-                mock20.address,
-                1
-            ).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for claimable badges.")
-        })
-
-        it('depositERC20() fail: invalid payment token', async () => {
-            // set the badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
-            );
-
-            // set the payment token
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentToken1155
-            );
-
-            await childOrganization.connect(signer1).depositERC20(
-                0,
-                mock20.address,
-                1
-            ).should.be.revertedWith("BadgerScout::_verifyPayment: Invalid payment token.")
-        })
-
-        it('depositERC20() fail: not enough allowance', async () => {
-            // set the badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
-            );
-
-            // set the payment token
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentToken20
-            );
-
-            // mint some tokens to the signer
-            await mock20.connect(owner).mint(
-                signer1.address,
-                1000
-            )
-
-            // deposit the tokens
-            await childOrganization.connect(signer1).depositERC20(
-                0,
-                mock20.address,
-                10000000
-            ).should.be.revertedWith("ERC20: insufficient allowance")
-        })
-
-        it("onERC1155Received() success", async () => {
-            // set the badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
-            );
-
-            // set the payment token
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentToken1155
-            );
-
-            // mint some tokens to the signer
-            await mock1155.connect(owner).mint(
-                signer1.address,
-                0,
-                15,
-                "0x"
-            )
-
-            // encode 0 as badge into the data
-            const data = ethers.utils.defaultAbiCoder.encode(
-                ["uint256"],
-                [0]
-            )
-
-            assert.notEqual(
-                data,
-                "0x"
-            )
-
-            // transfer the token to the contract
-            await mock1155.connect(signer1).safeTransferFrom(
-                signer1.address,
-                childOrganization.address,
-                0,
-                1,
-                data
+        it("call: setManagers(0, [other], [true])", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            const managerKey = getManagerKey(0, otherAccount.address);
+
+            await (
+                expect(organization['setManagers(uint256,address[],bool[])'](
+                    0, [otherAccount.address], [true]
+                )).to.emit(organization, "ManagerUpdated")
+                    .withArgs(managerKey, true)
             );
         });
 
-        it("onERC1155Received() success: normal transfer", async () => {
-            await mock1155.connect(owner).mint(
-                signer1.address,
-                0,
-                15,
-                "0x"
-            )
+        it("call: setManagers([other], [true])", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
-            // transfer the token to the contract
-            await mock1155.connect(signer1).safeTransferFrom(
-                signer1.address,
-                childOrganization.address,
-                0,
-                1,
-                "0x"
+            const managerKey = getOrgManagerKey(otherAccount.address);
+
+            await (
+                expect(organization['setManagers(address[],bool[])'](
+                    [otherAccount.address], [true]
+                )).to.emit(organization, "ManagerUpdated")
+                    .withArgs(managerKey, true)
             );
-        })
-
-        it("onERC1155Received() fail: not real badge", async () => {
-            // encode 1000 as badge into the data
-            const data = ethers.utils.defaultAbiCoder.encode(
-                ["uint256"],
-                [1000]
-            )
-
-            // transfer the token to the contract
-            await mock1155.connect(signer1).safeTransferFrom(
-                signer1.address,
-                childOrganization.address,
-                0,
-                1,
-                data
-            ).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for setup badges.")
         });
 
-        it("onERC1155Received() fail: not claimable", async () => {
-            // set the badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                false
+        // setHooks
+        it("revert: setHooks(0, [other], [true]) missing permission", async function () {
+            const { organization, hook, otherAccount } = await loadFixture(deployNewHook);
+
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, hook.address]);
+
+            await (
+                expect(organization.connect(otherAccount).setHooks(slot, [hook.address], [true]))
+                    .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
             );
-
-            // encode 0 as badge into the data
-            const data = ethers.utils.defaultAbiCoder.encode(
-                ["uint256"],
-                [0]
-            )
-
-            // transfer the token to the contract
-            await mock1155.connect(signer1).safeTransferFrom(
-                signer1.address,
-                childOrganization.address,
-                0,
-                1,
-                data
-            ).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for claimable badges.")
         });
 
-        it("onERC1155Received() fail: invalid payment token", async () => {
-            // set the badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
+        it("revert: setHooks(0, [other], [true]) arrays wrong length", async function () {
+            const { organization, hook, owner } = await loadFixture(deployNewHook);
+
+            const target = ethers.Wallet.createRandom();
+
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, target.address]);
+
+            await (
+                expect(organization.connect(owner).setHooks(slot, [target.address], [true, true]))
+                    .to.be.revertedWith("BadgerScout::setHooks: _hooks and _isHook must be the same length.")
             );
-
-            // set the payment token
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentToken20
-            );
-
-            // encode 0 as badge into the data
-            const data = ethers.utils.defaultAbiCoder.encode(
-                ["uint256"],
-                [0]
-            )
-
-            // transfer the token to the contract
-            await mock1155.connect(signer1).safeTransferFrom(
-                signer1.address,
-                childOrganization.address,
-                0,
-                1,
-                data
-            ).should.be.revertedWith("BadgerScout::_verifyPayment: Invalid payment token.")
         });
 
-        it("onERC1155Received() fail: not enough balance", async () => {
-            // set the badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
-            );
+        it("revert: setHooks(0, [address0], [true]) zero address", async function () {
+            const { organization, owner } = await loadFixture(deployNewOrganization);
 
-            // set the payment token
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentToken1155
-            );
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, ethers.constants.AddressZero]);
 
-            // encode 0 as badge into the data
-            const data = ethers.utils.defaultAbiCoder.encode(
-                ["uint256"],
-                [0]
-            )
-
-            // transfer the token to the contract
-            await mock1155.connect(signer1).safeTransferFrom(
-                signer1.address,
-                childOrganization.address,
-                0,
-                10000000,
-                data
-            ).should.be.revertedWith("ERC1155: insufficient balance for transfer")
+            await expect(organization.connect(owner).setHooks(slot, [ethers.constants.AddressZero], [true]))
+                    .to.be.revertedWith("BadgerScout::setHooks: Hook cannot be the zero address.")
         });
 
-        it("onERC721Received() success", async () => {
-            // set the badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
-            );
+        it("revert: setHooks(0, [other], [true]) not a contract", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
-            // set the payment token
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentToken721
-            );
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, otherAccount.address]);
 
-            // mint 50 tokens to the signer
-            for (let i = 0; i < 10; i++) {
-                tx = await mock721.connect(owner).mint(
-                    signer1.address,
-                    i
-                )
-                tx.wait()
+            await expect(organization.setHooks(slot, [otherAccount.address], [true]))
+                    .to.be.revertedWith("BadgerOrganizationHooked::_configManager: Manager is not a contract.")
+        });
+
+        it("call: setHooks(0, [other], [true])", async function () {
+            const { organization, hook, owner } = await loadFixture(deployNewHook);
+
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, hook.address]);
+
+            const hookConfig = ethers.utils.defaultAbiCoder.encode(["uint256", "bool"], [0, true]);
+
+            const transactionsData = [
+                organization.interface.encodeFunctionData("setHooks", [slot, [hook.address], [true]]),
+                organization.interface.encodeFunctionData("configHook", [slot, hook.address, hookConfig])
+            ];
+
+            await expect(organization.connect(owner).multicall(transactionsData))
+                .to.emit(organization, "HookUpdated").withArgs(slot, hook.address, true)
+                .to.emit(organization, "HookConfigured").withArgs(slot, hookConfig);
+        });
+
+        // configHook
+        it("revert: configHook(slot, hook, '0x')", async function () {
+            const { organization, hook, owner } = await loadFixture(deployNewHook);
+
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, hook.address]);
+
+            await expect(organization.connect(owner).configHook(slot, hook.address, "0x"))
+                .to.be.revertedWith("BadgerOrganizationHooked::_configHook: Hook is not enabled.")
+        });
+
+        it("revert: configHook(0, hook, config) missing permission", async function () {
+            const { organization, hook, otherAccount } = await loadFixture(deployNewHook);
+
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, hook.address]);
+
+            const hookConfig = ethers.utils.defaultAbiCoder.encode(["uint256", "bool"], [0, true]);
+
+            await expect(organization.connect(otherAccount).configHook(slot, hook.address, hookConfig))
+                .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+        });
+
+        // configManager
+        it("call: configManager(manager, config)", async function () {
+            const { manager, organization, owner } = await loadFixture(deployNewManagedOrganization);
+
+            const managerKey = getOrgManagerKey(manager.address)
+            const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
+
+            const transactions = [
+                organization.interface.encodeFunctionData("setManagers(address[],bool[])", [[manager.address], [true]]),
+                organization.interface.encodeFunctionData("configManager(address,bytes)", [manager.address, config])
+            ]
+
+            await expect(organization.connect(owner).multicall(transactions))
+                .to.emit(organization, "ManagerConfigured").withArgs(managerKey, config);
+        });
+
+        it("call: configManager(0, manager, config)", async function () {
+            const { manager, organization, owner } = await loadFixture(deployNewManagedOrganization);
+
+            const managerKey = getManagerKey(0, manager.address)
+            const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
+
+            const transactions = [
+                organization.interface.encodeFunctionData("setManagers(uint256,address[],bool[])", [0, [manager.address], [true]]),
+                organization.interface.encodeFunctionData("configManager(uint256,address,bytes)", [0, manager.address, config])
+            ]
+
+            await expect(organization.connect(owner).multicall(transactions))
+                .to.emit(organization, "ManagerConfigured").withArgs(managerKey, config);
+        });
+
+        it("revert: configManager(manager, config) missing permission", async function () {
+            const { manager, organization, otherAccount } = await loadFixture(deployNewManagedOrganization);
+
+            const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
+
+            await expect(organization.connect(otherAccount)["configManager(address,bytes)"](manager.address, config))
+                .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+        });
+
+        it("revert: configManager(0, manager, config) missing permission", async function () {
+            const { manager, organization, otherAccount } = await loadFixture(deployNewManagedOrganization);
+
+            const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
+
+            await expect(organization.connect(otherAccount)["configManager(uint256,address,bytes)"](0, manager.address, config))
+                .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+        });
+
+        it("revert: configManager(manager, config) Manager not enabled", async function () {
+            const { manager, organization } = await loadFixture(deployNewManagedOrganization);
+
+            const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
+
+            await expect(organization["configManager(address,bytes)"](manager.address, config))
+                .to.be.revertedWith("BadgerOrganizationHooked::_configManager: Manager is not enabled.")
+        });
+
+
+        it("revert: configManager(manager, config) Not configurable module", async function () {
+            const { manager, organization, otherAccount } = await loadFixture(deployNewManagedOrganization);
+
+            const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
+
+            await expect(organization.connect(otherAccount)["configManager(address,bytes)"](manager.address, config))
+                .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+        });
+
+        it("revert: configManager(manager, config) Manager not contract", async function () {
+            const { owner, organization, otherAccount } = await loadFixture(deployNewManagedOrganization);
+
+            const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
+
+            const transactions = [
+                organization.interface.encodeFunctionData("setManagers(address[],bool[])", [[otherAccount.address], [true]]),
+                organization.interface.encodeFunctionData("configManager(address,bytes)", [otherAccount.address, config])
+            ]
+
+            await expect(organization.connect(owner).multicall(transactions))
+                .to.be.revertedWith("BadgerOrganizationHooked::_configManager: Manager is not a contract.")
+        });
+
+        it("revert: configManager(manager, config) Manager not configured module", async function () {
+            const { badgerFactory, owner, organization } = await loadFixture(deployNewOrganization);
+
+            const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
+
+            const transactions = [
+                organization.interface.encodeFunctionData("setManagers(address[],bool[])", [[badgerFactory.address], [true]]),
+                organization.interface.encodeFunctionData("configManager(address,bytes)", [badgerFactory.address, config])
+            ]
+
+            await expect(organization.connect(owner).multicall(transactions))
+                .to.be.revertedWith("BadgerOrganizationHooked::_configManager: Manager is not a configured Badger module.")
+        });
+
+        // isOrganizationManager
+        it("call: isOrganizationManager(owner)", async function () {
+            const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+            const random = ethers.Wallet.createRandom();
+            const tx = await organization.connect(owner)['setManagers(address[],bool[])']([otherAccount.address], [true])
+            await tx.wait();
+
+            expect(await organization.isOrganizationManager(owner.address)).to.be.true;
+            expect(await organization.isOrganizationManager(otherAccount.address)).to.be.true;
+            expect(await organization.isOrganizationManager(random.address)).to.be.false;
+        });
+
+        // isBadgeManager
+        it("call: isBadgeManager(0, owner)", async function () {
+            const { organization, owner, otherAccount } = await loadFixture(deployNewOrganization);
+
+            const tx = await organization.connect(owner)['setManagers(uint256,address[],bool[])'](0, [otherAccount.address], [true])
+            await tx.wait();
+
+            const random = ethers.Wallet.createRandom();
+
+            expect(await organization.isBadgeManager(0, owner.address)).to.be.true;
+            expect(await organization.isBadgeManager(0, otherAccount.address)).to.be.true;
+            expect(await organization.isBadgeManager(0, random.address)).to.be.false;
+        });
+
+        // supportsInterface
+        it("call: supportsInterface(0xd2779f52)", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
+
+            expect(await organization.supportsInterface("0x01ffc9a7")).to.equal(true);
+            expect(await organization.supportsInterface("0xd2779f52")).to.equal(true);
+            expect(await organization.supportsInterface("0x7a3851dc")).to.equal(true);
+        });
+
+        it("revert: initialize(0) already initialized", async function () {
+            const { organization, owner } = await loadFixture(deployNewOrganization);
+
+            org = {
+                deployer: owner.address,
+                uri: "x",
+                organizationURI: "x",
+                name: "x",
+                symbol: "X"
             }
 
-            const data = ethers.utils.defaultAbiCoder.encode(
-                ["uint256"],
-                [0]
-            )
+            await expect(organization.initialize(org)).to.be.revertedWith("Initializable: contract is already initialized");
+        });
+    });
 
-            // build the overloaded safeTransferFrom function
-            await mock721.connect(signer1)["safeTransferFrom(address,address,uint256,bytes)"](
-                signer1.address,
-                childOrganization.address,
-                0,
-                data
-            )
+    describe("BadgerHooked.sol", async function () {
+        it("call: getHooks(slot):", async function () {
+            const { organization, hook, owner } = await loadFixture(deployNewHook);
+
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, hook.address]);
+
+            await organization.connect(owner).setHooks(slot, [hook.address], [true]);
+
+            expect(await organization.getHooks(slot)).to.deep.equal([hook.address]);
         });
 
-        it("onERC721Received() success: normal transfer", async () => {
-            await mock721.connect(signer1)["safeTransferFrom(address,address,uint256,bytes)"](
-                signer1.address,
-                childOrganization.address,
-                2,
-                "0x"
-            )
-        })
+        it("call: setHook(slot, hook, false)", async function () {
+            const { organization, hook, owner } = await loadFixture(deployNewHook);
 
-        it("onERC721Received() fail: not real badge", async () => {
-            // encode 1000 as badge into the data
-            const data = ethers.utils.defaultAbiCoder.encode(
-                ["uint256"],
-                [1000]
-            )
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, hook.address]);
 
-            // build the overloaded transfer from
-            await mock721.connect(signer1)["safeTransferFrom(address,address,uint256,bytes)"](
-                signer1.address,
-                childOrganization.address,
-                1,
-                data
-            ).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for setup badges.")
+            await organization.connect(owner).setHooks(slot, [hook.address], [false])
+
+            expect(await organization.getHooks(slot)).to.deep.equal([]);
         });
 
-        it("onERC721Received() fail: not claimable", async () => {
-            // set the badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                false
-            );
+        it("revert: setHook(slot, random, true)", async function () {
+            const { organization, owner } = await loadFixture(deployNewHook);
+            
+            const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, organization.address]);
 
-            // set signer as none
-            await childOrganization.connect(owner).setSigner(
-                0,
-                "0x0000000000000000000000000000000000000000"
-            );
-
-            // encode 0 as badge into the data
-            const data = ethers.utils.defaultAbiCoder.encode(
-                ["uint256"],
-                [0]
-            )
-
-            await mock721.connect(owner).mint(
-                signer1.address,
-                55
-            )
-
-            // transfer the token to the contract
-            await mock721.connect(signer1)["safeTransferFrom(address,address,uint256,bytes)"](
-                signer1.address,
-                childOrganization.address,
-                55,
-                data
-            ).should.be.revertedWith("BadgerScout::_verifyBadge: Can only call this for claimable badges.")
+            await expect(organization.connect(owner).setHooks(slot, [organization.address], [true]))
+                .to.be.revertedWith("BadgerHooks::_setHook: Hook does not implement IBadgerHook.")
         });
 
-        it("onERC721Received() fail: invalid payment token", async () => {
-            // set the badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
-            );
+        it("revert: mint() Transfer bound", async function () {
+            const { organization, hook, otherAccount, owner } = await loadFixture(deployNewHook);
 
-            // set the payment token
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentToken20
-            );
+            /// Make token transfer bound
+            const BEFORE_TRANSFER_SLOT = await organization.BEFORE_TRANSFER();
+            const hookConfig = ethers.utils.defaultAbiCoder.encode(["uint256", "bool"], [0, true]);
 
-            // encode 0 as badge into the data
-            const data = ethers.utils.defaultAbiCoder.encode(
-                ["uint256"],
-                [0]
-            )
+            /// set transfer bound hook, configure it, and mint a badge to a user.
+            const transactions = [
+                organization.interface.encodeFunctionData("setHooks", [BEFORE_TRANSFER_SLOT, [hook.address], [true]]),
+                organization.interface.encodeFunctionData("configHook", [BEFORE_TRANSFER_SLOT, hook.address, hookConfig]),
+                organization.interface.encodeFunctionData("mint", [otherAccount.address, 0, 100, "0x"])
+            ]
 
-            // transfer the token to the contract
-            await mock721.connect(signer1)["safeTransferFrom(address,address,uint256,bytes)"](
-                signer1.address,
-                childOrganization.address,
-                3,
-                data
-            ).should.be.revertedWith("BadgerScout::_verifyPayment: Invalid payment token.")
+            /// Execute the setup transactions
+            await expect(organization.connect(owner).multicall(transactions))
+                .to.emit(organization, "HookUpdated").withArgs(BEFORE_TRANSFER_SLOT, hook.address, true)
+                .to.emit(organization, "HookConfigured").withArgs(BEFORE_TRANSFER_SLOT, hookConfig)
+                .to.emit(organization, "TransferSingle").withArgs(owner.address, ethers.constants.AddressZero, otherAccount.address, 0, 100)
+
+            /// See if transfer bound works as expected
+            await expect(organization.connect(otherAccount).safeTransferFrom(otherAccount.address, owner.address, 0, 100, "0x"))
+                .to.be.revertedWith("BadgerTransferBound::execute: Invalid permission to transfer token.")
         });
 
-        it("claimMint() success: signature", async () => {
-            mnemonic = "test test test test test test test test test test test junk";
-            claimSigner = await ethers.Wallet.fromMnemonic(mnemonic, "m/44'/60'/0'/0/1");
+        it("call: supportsInterface(0x6847c1d5)", async function () {
+            const { hook } = await loadFixture(deployNewHook);
 
-            // set the badge as claimable
-            await childOrganization.connect(owner).setSigner(
-                0,
-                claimSigner.address
-            )
-
-            const messageHash = ethers.utils.solidityKeccak256(
-                ["address", "uint256", "uint256", "bytes"],
-                [
-                    signer1.address,
-                    0,
-                    1,
-                    "0x"
-                ]
-            )
-
-            // sign the message hash
-            const signature = await claimSigner.signMessage(ethers.utils.arrayify(messageHash))
-
-            // set the payment token
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentToken20
-            );
-
-            // mint some tokens to the signer
-            await mock20.connect(owner).mint(
-                signer1.address,
-                1000
-            )
-
-            // approve the contract to spend the tokens
-            await mock20.connect(signer1).approve(
-                childOrganization.address,
-                1000
-            )
-
-            // deposit the tokens
-            await childOrganization.connect(signer1).depositERC20(
-                0,
-                mock20.address,
-                1
-            )
-
-            // claim the mint
-            await childOrganization.connect(signer1).claimMint(
-                signature,
-                0,
-                1,
-                "0x"
-            )
-        })
-
-        it("claimMint() success: claimable", async () => {
-            // set signer as none
-            await childOrganization.connect(owner).setSigner(
-                0,
-                "0x0000000000000000000000000000000000000000"
-            );
-
-            // set the badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
-            );
-
-            // set the payment token
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentToken20
-            );
-
-            // mint some tokens to the signer
-            await mock20.connect(owner).mint(
-                signer1.address,
-                1000
-            )
-
-            // approve the contract to spend the tokens
-            await mock20.connect(signer1).approve(
-                childOrganization.address,
-                1000
-            )
-
-            // deposit the tokens
-            await childOrganization.connect(signer1).depositERC20(
-                0,
-                mock20.address,
-                1
-            )
-
-            // claim the mint
-            await childOrganization.connect(signer1).claimMint(
-                "0x",
-                0,
-                1,
-                "0x"
-            )
-        })
-
-        it("claimMint() fail: invalid signature", async () => {
-            mnemonic = "test test test test test test test test test test test junk";
-            claimSigner = await ethers.Wallet.fromMnemonic(mnemonic, "m/44'/60'/0'/0/1");
-
-            // set the badge as claimable
-            await childOrganization.connect(owner).setSigner(
-                0,
-                signer1.address
-            )
-
-            const messageHash = ethers.utils.solidityKeccak256(
-                ["address", "uint256", "uint256", "bytes"],
-                [
-                    signer1.address,
-                    0,
-                    1,
-                    "0x"
-                ]
-            )
-
-            // sign the message hash
-            const signature = await claimSigner.signMessage(ethers.utils.arrayify(messageHash))
-
-            // set the payment token
-            await childOrganization.connect(owner).setPaymentToken(
-                0,
-                paymentToken20
-            );
-
-            // mint some tokens to the signer
-            await mock20.connect(owner).mint(
-                signer1.address,
-                1000
-            )
-
-            // approve the contract to spend the tokens
-            await mock20.connect(signer1).approve(
-                childOrganization.address,
-                1000
-            )
-
-            // deposit the tokens
-            await childOrganization.connect(signer1).depositERC20(
-                0,
-                mock20.address,
-                1
-            )
-
-            // claim the mint
-            await childOrganization.connect(signer1).claimMint(
-                signature,
-                0,
-                1,
-                "0x"
-            ).should.be.revertedWith("BadgerScout::_verifySignature: Invalid signature.")
-        })
-
-        it("claimMint() fail: not real badge", async () => {
-            // set badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
-            );
-
-            // set signer to none
-            await childOrganization.connect(owner).setSigner(
-                0,
-                "0x0000000000000000000000000000000000000000"
-            );
-
-            // deposit
-            await childOrganization.connect(signer1).depositERC20(
-                0,
-                mock20.address,
-                100
-            )
-
-            // claim the mint
-            await childOrganization.connect(signer1).claimMint(
-                "0x",
-                1000,
-                1,
-                "0x"
-            ).should.be.revertedWith("BadgerScout::onlyRealBadge: Can only call this for setup badges.")
-        })
-
-        it("claimMint() fail: not claimable", async () => {
-            // set badge as not claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                false
-            );
-
-            // claim the mint
-            await childOrganization.connect(signer1).claimMint(
-                "0x",
-                0,
-                1,
-                "0x"
-            ).should.be.revertedWith("BadgerOragnization::claimMint: This badge is not claimable.")
+            expect(await hook.supportsInterface("0x7cc2d017")).to.equal(false);
+            expect(await hook.supportsInterface("0x6847c1d5")).to.equal(true); //IBadgerHook interface
+            expect(await hook.supportsInterface("0x01ffc9a7")).to.equal(true); // IERC165
+            expect(await hook.supportsInterface("0x56dbdf14")).to.equal(true); // IBadgerConfigured
         });
-
-        it("claimMint() fail: amount is zero", async () => {
-            // claim the mint
-            await childOrganization.connect(sigSigner).claimMint(
-                "0x",
-                0,
-                0,
-                "0x"
-            ).should.be.revertedWith("BadgerScout::claimMint: Amount must be greater than 0.")
-        })
-
-        it("claimMint() fail: has not funded", async () => {
-            // set badge as claimable
-            await childOrganization.connect(owner).setClaimable(
-                0,
-                true
-            );
-
-            // claim the mint
-            await childOrganization.connect(sigSigner).claimMint(
-                "0x",
-                0,
-                1,
-                "0x"
-            ).should.be.revertedWith("BadgerScout::_verifyFunding: User has not funded the badge.")
-        })
-
-        it("uri() success: has badge uri", async () => {
-            assert.equal(
-                await childOrganization.uri(0),
-                "uri"
-            )
-        })
-
-        it("uri() success: no badge uri", async () => {
-            assert.equal(
-                await childOrganization.uri(1),
-                "baseuri"
-            )
-        })
-
-        it('contractURI() success', async () => {
-            assert.equal(
-                await childOrganization.contractURI(),
-                "newURI"
-            )
-        })
-
-        it('supportsInterface() success', async () => {
-            // Test ERC1155Upgradeable
-            assert.equal(
-                await childOrganization.supportsInterface("0xd9b67a26"),
-                true
-            );
-
-            // Test ERC1155HolderUpgradeable
-            assert.equal(
-                await childOrganization.supportsInterface(
-                    "0x4e2312e0"
-                ), true
-            )
-
-            // Test ERC721ReceiverUpgradeable
-            assert.equal(
-                await childOrganization.supportsInterface(
-                    "0x150b7a02"
-                ), true
-            )
-
-            // Test ERC165Upgradeable
-            assert.equal(
-                await childOrganization.supportsInterface(
-                    "0x01ffc9a7"
-                ), true
-            )
-        });
-    })
-})
+    });
+});

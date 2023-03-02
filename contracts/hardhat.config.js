@@ -3,11 +3,9 @@ require('hardhat-deploy');
 require("hardhat-watcher");
 require("hardhat-tracer");
 require("hardhat-abi-exporter");
-require("hardhat-api-builder");
-require("hardhat-docgen");
-require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require('solidity-coverage');
+require('@nomicfoundation/hardhat-chai-matchers')
 require("dotenv").config();
 
 // All of these keys have been knowingly leaked to make the startup process easier for new onboards.
@@ -30,39 +28,42 @@ task("deploy", "Deploys the protocol")
     .setAction(async (taskArgs, hre) => {
         // Compiling all of the contracts again just in case
         await hre.run('compile');
-
+        
         const [deployer] = await ethers.getSigners();
-        console.log(`✅ Connected to ${deployer.address}`);
-
-        const chainId = await getChainId()
-
-        // Deploying the primitive master BadgerOrganization contract that is used for clones
-        const BadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
-        organizationMaster = await BadgerOrganization.deploy();
-        organizationMaster = await organizationMaster.deployed();
-        console.log("✅ Organization Implementation Deployed.")
-
+        const balance = ethers.utils.formatEther(await deployer.getBalance());
+    
+        console.table({
+            "Deployer Address": deployer.address,
+            "Deployer Balance": balance,
+        })
+        
+        const BadgerSingleton = await ethers.getContractFactory("BadgerOrganization");
+        badgerSingleton = await BadgerSingleton.deploy();
+        badgerSingleton = await badgerSingleton.deployed();
+        console.log("✅ Organization Implementation Deployed.");
+        
+        const chainId = await getChainId();
         organizationDeployment = {
             "Chain ID": chainId,
             "Deployer": deployer.address,
-            "Organization Implementation Address": organizationMaster.address,
+            "Organization Implementation Address": badgerSingleton.address,
             "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
-        }
-        console.table(organizationDeployment)
+        };
+        console.table(organizationDeployment);
 
         // Deploy the protocol
-        const Badger = await ethers.getContractFactory("Badger");
-        badger = await Badger.deploy(organizationMaster.address);
-        badger = await badger.deployed();
-        console.log("✅ Badger Deployed.")
+        const BadgerFactory = await ethers.getContractFactory("Badger");
+        badgerFactory = await BadgerFactory.deploy(badgerSingleton.address);
+        badgerFactory = await badgerFactory.deployed();
+        console.log("✅ Badger Deployed.");
 
         badgerDeployment = {
             "Chain ID": chainId,
             "Deployer": deployer.address,
-            "Badger Address": badger.address,
+            "Badger Address": badgerFactory.address,
             "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
         }
-        console.table(badgerDeployment)
+        console.table(badgerDeployment);
 
         // Verifying
         if (taskArgs.verify !== false && chainId != '31337') {
@@ -93,7 +94,7 @@ module.exports = {
                 settings: {
                     optimizer: { // Keeps the amount of gas used in check
                         enabled: true,
-                        runs: 1000
+                        runs: 1000000000
                     }
                 }
             }
@@ -105,6 +106,8 @@ module.exports = {
         coinmarketcap: COINMARKETCAP_API_KEY,
         showMethodSig: true,
         showTimeSpent: true,
+        noColors: true,
+        outputFile: 'build/gas-report.txt'
     },
     watcher: {
         compilation: {
@@ -113,16 +116,8 @@ module.exports = {
             verbose: true,
         },
         ci: {
-            tasks: ["clean", { command: "compile", params: { quiet: true } }, { command: "test", params: { noCompile: true, testFiles: ["testfile.ts"] } }],
+            tasks: ["clean", { command: "compile", params: { quiet: true } }, { command: "test", params: { noCompile: true, testFiles: ["./test/"] } }],
         }
-    },
-    abiExporter: {
-        path: 'abis/',
-        runOnCompile: true,
-        clear: true,
-        flat: true,
-        spacing: 2,
-        format: "minimal"
     },
     etherscan: {
         apiKey: {
@@ -140,9 +135,10 @@ module.exports = {
             gasPrice: "auto",
             saveDeployments: false,
             mining: {
-                auto: false,
-                order: 'fifo',
-                interval: 1500,
+                auto: true
+                // auto: false,
+                // order: 'fifo',
+                // interval: 1500,
             }
         },
         goerli: {
@@ -166,5 +162,26 @@ module.exports = {
             accounts: PRIVATE_KEY_ACCOUNTS,
             gasPrice: 'auto'
         },
-    }
+    },
+    abiExporter: [{
+        path: './build/abis/',
+        runOnCompile: true,
+        clear: true,
+        flat: true,
+        format: "json"
+    }, {
+        path: '../frontend/src/abis/',
+        runOnCompile: true,
+        clear: true,
+        flat: true,
+        spacing: 4,
+        format: "json"
+    }, {
+        path: '../api/abis/',
+        runOnCompile: true,
+        clear: true,
+        flat: true,
+        spacing: 4,
+        format: "json"
+    }]
 };

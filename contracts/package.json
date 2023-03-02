@@ -1,9 +1,9 @@
 {
   "name": "contracts",
   "version": "1.0.0",
-  "author": "masonchain",
-  "license": "MIT",
-  "description": "",
+  "author": "flipsidecrypto",
+  "license": "AGPL-3.0-or-later",
+  "description": "Badge-based credentials powering on-chain access controls.",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.1.1",
     "@nomiclabs/hardhat-etherscan": "^3.1.0",
@@ -14,6 +14,7 @@
     "chai-as-promised": "^7.1.1",
     "dotenv": "^16.0.2",
     "ethers": "^5.7.1",
+    "ganache-cli": "^6.12.2",
     "hardhat": "^2.11.2",
     "hardhat-abi-exporter": "^2.10.0",
     "hardhat-api-builder": "^0.0.5",
@@ -22,10 +23,11 @@
     "hardhat-gas-reporter": "^1.0.9",
     "hardhat-tracer": "^1.1.0-rc.9",
     "hardhat-watcher": "^2.5.0",
-    "mocha": "^10.0.0"
-  },
-  "dependencies": {
-    "ganache-cli": "^6.12.2",
-    "solidity-coverage": "^0.8.2"
+    "mocha": "^10.0.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "solady": "^0.0.78",
+    "solidity-coverage": "^0.8.2",
+    "solmate": "^6.7.0"
   }
 }

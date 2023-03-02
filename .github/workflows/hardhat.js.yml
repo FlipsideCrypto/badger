@@ -1,0 +1,51 @@
+name: Build smart contract utils
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+
+defaults:
+  run:
+    working-directory: contracts/
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      PRIVATE_KEY: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+      POLYGON_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
+      ETH_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Hardhat smart contract tests
+        run: REPORT_GAS=true npx hardhat test
+
+      - name: Install C4udit worker
+        run: cd build && git clone https://github.com/byterocket/c4udit && cd c4udit && go build .
+
+      - name: Run automated low-complexity C4udit worker
+        run: cd build && ./c4udit/c4udit -s ../contracts/
+
+      - name: Save the build outputs
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "fix: smart contract build"
