@@ -14,19 +14,6 @@ with open(os.path.join(BASE_DIR, "abis", "BadgerOrganization.json")) as f:
     ORGANIZATION_ABI = json.load(f)
 
 # Establish the events that we are watching for
-FACTORY_EVENTS = [
-    "event OrganizationCreated(address indexed,address indexed,address indexed)",
-    "event VersionUpdated(address indexed,address indexed,bytes32 indexed,uint256,bool)"
-]
+FACTORY_EVENTS = [event for event in FACTORY_ABI if event.startswith("event")]
 
-ORGANIZATION_EVENTS = [
-    "event BadgeUpdated(uint256 indexed,uint256 indexed,bytes32 indexed,uint256)",
-    "event BadgeForfeited(uint256 indexed,uint256 indexed,bytes indexed)",
-    "event DelegateUpdated(uint256 indexed,address indexed,bool indexed)",
-    "event OrganizationUpdated(string)",
-    "event OwnershipTransferred(address indexed,address indexed)",
-    "event PaymentTokenDeposited(uint256 indexed,address indexed,uint256 indexed)",
-    "event TransferBatch(address indexed,address indexed,address indexed,uint256[],uint256[])",
-    "event TransferSingle(address indexed,address indexed,address indexed,uint256,uint256)",
-    "event URI(string,uint256 indexed)"
-]
+ORGANIZATION_EVENTS = [event for event in ORGANIZATION_ABI if event.startswith("event")]
