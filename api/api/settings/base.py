@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'badge',
     'balance',
     'feedback',
+    'indexer',
     'ipfs',
     'job',
     'organization',
@@ -154,11 +155,7 @@ PINATA_INDEXER_URL = os.getenv("API_PINATA_INDEXER_URL", "https://badger.mypinat
 
 # ABI settings
 # TODO: Add 5.0 when contract has been deployed
-VERSIONS = ['4.0']
-FACTORY_ADDRESSES = {
-    '4.0': '0x218B3C623FfB9c5E4DBb9142E6Ca6f6559F1c2D6',
-    '5.0': ''
-}
+FACTORY_ADDRESS = os.getenv("FACTORY_ADDRESS", "0x218B3C623FfB9c5E4DBb9142E6Ca6f6559F1c2D6")
 
 # Dictionary of the version abis
 FACTORY_ABI = FACTORY

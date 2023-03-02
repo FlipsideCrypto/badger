@@ -329,7 +329,7 @@ class Loader:
 
         return ("Badge uri updated", event['args'])
 
-    def handle_events(self, events, version):
+    def handle_events(self, events):
         event_responses = []
 
         response = None
@@ -338,7 +338,7 @@ class Loader:
             if 'event' in event:
                 if event['event'] in self.loader_mapping:
                     for handler in self.loader_mapping[event['event']]:
-                        response = handler(event, response, version)
+                        response = handler(event, response)
                         event_responses.append(response)
                 else:
                     event_responses.append(

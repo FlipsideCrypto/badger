@@ -1,9 +1,9 @@
-import django
+from .extractor import *
+from .transformer import *
+from .loader import *
+
 from django.conf import settings
 
-from .transformer import Transformer
-from .loader import Loader
-from .extractor import Extractor
 from abis import (
     FACTORY as FACTORY_ABI,
     ORGANIZATION as ORGANIZATION_ABI,
@@ -19,21 +19,19 @@ class Backfill:
         self.transformer = Transformer()
         self.loader = Loader()
 
-    def etl(self, version, queryset, abi, contract_events):
-        contracts = [
-            [
-                contract.chain.lower(), 
-                contract.ethereum_address,
-                contract.last_block
-            ] for contract in queryset 
-        ]
+    def etl(self,queryset, abi, contract_events):
+        # Build the list of contracts to get event updates for
+        contracts = [[
+            contract.chain.lower(), 
+            contract.ethereum_address,
+            contract.last_block
+        ] for contract in queryset if contract.ethereum_address]
 
-        [
-            events, 
-            last_block
-        ] = self.extractor.handle_contracts(contracts, abi, contract_events)
+        # Get the events for the QuerySet of contracts
+        [events, last_block] = self.extractor.handle_contracts(contracts, abi, contract_events)
+
         events = self.transformer.handle_events(events)
-        event_responses = self.loader.handle_events(events, version)
+        event_responses = self.loader.handle_events(events)
 
         # refresh queryset from database
         queryset = queryset.model.objects.filter(pk__in=[contract.pk for contract in queryset])
@@ -49,32 +47,26 @@ class Backfill:
         return event_responses
 
     def backfill_factories(self):
-        for version in settings.VERSIONS:
-            return self.etl(
-                version,
-                ContractListener.objects.filter(
-                    is_active=True,
-                    version=version
-                ), 
-                FACTORY_ABI[version], 
-                FACTORY_EVENTS[version]
-            )
+        print("Backfilling factories now baby")
+        # return self.etl(
+        #     ContractListener.objects.filter(
+        #         is_active=True
+        #     ), 
+        #     FACTORY_ABI, 
+        #     FACTORY_EVENTS
+        # )
         
     def backfill_organizations(self):
-        for version in settings.VERSIONS:
-            print('running version  ', version)
-            return self.etl(
-                version,
-                Organization.objects.filter(
-                    is_active=True,
-                    version=version, 
-                    updated__gte=django.utils.timezone.now() - django.utils.timezone.timedelta(days=30)
-                ), 
-                ORGANIZATION_ABI[version], 
-                ORGANIZATION_EVENTS[version]
-            )
-
-# if __name__ == '__main__':
-#     backfill = Backfill()
-#     backfill.backfill_factories()
-#     backfill.backfill_organizations()
+        print("Backfill organizations")
+        # for version in settings.VERSIONS:
+        #     print('running version  ', version)
+        #     return self.etl(
+        #         version,
+        #         Organization.objects.filter(
+        #             is_active=True,
+        #             version=version, 
+        #             updated__gte=django.utils.timezone.now() - django.utils.timezone.timedelta(days=30)
+        #         ), 
+        #         ORGANIZATION_ABI[version], 
+        #         ORGANIZATION_EVENTS[version]
+        #     )
