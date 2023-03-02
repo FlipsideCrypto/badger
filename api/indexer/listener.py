@@ -4,6 +4,7 @@ from .extractor import *
 from .loader import *
 
 from django.conf import settings
+from django.db.models.query import QuerySet
 
 from job.models import ContractListener
 from organization.models import Organization
@@ -15,22 +16,19 @@ class Backfill:
         self.extractor = Extractor()
         self.loader = Loader()
 
-    def etl(self, queryset, abi, topics):
+    def etl(self, extracting_obj, abi, topics):
         while True:
-            contract_addresses = queryset.values_list('ethereum_address', flat=True)
+            contracts = extracting_obj
 
-            # last_block = w3.eth.blockNumber
-
-            events = w3.eth.getLogs({
-                'fromBlock': 39865246,
-                'toBlock': 39865246
-            })
+            # If provided an object, make the query in each run so results from the last block
+            # are included in the next run.
+            if not isinstance(contracts, list):
+                contracts = extracting_obj.objects.filter(active=True).values_list('ethereum_address', flat=True)
 
             events = self.extractor.extract(
-                contract_addresses, 
+                contracts, 
                 abi, 
-                topics, 
-                events
+                topics
             )
 
             print(events)
@@ -60,16 +58,16 @@ class Backfill:
 
             time.sleep(POLL_INTERVAL)
 
-        return event_responses
-
     def backfill_factories(self):
         self.etl(
-            ContractListener.objects.filter(is_active=True), 
-            settings.FACTORY_ABI_FULL, settings.FACTORY_TOPIC_SIGNATURES
+            [settings.FACTORY_ADDRESS], 
+            settings.FACTORY_ABI_FULL, 
+            settings.FACTORY_TOPIC_SIGNATURES
         )
     
     def backfill_organizations(self):
         self.etl(
-            Organization.objects.filter(is_active=True), 
-            settings.ORGANIZATION_ABI_FULL, settings.ORGANIZATION_EVENTS, settings.ORGANIZATION_TOPIC_SIGNATURES
+            Organization, 
+            settings.ORGANIZATION_ABI_FULL, 
+            settings.ORGANIZATION_TOPIC_SIGNATURES
         )

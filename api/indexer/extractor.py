@@ -8,7 +8,14 @@ class Extractor:
     def __init__(self):
         self.contracts = {}
 
-    def extract(self, contract_addresses, abi, topics, events):
+    def extract(self, contract_addresses, abi, topics):
+        # last_block = w3.eth.blockNumber
+
+        events = w3.eth.getLogs({
+            'fromBlock': 39865246,
+            'toBlock': 39865246
+        })
+                    
         if not contract_addresses or len(contract_addresses) == 0:
             return []
         
