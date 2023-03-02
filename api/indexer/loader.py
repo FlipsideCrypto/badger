@@ -15,6 +15,12 @@ User = get_user_model()
 [AttributeDict({'args': AttributeDict({'organization': '0x4d51C82b2dFDEdE754447974C488708465943790', 'owner': '0x75ee82787C548daeaC58Af6cBA5bd2A9Ff863d28', 'organizationId': 0}), 'event': 'OrganizationCreated', 'logIndex': 226, 'transactionIndex': 53, 'transactionHash': HexBytes('0xdb405198a6ad743a52ade5347b249fb2268ec82a17b02172176c050979c4125e'), 'address': '0x72b03C649953CA95B920f60A5687e4d2DACf45c0', 'blockHash': HexBytes('0xaf9bb5d77f585c446417420e68f9c6508f6f85f2e0d54d4df03b35226046fa2d'), 'blockNumber': 39865246})]
 """
 
+# Hook configured
+# Hook updated
+
+# Manager configured
+# Manager updated
+
 class Loader:
     def __init__(self):
         self.loader_mapping = {
