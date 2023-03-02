@@ -4,9 +4,7 @@ from .extractor import *
 from .loader import *
 
 from django.conf import settings
-from django.db.models.query import QuerySet
 
-from job.models import ContractListener
 from organization.models import Organization
 
 POLL_INTERVAL = 5

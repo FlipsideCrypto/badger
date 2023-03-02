@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'feedback',
     'indexer',
     'ipfs',
-    'job',
     'organization',
     'wallet',
 ]
