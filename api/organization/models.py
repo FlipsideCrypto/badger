@@ -9,8 +9,6 @@ from utils.web3 import CHAINS, POLYGON
 class Organization(models.Model):
     is_active = models.BooleanField(default=False)
 
-    version = models.CharField(max_length=255, default="4.0")
-
     chain = models.CharField(max_length=50, choices=CHAINS, default=POLYGON)
     ethereum_address = models.CharField(
         max_length=50, blank=False, default=None, validators=[validate_ethereum_address])

@@ -1,0 +1,13 @@
+.actionBar {
+    display: grid;
+    grid-template-columns: auto auto;
+    margin-inline: 20px;
+}
+
+.actionBar .help { }
+
+.actionBar .actions { 
+    display: flex;
+    justify-content: flex-end;
+    column-gap: 20px;
+}

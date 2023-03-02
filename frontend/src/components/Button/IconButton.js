@@ -3,22 +3,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import "@style/Button/IconButton.css"
 
-const IconButton = ({ 
-    icon, 
-    text, 
+const IconButton = ({
+    icon,
+    text,
     className,
-    style, 
-    onClick, 
-    disabled, 
+    style,
+    onClick,
+    disabled,
     loading
 }) => {
     return (
-        <button 
-            className={loading 
-                ? `button__icon button__loading ${className}` 
+        <button
+            className={loading
+                ? `button__icon button__loading ${className}`
                 : `button__icon ${className}`}
-            style={style} 
-            onClick={onClick} 
+            style={style}
+            onClick={onClick}
             disabled={disabled}
         >
             <div className="button__text">
@@ -33,4 +33,4 @@ const IconButton = ({
     )
 }
 
-export default IconButton;
+export { IconButton };

@@ -1,0 +1,79 @@
+.hero {
+    position: relative;
+    margin-left: auto;
+    display: flex;
+    align-content: center;
+    min-height: 750px;
+    overflow: hidden;
+}
+
+.hero h1,
+.hero h2 {
+    margin: 0;
+}
+
+
+.hero .blobs {
+    filter: blur(150px);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -3;
+}
+
+.hero::before {
+    position: absolute;
+    background: linear-gradient(180deg, transparent, transparent, white);
+    content: '';
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    filter: blur(5px);
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url(../../static/images/hero-noise.png) repeat;
+    background-size: 960px 540px;
+    z-index: -2;
+}
+
+.hero .blob {
+    position: absolute;
+    top: -200px;
+    ;
+    right: -10%;
+    width: 600px;
+    height: 800px;
+    z-index: -3;
+    background: #00FFE0;
+    clip-path: polygon(58% 4%, 79% 24%, 79% 60%, 94% 78%, 46% 99%, 18% 88%, 24% 57%, 0% 43%, 20% 19%);
+    animation: blob 10s infinite;
+}
+
+.hero .blob:nth-of-type(2) {
+    top: -125%;
+    right: 30%;
+    width: 1900px;
+    height: 1200px;
+    background: #00FFE0;
+    clip-path: polygon(50% 0%, 57% 51%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 23% 72%, 0% 43%, 17% 12%);
+}
+
+.hero .blob:nth-of-type(3) {
+    top: -100px;
+    right: -350px;
+    width: 800px;
+    height: 800px;
+    background: #00FF94;
+    clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 68% 40%, 60% 56%, 49% 79%, 17% 73%, 0% 43%, 32% 40%);
+}

@@ -1,0 +1,111 @@
+.action_bar { 
+    display: grid;
+    grid-column: 1 / span 4;
+    grid-template-columns: 4fr 8fr;
+    grid-template-rows: 1fr;
+    align-items: center;
+    margin-inline: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-inline: 20px;
+}
+
+.action_bar .action_bar__actions { 
+    display: flex;
+    justify-content: flex-end;
+}
+
+.action_bar .action_bar__header * { 
+    margin: 0;
+}
+
+.action_bar .action_bar__header { 
+    display: grid !important;
+    align-items: center;
+    grid-template-columns: min-content min-content auto;
+    justify-content: initial !important;
+}
+
+.action_bar .action_bar__header.single { 
+    display: grid;
+    align-items: center;
+    grid-template-columns: auto;
+    margin-bottom: 30px;
+}
+
+.action_bar .action_bar__header .action_bar__header__image { 
+    border-radius: 50%;
+    height: 24px;
+    width: 24px;
+    margin-right: 10px;
+}
+
+.action_bar .action_bar__header a { 
+    color: #000;
+}
+
+.action_bar .action_bar__header .action_bar__header__subtext {
+    display: grid !important;
+    width: 100%;
+    grid-template-rows: min-content auto;
+    grid-template-columns: auto auto auto;
+    align-items: center;
+    font-size: 14px;
+}
+
+.action_bar .action_bar__header .action_bar__header__subtext div {
+    grid-row: span 2;
+}
+
+.action_bar .sidebar__header .sidebar__header__subtext a {
+    margin-left: auto;
+    width: 100%;
+    text-align: right;
+    color: rgba(0, 0, 0, 0.35);
+}
+
+.sidebar .sidebar__header .sidebar__header__subtext a:hover,
+.sidebar .sidebar__header .sidebar__header__subtext a:active,
+.sidebar .sidebar__header .sidebar__header__subtext a:focus {
+    color: rgba(0, 0, 0, 0.65);
+}
+
+.sidebar__organizations button {
+    display: block;
+}
+
+.sidebar__organizations .sidebar__organization { 
+    display: grid;
+    grid-template-columns: 28px auto;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.sidebar__organizations .sidebar__organization img { 
+    border-radius: 2px;
+    height: 18px;
+    width: 18px;
+    margin-right: 10px;
+}
+
+.sidebar__organizations .sidebar__organization a { 
+    margin: 0;
+}
+
+.sidebar .logout {
+    position: absolute;
+    bottom: 0;
+}
+
+.sidebar .logout span { 
+    color:rgba(0, 0, 0, .35);
+}
+
+.sidebar .logout svg { 
+    margin-right: 10px;
+}
+
+.text-clip {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
