@@ -13,16 +13,13 @@ class JobConfig(AppConfig):
             from .jobs import JobManager
             from .models import ContractListener
 
-            # v4.0 Factory Factory
-            for version in settings.VERSIONS:
-                ContractListener.objects.get_or_create(
-                    ethereum_address=settings.FACTORY_ADDRESSES[version],
-                    chain="Polygon",
-                    version=version,
-                    defaults={
-                        'is_active': True,
-                    }
-                )
+            ContractListener.objects.get_or_create(
+                ethereum_address=settings.FACTORY_ADDRESS,
+                chain="Polygon",
+                defaults={
+                    'is_active': True,
+                }
+            )
 
             manager = JobManager()
 
