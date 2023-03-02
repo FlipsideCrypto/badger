@@ -87,6 +87,11 @@ task("deploy", "Deploys the protocol")
             });
             console.log("✅ Badger Verified.")
         }
+
+        console.log("✅ Deployment Complete.")
+
+        // Keep Promise open to keep node running
+        await new Promise((resolve) => {});
     });
 
 
