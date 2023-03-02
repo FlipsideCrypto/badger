@@ -43,7 +43,10 @@ class Backfill:
             print(event_responses)
 
             if not isinstance(extracting_obj, list):
-                extracting_obj.objects.filter(ethereum_address__in=contracts).update(last_block=to_block)
+                contract_objs = extracting_obj.objects.filter(ethereum_address__in=contracts).update(last_block=to_block)
+
+                for obj in contract_objs:
+                    obj.save()
 
             if not to_block:
                 return
