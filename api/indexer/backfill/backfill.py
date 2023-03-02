@@ -14,19 +14,16 @@ class Backfill:
         self.loader = Loader()
 
     def etl(self, queryset, abi, filters):
-        # Build the list of contracts to get event updates for
         contracts = [[
             contract.chain.lower(), 
             contract.ethereum_address,
             contract.last_block
         ] for contract in queryset if contract.ethereum_address]
 
-        print(contracts, abi, filters)
-
-        return
-
         # Get the events for the QuerySet of contracts
         [events, last_block] = self.extractor.handle_contracts(contracts, abi, filters)
+
+        return
 
         events = self.transformer.handle_events(events)
         event_responses = self.loader.handle_events(events)

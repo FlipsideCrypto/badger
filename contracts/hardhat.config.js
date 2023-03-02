@@ -174,7 +174,6 @@ module.exports = {
         runOnCompile: true,
         clear: true,
         flat: true,
-        spacing: 4,
-        format: "json"
+        pretty: true
     }]
 };
