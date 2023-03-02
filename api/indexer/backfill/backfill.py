@@ -45,13 +45,6 @@ class Backfill:
 
             continue
 
-            # Ignore the below for now. This is the old way of doing things.
-
-            # This is equivalent to filter.get_all_entries() but we have multiple filters to check
-            # so we we have to iterate through them and then surface an already packaged list of events
-            # [events, last_block] = self.extractor.handle_contracts(contracts, abi, filters)
-
-            events = self.transformer.handle_events(events)
             event_responses = self.loader.handle_events(events)
 
             # refresh queryset from database
