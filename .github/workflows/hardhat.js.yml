@@ -1,9 +1,6 @@
 name: Build smart contract utils
 
 on:
-  push:
-    branches:
-      - "**"
   pull_request:
     branches:
       - "**"
