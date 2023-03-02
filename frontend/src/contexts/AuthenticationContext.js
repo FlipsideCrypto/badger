@@ -11,7 +11,7 @@ const getAuthenticatedAddress = () => {
 
 const AuthenticationContextProvider = ({ children }) => {
     const { chain } = useNetwork();
-    const { chains, switchNetwork } = useSwitchNetwork();
+    const { chains, isError, switchNetwork } = useSwitchNetwork();
 
     const { address, isConnected } = useAccount();
 
@@ -25,8 +25,9 @@ const AuthenticationContextProvider = ({ children }) => {
     const isAuthenticated = isConnected && !isWrongNetwork && address === authenticatedAddress;
 
     useEffect(() => {
-        if (isWrongNetwork && switchNetwork) switchNetwork(primaryChain.id)
-    }, [isWrongNetwork]);
+        /// Using isError here allows us to not prompt another switchNetwork if the user has already rejected the switch.
+        if (isWrongNetwork && switchNetwork && !isError) switchNetwork(primaryChain.id)
+    }, [isWrongNetwork, switchNetwork, isError, primaryChain.id]);
 
     return (
         <AuthenticationContext.Provider value={{

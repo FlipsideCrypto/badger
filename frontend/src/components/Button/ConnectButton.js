@@ -25,11 +25,11 @@ const ConnectButton = () => {
             </button>
         );
 
-    if (isWrongNetwork)
+    if (isWrongNetwork && switchNetwork)
         return (
             <button
                 disabled={!switchNetwork}
-                onClick={switchNetwork?.bind(null, primaryChain.id)}
+                onClick={switchNetwork.bind(null, primaryChain.id)}
             >
                 Switch to {PRIMARY_PRODUCTION_CHAIN}
             </button>
