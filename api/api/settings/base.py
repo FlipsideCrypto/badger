@@ -21,7 +21,7 @@ from abis import (
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-DEBUG = os.getenv('API_DEBUG', False)
+DEBUG = os.getenv('API_DEBUG', True)
 
 SECRET_KEY = os.getenv("API_SECRET_KEY", "secret")
 
@@ -140,7 +140,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Web3 settings
-ALCHEMY_API_KEY = os.getenv("API_ALCHEMY_API_KEY")
+ALCHEMY_API_KEY = os.getenv("REACT_APP_ALCHEMY_API_KEY")
 AUTHENTICATION_BACKENDS = ["siwe_auth.backend.SiweBackend"]
 
 CREATE_GROUPS_ON_AUTHN = False
