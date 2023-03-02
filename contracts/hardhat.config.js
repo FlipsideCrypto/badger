@@ -26,6 +26,11 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 task("deploy", "Deploys the protocol")
     .addFlag("verify", "Verify the deployed contracts on Etherscan")
     .setAction(async (taskArgs, hre) => {
+        const chainId = await getChainId();
+        
+        // Run a local node if we are on the hardhat network
+        if (chainId === '1337') hre.run('node');
+
         // Compiling all of the contracts again just in case
         await hre.run('compile');
         
@@ -42,7 +47,6 @@ task("deploy", "Deploys the protocol")
         badgerSingleton = await badgerSingleton.deployed();
         console.log("✅ Organization Implementation Deployed.");
         
-        const chainId = await getChainId();
         organizationDeployment = {
             "Chain ID": chainId,
             "Deployer": deployer.address,
@@ -135,10 +139,10 @@ module.exports = {
             gasPrice: "auto",
             saveDeployments: false,
             mining: {
-                auto: true
-                // auto: false,
-                // order: 'fifo',
-                // interval: 1500,
+                // auto: true
+                auto: false,
+                order: 'fifo',
+                interval: 200,
             }
         },
         goerli: {
