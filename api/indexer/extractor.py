@@ -9,17 +9,18 @@ class Extractor:
         self.contracts = {}
 
     def extract(self, contract_addresses, abi, topics, from_block, to_block):
-        events = w3.eth.getLogs({
+        events = w3.eth.get_logs({
+            'address': contract_addresses,
             'fromBlock': from_block,
             'toBlock': to_block
         })
-                    
+
         if not contract_addresses or len(contract_addresses) == 0:
             return []
         
         if not events or len(events) == 0:
             return []
-        
+
         event_data = []
 
         for event in events:

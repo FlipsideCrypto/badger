@@ -8,74 +8,83 @@ from django.conf import settings
 from organization.models import Organization
 
 POLL_INTERVAL = 5
+WARNING_BARRIER = 20000
+INIT_BLOCK_BUFFER = 20
+LOG_SIZE = 2000
 
 class Backfill:
     def __init__(self):
         self.extractor = Extractor()
         self.loader = Loader()
+        self.batches = []
 
-    def etl(self, extracting_obj, abi, topics, from_block=None, temp_to_block=None):
+    def etl(self, extracting_obj, abi, topics, temp_from_block=None, temp_to_block=None):
+        now = w3.eth.blockNumber
+
+        if temp_from_block and now - temp_from_block > WARNING_BARRIER:
+            print(f"Warning: Querying more than {WARNING_BARRIER} blocks. This may take a while. Check back in a few hours.")
+
         while True:
             contracts = extracting_obj
 
             to_block = temp_to_block
             if not temp_to_block:
                 to_block = w3.eth.blockNumber
+            
+            # Always get 20 blocks back so that we don't miss anything
+            # Hitting duplicate data will not corrupt
+            from_block = temp_from_block
+            if not temp_from_block:
+                from_block = to_block - INIT_BLOCK_BUFFER
 
             if not isinstance(contracts, list):
-                contracts = extracting_obj.objects.filter(active=True, last_block__lte=to_block).values_list('ethereum_address', flat=True)
-                
-            events = self.extractor.extract(
-                contracts, 
-                abi, 
-                topics,
-                from_block,
-                to_block
-            )
+                contracts = (extracting_obj.objects
+                    .filter(active=True)
+                    .values_list('ethereum_address', flat=True))
 
-            if len(events) == 0:
-                continue
+            BLOCK_BUFFER = LOG_SIZE if to_block - from_block > LOG_SIZE else to_block - from_block
+            BLOCK_BUFFER = 1 if BLOCK_BUFFER == 0 else BLOCK_BUFFER
 
-            print(events)
+            self.batches = [[i, i + BLOCK_BUFFER] for i in range(from_block, to_block, BLOCK_BUFFER)]
 
-            event_responses = self.loader.load(events)
+            print(from_block, to_block, BLOCK_BUFFER)
+            print(self.batches)
 
-            print(event_responses)
+            for batch in self.batches:
+                events = self.extractor.extract(
+                    contracts, 
+                    abi, 
+                    topics,
+                    batch[0],
+                    batch[1],
+                )
+
+                if len(events) == 0:
+                    time.sleep(POLL_INTERVAL)
+                    continue
+
+                event_responses = self.loader.load(events)
+
+                print(event_responses)
 
             if not isinstance(extracting_obj, list):
-                contract_objs = extracting_obj.objects.filter(ethereum_address__in=contracts).update(last_block=to_block)
+                contract_objs = (extracting_obj.objects
+                    .filter(ethereum_address__in=contracts)
+                    .update(last_block=batch[1]))
 
                 for obj in contract_objs:
                     obj.save()
 
-            if not to_block:
+            if temp_to_block:
                 return
 
             time.sleep(POLL_INTERVAL)
-
-    def backfill_factories(self):
-        self.etl(
-            [settings.FACTORY_ADDRESS], 
-            settings.FACTORY_ABI_FULL, 
-            settings.FACTORY_TOPIC_SIGNATURES,
-            0
-        )
-   
-    def backfill_organizations(self):
-        self.etl(
-            Organization, 
-            settings.ORGANIZATION_ABI_FULL, 
-            settings.ORGANIZATION_TOPIC_SIGNATURES,
-            0
-        )
 
     def listen_for_factories(self):
         self.etl(
             [settings.FACTORY_ADDRESS], 
             settings.FACTORY_ABI_FULL, 
-            settings.FACTORY_TOPIC_SIGNATURES,
-            39865246,
-            39865246
+            settings.FACTORY_TOPIC_SIGNATURES
         )
         
     def listen_for_organizations(self):
