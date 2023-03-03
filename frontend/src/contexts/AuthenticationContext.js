@@ -27,7 +27,7 @@ const AuthenticationContextProvider = ({ children }) => {
     useEffect(() => {
         /// Using isError here allows us to not prompt another switchNetwork if the user has already rejected the switch.
         if (isWrongNetwork && switchNetwork && !isError) switchNetwork(primaryChain.id)
-    }, [isWrongNetwork, switchNetwork, isError, primaryChain.id]);
+    }, [isWrongNetwork, switchNetwork, isError, primaryChain]);
 
     return (
         <AuthenticationContext.Provider value={{
