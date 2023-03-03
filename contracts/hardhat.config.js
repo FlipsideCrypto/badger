@@ -27,26 +27,26 @@ task("deploy", "Deploys the protocol")
     .addFlag("verify", "Verify the deployed contracts on Etherscan")
     .setAction(async (taskArgs, hre) => {
         const chainId = await getChainId();
-        
+
         // Run a local node if we are on the hardhat network
         if (chainId === '1337') hre.run('node');
 
         // Compiling all of the contracts again just in case
         await hre.run('compile');
-        
+
         const [deployer] = await ethers.getSigners();
         const balance = ethers.utils.formatEther(await deployer.getBalance());
-    
+
         console.table({
             "Deployer Address": deployer.address,
             "Deployer Balance": balance,
         })
-        
+
         const BadgerSingleton = await ethers.getContractFactory("BadgerOrganization");
         badgerSingleton = await BadgerSingleton.deploy();
         badgerSingleton = await badgerSingleton.deployed();
         console.log("✅ Organization Implementation Deployed.");
-        
+
         organizationDeployment = {
             "Chain ID": chainId,
             "Deployer": deployer.address,
@@ -91,7 +91,7 @@ task("deploy", "Deploys the protocol")
         console.log("✅ Deployment Complete.")
 
         // Keep Promise open to keep node running
-        await new Promise((resolve) => {});
+        await new Promise((resolve) => { });
     });
 
 
@@ -144,10 +144,10 @@ module.exports = {
             gasPrice: "auto",
             saveDeployments: false,
             mining: {
-                // auto: true
-                auto: false,
-                order: 'fifo',
-                interval: 200,
+                auto: true
+                // auto: false,
+                // order: 'fifo',
+                // interval: 200,
             }
         },
         goerli: {
