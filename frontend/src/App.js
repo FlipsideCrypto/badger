@@ -1,43 +1,43 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Helmet, HelmetProvider } from 'react-helmet-async'
-
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fal } from '@fortawesome/pro-light-svg-icons'
+import { fab } from '@fortawesome/free-brands-svg-icons'
 
-import Landing from '@components/Landing';
+import { ErrorContextProvider } from "@contexts"
 
-import "./App.css";
-import Dashboard from '@components/Dashboard/Dashboard';
-import WalletWrapper from "@components/Wallet/WalletWrapper";
+import { SEO, ScrollToTop, Wallet } from "@components"
 
-library.add(fal)
+import { Dashboard, Page } from "@pages"
+
+import "@style/App.css"
+
+library.add(fal, fab)
+
+const title = "The Web3 Organization Key Solution | Badger";
+const description = "Level up the access-controls of your onchain organization and enjoy the benefits of a Web3 focused key solution."
 
 function App() {
-  return (
-    <div className="App">
-      <HelmetProvider>
-        <Router>
-          <Helmet>
-            <title>BADGER | The Web3 Organization Key Solution</title>
-            <meta property="og:title" content="BADGER | The Web3 Organization Key Solution" />
-            <meta name="twitter:title" content="BADGER | The Web3 Organization Key Solution" />
+    return (
+        <div className="App">
+            <SEO title={title} description={description} />
 
-            <meta name="description" content="Level up the access-controls of your on-chain organization and enjoy the benefits of a Web3 focused key solution." />
-            <meta property="og:description" content="Level up the access-controls of your on-chain organization and enjoy the benefits of a Web3 focused key solution." />
-            <meta name="twitter:description" content="Level up the access-controls of your on-chain organization and enjoy the benefits of a Web3 focused key solution." />
-          </Helmet>
+            <Router>
+                <ScrollToTop />
 
-          <WalletWrapper>
-            <Routes>
-              <Route exact path="/" element={<Landing />} />
-              <Route exact path="/dashboard/*" element={<Dashboard />} />
-            </Routes>
-          </WalletWrapper>
+                <Routes>
+                    <Route exact path="/dashboard/*" element={
+                        <ErrorContextProvider>
+                            <Wallet>
+                                <Dashboard />
+                            </Wallet>
+                        </ErrorContextProvider>
+                    } />
 
-        </Router>
-      </HelmetProvider>
-    </div>
-  );
+                    <Route path="/*" element={<Page />} />
+                </Routes>
+            </Router>
+        </div>
+    );
 }
 
 export default App;

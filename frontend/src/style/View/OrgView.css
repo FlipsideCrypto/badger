@@ -1,0 +1,26 @@
+.view {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.view .organization {
+    text-decoration: none;
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 30px;
+}
+
+.view .organization img {
+    border-radius: 50%;
+    height: 36px;
+    width: 36px;
+}
+
+.view .organization span { 
+    font-size: 1.2rem;
+    font-weight: 600;
+}

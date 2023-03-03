@@ -1,0 +1,65 @@
+.sidebar.right { 
+    width: 300px;
+    padding-left: var(--page-margins);
+}
+
+.sidebar.right.collapsed { 
+    display: none;
+}
+
+.sidebar.right::after { 
+    content: "";
+    border-left: 1px solid #E3E0E0;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+}
+
+.sidebar.right .sidebar__header { 
+    display: grid;
+}
+
+.sidebar.right .sidebar__header svg,
+.sidebar.right .sidebar__footer svg { 
+    color: inherit;
+}
+
+.sidebar.right h5 {
+    color: rgba(0, 0, 0, .65);
+}
+
+.sidebar.right p { 
+    color: rgba(0, 0, 0, .65);
+}
+
+.sidebar.right .sidebar__content { 
+    margin-bottom: 20px;
+}
+
+.sidebar.right .sidebar__footer {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    align-items: center;
+}
+
+.sidebar.right .sidebar__footer p { 
+    margin-right: 20px;
+}
+
+.sidebar.right.collapsed { 
+    width: fit-content;
+    padding-right: 30px;
+    margin-left: 0px;
+}
+
+.sidebar.right.collapsed::after { 
+    border-left: none;
+}
+
+.sidebar.right.collapsed .sidebar__header h5,
+.sidebar.right.collapsed .sidebar__content, 
+.sidebar.right.collapsed .sidebar__statuses,
+.sidebar.right.collapsed .sidebar__footer { 
+    display: none; 
+}

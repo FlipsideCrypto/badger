@@ -5,9 +5,9 @@ import "@style/Table/TableSortHead.css";
 
 const TableSortHead = ({ id, label, sortMethod, onSortChange, align, width }) => {
     return (
-        <TableCell align={align} sx={{width: width}}>
-            <button 
-                className="button__unstyled" 
+        <TableCell align={align} sx={{ width: width }}>
+            <button
+                className="button__unstyled"
                 onClick={() => onSortChange(id)}
                 style={{ width: "100%" }}
             >
@@ -16,10 +16,13 @@ const TableSortHead = ({ id, label, sortMethod, onSortChange, align, width }) =>
                         <span>{label}</span>
                     </div>
                     <div className="table__sort__icon">
-                            <FontAwesomeIcon 
-                                className="table__sort__icon__solid" 
-                                icon={ ["fal", `${sortMethod==="asc" ? "chevron-up" : "chevron-down"}`] } 
-                            />
+                        <FontAwesomeIcon
+                            className="table__sort__icon__solid"
+                            icon={["fal", `${sortMethod === "asc" ? "chevron-up" : "chevron-down"}`]}
+                            style={{
+                                width: "0.9em",
+                            }}
+                        />
                     </div>
                 </div>
             </button>
@@ -27,4 +30,4 @@ const TableSortHead = ({ id, label, sortMethod, onSortChange, align, width }) =>
     )
 }
 
-export default TableSortHead;
+export { TableSortHead };

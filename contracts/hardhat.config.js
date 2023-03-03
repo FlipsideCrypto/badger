@@ -8,6 +8,13 @@ require('solidity-coverage');
 require('@nomicfoundation/hardhat-chai-matchers')
 require("dotenv").config();
 
+// All of these keys have been knowingly leaked to make the startup process easier for new onboards.
+// Do not use any of these keys in production.
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY;
+const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
+const PRIVATE_KEY_ACCOUNTS = [process.env.PRIVATE_KEY];
+
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
     const accounts = await hre.ethers.getSigners();
 
@@ -19,41 +26,48 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 task("deploy", "Deploys the protocol")
     .addFlag("verify", "Verify the deployed contracts on Etherscan")
     .setAction(async (taskArgs, hre) => {
+        const chainId = await getChainId();
+        
+        // Run a local node if we are on the hardhat network
+        if (chainId === '1337') hre.run('node');
+
         // Compiling all of the contracts again just in case
         await hre.run('compile');
-
+        
         const [deployer] = await ethers.getSigners();
-        console.log(`✅ Connected to ${deployer.address}`);
-
-        const chainId = await getChainId()
-
-        // Deploying the primitive master BadgerOrganization contract that is used for clones
-        const BadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
-        organizationMaster = await BadgerOrganization.deploy();
-        organizationMaster = await organizationMaster.deployed();
-        console.log("✅ Organization Implementation Deployed.")
-
+        const balance = ethers.utils.formatEther(await deployer.getBalance());
+    
+        console.table({
+            "Deployer Address": deployer.address,
+            "Deployer Balance": balance,
+        })
+        
+        const BadgerSingleton = await ethers.getContractFactory("BadgerOrganization");
+        badgerSingleton = await BadgerSingleton.deploy();
+        badgerSingleton = await badgerSingleton.deployed();
+        console.log("✅ Organization Implementation Deployed.");
+        
         organizationDeployment = {
             "Chain ID": chainId,
             "Deployer": deployer.address,
-            "Organization Implementation Address": organizationMaster.address,
+            "Organization Implementation Address": badgerSingleton.address,
             "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
-        }
-        console.table(organizationDeployment)
+        };
+        console.table(organizationDeployment);
 
         // Deploy the protocol
-        const Badger = await ethers.getContractFactory("Badger");
-        badger = await Badger.deploy(organizationMaster.address);
-        badger = await badger.deployed();
-        console.log("✅ Badger Deployed.")
+        const BadgerFactory = await ethers.getContractFactory("Badger");
+        badgerFactory = await BadgerFactory.deploy(badgerSingleton.address);
+        badgerFactory = await badgerFactory.deployed();
+        console.log("✅ Badger Deployed.");
 
         badgerDeployment = {
             "Chain ID": chainId,
             "Deployer": deployer.address,
-            "Badger Address": badger.address,
+            "Badger Address": badgerFactory.address,
             "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000,
         }
-        console.table(badgerDeployment)
+        console.table(badgerDeployment);
 
         // Verifying
         if (taskArgs.verify !== false && chainId != '31337') {
@@ -73,6 +87,11 @@ task("deploy", "Deploys the protocol")
             });
             console.log("✅ Badger Verified.")
         }
+
+        console.log("✅ Deployment Complete.")
+
+        // Keep Promise open to keep node running
+        await new Promise((resolve) => {});
     });
 
 
@@ -93,7 +112,7 @@ module.exports = {
     gasReporter: {
         currency: 'USD',
         gasPrice: 60,
-        coinmarketcap: process.env.COINMARKETCAP_API_KEY,
+        coinmarketcap: COINMARKETCAP_API_KEY,
         showMethodSig: true,
         showTimeSpent: true,
         noColors: true,
@@ -111,13 +130,10 @@ module.exports = {
     },
     etherscan: {
         apiKey: {
-            mainnet: process.env.ETHERSCAN_API_KEY,
-            rinkeby: process.env.ETHERSCAN_API_KEY,
-            goerli: process.env.ETHERSCAN_API_KEY,
-            kovan: process.env.ETHERSCAN_API_KEY,
-            ropsten: process.env.ETHERSCAN_API_KEY,
-            mumbai: process.env.POLYGONSCAN_API_KEY,
-            matic: process.env.POLYGONSCAN_API_KEY,
+            goerli: ETHERSCAN_API_KEY,
+            mumbai: POLYGONSCAN_API_KEY,
+            mainnet: ETHERSCAN_API_KEY,
+            matic: POLYGONSCAN_API_KEY,
         }
     },
     defaultNetwork: "hardhat",
@@ -128,31 +144,31 @@ module.exports = {
             gasPrice: "auto",
             saveDeployments: false,
             mining: {
-                auto: true
-                // auto: false,
-                // order: 'fifo',
-                // interval: 1500,
+                // auto: true
+                auto: false,
+                order: 'fifo',
+                interval: 200,
             }
         },
         goerli: {
-            url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ETH_ALCHEMY_KEY}`,
-            accounts: [`0x${process.env.PRIVATE_KEY}`],
+            url: `https://eth-goerli.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,
+            accounts: PRIVATE_KEY_ACCOUNTS,
             gasPrice: 5000000000, // 5 gwei
         },
         mumbai: {
-            url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.POLYGON_ALCHEMY_KEY}`,
-            accounts: [`0x${process.env.PRIVATE_KEY}`],
+            url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,
+            accounts: PRIVATE_KEY_ACCOUNTS,
             gas: 3000000,
             gasPrice: 100000000000 // 100 gwei
         },
         mainnet: {
-            url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ETH_ALCHEMY_KEY}`,
-            accounts: [`0x${process.env.PRIVATE_KEY}`],
+            url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,
+            accounts: PRIVATE_KEY_ACCOUNTS,
             gasPrice: 50000000000, // 50 gwei
         },
         polygon: {
-            url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.POLYGON_ALCHEMY_KEY}`,
-            accounts: [`0x${process.env.PRIVATE_KEY}`],
+            url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,
+            accounts: PRIVATE_KEY_ACCOUNTS,
             gasPrice: 'auto'
         },
     },

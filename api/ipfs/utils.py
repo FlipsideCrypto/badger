@@ -18,11 +18,13 @@ def pin_image(imageFile, imageName):
     suffix = imageName.split('.').pop()
 
     try:
-        with NamedTemporaryFile(suffix=f".{suffix}", delete=True) as temp_file:
-            # convert uploaded file to temp file in order to upload.
-            temp_file.write(imageFile.read())
+        with NamedTemporaryFile(suffix=f".{suffix}", delete=True) as temp_file: 
+            with open(temp_file.name, 'wb+') as pin_file:
+                for chunk in imageFile.chunks():
+                    pin_file.write(chunk)
+
             pin_response = pinata.pin_file_to_ipfs(
-                temp_file.name, 
+                pin_file.name, 
                 '', 
                 save_absolute_paths=False
             )

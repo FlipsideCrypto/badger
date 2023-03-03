@@ -243,27 +243,13 @@ class ArtViewSet(viewsets.ViewSet):
                 y = size - r * (height - i) * 5
                 circle_fill = "#fff" if fill == "#000" else "#000"                
 
-                # make the circles pulse with a keyframe animation
-                solid_animation = f"""
-                    <animate
-                        attributeName="r"
-                        values="{r};{r * 1.5};{r}"
-                        dur="3s"
-                        repeatCount="indefinite"
-                        begin="{i * .5}s"
-                        fill="{circle_fill}"
-                    />
-                """
-
                 fingerprint_svg += f"""
                     <circle
                         cx="{x}"
                         cy="{y}"
                         r="{r if not item[1] else r * 1.5}"
                         fill="{circle_fill}"
-                    >
-                        {solid_animation}
-                    </circle>
+                    ></circle>
                 """
 
         words = badge_name.split(" ")
