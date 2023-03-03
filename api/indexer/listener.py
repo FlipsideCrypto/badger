@@ -60,7 +60,7 @@ class Backfill:
             BLOCK_BUFFER = 1 if BLOCK_BUFFER == 0 else BLOCK_BUFFER
 
             batches = [[i, i + BLOCK_BUFFER] for i in range(from_block, to_block, BLOCK_BUFFER)]
-            workers = len(batches) if len(batches) < 20 else 20
+            workers = len(batches) if len(batches) < 50 else 50
 
             pool = concurrent.futures.ProcessPoolExecutor(max_workers=workers)
             futures = [pool.submit(self._etl, contracts, abi, topics, batch) for batch in batches]
