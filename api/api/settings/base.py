@@ -151,7 +151,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Web3 settings
 ALCHEMY_API_KEY = os.getenv("REACT_APP_ALCHEMY_API_KEY")
 
-DEFAULT_NETWORK = os.getenv("API_DEFAULT_NETWORK", "POLYGON")
+DEFAULT_NETWORK = os.getenv("API_DEFAULT_NETWORK", "LOCAL")
 PROVIDERS = {
     'ETHEREUM': os.getenv("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"),
     'POLYGON': os.getenv("POLYGON_PROVIDER", f"https://polygon-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"),
@@ -160,10 +160,6 @@ PROVIDERS = {
 PROVIDERS['DEFAULT'] = PROVIDERS[DEFAULT_NETWORK]
 
 AUTHENTICATION_BACKENDS = ["siwe_auth.backend.SiweBackend"]
-
-CREATE_ENS_PROFILE_ON_AUTHN = True
-
-PROVIDER = PROVIDERS['ETHEREUM'] # Has to be named PROVIDER for siwe-auth
 
 # Web3 Interaction Settings 
 PINATA_API_KEY = os.getenv("API_PINATA_API_KEY")
