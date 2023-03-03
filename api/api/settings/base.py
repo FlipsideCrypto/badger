@@ -159,6 +159,8 @@ PROVIDERS = {
 }
 PROVIDERS['DEFAULT'] = PROVIDERS[DEFAULT_NETWORK]
 
+PROVIDER = PROVIDERS['ETHEREUM']
+
 AUTHENTICATION_BACKENDS = ["siwe_auth.backend.SiweBackend"]
 
 # Web3 Interaction Settings 
