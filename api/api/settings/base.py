@@ -160,7 +160,7 @@ CUSTOM_GROUPS = [
 ]  
 
 DEFAULT_NETWORK = os.getenv("API_DEFAULT_NETWORK", "POLYGON")
-ALCHEMY_API_KEY = os.getenv("API_ALCHEMY_API_KEY")
+ALCHEMY_API_KEY = os.getenv("REACT_APP_ALCHEMY_API_KEY")
 
 PROVIDERS = {
     'ETHEREUM': os.getenv("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"),
@@ -168,6 +168,8 @@ PROVIDERS = {
     'LOCAL': os.getenv("LOCAL_PROVIDER", f"http://0.0.0.0:8545/"),
 }
 PROVIDERS['DEFAULT'] = PROVIDERS[DEFAULT_NETWORK]
+## Django SIWE setting
+PROVIDER = PROVIDERS['ETHEREUM']
 
 # Web3 Interaction Settings 
 PINATA_API_KEY = os.getenv("API_PINATA_API_KEY")
