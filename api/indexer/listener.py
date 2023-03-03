@@ -7,6 +7,8 @@ from django.conf import settings
 
 from organization.models import Organization
 
+INIT_BLOCK = 39864057
+
 POLL_INTERVAL = 5
 WARNING_BARRIER = 20000
 INIT_BLOCK_BUFFER = 20
@@ -19,20 +21,13 @@ class Backfill:
         self.batches = []
 
     def etl(self, extracting_obj, abi, topics, temp_from_block=None, temp_to_block=None):
-        now = w3.eth.blockNumber
-
-        if temp_from_block and now - temp_from_block > WARNING_BARRIER:
-            print(f"Warning: Querying more than {WARNING_BARRIER} blocks. This may take a while. Check back in a few hours.")
-
         while True:
             contracts = extracting_obj
 
             to_block = temp_to_block
             if not temp_to_block:
                 to_block = w3.eth.blockNumber
-            
-            # Always get 20 blocks back so that we don't miss anything
-            # Hitting duplicate data will not corrupt
+
             from_block = temp_from_block
             if not temp_from_block:
                 from_block = to_block - INIT_BLOCK_BUFFER
@@ -47,9 +42,6 @@ class Backfill:
 
             self.batches = [[i, i + BLOCK_BUFFER] for i in range(from_block, to_block, BLOCK_BUFFER)]
 
-            print(from_block, to_block, BLOCK_BUFFER)
-            print(self.batches)
-
             for batch in self.batches:
                 events = self.extractor.extract(
                     contracts, 
@@ -63,9 +55,7 @@ class Backfill:
                     time.sleep(POLL_INTERVAL)
                     continue
 
-                event_responses = self.loader.load(events)
-
-                print(event_responses)
+                self.loader.load(events)
 
             if not isinstance(extracting_obj, list):
                 contract_objs = (extracting_obj.objects
@@ -80,16 +70,24 @@ class Backfill:
 
             time.sleep(POLL_INTERVAL)
 
-    def listen_for_factories(self):
-        self.etl(
-            [settings.FACTORY_ADDRESS], 
+    def backfill_factories(self):
+        self.etl([settings.FACTORY_ADDRESS], 
             settings.FACTORY_ABI_FULL, 
-            settings.FACTORY_TOPIC_SIGNATURES
-        )
+            settings.FACTORY_TOPIC_SIGNATURES, 
+            temp_from_block=INIT_BLOCK)
+
+    def backfill_organizations(self):
+        self.etl(Organization, 
+            settings.ORGANIZATION_ABI_FULL, 
+            settings.ORGANIZATION_TOPIC_SIGNATURES, 
+            temp_from_block=INIT_BLOCK)
+
+    def listen_for_factories(self):
+        self.etl([settings.FACTORY_ADDRESS], 
+            settings.FACTORY_ABI_FULL, 
+            settings.FACTORY_TOPIC_SIGNATURES)
         
     def listen_for_organizations(self):
-        self.etl(
-            Organization, 
+        self.etl(Organization, 
             settings.ORGANIZATION_ABI_FULL, 
-            settings.ORGANIZATION_TOPIC_SIGNATURES
-        )
+            settings.ORGANIZATION_TOPIC_SIGNATURES)
