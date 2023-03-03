@@ -1,9 +1,8 @@
 from django.conf import settings
-from web3 import HTTPProvider, Web3
+from web3 import Web3
 from ens import ENS
 
-provider = HTTPProvider(settings.PROVIDER)
-w3 = Web3(provider)
+w3 = Web3(Web3.HTTPProvider(settings.PROVIDERS['DEFAULT']))
 ns = ENS.fromWeb3(w3)
 
 ETHEREUM = "Ethereum"

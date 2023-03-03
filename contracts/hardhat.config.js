@@ -26,23 +26,27 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 task("deploy", "Deploys the protocol")
     .addFlag("verify", "Verify the deployed contracts on Etherscan")
     .setAction(async (taskArgs, hre) => {
+        const chainId = await getChainId();
+
+        // Run a local node if we are on the hardhat network
+        if (chainId === '1337') hre.run('node');
+
         // Compiling all of the contracts again just in case
         await hre.run('compile');
-        
+
         const [deployer] = await ethers.getSigners();
         const balance = ethers.utils.formatEther(await deployer.getBalance());
-    
+
         console.table({
             "Deployer Address": deployer.address,
             "Deployer Balance": balance,
         })
-        
+
         const BadgerSingleton = await ethers.getContractFactory("BadgerOrganization");
         badgerSingleton = await BadgerSingleton.deploy();
         badgerSingleton = await badgerSingleton.deployed();
         console.log("✅ Organization Implementation Deployed.");
-        
-        const chainId = await getChainId();
+
         organizationDeployment = {
             "Chain ID": chainId,
             "Deployer": deployer.address,
@@ -83,6 +87,11 @@ task("deploy", "Deploys the protocol")
             });
             console.log("✅ Badger Verified.")
         }
+
+        console.log("✅ Deployment Complete.")
+
+        // Keep Promise open to keep node running
+        await new Promise((resolve) => { });
     });
 
 
@@ -138,7 +147,7 @@ module.exports = {
                 auto: true
                 // auto: false,
                 // order: 'fifo',
-                // interval: 1500,
+                // interval: 200,
             }
         },
         goerli: {
@@ -181,7 +190,12 @@ module.exports = {
         runOnCompile: true,
         clear: true,
         flat: true,
-        spacing: 4,
+        pretty: true
+    }, {
+        path: '../api/abis/full/',
+        runOnCompile: true,
+        clear: true,
+        flat: true,
         format: "json"
     }]
 };

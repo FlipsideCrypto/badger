@@ -16,7 +16,7 @@ services:
     ports:
       - "8545:8545"
     restart: unless-stopped
-    command: npx hardhat run scripts/deploy/deploy.js
+    command: npx hardhat deploy
   # This runs a local instance of the Badger API and database
   # by creating a local Postgres database in the api/ directory.
   # 

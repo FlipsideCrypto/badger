@@ -8,8 +8,14 @@ from siwe_auth.custom_groups.erc721 import ERC721OwnerManager
 load_dotenv()
 
 from abis import (
-    FACTORY,
-    ORGANIZATION,
+    FACTORY_ABI,
+    FACTORY_ABI_FULL,
+    FACTORY_EVENTS,
+    FACTORY_TOPIC_SIGNATURES,
+    ORGANIZATION_ABI,
+    ORGANIZATION_ABI_FULL,
+    ORGANIZATION_EVENTS,
+    ORGANIZATION_TOPIC_SIGNATURES,
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,7 +44,7 @@ INSTALLED_APPS = [
     "balance",
     "feedback",
     "ipfs",
-    "job",
+    "indexer",
     "organization",
     "wallet",
 ]
@@ -102,9 +108,7 @@ SESSION_COOKIE_AGE = 3 * 60 * 60
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -146,34 +150,31 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # Web3 settings
 ALCHEMY_API_KEY = os.getenv("REACT_APP_ALCHEMY_API_KEY")
+
+DEFAULT_NETWORK = os.getenv("API_DEFAULT_NETWORK", "LOCAL")
+PROVIDERS = {
+    'ETHEREUM': os.getenv("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"),
+    'POLYGON': os.getenv("POLYGON_PROVIDER", f"https://polygon-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"),
+    'LOCAL': os.getenv("LOCAL_PROVIDER", f"http://0.0.0.0:8545/"),
+}
+PROVIDERS['DEFAULT'] = PROVIDERS[DEFAULT_NETWORK]
+
 AUTHENTICATION_BACKENDS = ["siwe_auth.backend.SiweBackend"]
 
-CREATE_GROUPS_ON_AUTHN = False
-CREATE_ENS_PROFILE_ON_AUTHN = True
-CUSTOM_GROUPS = [
-    (
-        "ens_owners",
-        ERC721OwnerManager(
-            config={"contract": "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85"}
-        ),
-    ),
-]
-PROVIDER = os.getenv(
-    "PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"
-)
-
-WS_POLYGON_PROVIDER = os.getenv(
-    "POLYGON_PROVIDER", f"wss://polygon-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"
-)
-
-# IPFS settings
+# Web3 Interaction Settings 
 PINATA_API_KEY = os.getenv("API_PINATA_API_KEY")
 PINATA_API_SECRET_KEY = os.getenv("API_PINATA_API_SECRET_KEY")
 PINATA_INDEXER_URL = os.getenv(
     "API_PINATA_INDEXER_URL", "https://badger.mypinata.cloud/ipfs/"
 )
 
-# ABI settings
-FACTORY_ADDRESS = "0x218B3C623FfB9c5E4DBb9142E6Ca6f6559F1c2D6"
-FACTORY_ABI = FACTORY
-ORGANIZATION_ABI = ORGANIZATION
+FACTORY_ADDRESS = os.getenv("FACTORY_ADDRESS", "0x72b03C649953CA95B920f60A5687e4d2DACf45c0")
+
+FACTORY_ABI = FACTORY_ABI
+FACTORY_ABI_FULL = FACTORY_ABI_FULL
+FACTORY_EVENTS = FACTORY_EVENTS
+FACTORY_TOPIC_SIGNATURES = FACTORY_TOPIC_SIGNATURES
+
+ORGANIZATION_ABI = ORGANIZATION_ABI
+ORGANIZATION_ABI_FULL = ORGANIZATION_ABI_FULL
+ORGANIZATION_EVENTS = ORGANIZATION_EVENTS
