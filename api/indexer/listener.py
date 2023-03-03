@@ -1,8 +1,5 @@
 import concurrent.futures
-import threading
 import time
-
-from datetime import datetime
 
 from .extractor import *
 from .loader import *
