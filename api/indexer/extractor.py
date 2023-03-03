@@ -2,7 +2,7 @@ from web3 import Web3
 
 from django.conf import settings
 
-w3 = Web3(Web3.WebsocketProvider(settings.WS_POLYGON_PROVIDER))
+w3 = Web3(Web3.HTTPProvider(settings.PROVIDERS['DEFAULT']))
 
 class Extractor:
     def __init__(self):

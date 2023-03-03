@@ -140,7 +140,6 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Web3 settings
-ALCHEMY_API_KEY = os.getenv("API_ALCHEMY_API_KEY")
 AUTHENTICATION_BACKENDS = ["siwe_auth.backend.SiweBackend"]
 
 CREATE_GROUPS_ON_AUTHN = False
@@ -149,20 +148,24 @@ CUSTOM_GROUPS = [
     ('ens_owners', ERC721OwnerManager(
         config={'contract': '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85'})),
 ]  
-PROVIDER = os.getenv("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}")
 
-WS_POLYGON_PROVIDER = os.getenv("POLYGON_PROVIDER", f"wss://polygon-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}")
+DEFAULT_NETWORK = os.getenv("API_DEFAULT_NETWORK", "POLYGON")
+ALCHEMY_API_KEY = os.getenv("API_ALCHEMY_API_KEY")
 
-# IPFS settings
+PROVIDERS = {
+    'ETHEREUM': os.getenv("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"),
+    'POLYGON': os.getenv("POLYGON_PROVIDER", f"https://polygon-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"),
+    'LOCAL': os.getenv("LOCAL_PROVIDER", f"http://0.0.0.0:8545/"),
+}
+PROVIDERS['DEFAULT'] = PROVIDERS[DEFAULT_NETWORK]
+
+# Web3 Interaction Settings 
 PINATA_API_KEY = os.getenv("API_PINATA_API_KEY")
 PINATA_API_SECRET_KEY = os.getenv("API_PINATA_API_SECRET_KEY")
 PINATA_INDEXER_URL = os.getenv("API_PINATA_INDEXER_URL", "https://badger.mypinata.cloud/ipfs/")
 
-# ABI settings
-# TODO: Add 5.0 when contract has been deployed
 FACTORY_ADDRESS = os.getenv("FACTORY_ADDRESS", "0x72b03C649953CA95B920f60A5687e4d2DACf45c0")
 
-# Dictionary of the version abis
 FACTORY_ABI = FACTORY_ABI
 FACTORY_ABI_FULL = FACTORY_ABI_FULL
 FACTORY_EVENTS = FACTORY_EVENTS
