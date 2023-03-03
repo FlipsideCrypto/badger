@@ -74,13 +74,15 @@ class Backfill:
         self.etl([settings.FACTORY_ADDRESS], 
             settings.FACTORY_ABI_FULL, 
             settings.FACTORY_TOPIC_SIGNATURES, 
-            temp_from_block=INIT_BLOCK)
+            temp_from_block=INIT_BLOCK,
+            temp_to_block=w3.eth.blockNumber)
 
     def backfill_organizations(self):
         self.etl(Organization, 
             settings.ORGANIZATION_ABI_FULL, 
             settings.ORGANIZATION_TOPIC_SIGNATURES, 
-            temp_from_block=INIT_BLOCK)
+            temp_from_block=INIT_BLOCK,
+            temp_to_block=w3.eth.blockNumber)
 
     def listen_for_factories(self):
         self.etl([settings.FACTORY_ADDRESS], 
