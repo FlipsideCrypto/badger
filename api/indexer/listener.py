@@ -1,3 +1,4 @@
+import concurrent.futures
 import time
 
 from .extractor import *
@@ -7,65 +8,94 @@ from django.conf import settings
 
 from organization.models import Organization
 
+INIT_BLOCK = 39864057
+
 POLL_INTERVAL = 5
+WARNING_BARRIER = 20000
+INIT_BLOCK_BUFFER = 20
+LOG_SIZE = 2000
 
 class Backfill:
     def __init__(self):
         self.extractor = Extractor()
         self.loader = Loader()
 
-    def etl(self, extracting_obj, abi, topics):
+    def _etl(self, contracts, abi, topics, batch):
+        print(f'{batch[0]} -> {batch[1]}')
+        events = self.extractor.extract(
+            contracts, 
+            abi, 
+            topics,
+            batch[0],
+            batch[1],
+        )
+
+        if len(events) == 0:
+            time.sleep(POLL_INTERVAL)
+            return 
+
+        self.loader.load(events)
+
+    def etl(self, extracting_obj, abi, topics, temp_from_block=None, temp_to_block=None):
         while True:
             contracts = extracting_obj
 
-            # If provided an object, make the query in each run so results from the last block
-            # are included in the next run.
+            to_block = temp_to_block
+            if not temp_to_block:
+                to_block = w3.eth.blockNumber
+
+            from_block = temp_from_block
+            if not temp_from_block:
+                from_block = to_block - INIT_BLOCK_BUFFER
+
             if not isinstance(contracts, list):
-                contracts = extracting_obj.objects.filter(active=True).values_list('ethereum_address', flat=True)
+                contracts = (extracting_obj.objects
+                    .filter(active=True)
+                    .values_list('ethereum_address', flat=True))
 
-            events = self.extractor.extract(
-                contracts, 
-                abi, 
-                topics
-            )
+            BLOCK_BUFFER = LOG_SIZE if to_block - from_block > LOG_SIZE else to_block - from_block
+            BLOCK_BUFFER = 1 if BLOCK_BUFFER == 0 else BLOCK_BUFFER
 
-            print(events)
+            batches = [[i, i + BLOCK_BUFFER] for i in range(from_block, to_block, BLOCK_BUFFER)]
+            workers = len(batches) if len(batches) < 50 else 50
 
-            # Sleep for a bit before we check again
-            time.sleep(POLL_INTERVAL)
+            pool = concurrent.futures.ProcessPoolExecutor(max_workers=workers)
+            futures = [pool.submit(self._etl, contracts, abi, topics, batch) for batch in batches]
+            concurrent.futures.wait(futures)
 
-            # If there are events, then we need to check if they are in the range of the contracts
-            # that we are checking. If they are, then we need to extract them and then transform
-            # and load them.
-            # for event in events:
+            if not isinstance(extracting_obj, list):
+                contract_objs = (extracting_obj.objects
+                    .filter(ethereum_address__in=contracts)
+                    .update(last_block=to_block))
 
-            continue
+                for obj in contract_objs:
+                    obj.save()
 
-            event_responses = self.loader.handle_events(events)
-
-            # refresh queryset from database
-            queryset = queryset.model.objects.filter(pk__in=[contract.pk for contract in queryset])
-
-            for contract in queryset:
-                contract.last_block = last_block
-                contract.save()
-
-            if settings.DEBUG:
-                for response in event_responses:
-                    print(response)
+            if temp_to_block:
+                return
 
             time.sleep(POLL_INTERVAL)
 
     def backfill_factories(self):
-        self.etl(
-            [settings.FACTORY_ADDRESS], 
+        self.etl([settings.FACTORY_ADDRESS], 
             settings.FACTORY_ABI_FULL, 
-            settings.FACTORY_TOPIC_SIGNATURES
-        )
-    
+            settings.FACTORY_TOPIC_SIGNATURES, 
+            temp_from_block=INIT_BLOCK,
+            temp_to_block=w3.eth.blockNumber)
+
     def backfill_organizations(self):
-        self.etl(
-            Organization, 
+        self.etl(Organization, 
             settings.ORGANIZATION_ABI_FULL, 
-            settings.ORGANIZATION_TOPIC_SIGNATURES
-        )
+            settings.ORGANIZATION_TOPIC_SIGNATURES, 
+            temp_from_block=INIT_BLOCK,
+            temp_to_block=w3.eth.blockNumber)
+
+    def listen_for_factories(self):
+        self.etl([settings.FACTORY_ADDRESS], 
+            settings.FACTORY_ABI_FULL, 
+            settings.FACTORY_TOPIC_SIGNATURES)
+        
+    def listen_for_organizations(self):
+        self.etl(Organization, 
+            settings.ORGANIZATION_ABI_FULL, 
+            settings.ORGANIZATION_TOPIC_SIGNATURES)

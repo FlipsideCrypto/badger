@@ -2,26 +2,25 @@ from web3 import Web3
 
 from django.conf import settings
 
-w3 = Web3(Web3.WebsocketProvider(settings.WS_POLYGON_PROVIDER))
+w3 = Web3(Web3.HTTPProvider(settings.PROVIDERS['DEFAULT']))
 
 class Extractor:
     def __init__(self):
         self.contracts = {}
 
-    def extract(self, contract_addresses, abi, topics):
-        # last_block = w3.eth.blockNumber
-
-        events = w3.eth.getLogs({
-            'fromBlock': 39865246,
-            'toBlock': 39865246
+    def extract(self, contract_addresses, abi, topics, from_block, to_block):
+        events = w3.eth.get_logs({
+            'address': contract_addresses,
+            'fromBlock': from_block,
+            'toBlock': to_block
         })
-                    
+
         if not contract_addresses or len(contract_addresses) == 0:
             return []
         
         if not events or len(events) == 0:
             return []
-        
+
         event_data = []
 
         for event in events:
