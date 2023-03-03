@@ -1,4 +1,8 @@
+import concurrent.futures
+import threading
 import time
+
+from datetime import datetime
 
 from .extractor import *
 from .loader import *
@@ -18,7 +22,22 @@ class Backfill:
     def __init__(self):
         self.extractor = Extractor()
         self.loader = Loader()
-        self.batches = []
+
+    def _etl(self, contracts, abi, topics, batch):
+        print(f'{batch[0]} -> {batch[1]}')
+        events = self.extractor.extract(
+            contracts, 
+            abi, 
+            topics,
+            batch[0],
+            batch[1],
+        )
+
+        if len(events) == 0:
+            time.sleep(POLL_INTERVAL)
+            return 
+
+        self.loader.load(events)
 
     def etl(self, extracting_obj, abi, topics, temp_from_block=None, temp_to_block=None):
         while True:
@@ -40,27 +59,16 @@ class Backfill:
             BLOCK_BUFFER = LOG_SIZE if to_block - from_block > LOG_SIZE else to_block - from_block
             BLOCK_BUFFER = 1 if BLOCK_BUFFER == 0 else BLOCK_BUFFER
 
-            self.batches = [[i, i + BLOCK_BUFFER] for i in range(from_block, to_block, BLOCK_BUFFER)]
+            batches = [[i, i + BLOCK_BUFFER] for i in range(from_block, to_block, BLOCK_BUFFER)]
 
-            for batch in self.batches:
-                events = self.extractor.extract(
-                    contracts, 
-                    abi, 
-                    topics,
-                    batch[0],
-                    batch[1],
-                )
-
-                if len(events) == 0:
-                    time.sleep(POLL_INTERVAL)
-                    continue
-
-                self.loader.load(events)
+            pool = concurrent.futures.ProcessPoolExecutor(max_workers=len(batches))
+            futures = [pool.submit(self._etl, contracts, abi, topics, batch) for batch in batches]
+            concurrent.futures.wait(futures)
 
             if not isinstance(extracting_obj, list):
                 contract_objs = (extracting_obj.objects
                     .filter(ethereum_address__in=contracts)
-                    .update(last_block=batch[1]))
+                    .update(last_block=to_block))
 
                 for obj in contract_objs:
                     obj.save()
