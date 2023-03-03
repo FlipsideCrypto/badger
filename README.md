@@ -1,4 +1,4 @@
-![opengraph](frontend/src/public/opengraph.png)
+![opengraph](./frontend/public/opengraph.png)
 
 # Badger
 
