@@ -78,7 +78,6 @@ jobs:
         if: always()
         with:
           sarif_file: ${{ steps.slither.outputs.sarif }}
-          overwrite:
 
       - name: 🏗️ Save build
         uses: stefanzweifel/git-auto-commit-action@v4
