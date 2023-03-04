@@ -15,6 +15,12 @@ const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY;
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
 const PRIVATE_KEY_ACCOUNTS = [process.env.PRIVATE_KEY];
 
+const mining = process.env.MINING === 'true' ? { auto: true } : {
+    auto: false,
+    order: 'fifo',
+    interval: 500,
+}
+
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
     const accounts = await hre.ethers.getSigners();
 
@@ -143,12 +149,7 @@ module.exports = {
             gas: "auto",
             gasPrice: "auto",
             saveDeployments: false,
-            mining: {
-                auto: true
-                // auto: false,
-                // order: 'fifo',
-                // interval: 200,
-            }
+            mining
         },
         goerli: {
             url: `https://eth-goerli.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,

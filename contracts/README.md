@@ -129,5 +129,5 @@ In the meantime, you can find resources of due diligence below:
 To run the smart contracts you may use the following command:
 
 ```bash
-npx hardhat test .\test\Badger.js --verbose --fulltrace
+MINING="true" npx hardhat test .\test\Badger.js --verbose --fulltrace
 ```

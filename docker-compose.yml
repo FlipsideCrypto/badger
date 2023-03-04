@@ -134,4 +134,7 @@ services:
       - badger_db
       - badger_redis
       - badger_server
-    command: npm start --host 0.0.0.0 --disableHostCheck true
+    command: > 
+      sh -c "
+        npm start --host 0.0.0.0 --disableHostCheck true
+      "

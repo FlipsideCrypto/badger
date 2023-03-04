@@ -150,7 +150,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # Web3 settings
 NODE_IP = os.getenv("NODE_IP", "0.0.0.0")
-print(NODE_IP)
 
 ALCHEMY_API_KEY = os.getenv("REACT_APP_ALCHEMY_API_KEY")
 
