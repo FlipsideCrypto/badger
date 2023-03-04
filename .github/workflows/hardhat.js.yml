@@ -82,7 +82,7 @@ jobs:
         id: slither
         with:
           node-version: 16
-          sarif: outputs.sarif
+          sarif: results.sarif
           fail-on: none
           target: "contracts/"
 
