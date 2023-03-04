@@ -42,6 +42,10 @@ jobs:
   audit:
     name: 👁️ Audit
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
     env:
       PRIVATE_KEY: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
       POLYGON_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
@@ -71,8 +75,10 @@ jobs:
 
       - name: ☁️ Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
+        if: always()
         with:
           sarif_file: ${{ steps.slither.outputs.sarif }}
+          overwrite:
 
       - name: 🏗️ Save build
         uses: stefanzweifel/git-auto-commit-action@v4
