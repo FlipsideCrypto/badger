@@ -42,6 +42,10 @@ jobs:
   audit:
     name: 👁️ Audit
     runs-on: ubuntu-latest
+    env:
+      PRIVATE_KEY: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+      POLYGON_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
+      ETH_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
     steps:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
