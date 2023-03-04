@@ -52,7 +52,7 @@ class Backfill:
 
             if not isinstance(contracts, list):
                 contracts = (extracting_obj.objects
-                    .filter(active=True)
+                    .filter(is_active=True)
                     .values_list('ethereum_address', flat=True))
 
             BLOCK_BUFFER = LOG_SIZE if to_block - from_block > LOG_SIZE else to_block - from_block
