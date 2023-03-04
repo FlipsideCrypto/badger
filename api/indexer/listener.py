@@ -8,8 +8,6 @@ from django.conf import settings
 
 from organization.models import Organization
 
-INIT_BLOCK = 39864057
-
 POLL_INTERVAL = 5
 WARNING_BARRIER = 20000
 INIT_BLOCK_BUFFER = 20
@@ -46,7 +44,7 @@ class Backfill:
 
             from_block = temp_from_block
             if not temp_from_block:
-                from_block = to_block - INIT_BLOCK_BUFFER
+                from_block = 0 if to_block - INIT_BLOCK_BUFFER < 0 else to_block - INIT_BLOCK_BUFFER
 
             if not isinstance(contracts, list):
                 contracts = (extracting_obj.objects
@@ -54,6 +52,7 @@ class Backfill:
                     .values_list('ethereum_address', flat=True))
 
             BLOCK_BUFFER = LOG_SIZE if to_block - from_block > LOG_SIZE else to_block - from_block
+            BLOCK_BUFFER = to_block - from_block if BLOCK_BUFFER > to_block - from_block else BLOCK_BUFFER
             BLOCK_BUFFER = 1 if BLOCK_BUFFER == 0 else BLOCK_BUFFER
 
             batches = [[i, i + BLOCK_BUFFER] for i in range(from_block, to_block, BLOCK_BUFFER)]
@@ -80,14 +79,14 @@ class Backfill:
         self.etl([settings.FACTORY_ADDRESS], 
             settings.FACTORY_ABI_FULL, 
             settings.FACTORY_TOPIC_SIGNATURES, 
-            temp_from_block=INIT_BLOCK,
+            temp_from_block=settings.BACKFILL_INIT_BLOCK,
             temp_to_block=w3.eth.blockNumber)
 
     def backfill_organizations(self):
         self.etl(Organization, 
             settings.ORGANIZATION_ABI_FULL, 
             settings.ORGANIZATION_TOPIC_SIGNATURES, 
-            temp_from_block=INIT_BLOCK,
+            temp_from_block=settings.BACKFILL_INIT_BLOCK,
             temp_to_block=w3.eth.blockNumber)
 
     def listen_for_factories(self):
