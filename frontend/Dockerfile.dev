@@ -1,6 +1,7 @@
 FROM node
 
 ARG NPM_TOKEN
+ARG REACT_APP_API_URL
 
 # Set working directory
 WORKDIR /code
@@ -13,10 +14,16 @@ COPY package-lock.json /code/
 RUN npm config set "@fortawesome:registry" https://npm.fontawesome.com/
 RUN npm config set "//npm.fontawesome.com/:_authToken" ${NPM_TOKEN}
 
+# Prepare the environment
+ENV NODE_OPTIONS=--openssl-legacy-provider
+ENV CHOKIDAR_USEPOLLING=true
+ENV WATCHBACK_POLLING=true
+ENV NODE_ENV=development
+ENV WDS_SOCKET_HOST=127.0.0.1
+
+ENV REACT_APP_API_URL=${REACT_APP_API_URL}
+
 # Install the dependencies
 RUN npm install
-
-# Set WATCHBACK_POLLING as true
-ENV WATCHBACK_POLLING=true
 
 COPY . /code/

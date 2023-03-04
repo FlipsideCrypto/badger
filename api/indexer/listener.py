@@ -44,6 +44,8 @@ class Backfill:
             if not temp_to_block:
                 to_block = w3.eth.blockNumber
 
+            print(to_block)
+
             from_block = temp_from_block
             if not temp_from_block:
                 from_block = to_block - INIT_BLOCK_BUFFER

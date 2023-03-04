@@ -1,14 +1,17 @@
 FROM python:3.9
 
+ARG NODE_IP
+
 ENV PYTHONUNBUFFERED=1
 
-# Set working directory
 WORKDIR /code
 
-# Copy the requirements file
 COPY requirements.txt /code/
 
-# Install the requirements
 RUN pip install -r requirements.txt
 
 COPY . /code/
+
+ENV NODE_IP=$NODE_IP
+
+CMD ["python", "manage.py", "migrate"]

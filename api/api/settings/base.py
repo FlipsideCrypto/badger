@@ -149,13 +149,16 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Web3 settings
+NODE_IP = os.getenv("NODE_IP", "0.0.0.0")
+print(NODE_IP)
+
 ALCHEMY_API_KEY = os.getenv("REACT_APP_ALCHEMY_API_KEY")
 
 DEFAULT_NETWORK = os.getenv("REACT_APP_DEFAULT_NETWORK", "LOCAL")
 PROVIDERS = {
     'ETHEREUM': os.getenv("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"),
     'POLYGON': os.getenv("POLYGON_PROVIDER", f"https://polygon-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"),
-    'LOCAL': os.getenv("LOCAL_PROVIDER", f"http://0.0.0.0:8545/"),
+    'LOCAL': os.getenv("LOCAL_PROVIDER", f"http://{NODE_IP}:8545/"),
 }
 PROVIDERS['DEFAULT'] = os.getenv("PROVIDER", PROVIDERS[DEFAULT_NETWORK])
 PROVIDER = PROVIDERS['ETHEREUM']

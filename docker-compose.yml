@@ -7,7 +7,7 @@ services:
   # without having to deploy to a testnet or mainnet.
   badger_node:
     build:
-      dockerfile: Dockerfile.dev.node
+      dockerfile: Dockerfile.dev
       context: ./contracts
     volumes:
       - .:/contracts/code
@@ -17,13 +17,8 @@ services:
       - "8545:8545"
     restart: unless-stopped
     command: npx hardhat deploy
-  # This runs a local instance of the Badger API and database
+  # Run a local instance of the Badger API and database
   # by creating a local Postgres database in the api/ directory.
-  # 
-  # The initialization process of this will cause the API
-  # to error out until it is ready to accept connections even
-  # though the worker is technically running. This is expected
-  # behavior and will resolve itself once the database is ready.
   badger_db:
     image: postgres:13.2
     container_name: badger_db
@@ -38,10 +33,7 @@ services:
       - '5432:5432'
     restart: unless-stopped
   # Start a local instance of Redis for that drives the websockets
-  # for the Badger API.
-  # 
-  # This operates like a cache and does not need to persist through restarts
-  # so it is not mounted to a volume.
+  # for the Badger API caching and messaging system.
   badger_redis:
     image: redis:6.2.1
     container_name: badger_redis
@@ -49,12 +41,48 @@ services:
     ports:
       - 6379:6379
     restart: unless-stopped
-  # Run the Badge API running on Django. This will run the API
+  # Run the onchain listener for Badger Factories in a separate worker
+  # that is loading data into the same database as the API.
+  badger_factory_listener:
+    container_name: badger_factory_listener
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./api
+      args:
+        NODE_IP: host.docker.internal
+    volumes:
+      - ./api:/code
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    depends_on:
+      - badger_node
+      - badger_db
+    links:
+      - badger_node:badger_node
+    command: python manage.py listen_for_factories
+  # Run the onchain listener for Badger Organizations in a separate worker
+  # that is loading data into the same database as the API.
+  badger_organization_listener:
+    container_name: badger_organization_listener
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./api
+      args:
+        NODE_IP: host.docker.internal
+    volumes:
+      - ./api:/code
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    depends_on:
+      - badger_node
+      - badger_db
+    links:
+      - badger_node:badger_node
+    command: python manage.py listen_for_organizations
+  # Run the Badger API running on Django. This will run the API
   # on port 8000 and will be accessible at http://localhost:8000
-  #
-  # This will also run the Django development server which will
-  # automatically run all the migrations needed as well as 
-  # reload when changes are made to the code.
   badger_server:
     container_name: badger_server
     build:
@@ -75,9 +103,10 @@ services:
       - badger_node
       - badger_db
       - badger_redis
-    command: >
-      sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
-  # Run the React frontend
+    command: python manage.py runserver 0.0.0.0:8000
+  # Run the React frontend for Badger. This will run the frontend
+  # on port 3000 and will be accessible at http://localhost:3000
+  # while consuming the state of all services apriori.
   badger_frontend:
     container_name: badger_frontend
     build:
@@ -85,19 +114,13 @@ services:
       context: ./frontend
       args:
         NPM_TOKEN: ${NPM_TOKEN}
+        REACT_APP_API_URL: http://localhost:8000
     volumes:
       - ./frontend:/code
       - /code/node_modules
       - /code/public
     env_file:
       - ./.env
-    environment:
-      - NODE_OPTIONS=--openssl-legacy-provider
-      - REACT_APP_API_URL=http://localhost:8000
-      - CHOKIDAR_USEPOLLING=true
-      - WATCHPACK_POLLING=true 
-      - WDS_SOCKET_HOST=127.0.0.1
-      - NODE_ENV=development
     ports:
       - '3000:3000'
     restart: unless-stopped
