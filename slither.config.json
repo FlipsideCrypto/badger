@@ -5,6 +5,6 @@
     "exclude_medium": false,
     "exclude_high": false,
     "disable_color": false,
-    "filter_paths": "(test/|lib/|script/|node_modules/|contracts/node_modules)",
+    "filter_paths": "(node_nodules/|contracts/node_modules/)",
     "legacy_ast": false
   }
