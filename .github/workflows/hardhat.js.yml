@@ -64,9 +64,8 @@ jobs:
         run: cd build && ./c4udit/c4udit -s ../contracts/
 
       - name: 🐍 Run Slither
-        uses: crytic/slither-action@main
+        uses: crytic/slither-action@v0.3.0
         id: slither
-        continue-on-error: true
         with:
           node-version: 16
           sarif: results.sarif
@@ -74,7 +73,7 @@ jobs:
           target: "contracts/"
 
       - name: ☁️ Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
         if: always()
         with:
           sarif_file: ${{ steps.slither.outputs.sarif }}

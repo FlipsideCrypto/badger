@@ -7,4 +7,4 @@
     "disable_color": false,
     "filter_paths": "(test/|lib/|script/|node_modules/)",
     "legacy_ast": false
-  }
+}
