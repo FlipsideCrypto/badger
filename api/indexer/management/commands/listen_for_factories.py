@@ -1,8 +1,8 @@
-from django.core.management.commands.runserver import Command as IndexerCommand
+from django.core.management.base import BaseCommand
 
 from indexer.listener import Backfill
 
-class Command(IndexerCommand):
-    def handle(self, *args, **options):
+class Command(BaseCommand):
+    def handle(self, **options):
         backfill = Backfill()
         backfill.listen_for_factories()
