@@ -13,15 +13,10 @@ jobs:
   test:
     name: ✅ Test
     runs-on: ubuntu-latest
-
     env:
       PRIVATE_KEY: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
       POLYGON_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
       ETH_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
-    strategy:
-      matrix:
-        node-version: [16.x]
-
     steps:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -44,7 +39,6 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "fix: gas report"
-
   audit:
     name: 👁️ Audit
     runs-on: ubuntu-latest
@@ -55,10 +49,10 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
-      - name: Install C4udit worker
+      - name: 📥 Download deps
         run: cd build && git clone https://github.com/byterocket/c4udit && cd c4udit && go build .
 
-      - name: Run automated low-complexity C4udit worker
+      - name: 😡 Run contract auditor
         run: cd build && ./c4udit/c4udit -s ../contracts/
 
       - name: 🏗️ Save build
