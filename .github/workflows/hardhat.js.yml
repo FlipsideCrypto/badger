@@ -42,6 +42,26 @@ jobs:
   audit:
     name: 👁️ Audit
     runs-on: ubuntu-latest
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: 📥 Download deps
+        run: cd build && git clone https://github.com/byterocket/c4udit && cd c4udit && go build .
+
+      - name: 😡 Run contract auditor
+        run: cd build && ./c4udit/c4udit -s ../contracts/
+
+      - name: 🏗️ Save build
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "fix: contract audit"
+  slither:
+    name: 🐍 Slither
+    runs-on: ubuntu-latest
     permissions:
       security-events: write
       actions: read
@@ -57,12 +77,6 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
-      - name: 📥 Download deps
-        run: cd build && git clone https://github.com/byterocket/c4udit && cd c4udit && go build .
-
-      - name: 😡 Run contract auditor
-        run: cd build && ./c4udit/c4udit -s ../contracts/
-
       - name: 🐍 Run Slither
         uses: crytic/slither-action@v0.3.0
         id: slither
@@ -77,8 +91,3 @@ jobs:
         if: always()
         with:
           sarif_file: ${{ steps.slither.outputs.sarif }}
-
-      - name: 🏗️ Save build
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "fix: contract audit"
