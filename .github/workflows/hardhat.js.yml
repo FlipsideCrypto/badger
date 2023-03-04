@@ -37,24 +37,31 @@ jobs:
       - name: 📥 Download deps
         run: npm install
 
-      - name: Run Hardhat smart contract tests
+      - name: 🤔 Run smart contract tests
         run: MINING=true REPORT_GAS=true npx hardhat test
+
+      - name: 🏗️ Save build
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "fix: gas report"
 
   audit:
     name: 👁️ Audit
     runs-on: ubuntu-latest
     steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
       - name: Install C4udit worker
         run: cd build && git clone https://github.com/byterocket/c4udit && cd c4udit && go build .
 
       - name: Run automated low-complexity C4udit worker
         run: cd build && ./c4udit/c4udit -s ../contracts/
 
-  build:
-    name: ⚒️ Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Save the build outputs
+      - name: 🏗️ Save build
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "fix: smart contract build"
+          commit_message: "fix: contract audit"
