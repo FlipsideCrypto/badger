@@ -39,7 +39,7 @@ jobs:
 
   gas_report:
     name: ⛽ Gas Report
-
+    runs-on: ubuntu-latest
     steps:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -60,7 +60,7 @@ jobs:
 
   audit:
     name: 👁️ Audit
-
+    runs-on: ubuntu-latest
     steps:
       - name: Install C4udit worker
         run: cd build && git clone https://github.com/byterocket/c4udit && cd c4udit && go build .
@@ -70,7 +70,7 @@ jobs:
 
   build:
     name: ⚒️ Build
-
+    runs-on: ubuntu-latest
     steps:
       - name: Save the build outputs
         uses: stefanzweifel/git-auto-commit-action@v4
