@@ -39,6 +39,19 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "fix: gas report"
+  slither:
+    name: 🐍 Slither through the contracts
+    uses: crytic/slither-action@main
+    id: slither
+    continue-on-error: true
+    with:
+      sarif: results.sarif
+      fails_on: none
+  sarif:
+    name: 🌨️ Upload SARIF file
+    uses: github/codeql-action/upload-sarif@v1
+    with:
+      sarif_file: ${{ steps.slither.outputs.sarif }}
   audit:
     name: 👁️ Audit
     runs-on: ubuntu-latest

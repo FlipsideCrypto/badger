@@ -9,3 +9,5 @@ coverage.json
 gasReporterOutput.json
 
 build/c4udit/
+
+.idea
