@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions: write-all
     env:
-      PRIVATE_KEY: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
-      POLYGON_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
-      ETH_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      POLYGON_ALCHEMY_KEY: ${{ secrets.POLYGON_ALCHEMY_KEY }}
+      ETH_ALCHEMY_KEY: ${{ secrets.ETH_ALCHEMY_KEY }}
     steps:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -54,9 +54,9 @@ jobs:
     name: ✅ Test
     runs-on: ubuntu-latest
     env:
-      PRIVATE_KEY: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
-      POLYGON_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
-      ETH_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      POLYGON_ALCHEMY_KEY: ${{ secrets.POLYGON_ALCHEMY_KEY }}
+      ETH_ALCHEMY_KEY: ${{ secrets.ETH_ALCHEMY_KEY }}
     steps:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
