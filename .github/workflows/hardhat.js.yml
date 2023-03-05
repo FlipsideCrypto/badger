@@ -10,6 +10,38 @@ defaults:
     working-directory: contracts/
 
 jobs:
+  slither:
+    name: 🐍 Slither
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    env:
+      PRIVATE_KEY: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+      POLYGON_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
+      ETH_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: 🐍 Run Slither
+        uses: crytic/slither-action@v0.3.0
+        id: slither
+        with:
+          node-version: 16
+          sarif: results.sarif
+          fail-on: none
+          target: "contracts/"
+
+      - name: ☁️ Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: ${{ steps.slither.outputs.sarif }}
   test:
     name: ✅ Test
     runs-on: ubuntu-latest
@@ -59,35 +91,3 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "fix: contract audit"
-  slither:
-    name: 🐍 Slither
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
-    env:
-      PRIVATE_KEY: "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
-      POLYGON_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
-      ETH_ALCHEMY_KEY: "CLG_LCiDZkHaMGRaLQc_yhbhbSiv6NEL"
-    steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v3
-
-      - name: 🐍 Run Slither
-        uses: crytic/slither-action@v0.3.0
-        id: slither
-        with:
-          node-version: 16
-          sarif: results.sarif
-          fail-on: none
-          target: "contracts/"
-
-      - name: ☁️ Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
-        if: always()
-        with:
-          sarif_file: ${{ steps.slither.outputs.sarif }}

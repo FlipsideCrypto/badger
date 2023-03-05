@@ -5,6 +5,6 @@
     "exclude_medium": false,
     "exclude_high": false,
     "disable_color": false,
-    "filter_paths": "openzepellin",
+    "filter_paths": "node_modules/|contracts/mocks/",
     "legacy_ast": false
   }
