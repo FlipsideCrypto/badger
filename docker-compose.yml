@@ -60,7 +60,7 @@ services:
       - badger_db
     links:
       - badger_node:badger_node
-    command: python manage.py backfill_factories && python manage.py listen_for_factories
+    command: python manage.py listen_for_factories
   # Run the onchain listener for Badger Organizations in a separate worker
   # that is loading data into the same database as the API.
   badger_organization_listener:
@@ -80,7 +80,7 @@ services:
       - badger_db
     links:
       - badger_node:badger_node
-    command: python manage.py backfill_organizations && python manage.py listen_for_organizations
+    command: python manage.py listen_for_organizations
   # Run the Badger API running on Django. This will run the API
   # on port 8000 and will be accessible at http://localhost:8000
   badger_server:

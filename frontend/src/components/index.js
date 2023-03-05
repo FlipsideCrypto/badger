@@ -11,7 +11,6 @@ export { Footer } from './Footer/Footer';
 export { ArrowLink } from './Link';
 export { Navbar } from './Navbar/Navbar';
 export { Header } from './Header/Header';
-export { Help, HelpCopy, HelpSidebar } from './Help';
 export { ChainIcon, LogoIcon } from './Icon';
 export { OrgStats } from './Org/OrgStats';
 export { BadgePreview, StoryPreview } from './Preview';

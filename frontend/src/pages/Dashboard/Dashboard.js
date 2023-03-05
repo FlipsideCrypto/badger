@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 
 import { useUser } from "@hooks";
 
-import { ActionBar, Dashboard as DashboardContent, Empty, HelpSidebar, SEO } from "@components";
+import { ActionBar, Dashboard as DashboardContent, Empty, SEO } from "@components";
 
 import { Badge, BadgeForm, Home, Org, OrgForm } from "@pages";
 
@@ -15,15 +15,13 @@ const description = "Badger is a decentralized, open-source, and community-drive
 const Dashboard = () => {
     const { isAuthenticated, isConnected, isLoaded, isWrongNetwork, primaryChain } = useUser();
 
-    const [collapsed, setCollapsed] = useState(false);
-
     return (
         <>
             <SEO title={title} description={description} />
 
-            <div className={collapsed ? "dashboard collapsed" : "dashboard"}>
+            <div className="dashboard">
                 <div className="dashboard__contents">
-                    <ActionBar collapsed={collapsed} setCollapsed={setCollapsed} />
+                    <ActionBar />
 
                     {!isConnected && <Empty
                         title="Connect your wallet to view your Organizations!"
@@ -57,8 +55,6 @@ const Dashboard = () => {
                         </Routes>
                     </DashboardContent>}
                 </div>
-
-                <HelpSidebar collapsed={collapsed} />
             </div>
         </>
     )

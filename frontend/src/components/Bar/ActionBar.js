@@ -9,7 +9,7 @@ import { sliceAddress } from "@utils";
 import '@rainbow-me/rainbowkit/styles.css'
 import "@style/Bar/ActionBar.css";
 
-const ActionBar = ({ collapsed, setCollapsed }) => {
+const ActionBar = () => {
     const { pathname } = useLocation();
 
     const { authenticatedAddress, isAuthenticated, isLoaded } = useUser();
@@ -35,12 +35,8 @@ const ActionBar = ({ collapsed, setCollapsed }) => {
             </div>
 
             <div className="action_bar__actions">
-                <ActionButton icon={['fal', 'star']} afterText="Star on GitHub" 
+                <ActionButton icon={['fal', 'star']} afterText="Star on GitHub"
                     link="http://github.com/flipsidecrypto/badger" />
-
-                <ActionButton icon={['fal', 'question']} afterText="Help" onClick={() => {
-                    setCollapsed(!collapsed)
-                }} />
 
                 {isAuthenticated && authenticatedAddress && <LogoutButton />}
             </div>
