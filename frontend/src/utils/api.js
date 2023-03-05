@@ -6,38 +6,6 @@ import { IPFS_GATEWAY_URL } from "@static"
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-async function postFeedbackRequest(feedback) { 
-    let response;
-
-    try {
-        await fetch(`${API_URL}/feedback/`, {
-            method: 'POST',
-            mode: "cors",
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken(),
-            },
-            credentials: 'include',
-            body: JSON.stringify(feedback)
-        })
-        .then(res => res.json())
-        .then(data => { 
-            if(!data?.id) throw new Error(
-                data.detail || "Feedback POST request failed"
-            );
-            response = data;
-        })
-        .catch(err => { 
-            throw new Error(err);
-        })
-    }
-    catch(err) { 
-        response = { error: err };
-    }
-
-    return response;
-}
-
 async function postOrgRequest(org) {
     let response;
     const url = org?.url ? org.url : `${API_URL}/organizations/`;
@@ -54,19 +22,19 @@ async function postOrgRequest(org) {
             credentials: 'include',
             body: JSON.stringify(org)
         })
-        .then(res => res.json())
-        .then(data => {
-            if (!data?.id) throw new Error(
-                data.detail || "Org POST request failed"
-            );
-            response = data;
-        })
-        .catch(err => {
-            throw new Error(err);
-        })
+            .then(res => res.json())
+            .then(data => {
+                if (!data?.id) throw new Error(
+                    data.detail || "Org POST request failed"
+                );
+                response = data;
+            })
+            .catch(err => {
+                throw new Error(err);
+            })
     }
     catch (err) {
-        response = {error: err}
+        response = { error: err }
     }
 
     return response;
@@ -74,13 +42,13 @@ async function postOrgRequest(org) {
 
 async function postBadgeRequest(badge) {
     let response;
-    
+
     const users = formatAddresses(badge.users);
     const delegates = formatAddresses(badge.delegates);
     const signer = badge.signer === "" ? "" : ethers.utils.getAddress(badge.signer);
 
-    const organization = typeof(badge?.organization) === "string" ? 
-          parseInt(badge?.organization) 
+    const organization = typeof (badge?.organization) === "string" ?
+        parseInt(badge?.organization)
         : badge?.organization;
 
     const badgeData = {
@@ -106,20 +74,20 @@ async function postBadgeRequest(badge) {
             credentials: 'include',
             body: JSON.stringify(badgeData)
         })
-        .then(res => res.json())
-        .then(data => {
-            if (!data?.id) throw new Error(
-                data.detail ||
-                "Badge POST request failed"
-            );
-            response = data;
-        })
-        .catch(err => {
-            throw new Error(err);
-        })
+            .then(res => res.json())
+            .then(data => {
+                if (!data?.id) throw new Error(
+                    data.detail ||
+                    "Badge POST request failed"
+                );
+                response = data;
+            })
+            .catch(err => {
+                throw new Error(err);
+            })
     }
     catch (err) {
-        response = {error: err};
+        response = { error: err };
     }
 
     return response;
@@ -127,7 +95,7 @@ async function postBadgeRequest(badge) {
 
 async function postIPFSImage(image) {
     // If the image is already a hash, return it.
-    if (typeof(image) === "string") return {hash: image};
+    if (typeof (image) === "string") return { hash: image };
     const formData = new FormData();
     formData.append('image', image)
     let response;
@@ -142,19 +110,19 @@ async function postIPFSImage(image) {
             credentials: 'include',
             body: formData
         })
-        .then(res => res.json())
-        .then(data => {
-            if (!data.hash) throw new Error(
-                data.detail || "IPFS Image POST request failed"
-            );
-            response = data
-        })
-        .catch(error => {
-            throw new Error(error);
-        })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.hash) throw new Error(
+                    data.detail || "IPFS Image POST request failed"
+                );
+                response = data
+            })
+            .catch(error => {
+                throw new Error(error);
+            })
     }
     catch (err) {
-        response = {error: err}
+        response = { error: err }
     }
 
     return response;
@@ -168,8 +136,8 @@ async function postIPFSMetadata(props) {
         attributes
     } = props;
 
-    if (!name || !description || !imageHash) return {error: "Missing required fields for IPFS metadata upload"};
-    
+    if (!name || !description || !imageHash) return { error: "Missing required fields for IPFS metadata upload" };
+
     let response;
 
     const metadata = {
@@ -191,21 +159,21 @@ async function postIPFSMetadata(props) {
                 'X-CSRFToken': getCSRFToken(),
             },
             credentials: 'include',
-            body: JSON.stringify({data: metadata})
+            body: JSON.stringify({ data: metadata })
         })
-        .then(res => res.json())
-        .then(data => {
-            if (!data.hash) throw new Error(
-                data.detail || "IPFS Metadata POST request failed"
-            );
-            response = data
-        })
-        .catch(error => {
-            throw new Error(error);
-        })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.hash) throw new Error(
+                    data.detail || "IPFS Metadata POST request failed"
+                );
+                response = data
+            })
+            .catch(error => {
+                throw new Error(error);
+            })
     }
     catch (err) {
-        response = {error: err}
+        response = { error: err }
     }
 
     return response;
@@ -222,19 +190,19 @@ async function getUserRequest(address) {
                 'X-CSRFToken': getCSRFToken(),
             }
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.length < 1) throw new Error(
-                data.detail || "No user data found"
-            );
-            response = data;
-        })
-        .catch(err => {
-            throw new Error(err)
-        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.length < 1) throw new Error(
+                    data.detail || "No user data found"
+                );
+                response = data;
+            })
+            .catch(err => {
+                throw new Error(err)
+            })
     }
     catch (err) {
-        response = {error: err};
+        response = { error: err };
     }
 
     return response;
@@ -252,19 +220,19 @@ async function getOrgRequest(orgId) {
             },
             credentials: 'include'
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.length < 1) throw new Error(
-                data.detail || "No org data found"
-            );
-            response = data;
-        })
-        .catch(err => {
-            throw new Error(err);
-        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.length < 1) throw new Error(
+                    data.detail || "No org data found"
+                );
+                response = data;
+            })
+            .catch(err => {
+                throw new Error(err);
+            })
     }
     catch (err) {
-        response = {error: err}
+        response = { error: err }
     }
 
     return response
@@ -276,7 +244,7 @@ async function putBadgeRolesRequest(badge, orgId) {
     // Have to clean input addresses to match the API
     const users = formatAddresses(badge.users);
     const delegates = formatAddresses(badge.delegates);
-    const organization = typeof(orgId) === "string" ? parseInt(orgId) : orgId;
+    const organization = typeof (orgId) === "string" ? parseInt(orgId) : orgId;
 
     const data = {
         organization: organization,
@@ -295,17 +263,17 @@ async function putBadgeRolesRequest(badge, orgId) {
             credentials: 'include',
             body: JSON.stringify(data),
         })
-        .then(res => res.json())
-        .then(data => {
-            if (!data?.id) throw new Error(
-                data.detail || "Badge PUT request failed"
-            );
+            .then(res => res.json())
+            .then(data => {
+                if (!data?.id) throw new Error(
+                    data.detail || "Badge PUT request failed"
+                );
 
-            response = data
-        })
+                response = data
+            })
     }
     catch (err) {
-        response = {error: err}
+        response = { error: err }
     }
 
     return response;
@@ -313,7 +281,7 @@ async function putBadgeRolesRequest(badge, orgId) {
 
 async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
     const url = `${API_URL}/art/badge?organization=${orgName}&organization_ethereum_address=${orgAddress}&badge_id=${badgeId}&badge_name=${badgeName}`
-    
+
     let response;
     try {
         await fetch(url, {
@@ -324,19 +292,19 @@ async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
             },
             credentials: 'include'
         })
-        .then(res => res.json())
-        .then(data => {
-            if (!data) throw new Error(
-                "Badge image could not be created."
-            );
-            response = getFileFromBase64(data.image, `generated_${badgeName.replace(" ", "_")}_${badgeId}.svg`);
-        })
-        .catch(err => {
-            throw new Error(err);
-        })
+            .then(res => res.json())
+            .then(data => {
+                if (!data) throw new Error(
+                    "Badge image could not be created."
+                );
+                response = getFileFromBase64(data.image, `generated_${badgeName.replace(" ", "_")}_${badgeId}.svg`);
+            })
+            .catch(err => {
+                throw new Error(err);
+            })
     }
     catch (err) {
-        response = {error: err}
+        response = { error: err }
     }
 
     return response
@@ -353,19 +321,19 @@ async function getPFPImage(char, address) {
             },
             credentials: 'include'
         })
-        .then(res => res.json())
-        .then(data => {
-            if (!data) throw new Error(
-                "PFP image could not be created."
-            );
-            response = getFileFromBase64(data.image, `generated_${char}_${address}.svg`);
-        })
-        .catch(err => {
-            throw new Error(err);
-        })
+            .then(res => res.json())
+            .then(data => {
+                if (!data) throw new Error(
+                    "PFP image could not be created."
+                );
+                response = getFileFromBase64(data.image, `generated_${char}_${address}.svg`);
+            })
+            .catch(err => {
+                throw new Error(err);
+            })
     }
     catch (err) {
-        response = {error: err}
+        response = { error: err }
     }
 
     return response
@@ -380,19 +348,19 @@ async function getAttributesFromHash(hash) {
         await fetch(url, {
             method: "GET",
         })
-        .then(res => res.json())
-        .then(data => {
-            if (!data) throw new Error(
-                "Attributes could not be retrieved."
-            );
-            response = data.attributes;
-        })
-        .catch(err => {
-            throw new Error(err);
-        })
+            .then(res => res.json())
+            .then(data => {
+                if (!data) throw new Error(
+                    "Attributes could not be retrieved."
+                );
+                response = data.attributes;
+            })
+            .catch(err => {
+                throw new Error(err);
+            })
     }
     catch (err) {
-        response = {error: err}
+        response = { error: err }
     }
 
     return response;
@@ -411,26 +379,25 @@ async function patchModelType(type, obj) {
             credentials: 'include',
             body: JSON.stringify(obj)
         })
-        .then(res => res.json())
-        .then(data => {
-            if (!data) throw new Error(
-                `${type} could not be archived.`
-            );
-            response = data;
-        })
-        .catch(err => {
-            throw new Error(err);
-        })
+            .then(res => res.json())
+            .then(data => {
+                if (!data) throw new Error(
+                    `${type} could not be archived.`
+                );
+                response = data;
+            })
+            .catch(err => {
+                throw new Error(err);
+            })
     }
     catch (err) {
-        response = {error: err}
+        response = { error: err }
     }
 
     return response;
 }
 
-export { 
-    postFeedbackRequest,
+export {
     postOrgRequest,
     postBadgeRequest,
     postIPFSImage,

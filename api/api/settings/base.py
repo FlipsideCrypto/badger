@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "channels",
     "badge",
     "balance",
-    "feedback",
     "ipfs",
     "indexer",
     "organization",

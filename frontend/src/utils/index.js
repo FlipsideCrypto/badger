@@ -1,5 +1,4 @@
 export {
-    postFeedbackRequest,
     postOrgRequest,
     postBadgeRequest,
     postIPFSImage,
@@ -13,14 +12,14 @@ export {
     patchModelType,
 } from './api'
 
-export { 
+export {
     getAuthentication,
     getNonce,
     getAuthenticationMessage,
     getAuthenticationStatus,
 } from './auth'
 
-export { 
+export {
     csvFileToArray,
     sliceAddress,
     compareByProperty,
