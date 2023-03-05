@@ -4,7 +4,7 @@ import { IconButton } from "@components"
 
 import "@style/Bar/FormActionBar.css"
 
-const FormActionBar = ({ help, actions, style, helpStyle, actionStyle }) => {
+const FormActionBar = ({ actions, style, actionStyle }) => {
     return (
         <div className="actionBar" style={style}>
             <div className="actions">

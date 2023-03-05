@@ -38,7 +38,13 @@ const OrgForm = ({ isEdit = false }) => {
 
     const isDisabled = !(obj.name && obj.symbol && obj.description && activeImage);
 
+    console.log('obj', obj)
+    console.log('isDisabled', isDisabled)
+    console.log('activeImage', activeImage)
+
     const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({ obj, image: activeImage })
+
+    console.log('isPrepared', isPrepared)
 
     const actions = [{
         text: `${isEdit ? "Save" : "Create"} organization`,
@@ -46,16 +52,20 @@ const OrgForm = ({ isEdit = false }) => {
         loading: isLoading,
         disabled: isDisabled || !isPrepared,
         event: () => openOrgFormTx({
-            onSuccess: ({ org }) => { navigate(`/dashboard/organization/${org.id}/`) }
+            onSuccess: ({ txReceipt }) => {
+                const organizationCreatedEvent = txReceipt.events.find(e => e.event === "OrganizationCreated");
+
+                const orgAddress = organizationCreatedEvent.args.organization;
+
+                navigate(`/dashboard/organization/${txReceipt.chainId}/${orgAddress}/`);
+            }
         })
     }]
 
+    console.log('actions', actions)
+
     const onNameChange = (e) => {
         setObj({ ...obj, name: e.target.value, symbol: getSymbol(e.target.value) })
-    }
-
-    const onSymbolChange = (e) => {
-        setObj({ ...obj, symbol: getSymbol(e.target.value) })
     }
 
     const onDescriptionChange = (e) => {
@@ -84,16 +94,12 @@ const OrgForm = ({ isEdit = false }) => {
             <h2 className="dashboard__content">{`${isEdit ? "Update" : "Create"} Organization`}</h2>
 
             <FormDrawer label="Information">
-                <div className="vanities">
-                    <Input label="Name" value={obj.name || ""} onChange={onNameChange} />
-                    <Input label="Symbol" value={obj.symbol || ""} onChange={onSymbolChange} />
-                </div>
-
+                <Input label="Name" value={obj.name || ""} onChange={onNameChange} />
                 <Input label="Description" value={obj.description || ""} onChange={onDescriptionChange} />
             </FormDrawer>
 
-            <FormDrawer label="Appearance" open={!!obj.image_hash}>
-                <Input label="Image" accept="image/*" disabled={true} append={
+            <FormDrawer label="Advanced" open={!!obj.image_hash}>
+                <Input label="Custom Image" accept="image/*" disabled={true} append={
                     <button className="secondary" onClick={onImageUpload}>
                         {`${customImage ? "Update" : "Upload"} image`}
                     </button>}

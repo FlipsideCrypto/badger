@@ -11,9 +11,12 @@ function getPrimaryImplementation() {
 
 // Putting the parse into a try catch block to account for missing env var breaking the app.
 function getBadgerAddress(chainName) {
+    console.log('chain name', chainName)
     try {
         const BADGER_ADDRESSES = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES);
         const address = BADGER_ADDRESSES[chainName] ? BADGER_ADDRESSES[chainName] : BADGER_ADDRESSES[PRIMARY_PRODUCTION_CHAIN];
+        console.log('BADGER_ADDRESSES', BADGER_ADDRESSES)
+        console.log('address', address)
         return address;
     }
     catch {
@@ -27,11 +30,11 @@ function getBadgerAddress(chainName) {
 function getBadgerOrganizationAbi() {
     try {
         const abi = require('@abis/BadgerOrganization.json');
-        return {abi: new ethers.utils.Interface(abi)}
+        return { abi: new ethers.utils.Interface(abi) }
     }
     catch (err) {
         console.error('Error importing BadgerOrganization:', err);
-        return {error: err}
+        return { error: err }
     }
 }
 
@@ -40,6 +43,7 @@ function getBadgerAbi(chainName) {
     try {
         const abi = require('@abis/Badger.json');
         const address = getBadgerAddress(chainName);
+        console.log('getbadgeabi address', address)
         return {
             abi: new ethers.utils.Interface(abi),
             address: address
@@ -47,11 +51,11 @@ function getBadgerAbi(chainName) {
     }
     catch (err) {
         console.error('Error importing Badger:', err);
-        return {error: err}
+        return { error: err }
     }
 }
 
-export { 
+export {
     getPrimaryImplementation,
     getBadgerAddress,
     getBadgerOrganizationAbi,

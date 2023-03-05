@@ -121,6 +121,15 @@ services:
       - /code/public
     env_file:
       - ./.env
+    environment:
+      - NODE_OPTIONS=--openssl-legacy-provider
+      # ENABLE this to use the local backend
+      - REACT_APP_BACKEND_URL=http://localhost:8000
+      # Enable this for hot reloads
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true 
+      - WDS_SOCKET_HOST=127.0.0.1
+      - NODE_ENV=development
     ports:
       - '3000:3000'
     restart: unless-stopped

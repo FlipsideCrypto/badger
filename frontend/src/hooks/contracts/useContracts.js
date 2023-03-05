@@ -4,7 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
-import { getPrimaryImplementation, getBadgerOrganizationAbi, getBadgerAbi, useFees, useIPFS, useIPFSImageHash, useIPFSMetadataHash, useUser } from "@hooks";
+import {
+    getPrimaryImplementation,
+    getBadgerOrganizationAbi,
+    getBadgerAbi,
+    useFees,
+    useIPFS,
+    useIPFSImageHash,
+    useIPFSMetadataHash,
+    useUser
+} from "@hooks";
 
 import { postOrgRequest } from "@utils";
 
@@ -27,14 +36,17 @@ import { IPFS_GATEWAY_URL } from "@static";
 const getOrgFormTxArgs = ({ functionName, authenticatedAddress, name, symbol, imageHash, contractHash }) => {
     if (functionName === "setOrganizationURI") {
         return [IPFS_GATEWAY_URL + contractHash]
-    } else if (functionName === "createOrganization") return [
-        getPrimaryImplementation(),
-        authenticatedAddress,
-        IPFS_GATEWAY_URL + imageHash,
-        IPFS_GATEWAY_URL + contractHash,
-        name,
-        symbol,
-    ]
+    } else if (functionName === "createOrganization") {
+        const organizationStruct = {
+            deployer: authenticatedAddress,
+            uri: IPFS_GATEWAY_URL + imageHash,
+            organizationURI: IPFS_GATEWAY_URL + contractHash,
+            name,
+            symbol
+        }
+
+        return [organizationStruct]
+    }
 }
 
 const useOrg = ({ obj, functionName }) => {
@@ -131,7 +143,15 @@ const useOrgForm = ({ obj, image }) => {
         return getBadgerAbi(chain.name);
     }, [functionName, chain.name]);
 
-    const isReady = Badger && fees && authenticatedAddress;
+    console.log('functionname', functionName)
+
+    // Writing isReady like this results in the value being equal to authenticatedAddress, but 
+    // I want it to be a boolean
+    const isReady = Badger && fees && !!authenticatedAddress;
+
+    console.log('badger', Badger)
+
+    console.log('isReady', isReady)
 
     const args = getOrgFormTxArgs({
         functionName,
@@ -143,6 +163,8 @@ const useOrgForm = ({ obj, image }) => {
     });
 
     const overrides = { gasPrice: fees?.gasPrice };
+
+    console.log("badger address", Badger.address);
 
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
         enabled: isReady,
@@ -163,7 +185,7 @@ const useOrgForm = ({ obj, image }) => {
     const openOrgFormTx = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
-        onSuccess = ({ tx, org, response }) => { }
+        onSuccess = ({ config, tx, receipt }) => { }
     }) => {
         try {
             setIsLoading(true) && onLoading()
@@ -178,15 +200,7 @@ const useOrgForm = ({ obj, image }) => {
 
             if (txReceipt.status === 0) throw new Error("Error submitting transaction.");
 
-            // TODO: Include the logic here
-
-            const org = {}
-
-            const response = await postOrgRequest(org)
-
-            if (!response.ok) throw new Error("Error submitting Organization request.")
-
-            setIsSuccess(true) && onSuccess({ tx, org, response })
+            setIsSuccess(true) && onSuccess({ config, tx, txReceipt })
         } catch (e) {
             console.error(e);
 
