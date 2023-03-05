@@ -8,9 +8,16 @@ from django.conf import settings
 
 from organization.models import Organization
 
-POLL_INTERVAL = 5
-WARNING_BARRIER = 20000
-INIT_BLOCK_BUFFER = 20
+"""
+The poll interval should be a fraction of the block interval of the chain being listened to while still maintaining
+historical use due to the chance of a long-write and/or very data-heavy block.
+
+ETH: 12 seconds
+BSC: 3 seconds
+Polygon/Matic: 2 seconds
+Optimism: 1 second
+"""
+
 LOG_SIZE = 2000
 
 class Backfill:
@@ -29,7 +36,7 @@ class Backfill:
         )
 
         if len(events) == 0:
-            time.sleep(POLL_INTERVAL)
+            time.sleep(settings.LISTENER_POLL_INTERVAL)
             return 
 
         self.loader.load(events)
@@ -44,7 +51,7 @@ class Backfill:
 
             from_block = temp_from_block
             if not temp_from_block:
-                from_block = 0 if to_block - INIT_BLOCK_BUFFER < 0 else to_block - INIT_BLOCK_BUFFER
+                from_block = 0 if to_block - settings.LISTENER_INIT_BLOCK_BUFFER < 0 else to_block - settings.LISTENER_INIT_BLOCK_BUFFER
 
             if not isinstance(contracts, list):
                 contracts = (extracting_obj.objects
@@ -73,20 +80,20 @@ class Backfill:
             if temp_to_block:
                 return
 
-            time.sleep(POLL_INTERVAL)
+            time.sleep(settings.LISTENER_POLL_INTERVAL)
 
     def backfill_factories(self):
         self.etl([settings.FACTORY_ADDRESS], 
             settings.FACTORY_ABI_FULL, 
             settings.FACTORY_TOPIC_SIGNATURES, 
-            temp_from_block=settings.BACKFILL_INIT_BLOCK,
+            temp_from_block=settings.LISTENER_INIT_BLOCK,
             temp_to_block=w3.eth.blockNumber)
 
     def backfill_organizations(self):
         self.etl(Organization, 
             settings.ORGANIZATION_ABI_FULL, 
             settings.ORGANIZATION_TOPIC_SIGNATURES, 
-            temp_from_block=settings.BACKFILL_INIT_BLOCK,
+            temp_from_block=settings.LISTENER_INIT_BLOCK,
             temp_to_block=w3.eth.blockNumber)
 
     def listen_for_factories(self):
