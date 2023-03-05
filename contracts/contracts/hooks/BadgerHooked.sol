@@ -122,7 +122,7 @@ abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
             "BadgerHooks::_setHook: Hook does not implement IBadgerHook."
         );
 
-        // slither-disable-start unused-return
+        // slither-disable-start [unused-return]
 
         /// @dev If the hook is active, add it to the set.
         if (_isHook) {
@@ -133,7 +133,7 @@ abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
             hooks[_slot].remove(_slotHook);
         }
 
-        // slither-disable-end unused-return
+        // slither-disable-end [unused-return]
 
         /// @dev Announce updates to the hooks.
         emit HookUpdated(_slot, _slotHook, _isHook);
