@@ -143,7 +143,7 @@ Issue Information: [G007](https://github.com/byterocket/c4-common-issues/blob/ma
 ../contracts/hooks/mint/BadgerMintMaxAllowance.sol::65 => "BadgerMintMaxAllowance::execute: Max mint reached."
 ../contracts/hooks/mint/BadgerMintMaxSupply.sol::44 => "BadgerMintMaxSupply::config: Max must be greater than the already minted supply."
 ../contracts/hooks/mint/BadgerMintMaxSupply.sol::67 => "BadgerMintMaxSupply::execute: Max supply exceeded."
-../contracts/hooks/mint/BadgerMintSelf.sol::55 => "BadgerMintSelfOperated::execute: Only mint to self"
+../contracts/hooks/mint/BadgerMintSelf.sol::54 => "BadgerMintSelfOperated::execute: Only mint to self"
 ../contracts/hooks/revoke/BadgerRevokeForbidden.sol::52 => "BadgerRevokeForbidden::execute: Invalid permission to revoke token."
 ../contracts/hooks/transfer/BadgerTransferBlocklist.sol::55 => "BadgerTransferBlocklist::execute: Invalid permission to transfer token."
 ../contracts/hooks/transfer/BadgerTransferBound.sol::60 => "BadgerTransferBound::execute: Invalid permission to transfer token."
