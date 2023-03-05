@@ -63,9 +63,9 @@ class Backfill:
             concurrent.futures.wait(futures)
 
             if not isinstance(extracting_obj, list):
-                contract_objs = (extracting_obj.objects
-                    .filter(ethereum_address__in=contracts)
-                    .update(last_block=to_block))
+                contract_objs = extracting_obj.objects.filter(ethereum_address__in=contracts)
+                
+                contract_objs.update(last_block=to_block)
 
                 for obj in contract_objs:
                     obj.save()
