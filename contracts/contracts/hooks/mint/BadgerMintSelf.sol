@@ -47,11 +47,10 @@ contract BadgerMintSelf is BadgerMintHook {
             (address, address, uint256, uint256, bytes)
         );
 
-        /// @dev Determine if the Badge is self-operated.
-        bool operatorManaged = selfOperated[msg.sender][_id] == false;
-
+        /// @dev Ensure the token is not being minted to another address
+        ///      if self-operation is enabled.
         require(
-            _operator == _to || operatorManaged,
+            _operator == _to || !selfOperated[msg.sender][_id],
             "BadgerMintSelfOperated::execute: Only mint to self"
         );
     }

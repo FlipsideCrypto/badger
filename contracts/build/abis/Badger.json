@@ -66,7 +66,7 @@
           }
         ],
         "internalType": "struct IBadgerOrganizationStruct.Organization",
-        "name": "_organization",
+        "name": "_organizationStruct",
         "type": "tuple"
       }
     ],
