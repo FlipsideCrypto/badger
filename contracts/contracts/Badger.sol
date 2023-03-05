@@ -78,15 +78,15 @@ contract Badger is IBadger, ERC165, Context {
         /// @dev Interface with the Organization.
         badgerOrganization = BadgerOrganization(organizationAddress);
 
-        /// @dev Initialize the Organization.
-        badgerOrganization.initialize(_organization);
-
         /// @dev Announce the creation of the Organization.
         emit OrganizationCreated(
             badgerOrganization,
             _msgSender(),
             organizationId
         );
+
+        /// @dev Initialize the Organization.
+        badgerOrganization.initialize(_organization);
     }
 
     ////////////////////////////////////////////////////////

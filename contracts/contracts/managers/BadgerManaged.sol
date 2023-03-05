@@ -71,10 +71,10 @@ contract BadgerManaged is IBadgerManaged, BadgerNetwork {
             "BadgerOrganizationHooked::_configManager: Manager is not a configured Badger module."
         );
 
-        /// @dev Configure the manager network object.
-        _configNetwork(_manager, _config);
-
         /// @dev Announce the configuration of the manager.
         emit ManagerConfigured(_key, _config);
+
+        /// @dev Configure the manager network object.
+        _configNetwork(_manager, _config);
     }
 }
