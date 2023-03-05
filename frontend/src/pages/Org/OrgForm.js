@@ -38,13 +38,7 @@ const OrgForm = ({ isEdit = false }) => {
 
     const isDisabled = !(obj.name && obj.symbol && obj.description && activeImage);
 
-    console.log('obj', obj)
-    console.log('isDisabled', isDisabled)
-    console.log('activeImage', activeImage)
-
     const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({ obj, image: activeImage })
-
-    console.log('isPrepared', isPrepared)
 
     const actions = [{
         text: `${isEdit ? "Save" : "Create"} organization`,
@@ -61,8 +55,6 @@ const OrgForm = ({ isEdit = false }) => {
             }
         })
     }]
-
-    console.log('actions', actions)
 
     const onNameChange = (e) => {
         setObj({ ...obj, name: e.target.value, symbol: getSymbol(e.target.value) })

@@ -143,15 +143,7 @@ const useOrgForm = ({ obj, image }) => {
         return getBadgerAbi(chain.name);
     }, [functionName, chain.name]);
 
-    console.log('functionname', functionName)
-
-    // Writing isReady like this results in the value being equal to authenticatedAddress, but 
-    // I want it to be a boolean
     const isReady = Badger && fees && !!authenticatedAddress;
-
-    console.log('badger', Badger)
-
-    console.log('isReady', isReady)
 
     const args = getOrgFormTxArgs({
         functionName,
@@ -163,8 +155,6 @@ const useOrgForm = ({ obj, image }) => {
     });
 
     const overrides = { gasPrice: fees?.gasPrice };
-
-    console.log("badger address", Badger.address);
 
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
         enabled: isReady,
