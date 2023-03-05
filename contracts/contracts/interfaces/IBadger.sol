@@ -25,12 +25,12 @@ interface IBadger is IBadgerOrganizationStruct {
     ////////////////////////////////////////////////////////
 
     /**
-     * @dev Deploy a new Badger Organization based on the provided `_organization`.
-     * @param _organization The Organization struct containing the details of the new Organization.
+     * @dev Deploy a new Badger Organization based on the provided `_organizationStruct`.
+     * @param _organizationStruct The Organization struct containing the details of the new Organization.
      * @return badgerOrganization The newly deployed Organization contract.
      * @return organizationId The `organizationId` of the newly deployed Organization.
      */
-    function createOrganization(Organization calldata _organization)
+    function createOrganization(Organization calldata _organizationStruct)
         external
         returns (BadgerOrganization badgerOrganization, uint256 organizationId);
 
