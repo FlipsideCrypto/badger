@@ -67,7 +67,7 @@ Issue Information: [G002](https://github.com/byterocket/c4-common-issues/blob/ma
 ../contracts/BadgerOrganizationLogic.sol::238 => hooksLength == _isHook.length,
 ../contracts/BadgerOrganizationLogic.sol::239 => "BadgerScout::setHooks: _hooks and _isHook must be the same length."
 ../contracts/hooks/BadgerHooked.sol::84 => uint256 hooksLength = _hooks.length();
-../contracts/hooks/BadgerHooked.sol::178 => uint256 slotHooksLength = slotHooks.length;
+../contracts/hooks/BadgerHooked.sol::176 => uint256 slotHooksLength = slotHooks.length;
 ../contracts/hooks/transfer/BadgerTransferBound.sol::51 => uint256 idsLength = _ids.length;
 ../contracts/hooks/transfer/BadgerTransferBoundManaged.sol::63 => uint256 idsLength = _ids.length;
 ```
@@ -134,7 +134,7 @@ Issue Information: [G007](https://github.com/byterocket/c4-common-issues/blob/ma
 ../contracts/hooks/BadgerHooked.sol::16 => import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 ../contracts/hooks/BadgerHooked.sol::116 => "BadgerOrganizationHooked::_configManager: Manager is not a contract."
 ../contracts/hooks/BadgerHooked.sol::122 => "BadgerHooks::_setHook: Hook does not implement IBadgerHook."
-../contracts/hooks/BadgerHooked.sol::157 => "BadgerOrganizationHooked::_configHook: Hook is not enabled."
+../contracts/hooks/BadgerHooked.sol::155 => "BadgerOrganizationHooked::_configHook: Hook is not enabled."
 ../contracts/hooks/forfeit/BadgerForfeitForbidden.sol::51 => "BadgerForfeitForbidden::execute: Invalid permission to forfeit token."
 ../contracts/hooks/hook/BadgerHookBlocklist.sol::54 => "BadgerHookBlacklist::execute: Cannot enable blocklisted hook."
 ../contracts/hooks/mint/BadgerMintMax.sol::42 => "BadgerMintMax::config: Max must be greater than zero."
