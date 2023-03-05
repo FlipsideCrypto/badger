@@ -36,6 +36,17 @@ jobs:
           sarif: results.sarif
           fail-on: none
           target: "contracts/"
+          slither-args: --checklist --markdown-root ${{ github.server_url }}/${{ github.repository }}/blob/${{ github.sha }}/
+
+    - name: 🗣️ Create/update checklist as PR comment
+      uses: actions/github-script@v6
+      if: github.event_name == 'pull_request'
+      with:
+        script: |
+          const script = require('.github/scripts/comment')
+          const header = '# Slither report'
+          const body = `${{ steps.slither.outputs.stdout }}`
+          await script({ github, context, header, body })
 
       - name: ☁️ Upload SARIF file
         uses: github/codeql-action/upload-sarif@v2
