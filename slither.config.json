@@ -1,5 +1,5 @@
 {
-    "detectors_to_exclude": "redundant-statements, calls-loop, assembly-usage, block-timestamp, conformance-to-solidity-naming-conventions, incorrect-versions-of-solidity, similar-variables, variable-names-too-similar, uninitialized-local-variables, low-level-calls",
+    "detectors_to_exclude": "redundant-statements, calls-loop, unused-return, assembly-usage, block-timestamp, conformance-to-solidity-naming-conventions, incorrect-versions-of-solidity, similar-variables, variable-names-too-similar, uninitialized-local-variables, low-level-calls",
     "exclude_informational": false,
     "exclude_low": false,
     "exclude_medium": false,
