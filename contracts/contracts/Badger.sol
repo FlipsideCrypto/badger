@@ -60,7 +60,7 @@ contract Badger is IBadger, ERC165, Context {
     /**
      * See {IBadger-createOrganization}.
      */
-    function createOrganization(Organization calldata _organization)
+    function createOrganization(Organization calldata _organizationStruct)
         public
         virtual
         returns (BadgerOrganization badgerOrganization, uint256 organizationId)
@@ -86,7 +86,7 @@ contract Badger is IBadger, ERC165, Context {
         );
 
         /// @dev Initialize the Organization.
-        badgerOrganization.initialize(_organization);
+        badgerOrganization.initialize(_organizationStruct);
     }
 
     ////////////////////////////////////////////////////////
