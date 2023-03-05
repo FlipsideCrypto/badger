@@ -46,12 +46,10 @@ const OrgForm = ({ isEdit = false }) => {
         loading: isLoading,
         disabled: isDisabled || !isPrepared,
         event: () => openOrgFormTx({
-            onSuccess: ({ txReceipt }) => {
-                const organizationCreatedEvent = txReceipt.events.find(e => e.event === "OrganizationCreated");
+            onSuccess: ({ chain, receipt }) => {
+                const orgAddress = receipt.logs[1]['address']
 
-                const orgAddress = organizationCreatedEvent.args.organization;
-
-                navigate(`/dashboard/organization/${txReceipt.chainId}/${orgAddress}/`);
+                navigate(`/dashboard/organization/${chain.id}/${orgAddress}/`);
             }
         })
     }]

@@ -132,18 +132,20 @@ async function postIPFSMetadata(props) {
     const {
         name,
         description,
-        imageHash,
+        image,
         attributes
     } = props;
 
-    if (!name || !description || !imageHash) return { error: "Missing required fields for IPFS metadata upload" };
+    console.log(name, description, image, attributes)
+
+    if (!name || !description || !image) return { error: "Missing required fields for IPFS metadata upload" };
 
     let response;
 
     const metadata = {
         name: name,
         description: description,
-        image: IPFS_GATEWAY_URL + imageHash,
+        image: IPFS_GATEWAY_URL + image,
     }
 
     if (attributes) {

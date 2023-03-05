@@ -175,22 +175,29 @@ const useOrgForm = ({ obj, image }) => {
     const openOrgFormTx = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
-        onSuccess = ({ config, tx, receipt }) => { }
+        onSuccess = ({ config, chain, tx, receipt }) => { }
     }) => {
         try {
-            setIsLoading(true) && onLoading()
+            setIsLoading(true);
+            setIsSuccess(false);
+            onLoading()
 
             const tx = await writeAsync()
 
-            const [txReceipt, imageHash, metadataHash] = await Promise.all([
+            console.log(image, metadata)
+
+            const [receipt, imageHash, metadataHash] = await Promise.all([
                 tx.wait(),
                 pinImage(image),
                 pinMetadata(metadata)
             ])
 
-            if (txReceipt.status === 0) throw new Error("Error submitting transaction.");
+            if (receipt.status === 0) throw new Error("Error submitting transaction.");
 
-            setIsSuccess(true) && onSuccess({ config, tx, txReceipt })
+            setIsLoading(false);
+            setIsSuccess(true);
+
+            onSuccess({ config, chain, tx, receipt })
         } catch (e) {
             console.error(e);
 

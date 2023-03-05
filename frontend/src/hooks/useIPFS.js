@@ -27,6 +27,8 @@ const useIPFS = ({ image, data }) => {
     }
 
     const pinMetadata = async (data) => {
+        console.log('trying to pin', data)
+
         const response = await postIPFSMetadata(data);
 
         if (response.error) {
@@ -63,9 +65,9 @@ const useIPFSImageHash = (imageFile) => {
             reader.readAsArrayBuffer(image);
         }
 
-        if(!imageFile) return;
+        if (!imageFile) return;
 
-        if(typeof imageFile === 'string') {
+        if (typeof imageFile === 'string') {
             // If provided a string, it is treated as if it is hash.
             setHash(imageFile);
 
