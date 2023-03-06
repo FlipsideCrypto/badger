@@ -42,7 +42,7 @@ class OrganizationSerializer(
         fields = (
             'id',
             'is_active',
-            'chain',
+            'chain_id',
             'name',
             'symbol',
             'description',

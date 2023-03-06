@@ -14,4 +14,3 @@ COPY . /code/
 
 ENV NODE_IP=$NODE_IP
 
-CMD ["python", "manage.py", "migrate"]
