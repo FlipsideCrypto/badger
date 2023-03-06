@@ -27,8 +27,6 @@ const useIPFS = ({ image, data }) => {
     }
 
     const pinMetadata = async (data) => {
-        console.log('trying to pin', data)
-
         const response = await postIPFSMetadata(data);
 
         if (response.error) {

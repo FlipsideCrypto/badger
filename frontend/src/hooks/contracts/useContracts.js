@@ -104,8 +104,6 @@ const useOrgForm = ({ obj, image }) => {
 
             const tx = await writeAsync()
 
-            console.log(image, metadata)
-
             const [receipt, imageHash, metadataHash] = await Promise.all([
                 tx.wait(),
                 pinImage(image),
