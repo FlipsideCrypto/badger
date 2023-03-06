@@ -4,8 +4,6 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 import { useAuthentication, useAuthenticationModal } from "@hooks";
 
-const PRIMARY_PRODUCTION_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN;
-
 const ConnectButton = () => {
     const { switchNetwork } = useSwitchNetwork();
 
@@ -13,8 +11,7 @@ const ConnectButton = () => {
 
     const { openConnectModal } = useConnectModal();
 
-    const { primaryChain, isAuthenticating, isWrongNetwork } =
-        useAuthentication();
+    const { primaryChain, isAuthenticating, isWrongNetwork } = useAuthentication();
 
     const { openAuthenticationModal } = useAuthenticationModal();
 
@@ -31,7 +28,7 @@ const ConnectButton = () => {
                 disabled={!switchNetwork}
                 onClick={switchNetwork.bind(null, primaryChain.id)}
             >
-                Switch to {PRIMARY_PRODUCTION_CHAIN}
+                Switch to {primaryChain.name}
             </button>
         );
 

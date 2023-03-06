@@ -2,7 +2,7 @@ from django.conf import settings
 from web3 import Web3
 from ens import ENS
 
-w3 = Web3(Web3.HTTPProvider(settings.PROVIDERS['DEFAULT']))
+w3 = Web3(Web3.HTTPProvider(settings.CHAIN_PROVIDER))
 ns = ENS.fromWeb3(w3)
 
 def get_ens_name(address):

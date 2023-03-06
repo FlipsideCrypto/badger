@@ -1,15 +1,12 @@
 export {
-    getPrimaryImplementation, 
-    getBadgerAddress, 
-    getBadgerOrganizationAbi, 
-    getBadgerAbi, 
-    useCreateOrg, 
-    useEditOrg, 
-    useSetBadge, 
-    useOrgForm, 
-    useManageBadgeOwnership, 
-    useSetDelegates, 
-    useTransferOwnership, 
+    getBadgerAddress,
+    getBadgerOrganizationAbi,
+    getBadgerAbi,
+    useSetBadge,
+    useOrgForm,
+    useManageBadgeOwnership,
+    useSetDelegates,
+    useTransferOwnership,
     useRenounceOwnership
 } from './contracts';
 

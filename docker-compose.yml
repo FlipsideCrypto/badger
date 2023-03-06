@@ -65,9 +65,10 @@ services:
       - badger_redis
     command: >
       sh -c "
+        sleep 10 &&
         python manage.py migrate &&
-        python manage.py runserver
-      "   
+        python manage.py runserver 0.0.0.0:8000
+      "
   # Run the onchain listener for Badger Factories in a separate worker
   # that is loading data into the same database as the API.
   badger_factory_listener:
@@ -89,7 +90,11 @@ services:
     links:
       - badger_node:badger_node
       - badger_db:badger_db
-    command: python manage.py listen_for_factories
+    command: >
+      sh -c "
+        sleep 25 &&
+        python manage.py listen_for_factories
+      "
   # Run the onchain listener for Badger Organizations in a separate worker
   # that is loading data into the same database as the API.
   badger_organization_listener:
@@ -111,7 +116,11 @@ services:
     links:
       - badger_node:badger_node
       - badger_db:badger_db
-    command: python manage.py listen_for_organizations
+    command: >
+      sh -c "
+        sleep 25 &&
+        python manage.py listen_for_organizations
+      "
   # Run the React frontend for Badger. This will run the frontend
   # on port 3000 and will be accessible at http://localhost:3000
   # while consuming the state of all services apriori.

@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 
-const PRIMARY_PRODUCTION_CHAIN = process.env.REACT_APP_PRODUCTION_CHAIN
+const CHAIN_ID = process.env.REACT_APP_CHAIN_ID
 
 const AuthenticationContext = createContext();
 
@@ -18,16 +18,17 @@ const AuthenticationContextProvider = ({ children }) => {
     const [authenticatedAddress, setAuthenticatedAddress] = useState(getAuthenticatedAddress());
     const [isAuthenticating, setIsAuthenticating] = useState(false);
 
-    const primaryChain = chains.find(c => c.name === PRIMARY_PRODUCTION_CHAIN)
+    const primaryChain = chains.find(c => c.id === CHAIN_ID);
 
     const isWrongNetwork = isConnected && chain && primaryChain && chains && chain.id !== primaryChain.id;
 
     const isAuthenticated = isConnected && !isWrongNetwork && address === authenticatedAddress;
 
+    const isReadyToSwitch = !isError && switchNetwork && isWrongNetwork;
+
     useEffect(() => {
-        /// Using isError here allows us to not prompt another switchNetwork if the user has already rejected the switch.
-        if (isWrongNetwork && switchNetwork && !isError) switchNetwork(primaryChain.id)
-    }, [isWrongNetwork, switchNetwork, isError, primaryChain]);
+        if (isReadyToSwitch) switchNetwork(primaryChain.id)
+    }, [isReadyToSwitch, primaryChain]);
 
     return (
         <AuthenticationContext.Provider value={{

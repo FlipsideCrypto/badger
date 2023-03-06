@@ -1,4 +1,5 @@
 import os
+import json
 
 from dotenv import load_dotenv
 from pathlib import Path
@@ -147,35 +148,22 @@ REST_FRAMEWORK = {
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Web3 settings
+# Provider settings 
 NODE_IP = os.getenv("NODE_IP", "0.0.0.0")
-
 ALCHEMY_API_KEY = os.getenv("REACT_APP_ALCHEMY_API_KEY")
-
-DEFAULT_NETWORK = os.getenv("REACT_APP_DEFAULT_NETWORK", "LOCAL")
+CHAIN_ID = int(os.getenv("REACT_APP_CHAIN_ID", 1337))
 PROVIDERS = {
-    'ETHEREUM': os.getenv("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"),
-    'POLYGON': os.getenv("POLYGON_PROVIDER", f"https://polygon-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"),
-    'LOCAL': os.getenv("LOCAL_PROVIDER", f"http://{NODE_IP}:8545/"),
+    1: os.getenv("PROVIDER", f"https://eth-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"),
+    137: os.getenv("POLYGON_PROVIDER", f"https://polygon-mainnet.g.alchemy.com/v2/{ALCHEMY_API_KEY}"),
+    1337: os.getenv("LOCAL_PROVIDER", f"http://{NODE_IP}:8545/"),
 }
-PROVIDERS['DEFAULT'] = os.getenv("PROVIDER", PROVIDERS[DEFAULT_NETWORK])
-PROVIDER = PROVIDERS['ETHEREUM']
+CHAIN_PROVIDER = PROVIDERS[CHAIN_ID]
+PROVIDER = PROVIDERS[1]
 
-FACTORY_ADDRESSES = {
-    "ETHEREUM": "0x0",
-    "POLYGON": "0x72b03C649953CA95B920f60A5687e4d2DACf45c0",
-    "LOCAL": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-}
-FACTORY_ADDRESS = os.getenv("FACTORY_ADDRESS", FACTORY_ADDRESSES[DEFAULT_NETWORK])
-
+# Blockchain based authentication
 AUTHENTICATION_BACKENDS = ["siwe_auth.backend.SiweBackend"]
 
-PINATA_API_KEY = os.getenv("API_PINATA_API_KEY")
-PINATA_API_SECRET_KEY = os.getenv("API_PINATA_API_SECRET_KEY")
-PINATA_INDEXER_URL = os.getenv(
-    "API_PINATA_INDEXER_URL", "https://badger.mypinata.cloud/ipfs/"
-)
-
+# Onchain schema settings
 FACTORY_ABI = FACTORY_ABI
 FACTORY_ABI_FULL = FACTORY_ABI_FULL
 FACTORY_EVENTS = FACTORY_EVENTS
@@ -186,7 +174,28 @@ ORGANIZATION_ABI_FULL = ORGANIZATION_ABI_FULL
 ORGANIZATION_EVENTS = ORGANIZATION_EVENTS
 ORGANIZATION_TOPIC_SIGNATURES = ORGANIZATION_TOPIC_SIGNATURES
 
+# Listener settings
 LISTENER_INIT_BLOCK = os.getenv("LISTENER_INIT_BLOCK", 0)
 LISTENER_INIT_BLOCK_BUFFER = os.getenv("LISTENER_INIT_BLOCK_BUFFER", 20)
 LISTENER_CHAIN_ID = os.getenv("LISTENER_CHAIN_ID", 1337)
-LISTENER_POLL_INTERVAL = os.getenv("POLL_INTERVAL", 5)
+LISTENER_POLL_INTERVAL = os.getenv("LISTENER_POLL_INTERVAL", 5)
+
+# Onchain reference data
+BADGER_ADDRESSES = os.getenv("REACT_APP_BADGER_ADDRESSES", None)
+if BADGER_ADDRESSES is None:
+    raise Exception("BADGER_ADDRESSES not set")
+
+BADGER_ADDRESSES = {int(k): v for k, v in json.loads(BADGER_ADDRESSES).items()}
+
+if CHAIN_ID not in BADGER_ADDRESSES:
+    raise Exception(f"Chain ID {CHAIN_ID} not found in BADGER_ADDRESSES")
+
+FACTORY_ADDRESS = BADGER_ADDRESSES[CHAIN_ID]
+
+# IPFS settings
+PINATA_API_KEY = os.getenv("API_PINATA_API_KEY")
+PINATA_API_SECRET_KEY = os.getenv("API_PINATA_API_SECRET_KEY")
+PINATA_INDEXER_URL = os.getenv(
+    "API_PINATA_INDEXER_URL", "https://badger.mypinata.cloud/ipfs/"
+)
+
