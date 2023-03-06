@@ -14,7 +14,7 @@ const OrgCard = ({ org }) => {
     const navigate = useNavigate();
 
     return (
-        <Card onClick={() => navigate(`/dashboard/organization/${org.id}/`)}>
+        <Card onClick={() => navigate(`/dashboard/organization/${org.chain_id}/${org.ethereum_address}`)}>
             <div className="text">
                 <div className="subtext">
                     <ChainIcon chain={org.chain} />

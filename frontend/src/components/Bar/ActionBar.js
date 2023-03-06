@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 import { useENSProfile, useUser } from "@hooks";
 
@@ -16,22 +16,26 @@ const ActionBar = () => {
 
     const { ensAvatar, ensName } = useENSProfile(authenticatedAddress);
 
-    const orgRegex = /\/dashboard\/organization\/([0-9]+)\//;
+    const orgRegex = /\/dashboard\/organization\/(\w+)\/(\w+)/
 
-    const orgId = orgRegex.test(pathname) && orgRegex.exec(pathname)[1]
+    const chainId = orgRegex.test(pathname) && orgRegex.exec(pathname)[1]
+
+    const orgAddress = orgRegex.test(pathname) && orgRegex.exec(pathname)[2]
+
+    console.log('view', chainId, orgAddress)
 
     return (
         <div className="action_bar">
             <div className="action_bar__view">
                 {!isAuthenticated && <ConnectButton />}
 
-                {isAuthenticated && (!orgId || orgId && !isLoaded) && <ProfileView
+                {isAuthenticated && (!orgAddress || orgAddress && !isLoaded) && <ProfileView
                     ensAvatar={ensAvatar}
                     ensName={ensName}
                     address={sliceAddress(authenticatedAddress)}
                 />}
 
-                {isAuthenticated && isLoaded && orgId && <OrgView orgId={orgId} />}
+                {isAuthenticated && isLoaded && orgAddress && <OrgView chainId={chainId} orgAddress={orgAddress} />}
             </div>
 
             <div className="action_bar__actions">

@@ -24,7 +24,7 @@ const OrgView = ({ chainId, orgAddress }) => {
                 </Link>
 
                 <small className="action_bar__header__subtext">
-                    <span>{organization.chain}</span>
+                    <span>{organization.chain_id}</span>
 
                     <a target="_blank" rel="noreferrer" className="link-wrapper"
                         href={`https://polygonscan.com/address/${organization.ethereum_address}`}>

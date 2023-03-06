@@ -6,6 +6,8 @@ import { AuthenticationContext, BadgeContext, OrgContext, UserContext } from "@c
 const useUser = (props) => {
     const { chainId = null, orgAddress = null, badgeId = null } = props || {};
 
+    console.log(props);
+
     const { isConnected } = useAccount();
 
     const { chain } = useNetwork();
@@ -15,7 +17,9 @@ const useUser = (props) => {
     const { badges } = useContext(BadgeContext);
     const { isLoaded } = useContext(UserContext);
 
-    const organization = organizations && chainId && orgAddress && organizations.find((org) => String(org.chainId) === chainId && org.address === orgAddress);
+    const isOrganizationReady = organizations && chainId && orgAddress && organizations.length > 0;
+
+    const organization = isOrganizationReady && organizations.find((org) => org.chain_id === parseInt(chainId) && org.ethereum_address === orgAddress);
     const organizationBadges = organization && organization.badges;
 
     // TODO: make the badges use the dataset from the socket
