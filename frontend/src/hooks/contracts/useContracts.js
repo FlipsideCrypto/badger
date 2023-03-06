@@ -60,8 +60,8 @@ const useOrgForm = ({ obj, image }) => {
     const Badger = useMemo(() => {
         if (obj.ethereum_address) return getBadgerOrganizationAbi();
 
-        return getBadgerAbi(chain.name);
-    }, [functionName, chain.name]);
+        return getBadgerAbi(chain.id);
+    }, [functionName, chain.id]);
 
     const isReady = Badger && fees && !!authenticatedAddress;
 

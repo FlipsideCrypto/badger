@@ -1,10 +1,6 @@
 import { ethers } from "ethers";
 
-const BADGER_ADDRESSES_DICT = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES);
-const BADGER_ADDRESSES = Object.keys(BADGER_ADDRESSES_DICT).reduce((acc, key) => {
-    acc[key] = BADGER_ADDRESSES_DICT[key][0];
-    return acc;
-}, {});
+const BADGER_ADDRESSES = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES);
 
 function getBadgerAddress(chainID) {
     try {
@@ -25,13 +21,13 @@ function getBadgerOrganizationAbi() {
     }
 }
 
-function getBadgerAbi(chainName) {
+function getBadgerAbi(chainID) {
     try {
         const abi = require('@abis/Badger.json');
-        const address = getBadgerAddress(chainName);
+        const address = getBadgerAddress(chainID);
         return {
             abi: new ethers.utils.Interface(abi),
-            address: address
+            address
         }
     } catch (err) {
         console.error('Error importing Badger:', err);
