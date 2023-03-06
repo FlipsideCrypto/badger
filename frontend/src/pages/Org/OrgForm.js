@@ -21,9 +21,9 @@ const OrgForm = ({ isEdit = false }) => {
 
     const navigate = useNavigate();
 
-    const { orgId } = useParams();
+    const { chainId, orgAddress } = useParams();
 
-    const { organization } = useUser({ orgId });
+    const { organization } = useUser({ chainId, orgAddress });
 
     const [obj, setObj] = useState(organization || initialOrgForm);
     const [image, setImage] = useState(null);
@@ -79,7 +79,7 @@ const OrgForm = ({ isEdit = false }) => {
 
     return (
         <>
-            <Header back={() => navigate((isEdit ? `/dashboard/organization/${orgId}/` : '/dashboard/'))} />
+            <Header back={() => navigate((isEdit ? `/dashboard/organization/${chainId}/${organization.ethereum_address}/` : '/dashboard/'))} />
 
             <h2 className="dashboard__content">{`${isEdit ? "Update" : "Create"} Organization`}</h2>
 

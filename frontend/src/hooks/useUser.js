@@ -4,7 +4,7 @@ import { useAccount, useNetwork } from "wagmi";
 import { AuthenticationContext, BadgeContext, OrgContext, UserContext } from "@contexts";
 
 const useUser = (props) => {
-    const { orgId = null, badgeId = null } = props || {};
+    const { chainId = null, orgAddress = null, badgeId = null } = props || {};
 
     const { isConnected } = useAccount();
 
@@ -15,7 +15,7 @@ const useUser = (props) => {
     const { badges } = useContext(BadgeContext);
     const { isLoaded } = useContext(UserContext);
 
-    const organization = orgId && organizations.find((org) => String(org.id) === orgId);
+    const organization = organizations && chainId && orgAddress && organizations.find((org) => String(org.chainId) === chainId && org.address === orgAddress);
     const organizationBadges = organization && organization.badges;
 
     // TODO: make the badges use the dataset from the socket
@@ -29,7 +29,7 @@ const useUser = (props) => {
         authenticatedAddress,
         organizations,
         organization,
-        badges: orgId ? organizationBadges : badges,
+        badges: orgAddress ? organizationBadges : badges,
         badge,
         isConnected,
         isAuthenticated,

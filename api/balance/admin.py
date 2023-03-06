@@ -4,17 +4,8 @@ from .models import Balance
 
 @admin.register(Balance)
 class BalanceAdmin(admin.ModelAdmin):
-    list_display = (
-        'organization',
-        'badge',
-        'user',
-        'amount',
-    )
-    list_filter = (
-        'organization',
-        'badge',
-        'user',
-    )
+    list_display = ('badge', 'user', 'amount')
+    list_filter = ('organization', 'badge', 'user' )
     search_fields = (
         'organization',
         'badge',

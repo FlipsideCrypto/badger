@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { useUser } from "@hooks"
 
@@ -12,30 +12,30 @@ import "@style/View/OrgView.css"
 
 const copy = (text) => navigator.clipboard.writeText(text);
 
-const OrgView = ({ orgId }) => {
-    const { organizations } = useUser()
-
-    const org = organizations && organizations.find(org => String(org.id) === orgId);
+const OrgView = ({ chainId, orgAddress }) => {
+    const { organization } = useUser({ chainId, orgAddress });
 
     return (
         <div className="view">
-            <Link className="organization" to="/dashboard/">
-                <ImageLoader src={IPFS_GATEWAY_URL + org.image_hash} />
-                <span>{org.name}</span>
-            </Link>
+            {organization && <>
+                <Link className="organization" to="/dashboard/">
+                    <ImageLoader src={IPFS_GATEWAY_URL + organization.image_hash} />
+                    <span>{organization.name}</span>
+                </Link>
 
-            <small className="action_bar__header__subtext">
-                <span>{org.chain}</span>
+                <small className="action_bar__header__subtext">
+                    <span>{organization.chain}</span>
 
-                <a target="_blank" rel="noreferrer" className="link-wrapper"
-                    href={`https://polygonscan.com/address/${org.ethereum_address}`}>
-                    <strong>{sliceAddress(org?.ethereum_address)}</strong>
-                </a>
-            </small>
+                    <a target="_blank" rel="noreferrer" className="link-wrapper"
+                        href={`https://polygonscan.com/address/${organization.ethereum_address}`}>
+                        <strong>{sliceAddress(organization?.ethereum_address)}</strong>
+                    </a>
+                </small>
 
-            <ActionButton icon={['fal', 'clipboard']} onClick={() => copy(org.ethereum_address)} />
+                <ActionButton icon={['fal', 'clipboard']} onClick={() => copy(organization.ethereum_address)} />
 
-            <ActionButton icon={['fal', 'link']} onClick={() => copy(window.location.href)} />
+                <ActionButton icon={['fal', 'link']} onClick={() => copy(window.location.href)} />
+            </>}
         </div >
     )
 }

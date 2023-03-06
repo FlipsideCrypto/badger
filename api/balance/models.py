@@ -1,37 +1,18 @@
 from django.db import models
 
 from badge.models import Badge
-from organization.models import Organization
 
 class Transaction(models.Model):
     tx_hash = models.CharField(max_length=66, unique=True)
 
 class Balance(models.Model):
-    organization = models.ForeignKey(
-        Organization,
-        on_delete=models.CASCADE,
-        related_name='balances'
-    )
+    badge = models.ForeignKey(Badge, blank=True, null=True, related_name='balances', on_delete=models.CASCADE)
 
-    badge = models.ForeignKey(
-        Badge,
-        on_delete=models.CASCADE,
-        related_name='balances',
-        blank=True,
-        null=True
-    )
-
-    user = models.ForeignKey(
-        'siwe_auth.Wallet',
-        on_delete=models.CASCADE,
-        related_name='balances'
-    )
+    user = models.ForeignKey('siwe_auth.Wallet', related_name='balances', on_delete=models.CASCADE)
 
     amount = models.BigIntegerField(default=0)
 
-    transactions = models.ManyToManyField(
-        Transaction
-    )
+    transactions = models.ManyToManyField(Transaction)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
