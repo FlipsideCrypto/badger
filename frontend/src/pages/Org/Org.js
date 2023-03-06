@@ -11,8 +11,6 @@ const Org = () => {
 
     const { badges, isOwner, organization } = useUser({ chainId, orgAddress });
 
-    console.log(badges, isOwner, organization);
-
     const URL_BASE = `/dashboard/organization/${chainId}/${orgAddress}`;
 
     const headerActions = isOwner && [{

@@ -6,8 +6,6 @@ import { AuthenticationContext, BadgeContext, OrgContext, UserContext } from "@c
 const useUser = (props) => {
     const { chainId = null, orgAddress = null, badgeId = null } = props || {};
 
-    console.log(props);
-
     const { isConnected } = useAccount();
 
     const { chain } = useNetwork();

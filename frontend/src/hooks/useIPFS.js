@@ -75,7 +75,7 @@ const useIPFSImageHash = (imageFile) => {
         getHash(imageFile);
     }, [imageFile])
 
-    return { hash };
+    return { imageHash: hash, ipfsImage: imageFile };
 }
 
 const useIPFSMetadataHash = (data) => {
@@ -98,7 +98,7 @@ const useIPFSMetadataHash = (data) => {
         getHash();
     }, [data])
 
-    return { hash };
+    return { contractHash: hash, ipfsMetadata: data };
 }
 
 export {

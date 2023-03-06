@@ -1,7 +1,14 @@
 import { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { useOrgForm, usePFP, useUser } from "@hooks";
+import {
+    useOrgForm,
+    usePFP,
+    useUser,
+    useIPFS,
+    useIPFSImageHash,
+    useIPFSMetadataHash,
+} from "@hooks";
 
 import { initialOrgForm, FormActionBar, FormDrawer, Header, Input, OrgDangerZone } from "@components"
 
@@ -9,7 +16,6 @@ import { IPFS_GATEWAY_URL } from "@static";
 
 import "@style/pages/OrgForm.css";
 
-// TODO: Image handling still has some issues
 // TODO: OrgDangerZone is a landmine that I am not yet ready to mount.
 
 const getSymbol = (name) => {
@@ -38,7 +44,27 @@ const OrgForm = ({ isEdit = false }) => {
 
     const isDisabled = !(obj.name && obj.symbol && obj.description && activeImage);
 
-    const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({ obj, image: activeImage })
+    const { imageHash, ipfsImage } = useIPFSImageHash(activeImage)
+
+    const { contractHash, ipfsMetadata } = useIPFSMetadataHash({
+        name: obj.name,
+        description: obj.description,
+        image: imageHash,
+        attributes: obj.attributes
+    })
+
+    const org = {
+        ...obj,
+        imageHash: imageHash,
+        contractHash: contractHash
+    }
+
+    const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({ obj: org })
+
+    const { pinImage, pinMetadata } = useIPFS({
+        image: ipfsImage,
+        data: ipfsMetadata
+    })
 
     const actions = [{
         text: `${isEdit ? "Save" : "Create"} organization`,
@@ -46,8 +72,16 @@ const OrgForm = ({ isEdit = false }) => {
         loading: isLoading,
         disabled: isDisabled || !isPrepared,
         event: () => openOrgFormTx({
+            onLoading: () => {
+                pinImage();
+                pinMetadata();
+            },
             onSuccess: ({ chain, receipt }) => {
-                const orgAddress = receipt.logs[1]['address']
+                const event = receipt.events.find((event) => event.name === "OrganizationCreated");
+
+                if (!event) throw new Error("Error submitting transaction.");
+
+                const orgAddress = event.args.organization;
 
                 navigate(`/dashboard/organization/${chain.id}/${orgAddress}/`);
             }
@@ -102,7 +136,6 @@ const OrgForm = ({ isEdit = false }) => {
 
             {isEdit && <>
                 <hr />
-
                 <OrgDangerZone orgAddress={organization.ethereum_address} />
             </>}
         </>

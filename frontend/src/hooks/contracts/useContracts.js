@@ -7,9 +7,6 @@ import {
     getBadgerOrganizationAbi,
     getBadgerAbi,
     useFees,
-    useIPFS,
-    useIPFSImageHash,
-    useIPFSMetadataHash,
     useUser
 } from "@hooks";
 
@@ -31,24 +28,8 @@ const getOrgFormTxArgs = ({ functionName, authenticatedAddress, name, symbol, im
     }
 }
 
-const useOrgForm = ({ obj, image }) => {
+const useOrgForm = ({ obj }) => {
     const fees = useFees();
-
-    const { hash: imageHash } = useIPFSImageHash(image)
-
-    const metadata = {
-        name: obj.name,
-        description: obj.description,
-        image: imageHash,
-        attributes: obj.attributes
-    }
-
-    const { hash: contractHash } = useIPFSMetadataHash(metadata)
-
-    const { pinImage, pinMetadata } = useIPFS({
-        image: image,
-        data: metadata
-    })
 
     const { authenticatedAddress, chain } = useUser();
 
@@ -70,8 +51,8 @@ const useOrgForm = ({ obj, image }) => {
         authenticatedAddress,
         name: obj.name,
         symbol: obj.symbol,
-        imageHash,
-        contractHash
+        imageHash: obj.imageHash,
+        contractHash: obj.contractHash
     });
 
     const overrides = { gasPrice: fees?.gasPrice };
@@ -104,13 +85,9 @@ const useOrgForm = ({ obj, image }) => {
 
             const tx = await writeAsync()
 
-            const [receipt, imageHash, metadataHash] = await Promise.all([
-                tx.wait(),
-                pinImage(image),
-                pinMetadata(metadata)
-            ])
+            const receipt = await tx.wait()
 
-            if (receipt.status === 0) throw new Error("Error submitting transaction.");
+            receipt.events = receipt.logs.filter((log) => log.address === Badger.address).map((log) => Badger.abi.parseLog(log))
 
             setIsLoading(false);
             setIsSuccess(true);

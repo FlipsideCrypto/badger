@@ -27,7 +27,7 @@ function getBadgerAbi(chainID) {
         const address = getBadgerAddress(chainID);
         return {
             abi: new ethers.utils.Interface(abi),
-            address
+            address,
         }
     } catch (err) {
         console.error('Error importing Badger:', err);
