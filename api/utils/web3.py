@@ -5,28 +5,6 @@ from ens import ENS
 w3 = Web3(Web3.HTTPProvider(settings.PROVIDERS['DEFAULT']))
 ns = ENS.fromWeb3(w3)
 
-ETHEREUM = "Ethereum"
-POLYGON = "Polygon"
-OPTIMISM = "Optimism"
-HARDHAT = "Hardhat"
-GNOSIS = "Gnosis"
-LOCALHOST = "Localhost"
-CHAINS = (
-    (ETHEREUM, "Ethereum"),
-    (POLYGON, "Polygon"),
-    (OPTIMISM, "Optimism"),
-    (HARDHAT, "Hardhat"),
-    (LOCALHOST, "Localhost"),
-    (GNOSIS, "Gnosis"),
-)
-
-EVENTS = [
-    "TransferSingle(address indexed,address indexed,address indexed,uint256,uint256)",
-    "OrganizationCreated(address indexed,address indexed,address indexed)",
-    "OrganizationUpdated(string)",
-    "BadgeUpdated(uint256 indexed,uint256 indexed,bytes32 indexed,uint256)",
-]
-
 def get_ens_name(address):
     if w3.isAddress(address):
         return ns.name(address=address)

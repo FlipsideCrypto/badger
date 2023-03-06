@@ -8,16 +8,6 @@ from django.conf import settings
 
 from organization.models import Organization
 
-"""
-The poll interval should be a fraction of the block interval of the chain being listened to while still maintaining
-historical use due to the chance of a long-write and/or very data-heavy block.
-
-ETH: 12 seconds
-BSC: 3 seconds
-Polygon/Matic: 2 seconds
-Optimism: 1 second
-"""
-
 LOG_SIZE = 2000
 
 class Backfill:
@@ -55,7 +45,7 @@ class Backfill:
 
             if not isinstance(contracts, list):
                 contracts = (extracting_obj.objects
-                    .filter(is_active=True)
+                    .filter(is_active=True, chain_id=settings.LISTENER_CHAIN_ID)
                     .values_list('ethereum_address', flat=True))
 
             BLOCK_BUFFER = LOG_SIZE if to_block - from_block > LOG_SIZE else to_block - from_block
@@ -70,7 +60,8 @@ class Backfill:
             concurrent.futures.wait(futures)
 
             if not isinstance(extracting_obj, list):
-                contract_objs = extracting_obj.objects.filter(ethereum_address__in=contracts)
+                contract_objs = (extracting_obj.objects
+                    .filter(ethereum_address__in=contracts, chain_id=settings.LISTENER_CHAIN_ID))
                 
                 contract_objs.update(last_block=to_block)
 

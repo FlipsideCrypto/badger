@@ -5,6 +5,8 @@ from badge.models import Badge
 class Transaction(models.Model):
     tx_hash = models.CharField(max_length=66, unique=True)
 
+    created = models.DateTimeField(auto_now_add=True)
+
 class Balance(models.Model):
     badge = models.ForeignKey(Badge, blank=True, null=True, related_name='balances', on_delete=models.CASCADE)
 
@@ -16,3 +18,7 @@ class Balance(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created']
+        unique_together = ('badge', 'user')

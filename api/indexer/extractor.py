@@ -2,7 +2,7 @@ from web3 import Web3
 
 from django.conf import settings
 
-w3 = Web3(Web3.HTTPProvider(settings.PROVIDERS['DEFAULT']))
+from utils.web3 import w3
 
 class Extractor:
     def __init__(self):

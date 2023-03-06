@@ -4,10 +4,12 @@ from web3 import Web3
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from balance.models import Balance, Transaction
+from balance.models import Balance
 from organization.models import Organization
 
-w3 = Web3(Web3.HTTPProvider(settings.PROVIDERS['DEFAULT']))
+from utils.web3 import w3
+
+ZERO_ADDRESS = "0x0000000000000000000000000000000000000000" 
 
 User = get_user_model()
 
@@ -33,33 +35,6 @@ class Loader:
         self.contracts = {}
 
     """
-    Helper function to handle the creation and return of Organizations from an ethereum address.
-    """
-    def _organization(event):
-        address = event['address']
-
-        if not Web3.isChecksumAddress(address):
-            address = Web3.toChecksumAddress(address)
-
-        organization, created = Organization.objects.get_or_create(
-            ethereum_address=address
-        )
-
-        return organization
-    
-    """
-    Helper function to handle the creation and return of Badges from an organization and token id.
-    """
-    def _badge(organization, event):
-        token_id = event['args']['id']
-
-        badge, created = organization.badges.get_or_create(
-            token_id=token_id
-        )
-
-        return badge
-
-    """
     Helper function to get connected to the organization contract.
     """
     def _organization_contract(self, ethereum_address):
@@ -75,6 +50,32 @@ class Loader:
         return self.contracts[ethereum_address]
 
     """
+    Helper function to handle the creation and return of Organizations from an ethereum address.
+    """
+    def _organization(event):
+        address = event['address']
+
+        if not Web3.isChecksumAddress(address):
+            address = Web3.toChecksumAddress(address)
+
+        organization, created = Organization.objects.get_or_create(
+            ethereum_address=address,
+            chain_id=settings.LISTENER_CHAIN_ID
+        )
+
+        return organization
+    
+    """
+    Helper function to handle the creation and return of Badges from an organization and token id.
+    """
+    def _badge(organization, event):
+        token_id = event['args']['id']
+
+        badge, created = organization.badges.get_or_create(token_id=token_id)
+
+        return badge
+
+    """
     Helper function to handle the creation and return of Users from an ethereum address.
     """
     def _handle_users(self, ethereum_address):
@@ -84,21 +85,6 @@ class Loader:
         if not User.objects.filter(ethereum_address=ethereum_address).exists():
             return User.objects.create_user(ethereum_address=ethereum_address)
         return User.objects.get(ethereum_address=ethereum_address)
-
-    """
-    Helper function that handles `.users` when a balance changes.
-    """
-    def _handle_badge_user_balance_changes(self, badge, user, amount):
-        if amount > 0:
-            if user.ethereum_address != "0x0000000000000000000000000000000000000000":
-                badge.users.add(user)
-                badge.save()
-        elif user in badge.users.all():
-            badge.users.remove(user)
-        else:
-            return
-
-        badge.save()
 
     def _handle_user_balance(self, i, event, organization, address_field):
         user = self._handle_users(event['args'][address_field])
@@ -114,42 +100,33 @@ class Loader:
         for i, token_id in enumerate(token_ids):
             badge = organization.badges.get(token_id=token_id)
 
-            balance, created = Balance.objects.get_or_create(
-                organization=organization,
-                badge=badge,
-                user=user
-            )
+            balance, created = Balance.objects.get_or_create(badge=badge, user=user)
 
-            # check if transaction is not already in balance
-            transaction, created = Transaction.objects.get_or_create(
-                tx_hash=event['transactionHash'].hex(),
-            )
+            transaction, created = balance.transactions.get_or_create(tx_hash=event['transactionHash'].hex())
 
-            if transaction not in balance.transactions.all():
-                # apply the balance change if not a mint from 0x0
+            if created:
                 change = values[i]
                 
-                # Decrease the balance of the sender if a transfer from
                 if address_field == "from":
                     change *= - 1
-                    # Exclude address(0) because we are not tracking the balance of that address
-                    if event['args']['from'] == "0x0000000000000000000000000000000000000000":
+                    if event['args']['from'] == ZERO_ADDRESS:
                         change = -0
 
-                # If the badge doesn't exist, skip this balance for now
-                if not organization.badges.filter(token_id=token_id).exists():
-                    continue
-
-                balance.transactions.add(transaction)
                 balance.amount += change
                 balance.save()
 
-                # Add the user to the badge if not already in it if the balance is > 0
                 badge = organization.badges.get(token_id=token_id)
 
-                # Add the user to the badge if not already in it if the balance is > 0
-                # or remove them if the balance is 0
-                self._handle_badge_user_balance_changes(badge, user, balance.amount)
+                if balance.amount > 0:
+                    if user.ethereum_address != ZERO_ADDRESS:
+                        badge.users.add(user)
+                        badge.save()
+                elif user in badge.users.all():
+                    badge.users.remove(user)
+                else:
+                    return
+
+                badge.save()
 
     def handle_organization_created(self, event):
         organization = event['args']['organization']
@@ -158,18 +135,13 @@ class Loader:
         if not Web3.isChecksumAddress(organization):
             organization = Web3.toChecksumAddress(organization)
 
-        if not Organization.objects.filter(ethereum_address=organization).exists():
-            organization, created = Organization.objects.get_or_create(ethereum_address=organization)
+        organization, created = Organization.objects.get_or_create(ethereum_address=organization, chain_id=settings.LISTENER_CHAIN_ID)
+
+        response = "Organization already exists"
+        if created:
             response = "Organization created"
-        else:
-            organization = Organization.objects.get(ethereum_address=organization)
-            response = "Organization already exists"
 
-        created = False
-
-        if created or not organization.owner:
-            organization.is_active = True
-            organization.chain = "Polygon"
+        if not organization.owner:
             organization.owner = self._handle_users(owner)
             organization.save()
 
