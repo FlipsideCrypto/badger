@@ -22,8 +22,6 @@ const ActionBar = () => {
 
     const orgAddress = orgRegex.test(pathname) && orgRegex.exec(pathname)[2]
 
-    console.log('view', chainId, orgAddress)
-
     return (
         <div className="action_bar">
             <div className="action_bar__view">

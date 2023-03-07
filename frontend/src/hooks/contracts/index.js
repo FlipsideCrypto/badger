@@ -6,9 +6,13 @@ export {
 
 export {
     useOrgForm,
-    useSetBadge,
-    useManageBadgeOwnership,
-    useSetDelegates,
     useTransferOwnership,
     useRenounceOwnership
 } from './useContracts';
+
+export {
+    useBadgeForm,
+    useBadge,
+    useSetDelegates,
+    useManageBadgeOwnership
+} from './useBadgeForm';
