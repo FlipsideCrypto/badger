@@ -61,8 +61,6 @@ const OrgForm = ({ isEdit = false }) => {
 
     const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({ obj: org })
 
-    console.log('ipfsImage', ipfsImage)
-
     const { pinImage, pinMetadata } = useIPFS({
         image: ipfsImage,
         data: ipfsMetadata

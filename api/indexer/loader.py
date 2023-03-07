@@ -157,6 +157,9 @@ class Loader:
 
             response = "Organization management setup"
 
+        # Load all the metadata
+        self.handle_organization_updated({ 'address': organization.ethereum_address })
+
         return (response, event['args'])
 
     def handle_organization_updated(self, event):
