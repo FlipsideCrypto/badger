@@ -53,22 +53,15 @@ class Loader:
     Helper function to handle the creation and return of Organizations from an ethereum address.
     """
     def _organization(self, event):
-        print('in _organization')
         address = event['address']
-
-        print('address', address)
 
         if not Web3.isChecksumAddress(address):
             address = Web3.toChecksumAddress(address)
-
-        print('checksum address', address)
 
         organization, created = Organization.objects.get_or_create(
             ethereum_address=address,
             chain_id=int(settings.LISTENER_CHAIN_ID)
         )
-
-        print('organization', organization)
 
         return organization
     
@@ -173,7 +166,6 @@ class Loader:
 
         # Calculate the ipfs hash to the contract uri
         organization.contract_uri_hash = uri.split("/ipfs/")[1] if "ipfs" in uri else uri
-        organization.save()
 
         # Build the client side url used
         url = f"{settings.PINATA_INDEXER_URL}{organization.contract_uri_hash}"
