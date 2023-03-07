@@ -1,7 +1,3 @@
-from web3 import Web3
-
-from django.conf import settings
-
 from utils.web3 import w3
 
 class Extractor:

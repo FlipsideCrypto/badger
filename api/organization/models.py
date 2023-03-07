@@ -5,7 +5,7 @@ from siwe_auth.models import validate_ethereum_address
 from badge.models import Badge
 
 class Organization(models.Model):
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     chain_id = models.IntegerField(default=1337)
     ethereum_address = models.CharField(max_length=50, blank=False, default=None, validators=[validate_ethereum_address])

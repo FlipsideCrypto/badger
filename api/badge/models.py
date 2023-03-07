@@ -1,7 +1,7 @@
 from django.db import models
 
 class Badge(models.Model):
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     token_id = models.PositiveIntegerField(default=0)
 

@@ -17,19 +17,24 @@ class Backfill:
 
     def _etl(self, contracts, abi, topics, batch):
         print(f'{batch[0]} -> {batch[1]}')
-        events = self.extractor.extract(
-            contracts, 
-            abi, 
-            topics,
-            batch[0],
-            batch[1],
-        )
 
-        if len(events) == 0:
-            time.sleep(settings.LISTENER_POLL_INTERVAL)
-            return 
+        try:
+            events = self.extractor.extract(
+                contracts, 
+                abi, 
+                topics,
+                batch[0],
+                batch[1],
+            )
 
-        self.loader.load(events)
+            if len(events) == 0:
+                time.sleep(settings.LISTENER_POLL_INTERVAL)
+                return 
+        
+            self.loader.load(events)
+        except Exception as e:
+            print("Listener error: ", e)
+            return
 
     def etl(self, extracting_obj, abi, topics, temp_from_block=None, temp_to_block=None):
         while True:
@@ -43,10 +48,10 @@ class Backfill:
             if not temp_from_block:
                 from_block = 0 if to_block - settings.LISTENER_INIT_BLOCK_BUFFER < 0 else to_block - settings.LISTENER_INIT_BLOCK_BUFFER
 
+            qs = None
             if not isinstance(contracts, list):
-                contracts = (extracting_obj.objects
-                    .filter(is_active=True, chain_id=settings.LISTENER_CHAIN_ID)
-                    .values_list('ethereum_address', flat=True))
+                qs = contracts.objects.filter(is_active=True, chain_id=settings.LISTENER_CHAIN_ID)
+                contracts = qs.values_list('ethereum_address', flat=True)
 
             BLOCK_BUFFER = LOG_SIZE if to_block - from_block > LOG_SIZE else to_block - from_block
             BLOCK_BUFFER = to_block - from_block if BLOCK_BUFFER > to_block - from_block else BLOCK_BUFFER
@@ -60,11 +65,9 @@ class Backfill:
             concurrent.futures.wait(futures)
 
             if not isinstance(extracting_obj, list):
-                contract_objs = extracting_obj.objects.filter(ethereum_address__in=contracts, chain_id=settings.LISTENER_CHAIN_ID)
-                
-                contract_objs.update(last_block=to_block)
+                qs.update(last_block=to_block)
 
-                for obj in contract_objs:
+                for obj in qs:
                     obj.save()
 
             if temp_to_block:

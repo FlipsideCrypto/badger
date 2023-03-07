@@ -52,23 +52,30 @@ class Loader:
     """
     Helper function to handle the creation and return of Organizations from an ethereum address.
     """
-    def _organization(event):
+    def _organization(self, event):
+        print('in _organization')
         address = event['address']
+
+        print('address', address)
 
         if not Web3.isChecksumAddress(address):
             address = Web3.toChecksumAddress(address)
 
+        print('checksum address', address)
+
         organization, created = Organization.objects.get_or_create(
             ethereum_address=address,
-            chain_id=settings.LISTENER_CHAIN_ID
+            chain_id=int(settings.LISTENER_CHAIN_ID)
         )
+
+        print('organization', organization)
 
         return organization
     
     """
     Helper function to handle the creation and return of Badges from an organization and token id.
     """
-    def _badge(organization, event):
+    def _badge(self, organization, event):
         token_id = event['args']['id']
 
         badge, created = organization.badges.get_or_create(token_id=token_id)
@@ -135,7 +142,10 @@ class Loader:
         if not Web3.isChecksumAddress(organization):
             organization = Web3.toChecksumAddress(organization)
 
-        organization, created = Organization.objects.get_or_create(ethereum_address=organization, chain_id=settings.LISTENER_CHAIN_ID)
+        organization, created = Organization.objects.get_or_create(
+            ethereum_address=organization, 
+            chain_id=settings.LISTENER_CHAIN_ID
+        )
 
         response = "Organization already exists"
         if created:
@@ -159,7 +169,7 @@ class Loader:
         uri = organization_contract.functions.contractURI().call()
 
         # Calculate the ipfs hash to the contract uri
-        organization.contract_uri_hash = uri.split("/ipfs/")[1]
+        organization.contract_uri_hash = uri.split("/ipfs/")[1] if "ipfs" in uri else uri
         organization.save()
 
         # Build the client side url used
@@ -173,6 +183,10 @@ class Loader:
             organization.description = data["description"]
             organization.image_hash = data["image"].split("/ipfs/")[1]
 
+        # If we don't get IPFS, try the blockchain
+        if not organization.name:
+            organization.name = organization_contract.functions.name().call()
+
         organization.save()
 
         return ("Organization details updated", event['args'])
@@ -184,7 +198,7 @@ class Loader:
 
         organization.save()
 
-        return ("Need to update the organization owner", event['args'])
+        return ("Organization ownership updated", event['args'])
 
     def handle_transfer_batch(self, event):
         organization = self._organization(event)
@@ -250,5 +264,7 @@ class Loader:
                     event_responses.append(("Event not handled", event['event'], event['args']))
             else:
                 event_responses.append(("Event not decoded", event))
+
+        print('event_responses', event_responses)
 
         return event_responses
