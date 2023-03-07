@@ -101,7 +101,7 @@ task("deploy", "Deploys the protocol")
         await new Promise((resolve) => { });
     });
 
-
+console.log(process.env.REPORT_GAS)
 module.exports = {
     solidity: {
         compilers: [
@@ -123,7 +123,8 @@ module.exports = {
         showMethodSig: true,
         showTimeSpent: true,
         noColors: true,
-        outputFile: 'build/gas-report.txt'
+        outputFile: 'build/gas-report.txt',
+        enabled: process.env.REPORT_GAS ? true : false
     },
     watcher: {
         compilation: {
