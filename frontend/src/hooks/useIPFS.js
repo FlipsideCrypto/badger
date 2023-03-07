@@ -11,7 +11,8 @@ const Hash = require("ipfs-only-hash");
 const useIPFS = ({ image, data }) => {
     const { setError } = useContext(ErrorContext);
 
-    const pinImage = async (image) => {
+    const pinImage = async () => {
+        console.log('image', image)
         const response = await postIPFSImage(image);
 
         if (response?.error) {
@@ -26,7 +27,8 @@ const useIPFS = ({ image, data }) => {
         return response.hash;
     }
 
-    const pinMetadata = async (data) => {
+    const pinMetadata = async () => {
+        console.log('data', data)
         const response = await postIPFSMetadata(data);
 
         if (response.error) {
