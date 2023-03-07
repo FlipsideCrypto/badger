@@ -1,7 +1,9 @@
+.DS_Store
 node_modules
 artifacts
 cache
 .env
+package-lock.json
 
 coverage/
 deployments/
@@ -9,5 +11,7 @@ coverage.json
 gasReporterOutput.json
 
 build/c4udit/
+build/types/
+src/
 
 .idea
