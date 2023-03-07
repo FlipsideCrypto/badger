@@ -17,21 +17,24 @@ class Backfill:
 
     def _etl(self, contracts, abi, topics, batch):
         print(f'{batch[0]} -> {batch[1]}')
-        events = self.extractor.extract(
-            contracts, 
-            abi, 
-            topics,
-            batch[0],
-            batch[1],
-        )
 
-        if len(events) == 0:
-            time.sleep(settings.LISTENER_POLL_INTERVAL)
-            return 
+        try:
+            events = self.extractor.extract(
+                contracts, 
+                abi, 
+                topics,
+                batch[0],
+                batch[1],
+            )
+
+            if len(events) == 0:
+                time.sleep(settings.LISTENER_POLL_INTERVAL)
+                return 
         
-        print("loading in results")
-
-        self.loader.load(events)
+            self.loader.load(events)
+        except Exception as e:
+            print("Listener error: ", e)
+            return
 
     def etl(self, extracting_obj, abi, topics, temp_from_block=None, temp_to_block=None):
         while True:
@@ -49,7 +52,6 @@ class Backfill:
             if not isinstance(contracts, list):
                 qs = contracts.objects.filter(is_active=True, chain_id=settings.LISTENER_CHAIN_ID)
                 contracts = qs.values_list('ethereum_address', flat=True)
-                print('contracts filtering for', extracting_obj.__name__, '->', len(contracts))
 
             BLOCK_BUFFER = LOG_SIZE if to_block - from_block > LOG_SIZE else to_block - from_block
             BLOCK_BUFFER = to_block - from_block if BLOCK_BUFFER > to_block - from_block else BLOCK_BUFFER

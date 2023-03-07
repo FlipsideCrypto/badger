@@ -52,23 +52,30 @@ class Loader:
     """
     Helper function to handle the creation and return of Organizations from an ethereum address.
     """
-    def _organization(event):
+    def _organization(self, event):
+        print('in _organization')
         address = event['address']
+
+        print('address', address)
 
         if not Web3.isChecksumAddress(address):
             address = Web3.toChecksumAddress(address)
 
+        print('checksum address', address)
+
         organization, created = Organization.objects.get_or_create(
             ethereum_address=address,
-            chain_id=settings.LISTENER_CHAIN_ID
+            chain_id=int(settings.LISTENER_CHAIN_ID)
         )
+
+        print('organization', organization)
 
         return organization
     
     """
     Helper function to handle the creation and return of Badges from an organization and token id.
     """
-    def _badge(organization, event):
+    def _badge(self, organization, event):
         token_id = event['args']['id']
 
         badge, created = organization.badges.get_or_create(token_id=token_id)
@@ -153,7 +160,6 @@ class Loader:
         return (response, event['args'])
 
     def handle_organization_updated(self, event):
-        print("in handle organization updated")
         organization = self._organization(event)
 
         organization_contract = self._organization_contract(organization.ethereum_address)
@@ -177,6 +183,10 @@ class Loader:
             organization.description = data["description"]
             organization.image_hash = data["image"].split("/ipfs/")[1]
 
+        # If we don't get IPFS, try the blockchain
+        if not organization.name:
+            organization.name = organization_contract.functions.name().call()
+
         organization.save()
 
         return ("Organization details updated", event['args'])
@@ -188,7 +198,7 @@ class Loader:
 
         organization.save()
 
-        return ("Need to update the organization owner", event['args'])
+        return ("Organization ownership updated", event['args'])
 
     def handle_transfer_batch(self, event):
         organization = self._organization(event)
@@ -246,7 +256,6 @@ class Loader:
         event_responses = []
 
         for event in events:
-            print(event)
             if 'event' in event:
                 if event['event'] in self.loader_mapping:
                     for handler in self.loader_mapping[event['event']]:
