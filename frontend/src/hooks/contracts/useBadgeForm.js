@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
 import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
 
 const getBadgeFormTxArgs = ({ data, functionName }) => {
-    return [data?.token_id, data?.token_uri]
-    // if (functionName === "setBadgeURI")
-    //     return [data.token_id, data.uri];
+    if (functionName === "setBadgeURI")
+        return [data.token_id, data.uriHash]
     // if (functionName === "mint")
     //     return [data.holders, data.tokenId, data.amount, "0x"];
     // if (functionName === "burn")
@@ -16,6 +16,8 @@ const getBadgeFormTxArgs = ({ data, functionName }) => {
 
 const useBadgeForm = ({ obj, functionName }) => {
     const fees = useFees();
+
+    const { orgAddress } = useParams();
 
     const { authenticatedAddress, chain } = useUser();
 
@@ -27,7 +29,7 @@ const useBadgeForm = ({ obj, functionName }) => {
     const isReady = BadgerOrg && fees && authenticatedAddress;
 
     const args = getBadgeFormTxArgs({
-        data: {...obj, token_uri: obj.metadataHash },
+        data: obj,
         functionName: functionName
     });
 
@@ -35,9 +37,10 @@ const useBadgeForm = ({ obj, functionName }) => {
 
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
         enabled: isReady,
-        addressOrName: obj.organization_address,
-        contractInterface: BadgerOrg.abi,
+        address: orgAddress,
+        abi: BadgerOrg.abi,
         functionName,
+        chainId: chain.id,
         args,
         overrides,
         onError: (e) => {
@@ -65,7 +68,7 @@ const useBadgeForm = ({ obj, functionName }) => {
 
             if (receipt.status === 0) throw new Error("Error submitting transaction");
 
-            receipt.events = receipt.logs.filter((log) => log.address === obj.organization_address).map((log) => BadgerOrg.abi.parseLog(log))
+            receipt.events = receipt.logs.filter((log) => log.address === orgAddress).map((log) => BadgerOrg.abi.parseLog(log))
     
             setIsLoading(false)
             setIsSuccess(true)

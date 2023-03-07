@@ -46,7 +46,7 @@ const OrgForm = ({ isEdit = false }) => {
 
     const { imageHash, ipfsImage } = useIPFSImageHash(activeImage)
 
-    const { contractHash, ipfsMetadata } = useIPFSMetadataHash({
+    const { metadataHash, ipfsMetadata } = useIPFSMetadataHash({
         name: obj.name,
         description: obj.description,
         image: imageHash,
@@ -56,7 +56,7 @@ const OrgForm = ({ isEdit = false }) => {
     const org = {
         ...obj,
         imageHash: imageHash,
-        contractHash: contractHash
+        contractHash: metadataHash
     }
 
     const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({ obj: org })

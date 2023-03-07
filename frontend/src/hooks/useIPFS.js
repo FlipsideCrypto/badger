@@ -98,7 +98,7 @@ const useIPFSMetadataHash = (data) => {
         getHash();
     }, [data])
 
-    return { contractHash: hash, ipfsMetadata: data };
+    return { metadataHash: hash, ipfsMetadata: data };
 }
 
 export {

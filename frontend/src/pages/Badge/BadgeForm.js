@@ -3,9 +3,22 @@ import { useNavigate, useParams } from "react-router-dom";
 
 // import BadgeDangerZone from "@components/Badge/BadgeDangerZone";
 
-import { useUser, useBadgeForm } from "@hooks";
+import { 
+    useUser, 
+    useBadgeForm,
+    useIPFS,
+    useIPFSImageHash,
+    useIPFSMetadataHash
+} from "@hooks";
 
-import { FormActionBar, FormDrawer, initialBadgeForm, Input, Header, ImageLoader } from "@components";
+import { 
+    FormActionBar, 
+    FormDrawer,
+    initialBadgeForm, 
+    Input, 
+    Header, 
+    ImageLoader 
+} from "@components";
 
 import { getBadgeImage } from "@utils";
 
@@ -18,9 +31,9 @@ const BadgeForm = ({ isEdit = false }) => {
     
     const navigate = useNavigate();
 
-    const { orgId, badgeId } = useParams();
+    const { chainId, orgAddress } = useParams();
 
-    const { organization, badge } = useUser({ orgId, badgeId });
+    const { organization, badge } = useUser({ chainId, orgAddress });
 
     const [ obj, setObj ] = useState(badge || initialBadgeForm);
     const [ image, setImage ] = useState(null);
@@ -32,10 +45,35 @@ const BadgeForm = ({ isEdit = false }) => {
     const activeImageURL = customImage ? 
         (image ? image : IPFS_GATEWAY_URL + obj.image_hash) :
         (generatedImage ? generatedImage : null);
-    
-    const { openBadgeFormTransaction, isPrepared, isLoading } = useBadgeForm({ obj, activeImageURL });   
 
     const isDisabled = !(obj.name && obj.description && activeImageURL);
+
+    const { imageHash, ipfsImage } = useIPFSImageHash(customImage);
+
+    const { metadataHash, ipfsMetadata } = useIPFSMetadataHash({
+        name: obj.name,
+        description: obj.description,
+        image: imageHash,
+        attributes: obj.attributes
+    })
+
+    const transactionParams = {
+        ...obj,
+        imageHash: imageHash,
+        uriHash: metadataHash,
+        token_id: obj.token_id || organization.badges.length
+    }
+    
+    const { 
+        openBadgeFormTransaction, 
+        isPrepared, 
+        isLoading 
+    } = useBadgeForm({ obj: transactionParams, functionName: "setBadgeURI" });
+
+    const { pinImage, pinMetadata } = useIPFS({
+        image: ipfsImage,
+        data: ipfsMetadata
+    })
 
     const actions = [{
         text: isEdit ? "Update badge" : "Create badge",
@@ -43,7 +81,7 @@ const BadgeForm = ({ isEdit = false }) => {
         disabled: isDisabled || !isPrepared,
         loading: isLoading,
         event: () => openBadgeFormTransaction({
-            onSuccess: ({ badge }) => { navigate(`/organization/${orgId}/badge/${badge.token_id}/`) }
+            onSuccess: ({ badge }) => { navigate(`/organization/${orgAddress}/badge/${badge.token_id}/`) }
         })
     }]
     
@@ -79,11 +117,9 @@ const BadgeForm = ({ isEdit = false }) => {
 
     return (
         <>
-            <Header back={() => navigate(
-                isEdit ? `/dashboard/organization/${organization?.id}/badge/${badgeId}` : `/dashboard/organization/${organization?.id}`
-            )}/>
+            <Header back={() => navigate(`/dashboard/organization/${chainId}/${orgAddress}`)} />
 
-            <h2 style={{ marginLeft: "30px" }}>
+            <h2>
                 {isEdit ? "Update Badge" : "Create Badge"}
             </h2>
 
@@ -155,11 +191,6 @@ const BadgeForm = ({ isEdit = false }) => {
                 help={'After creating a badge, you (or your managers) can issue badges to team members.'}
                 actions={actions}
             />
-
-            {/* <hr style={{margin: "30px 20px 30px 20px", backgroundColor: "#EEEEF6", border: "none", height: "1px"}} />
-            {isEdit &&
-                <BadgeDangerZone />
-            } */}
         </>
     )
 }
