@@ -20,8 +20,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build-abis && npm run copy-files && tsc --build",
     "clean": "npx hardhat clean && tsc --build --clean",
-    "build-abis": "npm run clean && MINING=true npx hardhat compile",
-    "gas-report": "REPORT_GAS=true MINING=true npx hardhat test",
+    "build-abis": "npm run clean && npx hardhat compile",
     "copy-files": "mkdir -p src/contracts && cp -r contracts/* src/contracts/"
   },
   "devDependencies": {
@@ -51,5 +50,9 @@
     "solady": "^0.0.78",
     "solidity-coverage": "^0.8.2",
     "solmate": "^6.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlipsideCrypto/badger.git"
   }
 }
