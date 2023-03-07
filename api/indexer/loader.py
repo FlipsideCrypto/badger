@@ -135,7 +135,10 @@ class Loader:
         if not Web3.isChecksumAddress(organization):
             organization = Web3.toChecksumAddress(organization)
 
-        organization, created = Organization.objects.get_or_create(ethereum_address=organization, chain_id=settings.LISTENER_CHAIN_ID)
+        organization, created = Organization.objects.get_or_create(
+            ethereum_address=organization, 
+            chain_id=settings.LISTENER_CHAIN_ID
+        )
 
         response = "Organization already exists"
         if created:
@@ -150,6 +153,7 @@ class Loader:
         return (response, event['args'])
 
     def handle_organization_updated(self, event):
+        print("in handle organization updated")
         organization = self._organization(event)
 
         organization_contract = self._organization_contract(organization.ethereum_address)
@@ -159,7 +163,7 @@ class Loader:
         uri = organization_contract.functions.contractURI().call()
 
         # Calculate the ipfs hash to the contract uri
-        organization.contract_uri_hash = uri.split("/ipfs/")[1]
+        organization.contract_uri_hash = uri.split("/ipfs/")[1] if "ipfs" in uri else uri
         organization.save()
 
         # Build the client side url used
@@ -242,6 +246,7 @@ class Loader:
         event_responses = []
 
         for event in events:
+            print(event)
             if 'event' in event:
                 if event['event'] in self.loader_mapping:
                     for handler in self.loader_mapping[event['event']]:
@@ -250,5 +255,7 @@ class Loader:
                     event_responses.append(("Event not handled", event['event'], event['args']))
             else:
                 event_responses.append(("Event not decoded", event))
+
+        print('event_responses', event_responses)
 
         return event_responses

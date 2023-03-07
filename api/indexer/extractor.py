@@ -15,24 +15,31 @@ class Extractor:
             'toBlock': to_block
         })
 
+        print('events', events)
+
         if not contract_addresses or len(contract_addresses) == 0:
+            print('early returning because contract addresses is empty')
             return []
         
         if not events or len(events) == 0:
+            print('early returning because events is empty')
             return []
 
         event_data = []
 
         for event in events:
             if 'topics' not in event:
+                print('Event does not have topics')
                 continue
 
             if len(event['topics']) == 0:
+                print('Event topics is empty')
                 continue
 
             event_topic = event['topics'][0].hex()
 
             if event_topic not in topics:
+                print(f'Event topic {event_topic} not in topics {topics}')
                 continue
 
             event_name = topics[event_topic].split('(')[0]
@@ -40,6 +47,7 @@ class Extractor:
             event_address = event['address']
             
             if event_address not in contract_addresses:
+                print(f'Event address {event_address} not in contract addresses {contract_addresses}')
                 continue
 
             if event_address not in self.contracts:
