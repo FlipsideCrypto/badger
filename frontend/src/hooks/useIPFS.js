@@ -12,7 +12,6 @@ const useIPFS = ({ image, data }) => {
     const { setError } = useContext(ErrorContext);
 
     const pinImage = async () => {
-        console.log('image', image)
         const response = await postIPFSImage(image);
 
         if (response?.error) {
@@ -28,7 +27,6 @@ const useIPFS = ({ image, data }) => {
     }
 
     const pinMetadata = async () => {
-        console.log('data', data)
         const response = await postIPFSMetadata(data);
 
         if (response.error) {
