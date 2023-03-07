@@ -20,7 +20,7 @@ import {
     ImageLoader 
 } from "@components";
 
-import { getBadgeImage } from "@utils";
+import { getBadgeImage, postBadgeRequest } from "@utils";
 
 import { IPFS_GATEWAY_URL } from "@static";
 
@@ -39,16 +39,18 @@ const BadgeForm = ({ isEdit = false }) => {
     const [ image, setImage ] = useState(null);
     const [ generatedImage, setGeneratedImage ] = useState(null);
 
-    const customImage = image || obj.image_hash;
+    const activeImage = image || obj.image_hash || generatedImage;
 
     /// Prioritizes an uploaded image, then the ipfs gateway image, then the generated image
-    const activeImageURL = customImage ? 
+    const activeImageURL = image ? 
         (image ? image : IPFS_GATEWAY_URL + obj.image_hash) :
         (generatedImage ? generatedImage : null);
 
     const isDisabled = !(obj.name && obj.description && activeImageURL);
 
-    const { imageHash, ipfsImage } = useIPFSImageHash(customImage);
+    const tokenId = obj.token_id || organization.badges.length
+
+    const { imageHash, ipfsImage } = useIPFSImageHash(activeImage);
 
     const { metadataHash, ipfsMetadata } = useIPFSMetadataHash({
         name: obj.name,
@@ -61,12 +63,12 @@ const BadgeForm = ({ isEdit = false }) => {
         ...obj,
         imageHash: imageHash,
         uriHash: metadataHash,
-        token_id: obj.token_id || organization.badges.length
+        token_id: tokenId
     }
     
     const { 
         openBadgeFormTransaction, 
-        isPrepared, 
+        isPrepared,
         isLoading 
     } = useBadgeForm({ obj: transactionParams, functionName: "setBadgeURI" });
 
@@ -81,7 +83,27 @@ const BadgeForm = ({ isEdit = false }) => {
         disabled: isDisabled || !isPrepared,
         loading: isLoading,
         event: () => openBadgeFormTransaction({
-            onSuccess: ({ badge }) => { navigate(`/organization/${orgAddress}/badge/${badge.token_id}/`) }
+            onLoading: () => {
+                pinImage();
+                pinMetadata();
+            },
+            onSuccess: async({ chain, receipt }) => {
+                const event = receipt.events.find((event) => event.name === "URI");
+
+                if (!event) throw new Error("Error submitting transaction.");
+
+                const response = await postBadgeRequest({
+                    chain_id: chain.id,
+                    name: obj.name,
+                    description: obj.description,
+                    image_hash: imageHash,
+                    token_uri: metadataHash,
+                    token_id: tokenId,
+                    organization: organization.id
+                });
+
+                navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${response.id}/`);
+            }
         })
     }]
     
@@ -90,7 +112,7 @@ const BadgeForm = ({ isEdit = false }) => {
         setObj({...obj, name: event.target.value });
 
         // Prevent generating image if custom image is uploaded
-        if (!customImage) {
+        if (!image && !obj.image_hash) {
             const response = await getBadgeImage(
                 organization?.name,
                 organization?.ethereum_address,
@@ -170,7 +192,7 @@ const BadgeForm = ({ isEdit = false }) => {
                             onClick={() => imageInput.current.click()}
                             style={{ width: "auto" }}
                         >
-                            {customImage ?
+                            {image ?
                                 "Change image" :
                                 "Upload image"
                             }
