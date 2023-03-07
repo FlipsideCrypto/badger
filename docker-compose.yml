@@ -48,6 +48,8 @@ services:
     build:
       dockerfile: Dockerfile.dev
       context: ./api
+      args:
+        NODE_IP: host.docker.internal
     volumes:
       - ./api:/code
     env_file:

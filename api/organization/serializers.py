@@ -52,6 +52,7 @@ class OrganizationSerializer(
             'owner',
             'badges',
             'delegates',
+            'last_block',
             'created',
             'updated'
         )
