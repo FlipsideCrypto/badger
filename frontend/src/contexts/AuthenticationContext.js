@@ -18,7 +18,7 @@ const AuthenticationContextProvider = ({ children }) => {
     const [authenticatedAddress, setAuthenticatedAddress] = useState(getAuthenticatedAddress());
     const [isAuthenticating, setIsAuthenticating] = useState(false);
 
-    const primaryChain = chains.find(c => c.id === CHAIN_ID);
+    const primaryChain = chains.find(c => c.id === parseInt(CHAIN_ID));
 
     const isWrongNetwork = isConnected && chain && primaryChain && chains && chain.id !== primaryChain.id;
 
