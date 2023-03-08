@@ -7,6 +7,7 @@ require("@nomiclabs/hardhat-etherscan");
 require('solidity-coverage');
 require('@nomicfoundation/hardhat-chai-matchers')
 require("dotenv").config();
+require("@typechain/hardhat");
 
 // All of these keys have been knowingly leaked to make the startup process easier for new onboards.
 // Do not use any of these keys in production.
@@ -198,5 +199,8 @@ module.exports = {
         clear: true,
         flat: true,
         format: "json"
-    }]
+    }],
+    typechain: {
+        outDir: 'build/types'
+    }
 };
