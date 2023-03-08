@@ -54,8 +54,6 @@ const useOrgForm = ({ obj }) => {
         contractHash: obj.contractHash
     });
 
-    console.log(args)
-
     const overrides = { gasPrice: fees?.gasPrice };
 
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({

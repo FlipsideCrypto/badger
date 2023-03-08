@@ -22,7 +22,7 @@ const useIPFS = ({ image, data }) => {
 
             return;
         }
-        console.log('pinImage', response.hash)
+
         return response.hash;
     }
 
@@ -48,19 +48,24 @@ const useIPFSImageHash = (imageFile) => {
 
     useEffect(() => {
         async function getHash(image) {
-            var uint8Array = new Uint8Array(image);
+            const reader = new FileReader();
 
-            await Hash.of(uint8Array, {
-                cidVersion: 0,
-                onlyHash: true,
-            })
-                .then((res) => { setHash(res); })
-                .catch((err) => { console.error('Error with deterministic image hashing', err); })
+            reader.onload = async () => {
+                var uint8Array = new Uint8Array(reader.result);
+                await Hash.of(uint8Array, {
+                    cidVersion: 0,
+                    onlyHash: true,
+                })
+                    .then((res) => { setHash(res); })
+                    .catch((err) => { console.error('Error with deterministic image hashing', err); })
+            };
+
+            reader.readAsArrayBuffer(image);
         }
 
         if (!imageFile) return;
 
-        if (typeof imageFile === 'string' && imageFile.slice(0,4) !== 'data') {
+        if (typeof imageFile === 'string') {
             // If provided a string, it is treated as if it is hash.
             // unless it's a file bytes
             setHash(imageFile);

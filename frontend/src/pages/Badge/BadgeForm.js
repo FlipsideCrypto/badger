@@ -8,7 +8,8 @@ import {
     useBadgeForm,
     useIPFS,
     useIPFSImageHash,
-    useIPFSMetadataHash
+    useIPFSMetadataHash,
+    useBadgeArt
 } from "@hooks";
 
 import { 
@@ -37,14 +38,15 @@ const BadgeForm = ({ isEdit = false }) => {
 
     const [ obj, setObj ] = useState(badge || initialBadgeForm);
     const [ image, setImage ] = useState(null);
-    const [ generatedImage, setGeneratedImage ] = useState(null);
 
-    const activeImage = image || obj.image_hash || generatedImage;
+    const { badgeArt } = useBadgeArt({organization: organization, name: obj.name})
+
+    const activeImage = image || obj.image_hash || badgeArt;
 
     /// Prioritizes an uploaded image, then the ipfs gateway image, then the generated image
     const activeImageURL = image ? 
-        (image ? image : IPFS_GATEWAY_URL + obj.image_hash) :
-        (generatedImage ? generatedImage : null);
+        (image ? URL.createObjectURL(image) : IPFS_GATEWAY_URL + obj.image_hash) :
+        (badgeArt ? URL.createObjectURL(badgeArt) : null);
 
     const isDisabled = !(obj.name && obj.description && activeImageURL);
 
@@ -110,18 +112,6 @@ const BadgeForm = ({ isEdit = false }) => {
     // Updates generative image and Name field
     const onNameChange = async (event) => {
         setObj({...obj, name: event.target.value });
-
-        // Prevent generating image if custom image is uploaded
-        if (!image && !obj.image_hash) {
-            const response = await getBadgeImage(
-                organization?.name,
-                organization?.ethereum_address,
-                organization?.badges?.length,
-                event.target.value
-            );
-            
-            onCustomImageChange(response);
-        }
     }
 
     const onDescriptionChange = (event) => {
@@ -133,7 +123,7 @@ const BadgeForm = ({ isEdit = false }) => {
 
         reader.readAsDataURL(file);
         reader.onload = () => {
-            uploaded ? setImage(reader.result) : setGeneratedImage(reader.result);
+            setImage(reader.result)
         }
     }
 

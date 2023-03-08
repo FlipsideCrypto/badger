@@ -15,10 +15,9 @@ const Badge = () => {
     const navigate = useNavigate();
 
     const { chainId, orgAddress, badgeId } = useParams();
-    
+
     const { authenticatedAddress, organization, badge } = useUser({ chainId, orgAddress, badgeId });
 
-    console.log("Badge", authenticatedAddress, organization, badge)
     const [drawer, setDrawer] = useState({
         collapsed: true,
         action: "Mint"
@@ -32,7 +31,7 @@ const Badge = () => {
     const headerActions = [{
         text: "Settings",
         icon: ["fal", "fa-gear"],
-        event: () => navigate(`/dashboard/${chainId}/organization/${orgAddress}/badge/${badgeId}/edit/`)
+        event: () => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badgeId}/edit/`)
     }]
 
     const titleActions = [{
@@ -60,10 +59,10 @@ const Badge = () => {
 
     return (
         <>
-            <SEO title={`${organization?.name} | ${badge.name} | Badger`} description={badge.description} />
+            <SEO title={`${organization.name} | ${badge.name} | Badger`} description={badge.description} />
 
             <Header back={() => 
-                navigate(`/dashboard/${chainId}/organization/${orgAddress}/`)} 
+                navigate(`/dashboard/organization/${chainId}/${orgAddress}/`)} 
                 actions={isManager && headerActions} />
 
             <BadgePreview badge={badge} />
