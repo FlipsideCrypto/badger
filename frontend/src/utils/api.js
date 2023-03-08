@@ -280,7 +280,8 @@ async function putBadgeRolesRequest(badge, orgId) {
 }
 
 async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
-    const url = `${API_URL}/art/badge?organization=${orgName}&organization_ethereum_address=${orgAddress}&badge_id=${badgeId}&badge_name=${badgeName}`
+    const url = `${API_URL}/art/badge/${orgName}/${orgAddress}/${badgeName}/`
+    const filename = `generated_${badgeName.replace(" ", "_")}_${badgeId}.svg`;
 
     let response;
     try {
@@ -297,7 +298,7 @@ async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
                 if (!data) throw new Error(
                     "Badge image could not be created."
                 );
-                response = getFileFromBase64(data.image, `generated_${badgeName.replace(" ", "_")}_${badgeId}.svg`);
+                response = getFileFromBase64(data.image, filename);
             })
             .catch(err => {
                 throw new Error(err);
@@ -313,7 +314,7 @@ async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
 async function getPFPImage(char, address) {
     let response;
     try {
-        await fetch(`${API_URL}/art/pfp/?char=${char}&address=${address}`, {
+        await fetch(`${API_URL}/art/pfp/${char}/${address}/`, {
             method: "GET",
             mode: "cors",
             headers: {

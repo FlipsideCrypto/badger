@@ -39,7 +39,6 @@ class BadgeUserSerializer(
             'amount'
         )
 
-
 class BadgeSerializer(
     SerializerRepresentationMixin,
     serializers.ModelSerializer
@@ -63,15 +62,12 @@ class BadgeSerializer(
         fields = (
             'id',
             'is_active',
+            'token_id',
             'name',
             'description',
-            'token_id',
             'image_hash',
             'token_uri',
             'delegates',
-            'claimable',
-            'account_bound',
-            'signer_ethereum_address',
             'users',
             'created',
             'updated'

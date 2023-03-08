@@ -4,8 +4,6 @@ import json
 from dotenv import load_dotenv
 from pathlib import Path
 
-from siwe_auth.custom_groups.erc721 import ERC721OwnerManager
-
 load_dotenv()
 
 from abis import (
@@ -19,7 +17,6 @@ from abis import (
     ORGANIZATION_TOPIC_SIGNATURES,
 )
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = bool(os.getenv("API_DEBUG", True))
@@ -70,7 +67,7 @@ LOGIN_URL = "/api/auth/login"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
