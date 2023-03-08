@@ -67,6 +67,7 @@ const useIPFSImageHash = (imageFile) => {
 
         if (typeof imageFile === 'string') {
             // If provided a string, it is treated as if it is hash.
+            // unless it's a file bytes
             setHash(imageFile);
 
             return;
@@ -98,7 +99,7 @@ const useIPFSMetadataHash = (data) => {
         getHash();
     }, [data])
 
-    return { contractHash: hash, ipfsMetadata: data };
+    return { metadataHash: hash, ipfsMetadata: data };
 }
 
 export {

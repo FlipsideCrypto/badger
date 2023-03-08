@@ -12,6 +12,8 @@ import {
 
 import { initialOrgForm, FormActionBar, FormDrawer, Header, Input, OrgDangerZone } from "@components"
 
+import { postOrgRequest } from "@utils";
+
 import { IPFS_GATEWAY_URL } from "@static";
 
 import "@style/pages/OrgForm.css";
@@ -29,7 +31,7 @@ const OrgForm = ({ isEdit = false }) => {
 
     const { chainId, orgAddress } = useParams();
 
-    const { organization } = useUser({ chainId, orgAddress });
+    const { organization, authenticatedAddress } = useUser({ chainId, orgAddress });
 
     const [obj, setObj] = useState(organization || initialOrgForm);
     const [image, setImage] = useState(null);
@@ -46,7 +48,7 @@ const OrgForm = ({ isEdit = false }) => {
 
     const { imageHash, ipfsImage } = useIPFSImageHash(activeImage)
 
-    const { contractHash, ipfsMetadata } = useIPFSMetadataHash({
+    const { metadataHash, ipfsMetadata } = useIPFSMetadataHash({
         name: obj.name,
         description: obj.description,
         image: imageHash,
@@ -56,7 +58,7 @@ const OrgForm = ({ isEdit = false }) => {
     const org = {
         ...obj,
         imageHash: imageHash,
-        contractHash: contractHash
+        contractHash: metadataHash
     }
 
     const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({ obj: org })
@@ -82,6 +84,16 @@ const OrgForm = ({ isEdit = false }) => {
                 if (!event) throw new Error("Error submitting transaction.");
 
                 const orgAddress = event.args.organization;
+
+                postOrgRequest({
+                    chain_id: chain.id,
+                    ethereum_address: orgAddress,
+                    name: obj.name,
+                    symbol: obj.symbol,
+                    description: obj.description,
+                    image_hash: imageHash,
+                    contract_uri_hash: metadataHash,
+                });
 
                 navigate(`/dashboard/organization/${chain.id}/${orgAddress}/`);
             }

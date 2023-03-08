@@ -45,19 +45,12 @@ async function postBadgeRequest(badge) {
 
     const users = formatAddresses(badge.users);
     const delegates = formatAddresses(badge.delegates);
-    const signer = badge.signer === "" ? "" : ethers.utils.getAddress(badge.signer);
-
-    const organization = typeof (badge?.organization) === "string" ?
-        parseInt(badge?.organization)
-        : badge?.organization;
 
     const badgeData = {
         ...badge,
         is_active: true,
-        signer_ethereum_address: signer,
         users: users,
-        delegates: delegates,
-        organization: organization
+        delegates: delegates
     }
 
     const url = badge.url ? badge.url : `${API_URL}/badges/`;

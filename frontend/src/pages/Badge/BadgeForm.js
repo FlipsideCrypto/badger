@@ -1,19 +1,29 @@
-import { useState, useRef, useContext, useEffect, useReducer } from "react";
+import { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // import BadgeDangerZone from "@components/Badge/BadgeDangerZone";
-import { ErrorContext } from "@contexts";
 
-import { useSetBadge, useIPFSImageHash, useIPFSMetadataHash, useUser } from "@hooks";
+import { 
+    useUser, 
+    useBadgeForm,
+    useIPFS,
+    useIPFSImageHash,
+    useIPFSMetadataHash,
+    useBadgeArt
+} from "@hooks";
 
-import {
-    FormActionBar, FormDrawer, FormReducer, initialBadgeForm, Input, 
-    InputAddress, InputListCSV, InputListKeyValue, Header, ImageLoader, Select
+import { 
+    FormActionBar, 
+    FormDrawer,
+    initialBadgeForm, 
+    Input, 
+    Header, 
+    ImageLoader 
 } from "@components";
 
-import {
-    postBadgeRequest, postIPFSImage, postIPFSMetadata, getBadgeImage, getAttributesFromHash
-} from "@utils";
+import { getBadgeImage, postBadgeRequest } from "@utils";
+
+import { IPFS_GATEWAY_URL } from "@static";
 
 import "@style/pages/BadgeForm.css";
 
@@ -22,84 +32,106 @@ const BadgeForm = ({ isEdit = false }) => {
     
     const navigate = useNavigate();
 
-    const { orgId, badgeId } = useParams();
+    const { chainId, orgAddress } = useParams();
 
-    const { setError } = useContext(ErrorContext);
+    const { organization, badge } = useUser({ chainId, orgAddress });
 
-    const { authenticatedAddress, chain, organization, badge } = useUser({ orgId, badgeId });
-
-    const [ obj, dispatchObj ] = useReducer(FormReducer, badge || initialBadgeForm);
+    const [ obj, setObj ] = useState(badge || initialBadgeForm);
     const [ image, setImage ] = useState(null);
 
-    const [ txPending, setTxPending ] = useState(false);
+    const { badgeArt } = useBadgeArt({organization: organization, name: obj.name})
 
-    const actions = [
-        // {
-        //     text: isEdit ? "Update badge" : "Create badge",
-        //     icon: ["fal", "arrow-right"],
-        //     disabled: !setBadge.isSuccess,
-        //     loading: txPending,
-        //     event: () => setBadgeTx()
-        // }
-    ]
+    const activeImage = image || obj.image_hash || badgeArt;
+
+    /// Prioritizes an uploaded image, then the ipfs gateway image, then the generated image
+    const activeImageURL = image ? 
+        (image ? URL.createObjectURL(image) : IPFS_GATEWAY_URL + obj.image_hash) :
+        (badgeArt ? URL.createObjectURL(badgeArt) : null);
+
+    const isDisabled = !(obj.name && obj.description && activeImageURL);
+
+    const tokenId = obj.token_id || organization.badges.length
+
+    const { imageHash, ipfsImage } = useIPFSImageHash(activeImage);
+
+    const { metadataHash, ipfsMetadata } = useIPFSMetadataHash({
+        name: obj.name,
+        description: obj.description,
+        image: imageHash,
+        attributes: obj.attributes
+    })
+
+    const transactionParams = {
+        ...obj,
+        imageHash: imageHash,
+        uriHash: metadataHash,
+        token_id: tokenId
+    }
+    
+    const { 
+        openBadgeFormTransaction, 
+        isPrepared,
+        isLoading 
+    } = useBadgeForm({ obj: transactionParams, functionName: "setBadgeURI" });
+
+    const { pinImage, pinMetadata } = useIPFS({
+        image: ipfsImage,
+        data: ipfsMetadata
+    })
+
+    const actions = [{
+        text: isEdit ? "Update badge" : "Create badge",
+        icon: ["fal", "arrow-right"],
+        disabled: isDisabled || !isPrepared,
+        loading: isLoading,
+        event: () => openBadgeFormTransaction({
+            onLoading: () => {
+                pinImage();
+                pinMetadata();
+            },
+            onSuccess: async({ chain, receipt }) => {
+                const event = receipt.events.find((event) => event.name === "URI");
+
+                if (!event) throw new Error("Error submitting transaction.");
+
+                const response = await postBadgeRequest({
+                    chain_id: chain.id,
+                    name: obj.name,
+                    description: obj.description,
+                    image_hash: imageHash,
+                    token_uri: metadataHash,
+                    token_id: tokenId,
+                    organization: organization.id
+                });
+
+                navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${response.id}/`);
+            }
+        })
+    }]
     
     // Updates generative image and Name field
     const onNameChange = async (event) => {
-        dispatchObj({ type: "SET", field: "name", value: event.target.value });
-
-        const response = await getBadgeImage(
-            organization?.name,
-            organization?.ethereum_address,
-            organization?.badges?.length,
-            event.target.value
-        );
-
-        onCustomImageChange(response);
+        setObj({...obj, name: event.target.value });
     }
 
     const onDescriptionChange = (event) => {
-        dispatchObj({ type: "SET", field: "description", value: event.target.value });
+        setObj({...obj, description: event.target.value });
     }
 
-    const onSignerChange = (event) => {
-        dispatchObj({ type: "SET", field: "signer", value: event.target.value });
-    }
-
-    const onAccountBoundChange = (event) => {
-        dispatchObj({ 
-            type: "SET", 
-            field: "account_bound", 
-            value: event.target.value === "Yes" ? true : false 
-        });
-    }
-
-    const onClaimableChange = (event) => {
-        dispatchObj({
-            type: "SET",
-            field: "claimable",
-            value: event.target.value === "Yes" ? true : false
-        });
-    }
-
-    const onCustomImageChange = (file) => {
+    const onCustomImageChange = (file, uploaded) => {
         const reader = new FileReader();
 
         reader.readAsDataURL(file);
         reader.onload = () => {
-            setImage({
-                name: file.name,
-                url: reader.result
-            });
+            setImage(reader.result)
         }
     }
 
     return (
         <>
-            <Header back={() => navigate(
-                isEdit ? `/dashboard/organization/${organization?.id}/badge/${badgeId}` : `/dashboard/organization/${organization?.id}`
-            )}/>
+            <Header back={() => navigate(`/dashboard/organization/${chainId}/${orgAddress}`)} />
 
-            <h2 style={{ marginLeft: "30px" }}>
+            <h2>
                 {isEdit ? "Update Badge" : "Create Badge"}
             </h2>
 
@@ -123,70 +155,18 @@ const BadgeForm = ({ isEdit = false }) => {
                             value={obj.description}
                             onChange={onDescriptionChange}
                         />
-
-                        <InputListKeyValue
-                            label="Attributes"
-                            listKey="attributes"
-                            keyPlaceholder="Name"
-                            valuePlaceholder="Value"
-                            required={false}
-                            state={obj}
-                            dispatch={dispatchObj}
-                        />
-
-                        <FormActionBar
-                            help={"You can always change the metadata of your Badge in the future."}
-                        />
                     </div>
                     <div className="form__group" style={{ gridTemplateRows: "min-content" }}>
                         <label className="form__label">Live Badge Preview</label>
                         <div className="preview__container">
                             <ImageLoader
                                 className="preview__image"
-                                src={image?.url ?? obj.image_hash}
+                                src={activeImageURL}
                                 alt="Badge Preview"
-                                prependGateway={Boolean(!image?.url)}
                             />
                         </div>
                     </div>
                 </div>
-            </FormDrawer>
-
-            <FormDrawer label="Access" open={false}>
-                <div className="badge__form__access">
-                    <Select
-                        label="Account Bound"
-                        options={["Yes", "No"]}
-                        value={obj.account_bound ? "Yes" : "No"}
-                        setValue={onAccountBoundChange}
-                    />
-
-                    <Select
-                        label="Claimable"
-                        options={["Yes", "No"]}
-                        value={obj.claimable ? "Yes" : "No"}
-                        setValue={onClaimableChange}
-                    />
-                </div>
-
-                <InputAddress
-                    label="Signer"
-                    placeholder="0x0000..."
-                    required={false}
-                    value={obj.signer}
-                    setValue={onSignerChange}
-                />
-
-                {/* TODO: Add this back once reducer decision is made
-                {!isEdit &&
-                    <InputListCSV
-                        label={"Managers"}
-                        inputList={badge.delegates}
-                        dispatch={badgeDispatch}
-                        listKey={"delegates"}
-                        setAreAddressesValid={setAreAddressesValid}
-                    />
-                } */}
             </FormDrawer>
 
             <FormDrawer label="Appearance" open={false}>
@@ -194,16 +174,15 @@ const BadgeForm = ({ isEdit = false }) => {
                     name="Custom Image"
                     accept="image/*"
                     label="Custom Image"
-                    placeholder={image?.file.name ?? "Upload Custom Image"}
                     required={false}
                     disabled={true}
-                    value={image?.name ?? ""}
+                    value={imageInput.current?.files[0]?.name ?? "Upload Custom Image"}
                     append={
                         <button className="secondary"
                             onClick={() => imageInput.current.click()}
                             style={{ width: "auto" }}
                         >
-                            {image?.name ?
+                            {image ?
                                 "Change image" :
                                 "Upload image"
                             }
@@ -216,22 +195,14 @@ const BadgeForm = ({ isEdit = false }) => {
                     ref={imageInput}
                     accept="image/*"
                     type="file"
-                    onChange={(e) => onCustomImageChange(e.target.files[0])}
+                    onChange={(e) => onCustomImageChange(e.target.files[0], true)}
                 />
             </FormDrawer>
 
             <FormActionBar
-                help={
-                    'After creating a badge, you (or your managers) can issue badges to team members.'
-                }
+                help={'After creating a badge, you (or your managers) can issue badges to team members.'}
                 actions={actions}
-                style={{ marginInline: "30px", marginBottom: "30px" }}
             />
-
-            {/* <hr style={{margin: "30px 20px 30px 20px", backgroundColor: "#EEEEF6", border: "none", height: "1px"}} />
-            {isEdit &&
-                <BadgeDangerZone />
-            } */}
         </>
     )
 }

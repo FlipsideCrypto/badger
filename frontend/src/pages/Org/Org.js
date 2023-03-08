@@ -45,7 +45,7 @@ const Org = () => {
                         url={`${URL_BASE}/badge/new/`}
                     />}
 
-                    {badges && badges.length > 0 && <BadgeTable orgId={organization.id} badges={badges} />}
+                    {badges && badges.length > 0 && <BadgeTable badges={badges} />}
                 </div>
             </>}
         </>

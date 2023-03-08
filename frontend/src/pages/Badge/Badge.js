@@ -14,30 +14,27 @@ import "@style/pages/Badge.css";
 const Badge = () => {
     const navigate = useNavigate();
 
-    const { orgId, badgeId } = useParams();
+    const { chainId, orgAddress, badgeId } = useParams();
 
-    const { authenticatedAddress, organizations } = useUser()
+    const { authenticatedAddress, organization, badge } = useUser({ chainId, orgAddress, badgeId });
 
     const [drawer, setDrawer] = useState({
         collapsed: true,
         action: "Mint"
     });
 
-    const org = organizations && organizations.find(org => String(org.id) === orgId);
-    const badge = org?.badges?.find(badge => String(badge.id) === badgeId);
-
-    const isLeader = org && badge && (
-        org.owner.ethereum_address === authenticatedAddress ||
+    const isManager = organization && badge && (
+        organization.owner.ethereum_address === authenticatedAddress ||
         badge.delegates.find(delegate => delegate.ethereum_address === authenticatedAddress)
     );
 
-    const headerActions = isLeader && [{
+    const headerActions = [{
         text: "Settings",
         icon: ["fal", "fa-gear"],
-        event: () => navigate(`/dashboard/organization/${orgId}/badge/${badgeId}/edit/`)
+        event: () => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badgeId}/edit/`)
     }]
 
-    const titleActions = isLeader && [{
+    const titleActions = [{
         className: "home__action-button",
         icon: ['fal', 'fa-user'],
         text: "Update holders",
@@ -62,18 +59,20 @@ const Badge = () => {
 
     return (
         <>
-            <SEO title={`${org.name} | ${badge.name} | Badger`} description={badge.description} />
+            <SEO title={`${organization.name} | ${badge.name} | Badger`} description={badge.description} />
 
-            <Header back={() => navigate(`/dashboard/organization/${orgId}/`)} actions={headerActions} />
+            <Header back={() => 
+                navigate(`/dashboard/organization/${chainId}/${orgAddress}/`)} 
+                actions={isManager && headerActions} />
 
             <BadgePreview badge={badge} />
 
             <div className="dashboard__content">
                 <ActionTitle title="Badge Holders" actions={titleActions} />
 
-                {isLeader && <BadgeManagementDrawer
+                {isManager && <BadgeManagementDrawer
                     drawer={drawer} setDrawer={setDrawer}
-                    badge={badge} org={org} isLeader={isLeader}
+                    badge={badge} org={organization} isManager={isManager}
                 />}
             </div>
 
