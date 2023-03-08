@@ -3,8 +3,6 @@ import { ethers } from "ethers";
 
 import { getPFPImage } from "@utils";
 
-import { getRandomEmoji } from "@static";
-
 const ALCHEMY_API_KEY = process.env.REACT_APP_ALCHEMY_API_KEY;
 
 const useENSProfile = (address) => {
@@ -18,8 +16,9 @@ const useENSProfile = (address) => {
 
     useEffect(() => {
         const getGeneratedAvatar = async (address) => {
-            const seed = getRandomEmoji(address);
-            const response = await getPFPImage(seed, address);
+            // Emojis no longer supported by the api, so what do we use for personal pfps instead?
+            const firstChar = ensName ? ensName.charAt(0).toUpperCase() : 'x';
+            const response = await getPFPImage(firstChar, address);
 
             if (response.error) return;
             return URL.createObjectURL(response);

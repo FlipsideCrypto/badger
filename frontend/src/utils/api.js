@@ -273,7 +273,7 @@ async function putBadgeRolesRequest(badge, orgId) {
 }
 
 async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
-    const url = `${API_URL}/art/badge/${orgName}/${orgAddress}/${badgeName}/`
+    const url = `${API_URL}/art/pfp/${orgName}/${orgAddress}/${badgeName}/`
     const filename = `generated_${badgeName.replace(" ", "_")}_${badgeId}.svg`;
 
     let response;

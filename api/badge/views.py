@@ -168,7 +168,7 @@ class ArtViewSet(viewsets.ViewSet):
         detail=False, 
         methods=['get'], 
         url_name='badge',
-        url_path="pfp/(?P<organization_name>[a-zA-Z0-9]+)/(?P<address>[a-zA-Z0-9]+)/(?P<badge_name>[a-zA-Z0-9]+)/"
+        url_path="pfp/(?P<organization_name>[a-zA-Z0-9]+)/(?P<address>[a-zA-Z0-9]+)/(?P<badge_name>[a-zA-Z0-9]+)"
     )
     def badge_art(self, request, **kwargs):
         organization = kwargs.get('organization_name', None)

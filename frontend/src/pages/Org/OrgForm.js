@@ -36,7 +36,7 @@ const OrgForm = ({ isEdit = false }) => {
     const [obj, setObj] = useState(organization || initialOrgForm);
     const [image, setImage] = useState(null);
 
-    const { characterPFP } = usePFP({ name: obj.name });
+    const { characterPFP } = usePFP({ name: obj.name, address: authenticatedAddress });
 
     const customImage = image || obj.image_hash;
 

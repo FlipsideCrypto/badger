@@ -17,6 +17,8 @@ const useBadgeArt = ({ organization, name }) => {
             setBadgeArt(image);
         }
 
+        if (!name || !organization) return
+        
         getImage();
     }, [name, organization]);
 

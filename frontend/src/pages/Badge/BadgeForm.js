@@ -21,7 +21,7 @@ import {
     ImageLoader 
 } from "@components";
 
-import { getBadgeImage, postBadgeRequest } from "@utils";
+import { postBadgeRequest } from "@utils";
 
 import { IPFS_GATEWAY_URL } from "@static";
 
@@ -32,9 +32,9 @@ const BadgeForm = ({ isEdit = false }) => {
     
     const navigate = useNavigate();
 
-    const { chainId, orgAddress } = useParams();
+    const { chainId, orgAddress, badgeId } = useParams();
 
-    const { organization, badge } = useUser({ chainId, orgAddress });
+    const { organization, badge } = useUser({ chainId, orgAddress, badgeId });
 
     const [ obj, setObj ] = useState(badge || initialBadgeForm);
     const [ image, setImage ] = useState(null);
@@ -42,11 +42,11 @@ const BadgeForm = ({ isEdit = false }) => {
     const { badgeArt } = useBadgeArt({organization: organization, name: obj.name})
 
     const activeImage = image || obj.image_hash || badgeArt;
-
+    
     /// Prioritizes an uploaded image, then the ipfs gateway image, then the generated image
-    const activeImageURL = image ? 
-        (image ? URL.createObjectURL(image) : IPFS_GATEWAY_URL + obj.image_hash) :
-        (badgeArt ? URL.createObjectURL(badgeArt) : null);
+    const activeImageURL = image ? URL.createObjectURL(image) : 
+        obj.image_hash ? IPFS_GATEWAY_URL + obj.image_hash : 
+        badgeArt ? URL.createObjectURL(badgeArt) : null;
 
     const isDisabled = !(obj.name && obj.description && activeImageURL);
 
