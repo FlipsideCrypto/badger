@@ -89,7 +89,6 @@ class Loader:
     def _handle_user_balance(self, i, event, organization, address_field):
         user = self._handle_users(event['args'][address_field])
 
-        # Get the token ids and values from the event and wrap them in lists if they are not already
         if event['event'] == "TransferSingle":
             token_ids = [event['args']['id']]
             values = [event['args']['value']]
