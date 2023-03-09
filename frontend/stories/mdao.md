@@ -7,7 +7,7 @@ partner_url: https://metricsdao.xyz
 quote: Having Badger available to drive the credentials and completion certificates for MetricsDAO educational courses has changed the way we approach creating material.
 quoter: Aaron Lamphere
 quoter_title: Head of Growth and Retention
-quoter_image: https://pbs.twimg.com/profile_images/1469356718597423105/-C4aOTnz_400x400.jpg
+quoter_image: /story-assets/mdao/quoter_image.png
 logo: /story-assets/mdao/logo.png
 image: /story-assets/mdao/app.png
 color: #a8f1f2

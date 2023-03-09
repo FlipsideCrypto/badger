@@ -7,7 +7,7 @@ partner_url: https://taptive.xyz
 quote: Digital certificates and awards given off chain are easily lost and rarely resurfaced. When we issue awards on chain, participants are able to bring their reputation and accomplishments with them wherever they go.
 quoter: Grant Nissly
 quoter_title: Founder
-quoter_image: https://pbs.twimg.com/profile_images/1469356718597423105/-C4aOTnz_400x400.jpg
+quoter_image: /story-assets/taptive/quoter_image.png
 logo: /story-assets/taptive/logo.png
 image: /story-assets/taptive/app.png
 color: #615df5

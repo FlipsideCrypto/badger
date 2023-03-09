@@ -7,7 +7,7 @@ partner_url: https://talentdao.io/
 quote: I've been looking at a lot of reputation and credentialing tools; Badger is the best.
 quoter: banklesschick.eth
 quoter_title: Founder
-quoter_image: https://pbs.twimg.com/profile_images/1621238477336580097/rbMlQ1dd_400x400.jpg
+quoter_image: /story-assets/talentdao/quoter_image.png
 logo: /story-assets/talentdao/logo.png
 image: /story-assets/talentdao/app.png
 color: #f10606
