@@ -12,8 +12,6 @@ import {
 
 import { initialOrgForm, FormActionBar, FormDrawer, Header, Input, OrgDangerZone } from "@components"
 
-import { postOrgRequest } from "@utils";
-
 import { IPFS_GATEWAY_URL } from "@static";
 
 import "@style/pages/OrgForm.css";
@@ -84,16 +82,6 @@ const OrgForm = ({ isEdit = false }) => {
                 if (!event) throw new Error("Error submitting transaction.");
 
                 const orgAddress = event.args.organization;
-
-                postOrgRequest({
-                    chain_id: chain.id,
-                    ethereum_address: orgAddress,
-                    name: obj.name,
-                    symbol: obj.symbol,
-                    description: obj.description,
-                    image_hash: imageHash,
-                    contract_uri_hash: metadataHash,
-                });
 
                 navigate(`/dashboard/organization/${chain.id}/${orgAddress}/`);
             }
