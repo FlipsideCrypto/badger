@@ -4,6 +4,7 @@ export {
     getBadgerAbi,
     useOrgForm,
     useBadgeForm,
+    useManageHolders,
     useManageBadgeOwnership,
     useSetDelegates,
     useTransferOwnership,

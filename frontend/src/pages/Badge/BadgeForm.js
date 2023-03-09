@@ -21,8 +21,6 @@ import {
     ImageLoader 
 } from "@components";
 
-import { postBadgeRequest } from "@utils";
-
 import { IPFS_GATEWAY_URL } from "@static";
 
 import "@style/pages/BadgeForm.css";
@@ -94,17 +92,7 @@ const BadgeForm = ({ isEdit = false }) => {
 
                 if (!event) throw new Error("Error submitting transaction.");
 
-                const response = await postBadgeRequest({
-                    chain_id: chain.id,
-                    name: obj.name,
-                    description: obj.description,
-                    image_hash: imageHash,
-                    token_uri: metadataHash,
-                    token_id: tokenId,
-                    organization: organization.id
-                });
-
-                navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${response.id}/`);
+                navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${tokenId}/`);
             }
         })
     }]

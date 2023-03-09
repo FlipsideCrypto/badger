@@ -111,8 +111,8 @@ const holderHeadRows = {
 const badgeDrawerSelectActions = [
     "Mint",
     "Revoke",
-    "Add Manager",
-    "Remove Manager"
+    // "Add Manager",
+    // "Remove Manager"
 ]
 
 export { 
