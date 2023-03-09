@@ -242,8 +242,8 @@ h4 {
     position: absolute;
     top: -150%;
     left: -150%;
-    width: 300%;
-    height: 300%;
+    width: 400%;
+    height: 400%;
     background-image: url(../../static/images/hero-noise.png);
     background-size: 960px 540px;
     z-index: -1;
@@ -257,5 +257,10 @@ h4 {
     .story .hero .container .background {
         margin-top: 40px;
         height: auto;
+    }
+
+    .story .body {
+        grid-template-columns: 1fr 11fr;
+        padding: 60px;
     }
 }
