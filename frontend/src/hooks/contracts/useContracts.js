@@ -58,8 +58,8 @@ const useOrgForm = ({ obj }) => {
 
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
         enabled: isReady,
-        address: obj.ethereum_address || Badger.address,
-        abi: Badger.abi,
+        addressOrName: obj.ethereum_address || Badger.address,
+        contractInterface: Badger.abi,
         functionName,
         args,
         overrides,
