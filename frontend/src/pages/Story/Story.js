@@ -1,6 +1,5 @@
 import Markdown from 'markdown-to-jsx';
 
-import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,8 +14,6 @@ const Story = () => {
     const { slug } = useParams();
 
     const { story } = useStory(slug);
-
-    const [sticky, setSticky] = useState(false);
 
     const links = story && {
         twitter: `https://twitter.com/intent/tweet?text=${story.attributes.title}%20%7C%20%40trybadger%0A%0A%F0%9F%91%89&url=${window.location.href}`,
@@ -66,11 +63,13 @@ const Story = () => {
                         </div>
 
                         <div className="background">
-                            <div className="blobs">
-                                {Array.from({ length: Math.floor(Math.random() * 5) + 1 }, (o, i) => (
-                                    <div className="blob" key={i}
-                                        style={{ background: i % 2 === 0 ? story.attributes.color : story.attributes.color_dark }} />
-                                ))}
+                            <div className="color">
+                                <div className="blobs">
+                                    {Array.from({ length: Math.floor(Math.random() * 5) + 1 }, (o, i) => (
+                                        <div className="blob" key={i}
+                                            style={{ background: i % 2 === 0 ? story.attributes.color : story.attributes.color_dark }} />
+                                    ))}
+                                </div>
                             </div>
 
                             <img className="image" src={story.attributes.image} />

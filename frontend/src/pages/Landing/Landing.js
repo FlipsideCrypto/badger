@@ -39,9 +39,13 @@ const Landing = () => {
                     <h2>Badger is a protocol streamlining onchain access policies with Badges - <span className="blue">no coding needed.</span></h2>
 
                     <div className="context">
-                        <div className="blobs">
-                            <div className="blob" />
-                            <div className="blob" />
+                        <div className="color">
+                            <div className="blobs">
+                                <div className="blob" />
+                                <div className="blob" />
+                                <div className="blob" />
+                                <div className="blob" />
+                            </div>
                         </div>
                     </div>
 
@@ -94,9 +98,11 @@ const Landing = () => {
                     </div>
 
                     <div className="context">
-                        <div className="blobs">
-                            <div className="blob" />
-                            <div className="blob" />
+                        <div className="color">
+                            <div className="blobs">
+                                <div className="blob" />
+                                <div className="blob" />
+                            </div>
                         </div>
                     </div>
                 </div>
