@@ -1,7 +1,7 @@
 import django
 
 from apscheduler.events import EVENT_JOB_ERROR
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.background import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from django_apscheduler.jobstores import DjangoJobStore
@@ -11,7 +11,7 @@ from django_apscheduler import util
 from .listener import Backfill
 
 backfill = Backfill()
-scheduler = BackgroundScheduler()
+scheduler = BlockingScheduler()
 
 def listener(event):
     print(f'Job {event.job_id} raised {event.exception.__class__.__name__}')
@@ -39,9 +39,6 @@ def delete_old_job_executions(max_age=60 * 60):
 class JobManager:
     def ready(self, *args, **options):
         scheduler.add_jobstore(DjangoJobStore(), "default")
-
-        for job in scheduler.get_jobs():
-            job.remove()
 
         jobs = [[
             delete_old_job_executions,
@@ -75,7 +72,9 @@ class JobManager:
                         id=job[2],
                         max_instances=1,
                         replace_existing=True,
-                        jobstore="default"
+                        jobstore="default",
+                        coalesce=True,
+                        misfire_grace_time=5,
                     )
 
                     print("Added: `{}`".format(job[2]))

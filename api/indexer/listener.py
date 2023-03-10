@@ -14,6 +14,7 @@ class Backfill:
     def __init__(self):
         self.extractor = Extractor()
         self.loader = Loader()
+        self.running = True
 
     def _etl(self, contracts, abi, topics, batch):
         print(f'{batch[0]} -> {batch[1]}')
@@ -36,7 +37,7 @@ class Backfill:
             print("Listener error: ", e)
 
     def etl(self, extracting_obj, abi, topics, temp_from_block=None, temp_to_block=None):
-        while True:
+        while self.running:
             contracts = extracting_obj
 
             to_block = temp_to_block
@@ -59,33 +60,33 @@ class Backfill:
             batches = [[i, i + BLOCK_BUFFER] for i in range(from_block, to_block, BLOCK_BUFFER)]
             workers = len(batches) if len(batches) < 50 else 50
 
-            with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as pool:
-                futures = [pool.submit(self._etl, contracts, abi, topics, batch) for batch in batches]
-                done, not_done = concurrent.futures.wait(futures)
+            try:
+                with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as pool:
+                    futures = [pool.submit(self._etl, contracts, abi, topics, batch) for batch in batches]
 
-                try:
-                    while not_done:
-                        freshly_done, not_done = concurrent.futures.wait(futures)
-                        done |= freshly_done
-                except Exception as e:
-                    for future in not_done:
-                        _ = future.cancel()
+                    for future in futures:
+                        print([future._state for future in futures])
 
-                    _ = concurrent.futures.wait(not_done)
+                        if future.cancelled():
+                            print("Cancelled")
+                            continue
+                        try:
+                            n = future.result()
+                        except Exception as e:
+                            print("Listener error: ", e)
+                            pool.shutdown(wait=False, cancel_futures=True)
 
-                    print("Listener error: ", e)
 
-                    pool.shutdown(wait=False)
+                if not isinstance(extracting_obj, list):
+                    qs.update(last_block=to_block)
 
-                    return
-                
-                pool.shutdown(wait=True)
+                    for obj in qs:
+                        obj.save()
 
-            if not isinstance(extracting_obj, list):
-                qs.update(last_block=to_block)
+            except Exception as e:
+                print("Listener error: ", e)
 
-                for obj in qs:
-                    obj.save()
+                self.running = False
 
             if temp_to_block:
                 return
