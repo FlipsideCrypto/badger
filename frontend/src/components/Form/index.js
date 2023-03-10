@@ -1,4 +1,4 @@
-export { Input, InputAddress, InputListCSV, InputListKeyValue } from './Input';
+export { Input, InputAddress, InputListCSV, InputListKeyValue, InputListAddressAmountCSV } from './Input';
 
 export { Select } from './Select/Select';
 export { Switch } from './Switch/Switch';

@@ -6,12 +6,8 @@ import { usePrepareContractWrite, useContractWrite } from "wagmi"
 import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
 
 const getBadgeFormTxArgs = ({ data, functionName }) => {
-    if (functionName === "setBadgeURI")
-        return [data.token_id, data.uriHash]
-    // if (functionName === "mint")
-    //     return [data.holders, data.tokenId, data.amount, "0x"];
-    // if (functionName === "burn")
-    //     return [data.tokenId];
+    if (functionName === "setBadgeURI" && data.uriHash && data.token_id)
+        return [data.token_id, data.uriHash];
 }
 
 const useBadgeForm = ({ obj, functionName }) => {
@@ -26,26 +22,25 @@ const useBadgeForm = ({ obj, functionName }) => {
 
     const BadgerOrg = useMemo(() => { return getBadgerOrganizationAbi() }, [])
 
-    const isReady = BadgerOrg && fees && authenticatedAddress;
-
     const args = getBadgeFormTxArgs({
         data: obj,
         functionName: functionName
     });
 
-    const overrides = { gasPrice: fees?.gasPrice };
+    const isReady = BadgerOrg && fees && authenticatedAddress && !!args;
 
+    const overrides = { gasPrice: fees?.gasPrice };
+    
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
         enabled: isReady,
-        address: orgAddress,
-        abi: BadgerOrg.abi,
+        addressOrName: orgAddress,
+        contractInterface: BadgerOrg.abi,
         functionName,
         chainId: chain.id,
         args,
         overrides,
         onError: (e) => {
             const err = e?.error?.message || e?.data?.message || e
-
             throw new Error(err);
         }
     });

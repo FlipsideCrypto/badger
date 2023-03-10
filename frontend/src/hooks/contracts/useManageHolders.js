@@ -1,60 +1,9 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { usePrepareContractWrite, useContractWrite, useProvider } from "wagmi"
+import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
 import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
-
-import { ethers } from "ethers";
-
-const useValidateAddresses = ({ 
-    addresses,
-    onError = (e) => { console.error(e) },
-    onSuccess = ({ addresses }) => { } 
-}) => {
-    const [ isValid, setIsValid ] = useState(false);
-
-    console.log('addresses', addresses)
-
-    useEffect(() => {
-        async function validateAddresses(addresses) {
-            try {
-                if (!addresses) throw new Error("Please enter at least one address");
-        
-                addresses.map((address, idx) => {
-                    address = address.trim().toLowerCase();
-                    if (!ethers.utils.isAddress(address))
-                        throw new Error(`Please enter a valid address at row ${idx + 1}`);
-                });
-        
-                setIsValid(true);
-                onSuccess({ addresses })
-            }
-            catch (e) {
-                onError(e)
-                return addresses;
-            }
-            setIsValid(false)
-        }
-
-        validateAddresses(addresses)
-    }, [addresses])
-
-    return { addresses, isValid }
-}
-
-
-// const getENSMultiCall = async ({ addresses }) => {
-    // need ENS contract addresses and abi(?)
-    // const provider = useProvider({ chainId });
-    // const multiCall = new ethers.Contract(contractAddress, [
-
-
-// }
-
-// const getMultiCall = async ({ chainId }) => {
-
-// }
 
 const getManageHolderArgs = ({ data, functionName }) => {
     if (functionName === "mint")
@@ -79,33 +28,32 @@ const useManageHolders = ({ obj, functionName }) => {
 
     const BadgerOrg = useMemo(() => { return getBadgerOrganizationAbi() }, [])
 
-    const { addresses, isValid } = useValidateAddresses({addresses: obj.addresses});
+    const isReady = BadgerOrg && fees && authenticatedAddress;
+    const isInputValid = obj.addresses.length > 0 && obj.addresses.length === obj.amounts.length;
 
-    const isReady = BadgerOrg && fees && authenticatedAddress && isValid;
-
-    console.log("addresses", addresses)
-    functionName = addresses.length > 1 ? functionName + "Batch" : functionName;
+    functionName = obj.addresses.length > 1 ? functionName + "Batch" : functionName;
 
     const args = getManageHolderArgs({
-        data: {...obj, addresses: addresses},
+        data: {
+            amounts: obj.amounts, 
+            addresses: obj.addresses,
+            tokenId: obj.tokenId
+        },
         functionName: functionName
     });
 
-    console.log('args', args)
-
     const overrides = { gasPrice: fees?.gasPrice };
-
+    
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
-        enabled: isReady,
-        address: orgAddress,
-        abi: BadgerOrg.abi,
+        enabled: isReady && isInputValid,
+        addressOrName: orgAddress,
+        contractInterface: BadgerOrg.abi,
         functionName,
         chainId: chain.id,
         args,
         overrides,
         onError: (e) => {
             const err = e?.error?.message || e?.data?.message || e
-
             throw new Error(err);
         }
     });
@@ -135,6 +83,8 @@ const useManageHolders = ({ obj, functionName }) => {
 
             onSuccess({ config, chain, tx, receipt })
         } catch (e) {
+            console.error('e', e)
+
             onError(e);
         }
     }
