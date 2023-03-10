@@ -28,11 +28,7 @@ CSRF_TRUSTED_ORIGINS = [
 CSRF_COOKIE_DOMAIN = ".trybadger.com"
 SESSION_COOKIE_DOMAIN = ".trybadger.com"
 
-ALLOWED_HOSTS = [
-    "https://www.trybadger.com",
-    "https://trybadger.com",
-    "https://*.trybadger.com",
-]
+ALLOWED_HOSTS = ['*']
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [

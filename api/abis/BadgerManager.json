@@ -1,5 +1,0 @@
-[
-  "function CONFIG_SCHEMA() view returns (string)",
-  "function config(bytes)",
-  "function supportsInterface(bytes4) view returns (bool)"
-]

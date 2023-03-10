@@ -23,9 +23,9 @@ async function main() {
 
     const [deployer] = await ethers.getSigners();
     console.log(`✅ Connected to ${deployer.address}`);
-
-    const chainId = await getChainId()
-
+    
+    const chainId = await getChainId()   
+    
     // Deploying the primitive master BadgerOrganization contract that is used for clones
     const BadgerOrganization = await ethers.getContractFactory("BadgerOrganization");
     organizationMaster = await BadgerOrganization.deploy();
@@ -73,7 +73,7 @@ async function main() {
     }
 
     // Keep Promise open to keep node running
-    await new Promise((resolve) => { })
+    await new Promise((resolve) => {})
 }
 
 main()

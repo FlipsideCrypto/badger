@@ -1,5 +1,0 @@
-[
-  "event ManagerConfigured(bytes32 indexed,bytes)",
-  "event ManagerUpdated(bytes32 indexed,bool indexed)",
-  "function managerKeyToIsManager(bytes32) view returns (bool)"
-]

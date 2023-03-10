@@ -54,4 +54,4 @@ const ActionButton = (
     )
 }
 
-export { ActionButton };
+export default ActionButton;

@@ -1,13 +1,11 @@
 import "@style/Card/Card.css";
 
-const Card = (props) => {
-    const { children, className, style } = props;
-
+const Card = ({ children, className, style }) => {
     return (
-        <div className={`card ${className || ''}`} style={style} {...props}>
+        <div className={`card ${className}`} style={style}>
             {children}
         </div>
     )
 }
 
-export { Card } 
+export default Card;

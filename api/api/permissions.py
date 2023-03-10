@@ -3,6 +3,7 @@ from rest_framework.permissions import (
     IsAuthenticated
 )
 
+
 def generator(existing_permissions=None):
     permission_classes = [IsAuthenticated]
 
@@ -31,8 +32,6 @@ class CanManageOrganization(permissions.BasePermission):
 
 class CanManageBadge(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        print('checking if can manage badge')
-
         organization = obj.organization
         return (
             organization.owner == request.user

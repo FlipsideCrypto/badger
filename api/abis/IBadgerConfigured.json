@@ -1,4 +1,0 @@
-[
-  "function CONFIG_SCHEMA() view returns (string)",
-  "function config(bytes)"
-]

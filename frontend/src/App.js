@@ -1,40 +1,34 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fal } from '@fortawesome/pro-light-svg-icons'
-import { fab } from '@fortawesome/free-brands-svg-icons'
 
-import { ErrorContextProvider } from "@contexts"
+import Meta from '@components/seo/Meta';
 
-import { SEO, ScrollToTop, Wallet } from "@components"
+import Landing from '@components/Landing';
 
-import { Dashboard, Page } from "@pages"
+import Dashboard from '@components/Dashboard/Dashboard';
+import WalletWrapper from "@components/Wallet/WalletWrapper";
 
-import "@style/App.css"
+import "./App.css";
 
-library.add(fal, fab)
-
-const title = "The Web3 Organization Key Solution | Badger";
-const description = "Level up the access-controls of your onchain organization and enjoy the benefits of a Web3 focused key solution."
+library.add(fal)
 
 function App() {
+    const title = "BADGER | The Web3 Organization Key Solution";
+    const description = "Level up the access-controls of your on-chain organization and enjoy the benefits of a Web3 focused key solution."
+
     return (
         <div className="App">
-            <SEO title={title} description={description} />
+            <Meta title={title} description={description} />
 
             <Router>
-                <ScrollToTop />
-
-                <Routes>
-                    <Route exact path="/dashboard/*" element={
-                        <ErrorContextProvider>
-                            <Wallet>
-                                <Dashboard />
-                            </Wallet>
-                        </ErrorContextProvider>
-                    } />
-
-                    <Route path="/*" element={<Page />} />
-                </Routes>
+                <WalletWrapper>
+                    <Routes>
+                        <Route exact path="/" element={<Landing />} />
+                        <Route exact path="/dashboard/*" element={<Dashboard />} />
+                    </Routes>
+                </WalletWrapper>
             </Router>
         </div>
     );

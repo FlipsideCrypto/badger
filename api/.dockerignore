@@ -1,0 +1,10 @@
+# Ignore the following in Docker context transfer
++**/.git
++**/.gitignore
++**/.gitmodules
++**/.dockerignore
++**/Dockerfile
++**/README.md
++**/LICENSE
+
+***/database/

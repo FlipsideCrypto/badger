@@ -1,7 +1,0 @@
-[
-  "function CONFIG_SCHEMA() view returns (string)",
-  "function amounts(address,uint256) view returns (uint256)",
-  "function config(bytes)",
-  "function mint(address,uint256,bytes)",
-  "function supportsInterface(bytes4) view returns (bool)"
-]
