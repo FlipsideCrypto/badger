@@ -68,9 +68,7 @@ services:
     command: >
       sh -c "
         python manage.py migrate --noinput &&
-        python manage.py runserver 0.0.0.0:8000 &
-        python manage.py listen_for_factories 0.0.0.0:8000 &
-        python manage.py listen_for_organizations
+        python manage.py runserver 0.0.0.0:8000
       "
   # Run the React frontend for Badger. This will run the frontend
   # on port 3000 and will be accessible at http://localhost:3000

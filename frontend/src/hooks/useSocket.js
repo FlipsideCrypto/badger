@@ -54,7 +54,7 @@ const useSocket = ({ enabled, url }) => {
             setConnected(true);
         } else if (data.action === 'list') {
             setObjects(data.data);
-        } else if (data.action === 'update') {
+        } else if (data.action === 'update' || data.action === 'partial_update') {
             setObjects(objects => objects.map(object => object.id === data.data.id ? data.data : object));
         } else if (data.action === 'create') {
             setObjects(objects => [...objects, data.data]);

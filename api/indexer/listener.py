@@ -34,7 +34,6 @@ class Backfill:
             self.loader.load(events)
         except Exception as e:
             print("Listener error: ", e)
-            return
 
     def etl(self, extracting_obj, abi, topics, temp_from_block=None, temp_to_block=None):
         while True:
@@ -60,9 +59,27 @@ class Backfill:
             batches = [[i, i + BLOCK_BUFFER] for i in range(from_block, to_block, BLOCK_BUFFER)]
             workers = len(batches) if len(batches) < 50 else 50
 
-            pool = concurrent.futures.ProcessPoolExecutor(max_workers=workers)
-            futures = [pool.submit(self._etl, contracts, abi, topics, batch) for batch in batches]
-            concurrent.futures.wait(futures)
+            with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as pool:
+                futures = [pool.submit(self._etl, contracts, abi, topics, batch) for batch in batches]
+                done, not_done = concurrent.futures.wait(futures)
+
+                try:
+                    while not_done:
+                        freshly_done, not_done = concurrent.futures.wait(futures)
+                        done |= freshly_done
+                except Exception as e:
+                    for future in not_done:
+                        _ = future.cancel()
+
+                    _ = concurrent.futures.wait(not_done)
+
+                    print("Listener error: ", e)
+
+                    pool.shutdown(wait=False)
+
+                    return
+                
+                pool.shutdown(wait=True)
 
             if not isinstance(extracting_obj, list):
                 qs.update(last_block=to_block)
@@ -76,6 +93,7 @@ class Backfill:
             time.sleep(settings.LISTENER_POLL_INTERVAL)
 
     def backfill_factories(self):
+        print("Backfilling factories...")
         self.etl([settings.FACTORY_ADDRESS], 
             settings.FACTORY_ABI_FULL, 
             settings.FACTORY_TOPIC_SIGNATURES, 
@@ -83,6 +101,7 @@ class Backfill:
             temp_to_block=w3.eth.blockNumber)
 
     def backfill_organizations(self):
+        print("Backfilling organizations...")
         self.etl(Organization, 
             settings.ORGANIZATION_ABI_FULL, 
             settings.ORGANIZATION_TOPIC_SIGNATURES, 
@@ -90,11 +109,19 @@ class Backfill:
             temp_to_block=w3.eth.blockNumber)
 
     def listen_for_factories(self):
-        self.etl([settings.FACTORY_ADDRESS], 
-            settings.FACTORY_ABI_FULL, 
-            settings.FACTORY_TOPIC_SIGNATURES)
+        print("Listening for factories...")
+        try:
+            self.etl([settings.FACTORY_ADDRESS], 
+                settings.FACTORY_ABI_FULL, 
+                settings.FACTORY_TOPIC_SIGNATURES)
+        except Exception as e:
+            print("Listener error: ", e)
         
     def listen_for_organizations(self):
-        self.etl(Organization, 
-            settings.ORGANIZATION_ABI_FULL, 
-            settings.ORGANIZATION_TOPIC_SIGNATURES)
+        print("Listening for organizations...")
+        try:
+            self.etl(Organization, 
+                settings.ORGANIZATION_ABI_FULL, 
+                settings.ORGANIZATION_TOPIC_SIGNATURES)
+        except Exception as e:
+            print("Listener error: ", e)
