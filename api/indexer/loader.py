@@ -58,6 +58,8 @@ class Loader:
         if not Web3.isChecksumAddress(address):
             address = Web3.toChecksumAddress(address)
 
+        # TODO: Replace with websocket create event
+
         organization, created = Organization.objects.get_or_create(
             ethereum_address=address,
             chain_id=int(settings.LISTENER_CHAIN_ID)
@@ -70,6 +72,8 @@ class Loader:
     """
     def _badge(self, organization, event):
         token_id = event['args']['id']
+
+        # TODO: Replace with websocket create event
 
         badge, created = organization.badges.get_or_create(token_id=token_id)
 
@@ -149,8 +153,10 @@ class Loader:
 
             response = "Organization management setup"
 
-        # Load all the metadata
-        self.handle_organization_updated({ 'address': organization.ethereum_address })
+        self.handle_organization_updated({ 
+            'address': organization.ethereum_address,
+            'args': event['args'] 
+        })
 
         return (response, event['args'])
 

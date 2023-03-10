@@ -25,19 +25,24 @@ SECRET_KEY = os.getenv("API_SECRET_KEY", "SECRET_KEY")
 
 # Application definition
 INSTALLED_APPS = [
+    # Base configuration apps
     "daphne",
     "siwe_auth.apps.SiweAuthConfig",
+    # Django apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    'django.contrib.postgres',
     "django.contrib.staticfiles",
+    # Third party apps
     "django_apscheduler",
     "rest_framework",
     "corsheaders",
     "django_filters",
     "channels",
+    # First party apps
     "badge",
     "balance",
     "ipfs",

@@ -24,8 +24,6 @@ class OrganizationConsumer(ManagedModelMixin):
 
     permissions = (permissions.IsAuthenticated)
 
-    # TODO: Make it to where staff users can see all organizations.
-
     def get_queryset(self, **kwargs):
         query = (
             Q(owner=self.scope['user']) | 
