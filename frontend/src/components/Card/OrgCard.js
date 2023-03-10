@@ -17,7 +17,7 @@ const OrgCard = ({ org }) => {
         <Card onClick={() => navigate(`/dashboard/organization/${org.chain_id}/${org.ethereum_address}`)}>
             <div className="text">
                 <div className="subtext">
-                    <ChainIcon chain={org.chain} />
+                    <ChainIcon chainId={org.chain_id} />
                     <strong>{sliceAddress(org.ethereum_address)}</strong>
                 </div>
 

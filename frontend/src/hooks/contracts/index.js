@@ -12,7 +12,11 @@ export {
 
 export {
     useBadgeForm,
-    useBadge,
+    useBadge
+} from './useBadgeForm';
+
+export { 
+    useManageHolders,
     useSetDelegates,
     useManageBadgeOwnership
-} from './useBadgeForm';
+} from './useManageHolders';
