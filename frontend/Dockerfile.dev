@@ -1,29 +1,23 @@
+# Use node image
 FROM node
 
-ARG NPM_TOKEN
-ARG REACT_APP_API_URL
+ARG FONTAWESOME_NPM_AUTH_TOKEN
 
 # Set working directory
 WORKDIR /code
 
 # Copy package.json
-COPY package.json /code/
-COPY package-lock.json /code/
+COPY package.json /code/package.json
 
 # Load FontAwesome registry
 RUN npm config set "@fortawesome:registry" https://npm.fontawesome.com/
-RUN npm config set "//npm.fontawesome.com/:_authToken" ${NPM_TOKEN}
 
-# Prepare the environment
-ENV NODE_OPTIONS=--openssl-legacy-provider
-ENV CHOKIDAR_USEPOLLING=true
+# Set the auth token
+RUN echo "//npm.fontawesome.com/:_authToken=${FONTAWESOME_NPM_AUTH_TOKEN}" > /code/.npmrc && \
+    npm install && \
+    rm -f /code/.npmrc
+
+# Set WATCHBACK_POLLING as true
 ENV WATCHBACK_POLLING=true
-ENV NODE_ENV=development
-ENV WDS_SOCKET_HOST=127.0.0.1
-
-ENV REACT_APP_API_URL=${REACT_APP_API_URL}
-
-# Install the dependencies
-RUN npm install
 
 COPY . /code/

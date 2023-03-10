@@ -1,5 +1,0 @@
-[
-  "event HookConfigured(bytes32 indexed,bytes)",
-  "event HookUpdated(bytes32 indexed,address,bool indexed)",
-  "function getHooks(bytes32) view returns (address[])"
-]

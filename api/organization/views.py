@@ -7,6 +7,8 @@ from api.permissions import generator, CanManageOrganization
 
 from .models import Organization
 from .serializers import OrganizationSerializer
+from siwe_auth.models import Wallet
+from rest_framework.response import Response
 
 class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()

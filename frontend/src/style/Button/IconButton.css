@@ -5,7 +5,7 @@
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    transition: .1s all ease-in-out;
     height: 40px;
     width: min-content;
     white-space: nowrap;
@@ -21,7 +21,7 @@
     height: 100%;
     display: flex;
     align-items: center;
-    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    transition: .1s all ease-in-out;
 }
 
 .button__text span {
@@ -36,7 +36,7 @@
     color: #fff;
     background: #000;
     align-items: center;
-    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    transition: .1s all ease-in-out;
     padding: 7px 12px 8px 12px;
     z-index: 5;
 }

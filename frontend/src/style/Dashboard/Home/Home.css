@@ -1,0 +1,67 @@
+.home {
+    margin-inline: 20px;
+}
+
+.home .home__announcement .card {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 32px auto;
+    margin-top: 20px;
+    align-items: center;
+}
+
+.home .home__announcement .card .announcement__status {
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    border: 1px solid #E0E0E0;
+}
+
+.home .home__announcement .card .announcement__message {
+    line-height: 16px;
+}
+
+.home__cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 20px;
+}
+
+.home__cards .card {
+    border-radius: 4px;
+    height: 200px;
+    padding: 20px;
+    position: relative;
+    cursor: pointer;
+}
+
+.home__cards .home__card .home__card__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.home__cards .home__card__text {
+    display: grid;
+    grid-template-rows: 4fr 8fr;
+    height: 100%;
+}
+
+.home__cards .home__card__text .home__card__title {
+    margin-top: auto;
+    display: grid;
+    align-self: center;
+}
+
+.home__cards .home__card__text .home__card__title .home__card__view__image {
+    border-radius: 50%;
+    height: 24px;
+    width: 24px;
+    margin-bottom: -5px;
+    margin-right: 10px;
+}

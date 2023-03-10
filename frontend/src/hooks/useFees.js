@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { ethers } from "ethers";
 import { useFeeData } from "wagmi";
+import { ethers } from "ethers";
 
-function useFees() {
+
+// Gets the fees if a transaction is ready and multiplies them by a multiplier
+// to help the transaction underpriced errors commonly being had on polygon.
+export default function useFees() {
     const [fees, setFees] = useState(null);
     const { data } = useFeeData({
         watch: false,
@@ -22,5 +25,3 @@ function useFees() {
 
     return fees;
 }
-
-export { useFees }

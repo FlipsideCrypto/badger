@@ -1,62 +1,44 @@
-![opengraph](./frontend/public/opengraph.png)
+![opengraph](frontend/src/static/images/opengraph.png)
 
-# Badger
+# Badger Primitive & Protocol
 
-Badger is a primitive driving seamless onchain creation of Organizations and Badges that can be used to turbocharge the granular power of onchain access for every member. With a unique model in place, an Organization can mint Badges that act as keys to access all of the existing Web3 gates and locks using a forward-looking and secure access policy implementation.
+In this repository is contained the base primitive of Badger (`BadgerOrganization.sol`) as well as the Badger protocol (`Badger.sol`) on top of it.
 
-Built on the standard [ERC-1155](https://eips.ethereum.org/EIPS/eip-1155), Badges allow for middle-out management of any onchain organization. With this capability, every consumer of Badger has the ability to choose if their organization will be top-down, middle-out or bottom-up in nature.
+## Badger Primitive
+
+The Badger primitive is a simple contract that allows for the creation of a collection of NFTs that are all owned by the same address. This is useful for organizations that want to issue NFTs to their members, but don't want to have to manage a collection of NFTs for each member.
+
+With the unique model in place an on-chain Organization can generate the keys needed to access all of the existing Web3 gates and locks.
+
+Built on the standard ERC-1155, Badges allow for top-down management of any on-chain organization.
+
+* The tokens can be account bound, but they don't have to be.
+* There can be custom signers.
+    * This unlocks first-party claim gates and external development under the control of the Organization owner.  
+* The tokens can be minted and burned.
+* The tokens can operate with trie-like permissions.
+    * Achieved without breaking the composability of any standard or any of the existing locks in the market. Anyone that conforms to already released standards will be able to use Badger as keys.   
+* The tokens can be used as a way to bootstrap on-chain roles and token-gated areas for their members.
 
 ## Running The Dapp
-
-Getting up and running with Badger is simple, although there are many pieces to get running. We've included a docker-compose file that will get you up and running with the Badger dapp and all of its dependencies such as:
-
-* Local Hardhat Node
-* Database running on Postgres
-* Redis enabling the use of Websockets
-* Backend running on Django
-* Frontend running on React 
-
-Packed into a single command, you can get up and running with Badger in no time.
-
-### Prerequisites
-
-Running Badger is simple due to the use of Docker, but there are a few things you'll need to get started; primarily the things needed to run a Docker container.
 
 - Node.js 
 - Docker
 
-#### Paid services
-
-- [FontAwesomePro Account](https://fontawesome.com/account#pro-package-tokens) (for icons)
-- [Pinata Account](https://docs.pinata.cloud/pinata-api/authentication) (for IPFS)
-
-### Running the Dapp
-
-- [Fork the repository](https://github.com/flipsidecrypto/badger/fork).
-- Setup `.env` to reflect `example.env`.
-  - To run Badger locally you only need to set:
-    - `NPM_TOKEN`
-    - `API_PINATA_API_KEY`
-    - `API_PINATA_API_SECRET_KEY`
-- Run `docker compose up --build --remove-orphans` in an active terminal within the root directory.
+### Prerequisites
+- fork the repo
+- setup `.env` to reflect `example.env` with your choosing of keys
+- terminal: `docker compose build` (let everything build)
+- grab the contract addresses that were just deployed with docker (the address will remain the same) in `.env`
+- terminal: `docker compose up --build`
 
 ### Helpers
 
-Although everything has been bundled into a single command, there are a few helpers to make your life easier. Hopefully, you never need to run these but if you are making changes or working on a pull request, you likely will need one of them.
+- Migrating the database: The Badger backend is built using Django. Anytime there are changes to the database schema the migrations need to be made and applied. If you're just forking, we've already pre-built the migrations, you just need to apply them to your database. Migrations are automatically applied when you build using Docker, but if you have an issue this is how you can migrate the database manually. 
+    - terminal: `docker compose run --rm web python manage.py migrate`
 
-#### Database Migrations
-
-The Badger backend is built using Django. Anytime there are changes to the database schema the migrations need to be made and applied. 
-
-> If you're just forking, we've already pre-built the migrations, you just need to apply them to your database. Migrations are automatically applied when you build using Docker, but if you have an issue this is how you can migrate the database manually. 
-
-- terminal: `docker compose run --rm badger_server python manage.py migrate`
-
-#### Testing The Contract
-
-Testing contracts is a critical step before deployment. We've included a few helpers to make this process easier. 
-
-- terminal: `docker compose run --rm badger_node node npx hardhat coverage --network localhost`
+To run the tests with coverage included:
+- terminal: `npx hardhat coverage --network localhost`
 
 ## Contract Tests
 

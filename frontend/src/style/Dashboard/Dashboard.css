@@ -4,23 +4,17 @@
     position: relative;
 }
 
-.dashboardContent {
-    grid-column: 1 / span 4;
-    margin-inline: 20px;
-}
-
-.dashboard__contents {
+.dashboard__contents { 
     display: grid;
     grid-template-rows: 75px auto;
     grid-row-gap: 20px;
-    margin-bottom: 40px;
 }
 
-.dashboard.collapsed {
+.dashboard.collapsed { 
     grid-template-columns: auto 400px;
 }
 
-.dashboard.collapsed .sidebar {
+.dashboard.collapsed .sidebar { 
     grid-column: 2;
     grid-row: span 2;
 }
@@ -32,7 +26,7 @@
 }
 
 .dashboard button,
-.dashboard .button {
+.dashboard .button { 
     font-weight: 700;
 }
 
@@ -40,7 +34,7 @@
     margin-left: 30px;
 }
 
-.div__header {
+.div__header { 
     align-items: center;
     height: 70px;
 }
@@ -55,6 +49,6 @@
     height: max-content;
 }
 
-.dashboard__content {
+.dashboard__content { 
     margin-inline: 20px;
 }

@@ -35,31 +35,25 @@ const handleImageLoad = (el) => {
     const average = getAverageColor(el);
 
     // Get an item up in the dom tree
-    const card = el.parentNode.parentNode.parentNode;
+    const parent = el.parentNode.parentNode.parentNode.parentNode;
+    const image = parent.querySelector('.home__card__image');
 
     if (el.offsetWidth === 0) return;
 
-    const multiplier = 1.75;
-
-    const r = average.r * multiplier;
-    const g = average.g * multiplier;
-    const b = average.b * multiplier;
-
     // Set the background color of the parent
-    card.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+    image.style.backgroundColor = `rgb(${average.r}, ${average.g}, ${average.b})`;
 
     // Determine if we should use black or white text
-    const brightness = Math.round((
-        (parseInt(r) * 299) +
-        (parseInt(g) * 587) +
-        (parseInt(b) * 114)
-    ) / 1000);
+    const brightness = Math.round(((parseInt(average.r) * 299) +
+        (parseInt(average.g) * 587) +
+        (parseInt(average.b) * 114)) / 1000);
+
+    const card = image.parentNode;
 
     if (brightness > 125) card.style.color = "black";
     else card.style.color = "white";
 }
 
 export {
-    getAverageColor,
     handleImageLoad
 }
