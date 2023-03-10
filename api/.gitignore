@@ -2,6 +2,7 @@
 
 database/
 
+__pycache__/
 venv/
 cache
 *.pyc

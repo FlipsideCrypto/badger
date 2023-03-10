@@ -14,3 +14,4 @@ COPY . /code/
 
 ENV NODE_IP=$NODE_IP
 
+EXPOSE 8000

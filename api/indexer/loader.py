@@ -41,13 +41,13 @@ class Loader:
         if not Web3.isChecksumAddress(ethereum_address):
             ethereum_address = Web3.toChecksumAddress(ethereum_address)
 
-        if ethereum_address not in self.contracts:
-            self.contracts[ethereum_address] = w3.eth.contract(
+        if not hasattr(self, ethereum_address):
+            setattr(self, ethereum_address, w3.eth.contract(
                 address=ethereum_address,
                 abi=settings.ORGANIZATION_ABI_FULL
-            )
+            ))
 
-        return self.contracts[ethereum_address]
+        return getattr(self, ethereum_address)
 
     """
     Helper function to handle the creation and return of Organizations from an ethereum address.
@@ -58,7 +58,7 @@ class Loader:
         if not Web3.isChecksumAddress(address):
             address = Web3.toChecksumAddress(address)
 
-        organization, created = Organization.objects.get_or_create(
+        organization, _ = Organization.objects.get_or_create(
             ethereum_address=address,
             chain_id=int(settings.LISTENER_CHAIN_ID)
         )
@@ -71,8 +71,8 @@ class Loader:
     def _badge(self, organization, event):
         token_id = event['args']['id']
 
-        badge, created = organization.badges.get_or_create(token_id=token_id)
-
+        badge, _ = organization.badges.get_or_create(token_id=token_id)
+        
         return badge
 
     """
@@ -84,6 +84,7 @@ class Loader:
 
         if not User.objects.filter(ethereum_address=ethereum_address).exists():
             return User.objects.create_user(ethereum_address=ethereum_address)
+        
         return User.objects.get(ethereum_address=ethereum_address)
 
     def _handle_user_balance(self, i, event, organization, address_field):
@@ -99,9 +100,16 @@ class Loader:
         for i, token_id in enumerate(token_ids):
             badge = organization.badges.get(token_id=token_id)
 
-            balance, created = Balance.objects.get_or_create(badge=badge, user=user)
+            balance, _ = Balance.objects.get_or_create(badge=badge, user=user)
 
-            transaction, created = balance.transactions.get_or_create(tx_hash=event['transactionHash'].hex())
+            # If the transaction has not been processed, process it
+            # This has a bug where if a transaction has multiple events, 
+            # it will only process the first one
+            # This can be fixed by adding a check for the 
+            print(event)
+            _, created = balance.transactions.get_or_create(
+                tx_hash=event['transactionHash'].hex()
+            )
 
             if created:
                 change = values[i]
@@ -114,16 +122,14 @@ class Loader:
                 balance.amount += change
                 balance.save()
 
-                badge = organization.badges.get(token_id=token_id)
-
+                # If balance of user is greater than zero, proceed
                 if balance.amount > 0:
+                    # If the user is not address(0), add to m2m
                     if user.ethereum_address != ZERO_ADDRESS:
                         badge.users.add(user)
-                        badge.save()
+                # If balance == 0 or less, remove from m2m
                 elif user in badge.users.all():
                     badge.users.remove(user)
-                else:
-                    return
 
                 badge.save()
 
@@ -149,8 +155,10 @@ class Loader:
 
             response = "Organization management setup"
 
-        # Load all the metadata
-        self.handle_organization_updated({ 'address': organization.ethereum_address })
+        self.handle_organization_updated({ 
+            'address': organization.ethereum_address,
+            'args': event['args'] 
+        })
 
         return (response, event['args'])
 
@@ -247,6 +255,7 @@ class Loader:
         return ("Badge uri updated", event['args'])
 
     def load(self, events):
+        print("in loader")
         event_responses = []
 
         for event in events:

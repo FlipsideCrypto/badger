@@ -67,61 +67,8 @@ services:
       - badger_redis
     command: >
       sh -c "
-        sleep 10 &&
-        python manage.py migrate &&
+        python manage.py migrate --noinput &&
         python manage.py runserver 0.0.0.0:8000
-      "
-  # Run the onchain listener for Badger Factories in a separate worker
-  # that is loading data into the same database as the API.
-  badger_factory_listener:
-    container_name: badger_factory_listener
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./api
-      args:
-        NODE_IP: host.docker.internal
-    volumes:
-      - ./api:/code
-    env_file:
-      - ./.env
-    restart: unless-stopped
-    depends_on:
-      - badger_node
-      - badger_db
-      - badger_server
-    links:
-      - badger_node:badger_node
-      - badger_db:badger_db
-    command: >
-      sh -c "
-        sleep 25 &&
-        python manage.py listen_for_factories
-      "
-  # Run the onchain listener for Badger Organizations in a separate worker
-  # that is loading data into the same database as the API.
-  badger_organization_listener:
-    container_name: badger_organization_listener
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./api
-      args:
-        NODE_IP: host.docker.internal
-    volumes:
-      - ./api:/code
-    env_file:
-      - ./.env
-    restart: unless-stopped
-    depends_on:
-      - badger_node
-      - badger_db
-      - badger_server
-    links:
-      - badger_node:badger_node
-      - badger_db:badger_db
-    command: >
-      sh -c "
-        sleep 25 &&
-        python manage.py listen_for_organizations
       "
   # Run the React frontend for Badger. This will run the frontend
   # on port 3000 and will be accessible at http://localhost:3000
