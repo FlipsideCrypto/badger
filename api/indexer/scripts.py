@@ -33,7 +33,7 @@ def listen_for_organizations():
 
 @util.close_old_connections
 # max age of 5 minutes
-def delete_old_job_executions(max_age=300):
+def delete_old_job_executions(max_age=60 * 60):
     DjangoJobExecution.objects.delete_old_job_executions(max_age)
 
 class JobManager:
@@ -61,7 +61,7 @@ class JobManager:
             "listen_for_factories",
         ], [
             listen_for_organizations,
-            CronTrigger(minute="*/1"),
+            CronTrigger(second="*/30"),
             "listen_for_organizations",
         ]]
 
