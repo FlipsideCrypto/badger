@@ -1,7 +1,7 @@
 import django
 
 from apscheduler.events import EVENT_JOB_ERROR
-from apscheduler.schedulers.background import BlockingScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from django_apscheduler.jobstores import DjangoJobStore
@@ -11,7 +11,7 @@ from django_apscheduler import util
 from .listener import Backfill
 
 backfill = Backfill()
-scheduler = BlockingScheduler()
+scheduler = BackgroundScheduler()
 
 def listener(event):
     print(f'Job {event.job_id} raised {event.exception.__class__.__name__}')

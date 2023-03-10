@@ -1,15 +1,8 @@
-from utils.web3 import w3
+from .references import ListenerReference
 
-class Extractor:
-    def __init__(self):
-        self.contracts = {}
-
+class Extractor(ListenerReference):
     def extract(self, contract_addresses, abi, topics, from_block, to_block):
-        events = w3.eth.get_logs({
-            'address': contract_addresses,
-            'fromBlock': from_block,
-            'toBlock': to_block
-        })
+        events = self.logs(contract_addresses, from_block, to_block) 
 
         if not contract_addresses or len(contract_addresses) == 0:
             return []
@@ -31,20 +24,14 @@ class Extractor:
             if event_topic not in topics:
                 continue
 
-            event_name = topics[event_topic].split('(')[0]
-
             event_address = event['address']
             
             if event_address not in contract_addresses:
                 continue
 
-            if event_address not in self.contracts:
-                self.contracts[event_address] = w3.eth.contract(
-                    address=event_address,
-                    abi=abi
-                )
+            contract = self.connected_contract(event_address, abi)
 
-            contract = self.contracts[event_address]
+            event_name = topics[event_topic].split('(')[0]
 
             event_data.append(contract.events[event_name]().processLog(event))
 

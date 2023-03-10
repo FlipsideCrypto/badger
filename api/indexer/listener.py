@@ -76,7 +76,6 @@ class Backfill:
                             print("Listener error: ", e)
                             pool.shutdown(wait=False, cancel_futures=True)
 
-
                 if not isinstance(extracting_obj, list):
                     qs.update(last_block=to_block)
 

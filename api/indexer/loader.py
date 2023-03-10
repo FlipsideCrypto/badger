@@ -9,6 +9,8 @@ from organization.models import Organization
 
 from utils.web3 import w3
 
+from .references import ListenerReference
+
 ZERO_ADDRESS = "0x0000000000000000000000000000000000000000" 
 
 User = get_user_model()
@@ -19,17 +21,17 @@ User = get_user_model()
 # Manager configured
 # Manager updated
 
-class Loader:
+class Loader(ListenerReference):
     def __init__(self):
         self.loader_mapping = {
             # Factory events
-            "OrganizationCreated": [self.handle_organization_created],
+            "OrganizationCreated": self.handle_organization_created,
             # Organization events
-            "OrganizationUpdated": [self.handle_organization_updated],
-            "OwnershipTransferred": [self.handle_ownership_transferred],
-            "TransferSingle": [self.handle_transfer_single],
-            "TransferBatch": [self.handle_transfer_batch],
-            "URI": [self.handle_uri],
+            "OrganizationUpdated": self.handle_organization_updated,
+            "OwnershipTransferred": self.handle_ownership_transferred,
+            "TransferSingle": self.handle_transfer_single,
+            "TransferBatch": self.handle_transfer_batch,
+            "URI": self.handle_uri,
         }
 
         self.contracts = {}
@@ -38,28 +40,17 @@ class Loader:
     Helper function to get connected to the organization contract.
     """
     def _organization_contract(self, ethereum_address):
-        if not Web3.isChecksumAddress(ethereum_address):
-            ethereum_address = Web3.toChecksumAddress(ethereum_address)
-
-        if not hasattr(self, ethereum_address):
-            setattr(self, ethereum_address, w3.eth.contract(
-                address=ethereum_address,
-                abi=settings.ORGANIZATION_ABI_FULL
-            ))
-
-        return getattr(self, ethereum_address)
+        return self.connected_contract(
+            self.summedAddress(ethereum_address),
+            settings.ORGANIZATION_ABI_FULL
+        )
 
     """
     Helper function to handle the creation and return of Organizations from an ethereum address.
     """
-    def _organization(self, event):
-        address = event['address']
-
-        if not Web3.isChecksumAddress(address):
-            address = Web3.toChecksumAddress(address)
-
+    def _organization(self, address):
         organization, _ = Organization.objects.get_or_create(
-            ethereum_address=address,
+            ethereum_address=self.summedAddress(address),
             chain_id=int(settings.LISTENER_CHAIN_ID)
         )
 
@@ -68,9 +59,7 @@ class Loader:
     """
     Helper function to handle the creation and return of Badges from an organization and token id.
     """
-    def _badge(self, organization, event):
-        token_id = event['args']['id']
-
+    def _badge(self, organization, token_id):
         badge, _ = organization.badges.get_or_create(token_id=token_id)
         
         return badge
@@ -79,8 +68,7 @@ class Loader:
     Helper function to handle the creation and return of Users from an ethereum address.
     """
     def _handle_users(self, ethereum_address):
-        if not Web3.isChecksumAddress(ethereum_address):
-            ethereum_address = Web3.toChecksumAddress(ethereum_address)
+        ethereum_address = self.summedAddress(ethereum_address)
 
         if not User.objects.filter(ethereum_address=ethereum_address).exists():
             return User.objects.create_user(ethereum_address=ethereum_address)
@@ -134,26 +122,19 @@ class Loader:
                 badge.save()
 
     def handle_organization_created(self, event):
-        organization = event['args']['organization']
-        owner = event['args']['owner']
-
-        if not Web3.isChecksumAddress(organization):
-            organization = Web3.toChecksumAddress(organization)
-
         organization, created = Organization.objects.get_or_create(
-            ethereum_address=organization, 
+            ethereum_address=self.summedAddress(event['args']['organization']), 
             chain_id=settings.LISTENER_CHAIN_ID
         )
 
         response = "Organization already exists"
-        if created:
-            response = "Organization created"
 
-        if not organization.owner:
+        if created or not organization.owner:
+            owner = event['args']['owner']
             organization.owner = self._handle_users(owner)
             organization.save()
 
-            response = "Organization management setup"
+            response = "Organization established"
 
         self.handle_organization_updated({ 
             'address': organization.ethereum_address,
@@ -163,27 +144,25 @@ class Loader:
         return (response, event['args'])
 
     def handle_organization_updated(self, event):
-        organization = self._organization(event)
+        organization = self._organization(event['address'])
 
         organization_contract = self._organization_contract(organization.ethereum_address)
 
-        # Make the blockchain read calls
-        organization.symbol = organization_contract.functions.symbol().call()
+        if not organization.symbol:
+            organization.symbol = organization_contract.functions.symbol().call()
+
         uri = organization_contract.functions.contractURI().call()
+        uri_hash = uri.split("/ipfs/")[1] if "ipfs" in uri else uri
 
-        # Calculate the ipfs hash to the contract uri
-        organization.contract_uri_hash = uri.split("/ipfs/")[1] if "ipfs" in uri else uri
+        if uri_hash != organization.contract_uri_hash:
+            organization.contract_uri_hash = uri_hash
 
-        # Build the client side url used
-        url = f"{settings.PINATA_INDEXER_URL}{organization.contract_uri_hash}"
-
-        # Retrieve the metadata from IPFS
-        response = requests.get(url)
-        if response.status_code == 200:
-            data = response.json()
-            organization.name = data["name"]
-            organization.description = data["description"]
-            organization.image_hash = data["image"].split("/ipfs/")[1]
+            response = requests.get(f"{settings.PINATA_INDEXER_URL}{uri_hash}")
+            if response.status_code == 200:
+                data = response.json()
+                organization.name = data["name"]
+                organization.description = data["description"]
+                organization.image_hash = data["image"].split("/ipfs/")[1]
 
         # If we don't get IPFS, try the blockchain
         if not organization.name:
@@ -194,7 +173,7 @@ class Loader:
         return ("Organization details updated", event['args'])
 
     def handle_ownership_transferred(self, event):
-        organization = self._organization(event)
+        organization = self._organization(event['address'])
 
         organization.owner = self._handle_users(event["args"]["newOwner"])
 
@@ -203,7 +182,8 @@ class Loader:
         return ("Organization ownership updated", event['args'])
 
     def handle_transfer_batch(self, event):
-        organization = self._organization(event)
+        organization = self._organization(event['address'])
+
 
         # Update the balance of the `to` and `from` addresses
         for i in range(len(event['args']['ids'])):
@@ -213,7 +193,8 @@ class Loader:
         return ("Balance updated", event['args'])
 
     def handle_transfer_single(self, event):
-        organization = self._organization(event)
+        organization = self._organization(event['address'])
+
 
         # Update the balance of the `to` and `from` addresses
         self._handle_user_balance(0, event, organization, "from")
@@ -225,9 +206,9 @@ class Loader:
         uri = event['args']['value']
         token_id = event['args']['id']
 
-        organization = self._organization(event)
+        organization = self._organization(event['address'])
 
-        badge = self._badge(organization, event)
+        badge = self._badge(organization, event['args']['id'])
 
         needs_metadata = not badge.name or not badge.description
         needs_image = not badge.image_hash or badge.token_uri != uri
