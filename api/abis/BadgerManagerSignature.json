@@ -1,0 +1,7 @@
+[
+  "function CONFIG_SCHEMA() view returns (string)",
+  "function config(bytes)",
+  "function mint(address,uint256,uint256,bytes,bytes,uint256,uint256)",
+  "function signers(address,uint256) view returns (address)",
+  "function supportsInterface(bytes4) view returns (bool)"
+]

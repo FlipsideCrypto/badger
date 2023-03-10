@@ -1,3 +1,4 @@
+.DS_Store
 node_modules
 artifacts
 cache
@@ -6,3 +7,10 @@ cache
 coverage/
 deployments/
 coverage.json
+gasReporterOutput.json
+
+build/c4udit/
+build/types/
+src/
+
+.idea

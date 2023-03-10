@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     Table, TableHead, TableRow,
     TableContainer, TableCell, TableBody
 } from "@mui/material"
 
-import { IPFS_GATEWAY_URL } from "@static/constants/links";
+import { TableSortHead } from "@components";
 
-import TableSortHead from "./TableSortHead";
-import { compareByProperty } from "@utils/helpers";
-import { badgeHeadRows } from "@static/constants/constants";
+import { compareByProperty } from "@utils";
+
+import { badgeHeadRows, IPFS_GATEWAY_URL } from "@static";
 
 import "@style/Table/HolderTable.css";
 
-const BadgeTable = ({ orgId, badges }) => {
+const BadgeTable = ({ badges }) => {
     const navigate = useNavigate();
+
+    const { orgAddress, chainId } = useParams();
 
     const [headRows, setHeadRows] = useState(badgeHeadRows);
     const [sortedList, setSortedList] = useState(badges);
@@ -65,7 +67,7 @@ const BadgeTable = ({ orgId, badges }) => {
                         {sortedList.map((badge, index) => (
                             <TableRow
                                 key={index}
-                                onClick={() => navigate(`/dashboard/organization/${orgId}/badge/${badge.id}`)}
+                                onClick={() => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badge.id}/`)}
                                 style={{
                                     cursor: "pointer"
                                 }}
@@ -110,4 +112,4 @@ const BadgeTable = ({ orgId, badges }) => {
     )
 }
 
-export default BadgeTable;
+export { BadgeTable };

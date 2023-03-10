@@ -1,0 +1,4 @@
+[
+  "event ManagerConfigured(bytes32 indexed,bytes)",
+  "event ManagerUpdated(bytes32 indexed,bool indexed)"
+]

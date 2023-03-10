@@ -1,0 +1,13 @@
+[
+  "event OrganizationUpdated(string)",
+  "function configHook(bytes32,address,bytes)",
+  "function configManager(address,bytes)",
+  "function configManager(uint256,address,bytes)",
+  "function isBadgeManager(uint256,address) view returns (bool)",
+  "function isOrganizationManager(address) view returns (bool)",
+  "function setBadgeURI(uint256,string)",
+  "function setHooks(bytes32,address[],bool[])",
+  "function setManagers(address[],bool[])",
+  "function setManagers(uint256,address[],bool[])",
+  "function setOrganizationURI(string)"
+]

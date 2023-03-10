@@ -1,0 +1,103 @@
+#badge {
+    height: 80%;
+}
+
+.center__gutter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: baseline;
+}
+
+.center__gutter .badge__actions {
+    margin-left: auto;
+}
+
+.badge__actions svg {
+    color: rgba(0, 0, 0, 0.35);
+    margin-right: 10px;
+}
+
+.badge__action span {
+    color:rgba(0, 0, 0, 0.65);
+}
+
+#manage__button {
+    float: right; 
+    margin-top: 20px; 
+    margin-bottom: 20px;
+}
+
+.badge__header {
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    grid-gap: 30px;
+    padding: 20px 20px 20px 20px;
+    margin-top: 20px;
+}
+
+.badge__header img {
+    width: 140px;
+    height: 140px;
+}
+
+.badge__header img::after {
+    box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.15);
+    max-width: 140px;
+    max-height: 140px;
+    content: '';
+    display: block;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+.badge__header .title {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-gap: 16px;
+    align-items: center;
+}
+
+.badge__header .title h2 {
+    margin: 0;
+}
+
+.badge__header .title .icons {
+    display: grid;
+    grid-template-columns: repeat(3, min-content);
+    grid-gap: 10px;
+    align-items: baseline;
+}
+
+.badge__header .title .icons svg {
+    width: 14px;
+    height: 16px;
+}
+
+.badge__header p {
+    max-width: 50%;
+}
+
+.badge__header .content {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 10px;
+}
+
+.badge__header .pill {
+    border: 1px solid #E3E0E0;
+    border-radius: 50px;
+    min-width: 40px;
+    text-align: center;
+    width: min-content;
+    font-size: 12px;
+    line-height: 24px;
+    height: 24px;
+    align-self: end;
+}
+
+.no__holders {
+    width: 300px;
+    margin: 30px 0px 30px 20px;
+}

@@ -1,30 +1,24 @@
 from django.db import models
 
-from organization.models import Organization
+from badge.models import Badge
 
 class Transaction(models.Model):
     tx_hash = models.CharField(max_length=66, unique=True)
 
+    created = models.DateTimeField(auto_now_add=True)
+
 class Balance(models.Model):
-    user = models.ForeignKey(
-        'siwe_auth.Wallet',
-        on_delete=models.CASCADE,
-        related_name='balances'
-    )
+    badge = models.ForeignKey(Badge, blank=True, null=True, related_name='balances', on_delete=models.CASCADE)
 
-    organization = models.ForeignKey(
-        Organization,
-        on_delete=models.CASCADE,
-        related_name='balances'
-    )
-
-    token_id = models.CharField(max_length=255)
+    user = models.ForeignKey('siwe_auth.Wallet', related_name='balances', on_delete=models.CASCADE)
 
     amount = models.BigIntegerField(default=0)
 
-    transactions = models.ManyToManyField(
-        Transaction
-    )
+    transactions = models.ManyToManyField(Transaction)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created']
+        unique_together = ('badge', 'user')

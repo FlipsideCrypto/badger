@@ -4,23 +4,30 @@ from rest_framework import serializers
 
 from badge.serializers import BadgeSerializer
 
+from api.mixins import SerializerRepresentationMixin
+
 from .models import Organization
 
 User = get_user_model()
 
 
-class OrganizationUserSerializer(serializers.ModelSerializer):
+class OrganizationUserSerializer(
+    SerializerRepresentationMixin,
+    serializers.ModelSerializer
+):
     class Meta:
         model = User
         fields = (
-            'url',
             'ethereum_address',
             'ens_name',
             'ens_avatar',
         )
 
 
-class OrganizationSerializer(serializers.ModelSerializer):
+class OrganizationSerializer(
+    SerializerRepresentationMixin,
+    serializers.ModelSerializer
+):
     owner = OrganizationUserSerializer(read_only=True)
     badges = BadgeSerializer(many=True, read_only=True)
     delegates = OrganizationUserSerializer(many=True, read_only=True)
@@ -34,9 +41,8 @@ class OrganizationSerializer(serializers.ModelSerializer):
         model = Organization
         fields = (
             'id',
-            'url',
             'is_active',
-            'chain',
+            'chain_id',
             'name',
             'symbol',
             'description',
@@ -46,6 +52,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'owner',
             'badges',
             'delegates',
+            'last_block',
             'created',
             'updated'
         )

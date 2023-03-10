@@ -1,5 +1,0 @@
-[
-  "function getLicenseKey(bytes32,address) pure returns (bytes32)",
-  "function getVersionKey(address) view returns (bytes32)",
-  "function setVersion(address,address,address,uint256,uint256,bool)"
-]

@@ -19,7 +19,6 @@ from .serializers import BadgeSerializer
 
 User = get_user_model()
 
-
 class ArtViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated] 
 
@@ -58,18 +57,23 @@ class ArtViewSet(viewsets.ViewSet):
             smudge % 2 == 0,
         ]
 
-    def _handle_fingerprint(self, address, badge_id):
+    def _handle_fingerprint(self, address, badge_name):
         fingerprint = []
 
-        for char in f"{address}{badge_id}":
+        for char in f"{address}{badge_name}":
             fingerprint.append(self._encode(char))
 
         return fingerprint
 
-    @action(detail=False, methods=['get'], url_path='pfp', url_name='pfp')
-    def pfp_art(self, request):
-        char = request.query_params.get('char', None)
-        address = request.query_params.get('address', None)
+    @action(
+        detail=False, 
+        methods=['get'], 
+        url_name='pfp',
+        url_path='pfp/(?P<char>[a-zA-Z])/(?P<address>[a-zA-Z0-9]+)'
+    )
+    def pfp_art(self, request, **kwargs):
+        char = kwargs.get('char', None)
+        address = kwargs.get('address', None)
 
         fill = "#fff"
 
@@ -152,7 +156,6 @@ class ArtViewSet(viewsets.ViewSet):
             </svg>
         """
 
-        # return base64 encoded svg
         image = base64.b64encode(svg.encode('utf-8')).decode('utf-8')
 
         url_ready_base64 = f"data:image/svg+xml;base64,{image}"
@@ -161,18 +164,20 @@ class ArtViewSet(viewsets.ViewSet):
             "image": url_ready_base64,
         })
 
+    @action(
+        detail=False, 
+        methods=['get'], 
+        url_name='badge',
+        url_path="pfp/(?P<organization_name>[a-zA-Z0-9]+)/(?P<address>[a-zA-Z0-9]+)/(?P<badge_name>[a-zA-Z0-9]+)"
+    )
+    def badge_art(self, request, **kwargs):
+        organization = kwargs.get('organization_name', None)
+        address = kwargs.get('address', None)
+        badge_name = kwargs.get('badge_name', None)
 
-    # create a custom action for badge art
-    @action(detail=False, methods=['get'], url_path='badge', url_name='badge')
-    def badge_art(self, request, pk=None):
-        organization = request.query_params.get('organization', None)
-        organization_ethereum_address = request.query_params.get(
-            'organization_ethereum_address', None)
-        badge_name = request.query_params.get('badge_name', None)
         invert = request.query_params.get('inverse', False)
 
-        fingerprint = self._handle_fingerprint(
-            organization_ethereum_address, badge_name)
+        fingerprint = self._handle_fingerprint(address, badge_name)
 
         fill = "#fff"
         if invert:

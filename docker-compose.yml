@@ -1,9 +1,13 @@
 version: '3.8'
 services:
-  # Run the hardhat node
-  badger_local_hardhat_node:
+  # This runs a local hardhat node for Badger to be deployed on
+  # and users of the front-end to connect and interact with.
+  # 
+  # This enables the ability to develop on a local version of Badger
+  # without having to deploy to a testnet or mainnet.
+  badger_node:
     build:
-      dockerfile: Dockerfile.dev.node
+      dockerfile: Dockerfile.dev
       context: ./contracts
     volumes:
       - .:/contracts/code
@@ -12,57 +16,130 @@ services:
     ports:
       - "8545:8545"
     restart: unless-stopped
-    command: npx hardhat run scripts/deploy/deploy.js
+    command: npx hardhat deploy
+  # Run a local instance of the Badger API and database
+  # by creating a local Postgres database in the api/ directory.
   badger_db:
     image: postgres:13.2
     container_name: badger_db
-    restart: always
+    hostname: badger_db
+    volumes:
+      - ./api/database:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: badger
       POSTGRES_USER: badger
       POSTGRES_DB: badger
-    volumes:
-      - ./api/database:/var/lib/postgresql/data
-    hostname: badger_db
     ports:
       - '5432:5432'
-  # Run the badger server
-  web:
+    restart: unless-stopped
+  # Start a local instance of Redis for that drives the websockets
+  # for the Badger API caching and messaging system.
+  badger_redis:
+    image: redis:6.2.1
+    container_name: badger_redis
+    hostname: redis
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+  # Run the Badger API running on Django. This will run the API
+  # on port 8000 and will be accessible at http://localhost:8000
+  badger_server:
     container_name: badger_server
     build:
       dockerfile: Dockerfile.dev
       context: ./api
-    command: >
-      sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
-    restart: always
-    ports:
-      - '8000:8000'
-    env_file:
-      - ./.env
+      args:
+        NODE_IP: host.docker.internal
     volumes:
       - ./api:/code
+    env_file:
+      - ./.env
+    ports:
+      - '8000:8000'
+    restart: unless-stopped
     depends_on:
+      - badger_node
       - badger_db
+      - badger_redis
     links:
+      - badger_node
       - badger_db
-  # Run the React frontend
-  frontend:
+      - badger_redis
+    command: >
+      sh -c "
+        sleep 10 &&
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:8000
+      "
+  # Run the onchain listener for Badger Factories in a separate worker
+  # that is loading data into the same database as the API.
+  badger_factory_listener:
+    container_name: badger_factory_listener
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./api
+      args:
+        NODE_IP: host.docker.internal
+    volumes:
+      - ./api:/code
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    depends_on:
+      - badger_node
+      - badger_db
+      - badger_server
+    links:
+      - badger_node:badger_node
+      - badger_db:badger_db
+    command: >
+      sh -c "
+        sleep 25 &&
+        python manage.py listen_for_factories
+      "
+  # Run the onchain listener for Badger Organizations in a separate worker
+  # that is loading data into the same database as the API.
+  badger_organization_listener:
+    container_name: badger_organization_listener
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./api
+      args:
+        NODE_IP: host.docker.internal
+    volumes:
+      - ./api:/code
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    depends_on:
+      - badger_node
+      - badger_db
+      - badger_server
+    links:
+      - badger_node:badger_node
+      - badger_db:badger_db
+    command: >
+      sh -c "
+        sleep 25 &&
+        python manage.py listen_for_organizations
+      "
+  # Run the React frontend for Badger. This will run the frontend
+  # on port 3000 and will be accessible at http://localhost:3000
+  # while consuming the state of all services apriori.
+  badger_frontend:
     container_name: badger_frontend
     build:
       dockerfile: Dockerfile.dev
       context: ./frontend
       args:
-        # use FONTAWSOME_TOKEN in .env to get access to private fontawesome packages
-        FONTAWESOME_NPM_AUTH_TOKEN: ${FONTAWESOME_NPM_AUTH_TOKEN}
-    command: npm start --host 0.0.0.0 --disableHostCheck true
-    restart: always
-    ports:
-      - '3000:3000'
-    # make sure the volumes for hot reloading to work are setup
+        NPM_TOKEN: ${NPM_TOKEN}
+        REACT_APP_API_URL: http://localhost:8000
     volumes:
       - ./frontend:/code
       - /code/node_modules
       - /code/public
+    env_file:
+      - ./.env
     environment:
       - NODE_OPTIONS=--openssl-legacy-provider
       # ENABLE this to use the local backend
@@ -72,9 +149,20 @@ services:
       - WATCHPACK_POLLING=true 
       - WDS_SOCKET_HOST=127.0.0.1
       - NODE_ENV=development
-    env_file:
-      - ./.env
+    ports:
+      - '3000:3000'
+    restart: unless-stopped
     depends_on:
-      - web
+      - badger_node
+      - badger_db
+      - badger_redis
+      - badger_server
     links:
-      - web
+      - badger_node
+      - badger_db
+      - badger_redis
+      - badger_server
+    command: > 
+      sh -c "
+        npm start --host 0.0.0.0 --disableHostCheck true
+      "

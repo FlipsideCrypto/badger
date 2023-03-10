@@ -1,0 +1,15 @@
+FROM node
+
+# Set working directory
+WORKDIR /code
+
+# Copy the requirements file
+COPY package.json /code/
+
+# Install the dependencies
+RUN npm install
+
+COPY . /code/
+
+# Run the local node on 0.0.0.0:8545
+CMD ["npx", "hardhat", "node" "--hostname", "0.0.0.0", "--port", "8545"]

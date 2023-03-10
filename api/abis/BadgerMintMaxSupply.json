@@ -1,0 +1,9 @@
+[
+  "function CONFIG_SCHEMA() view returns (string)",
+  "function EXECUTE_SCHEMA() view returns (string)",
+  "function config(bytes)",
+  "function execute(bytes)",
+  "function maxSupply(address,uint256) view returns (uint256)",
+  "function supportsInterface(bytes4) view returns (bool)",
+  "function totalSupply(address,uint256) view returns (uint256)"
+]

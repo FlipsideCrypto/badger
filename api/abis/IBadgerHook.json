@@ -1,0 +1,6 @@
+[
+  "function CONFIG_SCHEMA() view returns (string)",
+  "function EXECUTE_SCHEMA() view returns (string)",
+  "function config(bytes)",
+  "function execute(bytes)"
+]

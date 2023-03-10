@@ -1,0 +1,8 @@
+[
+  "function CONFIG_SCHEMA() view returns (string)",
+  "function EXECUTE_SCHEMA() view returns (string)",
+  "function accountBound(address,uint256) view returns (bool)",
+  "function config(bytes)",
+  "function execute(bytes)",
+  "function supportsInterface(bytes4) view returns (bool)"
+]

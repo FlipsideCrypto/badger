@@ -1,0 +1,36 @@
+a.arrowLink {
+    color: #000;
+    font-size: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: inherit;
+    display: flex;
+    border-bottom: 1px solid #000;
+    gap: 10px;
+}
+
+a.arrowLink.clean { 
+    border-bottom: none;
+}
+
+a.arrowLink.close { 
+    width: fit-content;
+}
+
+a.arrowLink.close span { 
+    margin-left: 20px;
+}
+
+a.arrowLink span,
+a.arrowLink span {
+    margin-left: auto;
+    transform: rotate(-45deg);
+    position: relative;
+    top: 2px;
+    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    transform-origin: 50% 50%;
+}
+
+a.arrowLink:hover span {
+    transform: rotate(-45deg) translateX(5px) translateY(0px) scale(1.2);
+}
