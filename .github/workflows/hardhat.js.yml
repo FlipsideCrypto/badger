@@ -116,7 +116,7 @@ jobs:
         run: npm install
 
       - name: 🤔 Run smart contract tests
-        run: MINING=true npx hardhat test
+        run: MINING=true CI=true npx hardhat test
 
       - name: 🏗️ Save build
         uses: stefanzweifel/git-auto-commit-action@v4

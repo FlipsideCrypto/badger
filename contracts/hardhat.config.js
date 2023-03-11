@@ -16,6 +16,10 @@ const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY;
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
 const PRIVATE_KEY_ACCOUNTS = [process.env.PRIVATE_KEY];
 
+const GAS_REPORTER_CONFIG = process.env.CI && process.env.CI.toLowerCase() === 'true' ? {
+    outputFile: 'build/gas-report.txt'
+} : {};
+
 const mining = process.env.MINING === 'true' ? { auto: true } : {
     auto: false,
     order: 'fifo',
@@ -123,7 +127,7 @@ module.exports = {
         showMethodSig: true,
         showTimeSpent: true,
         noColors: true,
-        outputFile: 'build/gas-report.txt'
+        ...GAS_REPORTER_CONFIG
     },
     watcher: {
         compilation: {
