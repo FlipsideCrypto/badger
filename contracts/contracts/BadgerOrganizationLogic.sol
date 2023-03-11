@@ -56,10 +56,9 @@ contract BadgerOrganizationLogic is
      * @notice Initialize the BadgerOrganizationLogic contract.
      * @param _organization The Organization struct.
      */
-    function initialize(Organization calldata _organization)
-        external
-        initializer
-    {
+    function initialize(
+        Organization calldata _organization
+    ) external initializer {
         /// @dev Initialize ERC1155.
         __ERC1155_init(_organization.uri);
 
@@ -111,12 +110,9 @@ contract BadgerOrganizationLogic is
     /**
      * See {IBadgerOrganizationLogic.setOrganizationURI}
      */
-    function setOrganizationURI(string memory _uri)
-        public
-        virtual
-        override
-        onlyOrganizationManager
-    {
+    function setOrganizationURI(
+        string memory _uri
+    ) public virtual override onlyOrganizationManager {
         /// @dev Confirm a valid URI was provided.
         require(
             bytes(_uri).length != 0,
@@ -130,12 +126,10 @@ contract BadgerOrganizationLogic is
     /**
      * See {IBadgerOrganizationLogic.setBadgeURI}
      */
-    function setBadgeURI(uint256 _id, string memory _uri)
-        public
-        virtual
-        override
-        onlyBadgeManager(_id)
-    {
+    function setBadgeURI(
+        uint256 _id,
+        string memory _uri
+    ) public virtual override onlyBadgeManager(_id) {
         /// @dev Confirm a valid URI was provided.
         require(
             bytes(_uri).length != 0,
@@ -155,7 +149,6 @@ contract BadgerOrganizationLogic is
     ) public virtual override onlyOwner {
         /// @dev Load the stack.
         uint256 i;
-        bytes32 managerHash;
         uint256 managersLength = _managers.length;
         address manager;
 
@@ -175,11 +168,8 @@ contract BadgerOrganizationLogic is
                 "BadgerScout::setManagers: Manager cannot be the zero address."
             );
 
-            /// @dev Calculate the hash for the Organization Manager.
-            managerHash = _managerHash(manager);
-
             /// @dev Update the state of the Manager for the Organization.
-            _setManager(managerHash, _isManager[i]);
+            _setManager(manager, _isManager[i]);
         }
     }
 
@@ -193,7 +183,6 @@ contract BadgerOrganizationLogic is
     ) public virtual override onlyOrganizationManager {
         /// @dev Load the stack.
         uint256 i;
-        bytes32 managerHash;
         uint256 managersLength = _managers.length;
         address manager;
 
@@ -213,11 +202,8 @@ contract BadgerOrganizationLogic is
                 "BadgerScout::setManagers: Manager cannot be the zero address."
             );
 
-            /// @dev Calculate the hash for the Organization Manager.
-            managerHash = _badgeManagerHash(_id, manager);
-
             /// @dev Update the state of the Manager for the Badge.
-            _setManager(managerHash, _isManager[i]);
+            _setManager(_id, manager, _isManager[i]);
         }
     }
 
@@ -258,12 +244,10 @@ contract BadgerOrganizationLogic is
     /**
      * See {IBadgerOrganizationLogic.configManager}
      */
-    function configManager(address _manager, bytes calldata _config)
-        public
-        virtual
-        override
-        onlyOrganizationManager
-    {
+    function configManager(
+        address _manager,
+        bytes calldata _config
+    ) public virtual override onlyOrganizationManager {
         /// @dev Configure the Organization manager.
         _configManager(_manager, _managerHash(_manager), _config);
     }
@@ -299,13 +283,9 @@ contract BadgerOrganizationLogic is
     /**
      * See {IBadgerOrganizationLogic.isOrganizationManager}
      */
-    function isOrganizationManager(address _address)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function isOrganizationManager(
+        address _address
+    ) public view virtual override returns (bool) {
         /// @dev Determine if the address is an Organization Manager.
         return _isOrganizationManager(_address);
     }
@@ -313,13 +293,10 @@ contract BadgerOrganizationLogic is
     /**
      * See {IBadgerOrganizationLogic.isBadgeManager}
      */
-    function isBadgeManager(uint256 _id, address _address)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function isBadgeManager(
+        uint256 _id,
+        address _address
+    ) public view virtual override returns (bool) {
         /// @dev Determine if the address is a Badge Manager.
         return _isBadgeManager(_id, _address);
     }
@@ -327,13 +304,9 @@ contract BadgerOrganizationLogic is
     /**
      * See {ERC165-supportsInterface}
      */
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override returns (bool) {
         return
             interfaceId == type(IBadgerOrganizationLogic).interfaceId ||
             super.supportsInterface(interfaceId);
@@ -461,12 +434,9 @@ contract BadgerOrganizationLogic is
      * @param _address The address of the Manager to check.
      * @return True if the address is a Manager of the Organization, false otherwise.
      */
-    function _isOrganizationManager(address _address)
-        internal
-        view
-        virtual
-        returns (bool)
-    {
+    function _isOrganizationManager(
+        address _address
+    ) internal view virtual returns (bool) {
         /// @dev Confirm that the address is either the Owner of the contract or
         ///      a Manager of the Organization.
         return (_address == owner() ||
@@ -479,40 +449,13 @@ contract BadgerOrganizationLogic is
      * @param _address The address of the Manager to check.
      * @return True if the address is a Manager of the Badge or Organization, false otherwise.
      */
-    function _isBadgeManager(uint256 _id, address _address)
-        internal
-        view
-        virtual
-        returns (bool)
-    {
+    function _isBadgeManager(
+        uint256 _id,
+        address _address
+    ) internal view virtual returns (bool) {
         /// @dev Confirm that the address is either a Manager of the Organization or
         ///      a Manager of the Badge.
         return (_isOrganizationManager(_address) ||
             managerKeyToIsManager[_badgeManagerHash(_id, _address)]);
-    }
-
-    /**
-     * @notice Calculates the hash that would be used for this sender pointer reference.
-     * @param _manager The address of the alleged Manager.
-     * @return The hash of the Manager.
-     */
-    function _managerHash(address _manager) internal pure returns (bytes32) {
-        /// @dev Build the hash of the Manager.
-        return keccak256(abi.encode(_manager));
-    }
-
-    /**
-     * @notice Calculates the hash that would be used for this sender pointer reference.
-     * @param _id The id of the Badge.
-     * @param _manager The address of the alleged Manager.
-     * @return The hash of the Manager.
-     */
-    function _badgeManagerHash(uint256 _id, address _manager)
-        internal
-        pure
-        returns (bytes32)
-    {
-        /// @dev Build the hash of the Manager.
-        return keccak256(abi.encode(_id, _manager));
     }
 }
