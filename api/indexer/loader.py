@@ -12,9 +12,6 @@ ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 User = get_user_model()
 
-# TODO: Balances
-# Only 1 transfer per user per transaction is processed while there can be multiple
-# The below events are not supported currently
 # TODO: Hook configured
 # TODO: Hook updated
 # TODO: Manager configured
@@ -74,6 +71,9 @@ class Loader(ListenerReference):
         
         return User.objects.get(ethereum_address=ethereum_address)
 
+    """
+    When the balance of an address changes, record the transaction and update the balance.
+    """
     def _handle_user_balance(self, i, event, organization, address_field):
         user = self._handle_users(event['args'][address_field])
 
@@ -83,19 +83,15 @@ class Loader(ListenerReference):
         else:
             token_ids = event['args']['ids']
             values = event['args']['values']
-
+        
         for i, token_id in enumerate(token_ids):
             badge = organization.badges.get(token_id=token_id)
 
             balance, _ = Balance.objects.get_or_create(badge=badge, user=user)
 
-            # If the transaction has not been processed, process it
-            # This has a bug where if a transaction has multiple events, 
-            # it will only process the first one
-            # This can be fixed by adding a check for the 
-            print(event)
             _, created = balance.transactions.get_or_create(
-                tx_hash=event['transactionHash'].hex()
+                tx_hash=event['transactionHash'].hex(),
+                log_index=event['logIndex']
             )
 
             if created:
@@ -235,6 +231,7 @@ class Loader(ListenerReference):
         for event in events:
             if 'event' in event:
                 if event['event'] in self.loader_mapping:
+                    print(event)
                     event_responses.append(self.loader_mapping[event['event']](event))
                 else:
                     event_responses.append(("Event not handled", event['event'], event['args']))
