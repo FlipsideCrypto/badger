@@ -1,13 +1,10 @@
 import requests
-from web3 import Web3
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from balance.models import Balance
 from organization.models import Organization
-
-from utils.web3 import w3
 
 from .references import ListenerReference
 

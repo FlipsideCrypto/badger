@@ -1,16 +1,15 @@
 import concurrent.futures
 import time
 
-from .extractor import *
-from .loader import *
-
 from django.conf import settings
 
 from organization.models import Organization
+from utils.web3 import w3
 
-LOG_SIZE = 2000
+from .extractor import Extractor
+from .loader import Loader
 
-class Backfill:
+class Listener:
     def __init__(self):
         self.extractor = Extractor()
         self.loader = Loader()
@@ -19,21 +18,18 @@ class Backfill:
     def _etl(self, contracts, abi, topics, batch):
         print(f'{batch[0]} -> {batch[1]}')
 
-        try:
-            events = self.extractor.extract(
-                contracts, 
-                abi, 
-                topics,
-                batch[0],
-                batch[1],
-            )
+        events = self.extractor.extract(
+            contracts, 
+            abi, 
+            topics,
+            batch[0],
+            batch[1],
+        )
 
-            if len(events) == 0:
-                return 
-        
-            self.loader.load(events)
-        except Exception as e:
-            print("Listener error: ", e)
+        if len(events) == 0:
+            return 
+    
+        self.loader.load(events)
 
     def etl(self, extracting_obj, abi, topics, temp_from_block=None, temp_to_block=None):
         while self.running:
@@ -52,7 +48,7 @@ class Backfill:
                 qs = contracts.objects.filter(is_active=True, chain_id=settings.LISTENER_CHAIN_ID)
                 contracts = qs.values_list('ethereum_address', flat=True)
 
-            BLOCK_BUFFER = LOG_SIZE if to_block - from_block > LOG_SIZE else to_block - from_block
+            BLOCK_BUFFER = settings.LISTENER_LOG_SIZE if to_block - from_block > settings.LISTENER_LOG_SIZE else to_block - from_block
             BLOCK_BUFFER = to_block - from_block if BLOCK_BUFFER > to_block - from_block else BLOCK_BUFFER
             BLOCK_BUFFER = 1 if BLOCK_BUFFER == 0 else BLOCK_BUFFER
 
@@ -108,18 +104,12 @@ class Backfill:
 
     def listen_for_factories(self):
         print("Listening for factories...")
-        try:
-            self.etl([settings.FACTORY_ADDRESS], 
-                settings.FACTORY_ABI_FULL, 
-                settings.FACTORY_TOPIC_SIGNATURES)
-        except Exception as e:
-            print("Listener error: ", e)
+        self.etl([settings.FACTORY_ADDRESS], 
+            settings.FACTORY_ABI_FULL, 
+            settings.FACTORY_TOPIC_SIGNATURES)
         
     def listen_for_organizations(self):
         print("Listening for organizations...")
-        try:
-            self.etl(Organization, 
-                settings.ORGANIZATION_ABI_FULL, 
-                settings.ORGANIZATION_TOPIC_SIGNATURES)
-        except Exception as e:
-            print("Listener error: ", e)
+        self.etl(Organization, 
+            settings.ORGANIZATION_ABI_FULL, 
+            settings.ORGANIZATION_TOPIC_SIGNATURES)

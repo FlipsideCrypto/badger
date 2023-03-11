@@ -5,17 +5,17 @@ from apscheduler.triggers.cron import CronTrigger
 
 from django.conf import settings
 
-from .listener import Backfill
+from .listener import Listener
+from .references import ListenerReference
 
 if settings.DEBUG:
     logging.basicConfig()
     logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
-class JobManager:
+class JobManager(ListenerReference):
     def __init__(self):
-        self.backfill = Backfill()
+        self.listener = Listener()
 
-        # use memory store
         self.scheduler_config = {
             "apscheduler.jobstores.default": {
                 "type": "memory"
@@ -51,16 +51,16 @@ class JobManager:
         ]]
 
     def backfill_factories(self):
-        self.backfill.backfill_factories()
+        self.listener.backfill_factories()
 
     def backfill_organizations(self):
-        self.backfill.backfill_organizations()
+        self.listener.backfill_organizations()
 
     def listen_for_factories(self):
-        self.backfill.listen_for_factories()
+        self.listener.listen_for_factories()
 
     def listen_for_organizations(self):
-        self.backfill.listen_for_organizations()
+        self.listener.listen_for_organizations()
 
     def ready(self, *args, **options):
         for job in self.init_jobs:
