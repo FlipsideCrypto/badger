@@ -58,9 +58,9 @@
         "type": "bytes32"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
-        "name": "",
+        "name": "hook",
         "type": "address"
       },
       {
@@ -113,6 +113,12 @@
         "internalType": "bytes32",
         "name": "managerKey",
         "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "manager",
+        "type": "address"
       },
       {
         "indexed": true,

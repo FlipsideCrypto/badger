@@ -91,7 +91,7 @@ describe("Badger", function () {
 
             await expect(organization.connect(owner).multicall(transactions))
                 .to.emit(organization, "TransferSingle").withArgs(owner.address, ethers.constants.AddressZero, random.address, 0, 1000)
-                .to.emit(organization, "ManagerUpdated").withArgs(getOrgManagerKey(otherAccount.address), true)
+                .to.emit(organization, "ManagerUpdated").withArgs(getOrgManagerKey(otherAccount.address), otherAccount.address, true)
 
             await expect(organization.connect(otherAccount).revoke(random.address, 0, 1000))
                 .to.emit(organization, "TransferSingle").withArgs(otherAccount.address, random.address, ethers.constants.AddressZero, 0, 1000)
@@ -111,7 +111,7 @@ describe("Badger", function () {
 
             await expect(organization.connect(owner).multicall(transactions))
                 .to.emit(organization, "TransferSingle").withArgs(owner.address, ethers.constants.AddressZero, random.address, 0, 1000)
-                .to.emit(organization, "ManagerUpdated").withArgs(managerKey, true)
+                .to.emit(organization, "ManagerUpdated").withArgs(managerKey, otherAccount.address, true)
 
             await expect(organization.connect(otherAccount).revoke(random.address, 0, 1000))
                 .to.be.revertedWith("BadgerRevokeForbidden::execute: Invalid permission to revoke token.")
@@ -139,10 +139,10 @@ describe("Badger", function () {
                 organization.interface.encodeFunctionData("setManagers(address[],bool[])", [[otherAccount.address], [true]]),
                 organization.interface.encodeFunctionData("mint", [random.address, 0, 1000, "0x"]),
             ]
-            
+
             await expect(organization.connect(owner).multicall(transactions))
                 .to.emit(organization, "TransferSingle").withArgs(owner.address, ethers.constants.AddressZero, random.address, 0, 1000)
-                .to.emit(organization, "ManagerUpdated").withArgs(getOrgManagerKey(otherAccount.address), true)
+                .to.emit(organization, "ManagerUpdated").withArgs(getOrgManagerKey(otherAccount.address), otherAccount.address, true)
 
             await expect(organization.connect(otherAccount).revoke(random.address, 0, 1000))
                 .to.be.revertedWith("BadgerRevokeForbidden::execute: Invalid permission to revoke token.")
@@ -166,7 +166,7 @@ describe("Badger", function () {
 
             await expect(organization.connect(owner).multicall(transactions))
                 .to.emit(organization, "TransferSingle").withArgs(owner.address, ethers.constants.AddressZero, random.address, 0, 1000)
-                .to.emit(organization, "ManagerUpdated").withArgs(getOrgManagerKey(otherAccount.address), true)
+                .to.emit(organization, "ManagerUpdated").withArgs(getOrgManagerKey(otherAccount.address), otherAccount.address, true)
 
             await expect(organization.connect(otherAccount).revoke(random.address, 0, 1000))
                 .to.emit(organization, "TransferSingle").withArgs(otherAccount.address, random.address, ethers.constants.AddressZero, 0, 1000)

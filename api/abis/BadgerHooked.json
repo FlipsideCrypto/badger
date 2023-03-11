@@ -1,6 +1,6 @@
 [
   "event HookConfigured(bytes32 indexed,bytes)",
-  "event HookUpdated(bytes32 indexed,address,bool indexed)",
+  "event HookUpdated(bytes32 indexed,address indexed,bool indexed)",
   "function BEFORE_FORFEIT() view returns (bytes32)",
   "function BEFORE_MINT() view returns (bytes32)",
   "function BEFORE_REVOKE() view returns (bytes32)",

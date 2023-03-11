@@ -93,7 +93,7 @@ describe("Badger", function () {
             ]
 
             await expect(organization.connect(owner).multicall(transactions))
-                .to.emit(organization, "ManagerUpdated").withArgs(getOrgManagerKey(otherAccount.address), true)
+                .to.emit(organization, "ManagerUpdated").withArgs(getOrgManagerKey(otherAccount.address), otherAccount.address, true)
                 .to.emit(organization, "HookConfigured").withArgs(SLOT, config)
 
             await expect(organization.connect(otherAccount).mint(random.address, 0, 1000, "0x"))
