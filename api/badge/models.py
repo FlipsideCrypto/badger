@@ -12,7 +12,7 @@ class Badge(models.Model):
     token_uri = models.CharField(max_length=256, blank=True, null=True)
 
     delegates = models.ManyToManyField('siwe_auth.Wallet', related_name='delegates', blank=True)
-    users = models.ManyToManyField('siwe_auth.Wallet')
+    users = models.ManyToManyField('siwe_auth.Wallet', related_name="users", blank=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

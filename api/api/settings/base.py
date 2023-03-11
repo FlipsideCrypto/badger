@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     "django.contrib.staticfiles",
     # Third party apps
-    "django_apscheduler",
     "rest_framework",
     "corsheaders",
     "django_filters",

@@ -1,93 +1,85 @@
-import django
+import logging
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
-from django_apscheduler.jobstores import DjangoJobStore
-from django_apscheduler.models import DjangoJobExecution
-from django_apscheduler import util
+from django.conf import settings
 
 from .listener import Backfill
 
-backfill = Backfill()
-scheduler = BackgroundScheduler()
-
-@util.close_old_connections
-def backfill_factories():
-    backfill.backfill_factories()
-
-@util.close_old_connections
-def backfill_organizations():
-    backfill.backfill_organizations()
-
-@util.close_old_connections
-def listen_for_factories():
-    backfill.listen_for_factories()
-
-def listen_for_organizations():
-    backfill.listen_for_organizations()
-
-@util.close_old_connections
-# max age of 5 minutes
-def delete_old_job_executions(max_age=60 * 60):
-    DjangoJobExecution.objects.delete_old_job_executions(max_age)
+if settings.DEBUG:
+    logging.basicConfig()
+    logging.getLogger('apscheduler').setLevel(logging.DEBUG)
 
 class JobManager:
-    def ready(self, *args, **options):
-        scheduler.add_jobstore(DjangoJobStore(), "default")
+    def __init__(self):
+        self.backfill = Backfill()
 
-        for job in scheduler.get_jobs():
-            scheduler.remove_job(job.id, "default")
+        # use memory store
+        self.scheduler_config = {
+            "apscheduler.jobstores.default": {
+                "type": "memory"
+            },
+            "apscheduler.executors.default": {
+                "class": "apscheduler.executors.pool:ThreadPoolExecutor",
+                "max_workers": "20"
+            },
+            "apscheduler.job_defaults.coalesce": "true",
+            "apscheduler.job_defaults.max_instances": "1",
+            "apscheduler.job_defaults.replace_existing": "true",
+            "apscheduler.timezone": "UTC",
+        }
 
-        jobs = [[
-            delete_old_job_executions,
-            CronTrigger(hour="*", minute="*/59"),
-            "delete_old_job_executions",
-        ], [
-            backfill_factories,
+        self.scheduler = BackgroundScheduler(self.scheduler_config)
+
+        self.init_jobs = [[
+            self.backfill_factories,
             CronTrigger(hour="0", minute="0"),
             "backfill_factories",
         ], [
-            backfill_organizations,
+            self.backfill_organizations,
             CronTrigger(hour="0", minute="0"),
             "backfill_organizations",
         ], [
-            listen_for_factories,
+            self.listen_for_factories,
             CronTrigger(second="*/30"), 
             "listen_for_factories",
         ], [
-            listen_for_organizations,
+            self.listen_for_organizations,
             CronTrigger(second="*/30"),
             "listen_for_organizations",
         ]]
 
-        for job in jobs:
-            # If job does not exist, add it
-            try:
-                scheduler.add_job(
-                    job[0],
-                    job[1],
-                    id=job[2],
-                    max_instances=1,
-                    replace_existing=True,
-                    jobstore="default",
-                    coalesce=True,
-                    misfire_grace_time=5,
-                )
+    def backfill_factories(self):
+        self.backfill.backfill_factories()
 
-                print("Added: `{}`".format(job[2]))
-            except Exception as e:
-                print("Error adding job: `{}`".format(job[2]))
-                print(e)
+    def backfill_organizations(self):
+        self.backfill.backfill_organizations()
+
+    def listen_for_factories(self):
+        self.backfill.listen_for_factories()
+
+    def listen_for_organizations(self):
+        self.backfill.listen_for_organizations()
+
+    def ready(self, *args, **options):
+        for job in self.init_jobs:
+            self.scheduler.add_job(
+                job[0],
+                job[1],
+                id=job[2],
+            )
+
+            print("Added: `{}`".format(job[2]))
 
         try:
             print("Starting scheduler...")
-            scheduler.start()
+            self.scheduler.start()
         except (Exception, KeyboardInterrupt, SystemExit) as e:
             print("Stopping scheduler...")
 
-            for job in jobs:
-                scheduler.remove_job(job[2], "default")
+            for job in self.init_jobs:
+                self.scheduler.remove_job(job[2], "default")
 
-            scheduler.shutdown()
+            self.scheduler.shutdown()
             print("Scheduler shut down successfully!")

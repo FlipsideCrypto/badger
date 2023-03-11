@@ -15,11 +15,13 @@ ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 User = get_user_model()
 
-# Hook configured
-# Hook updated
-
-# Manager configured
-# Manager updated
+# TODO: Balances
+# Only 1 transfer per user per transaction is processed while there can be multiple
+# The below events are not supported currently
+# TODO: Hook configured
+# TODO: Hook updated
+# TODO: Manager configured
+# TODO: Manager updated
 
 class Loader(ListenerReference):
     def __init__(self):
@@ -184,8 +186,6 @@ class Loader(ListenerReference):
     def handle_transfer_batch(self, event):
         organization = self._organization(event['address'])
 
-
-        # Update the balance of the `to` and `from` addresses
         for i in range(len(event['args']['ids'])):
             self._handle_user_balance(i, event, organization, "from")
             self._handle_user_balance(i, event, organization, "to")
@@ -195,8 +195,6 @@ class Loader(ListenerReference):
     def handle_transfer_single(self, event):
         organization = self._organization(event['address'])
 
-
-        # Update the balance of the `to` and `from` addresses
         self._handle_user_balance(0, event, organization, "from")
         self._handle_user_balance(0, event, organization, "to")
 
@@ -224,7 +222,6 @@ class Loader(ListenerReference):
                 data = response.json()
                 badge.name = data["name"]
                 badge.description = data["description"]
-                # TODO: This will break if someone uses a custom image url
                 badge.image_hash = data["image"].split("/ipfs/")[1]
 
                 response = "Badge details updated"

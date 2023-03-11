@@ -1,5 +1,5 @@
+apscheduler==3.10.1
 channels-redis==3.4.0
-django-apscheduler==0.6.2
 django-cors-headers==3.13.0
 django-filter==22.1
 django-heroku==0.3.1
