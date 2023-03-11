@@ -236,14 +236,12 @@ class Loader(ListenerReference):
         return ("Badge uri updated", event['args'])
 
     def load(self, events):
-        print("in loader")
         event_responses = []
 
         for event in events:
             if 'event' in event:
                 if event['event'] in self.loader_mapping:
-                    for handler in self.loader_mapping[event['event']]:
-                        event_responses.append(handler(event))
+                    event_responses.append(self.loader_mapping[event['event']](event))
                 else:
                     event_responses.append(("Event not handled", event['event'], event['args']))
             else:

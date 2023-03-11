@@ -1,5 +1,4 @@
-channels-redis==4.0.0
-daphne==4.0.0
+channels-redis==3.4.0
 django-apscheduler==0.6.2
 django-cors-headers==3.13.0
 django-filter==22.1

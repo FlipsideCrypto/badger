@@ -31,3 +31,5 @@ class ListenerReference:
 
         if not hasattr(self, key_hash):
             setattr(self, key_hash, self._logs(contract_addresses, from_block, to_block))
+
+        return getattr(self, key_hash)

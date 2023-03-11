@@ -29,7 +29,6 @@ class Backfill:
             )
 
             if len(events) == 0:
-                time.sleep(settings.LISTENER_POLL_INTERVAL)
                 return 
         
             self.loader.load(events)
@@ -68,7 +67,6 @@ class Backfill:
                         print([future._state for future in futures])
 
                         if future.cancelled():
-                            print("Cancelled")
                             continue
                         try:
                             n = future.result()
