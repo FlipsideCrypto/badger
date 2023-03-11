@@ -20,12 +20,11 @@ const GAS_REPORTER_CONFIG = process.env.CI && process.env.CI.toLowerCase() === '
     outputFile: 'build/gas-report.txt'
 } : {};
 
-const mining = { auto: true }
-// const mining = process.env.MINING === 'true' ? { auto: true } : {
-//     auto: false,
-//     order: 'fifo',
-//     interval: 500,
-// }
+const mining = process.env.MINING === 'true' ? { auto: true } : {
+    auto: false,
+    order: 'fifo',
+    interval: 500,
+}
 
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
     const accounts = await hre.ethers.getSigners();
