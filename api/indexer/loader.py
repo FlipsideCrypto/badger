@@ -12,10 +12,11 @@ ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 User = get_user_model()
 
-# TODO: Hook configured
-# TODO: Hook updated
 # TODO: Manager configured
 # TODO: Manager updated
+
+# TODO: Hook configured
+# TODO: Hook updated
 
 class Loader(ListenerReference):
     def __init__(self):
@@ -106,12 +107,9 @@ class Loader(ListenerReference):
                 balance.amount += change
                 balance.save()
 
-                # If balance of user is greater than zero, proceed
                 if balance.amount > 0:
-                    # If the user is not address(0), add to m2m
                     if user.ethereum_address != ZERO_ADDRESS:
                         badge.users.add(user)
-                # If balance == 0 or less, remove from m2m
                 elif user in badge.users.all():
                     badge.users.remove(user)
 
@@ -160,7 +158,6 @@ class Loader(ListenerReference):
                 organization.description = data["description"]
                 organization.image_hash = data["image"].split("/ipfs/")[1]
 
-        # If we don't get IPFS, try the blockchain
         if not organization.name:
             organization.name = organization_contract.functions.name().call()
 
