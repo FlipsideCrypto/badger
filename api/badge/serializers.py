@@ -3,40 +3,47 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from api.mixins import SerializerRepresentationMixin
+from wallet.serializers import WalletSerializer
 
 from .models import Badge
 
 User = get_user_model()
 
-class BadgeUserSerializer(
+class BadgeWalletSerializer(
     SerializerRepresentationMixin,
     serializers.ModelSerializer
 ):
     ens_name = serializers.CharField(read_only=True)
     ens_avatar = serializers.CharField(read_only=True)
 
-    amount = serializers.SerializerMethodField(read_only=True)
+    amount = serializers.IntegerField(read_only=True)
+
+    is_delegate = serializers.BooleanField(read_only=True)
 
     def get_amount(self, obj):
-        # get badge from context
         badge = self.context.get('badge', None)
 
-        if not badge: return None
+        if not badge: return 0
 
-        # get balance
         balance = badge.balances.filter(user=obj).first()
 
-        if not balance: return None
+        if not balance: return 0
 
         return balance.amount
 
+    def get_is_delegate(self, obj):
+        badge = self.context.get('badge', None)
+
+        if not badge: return False
+
+        return badge.delegates.filter(ethereum_address=obj.ethereum_address).exists()
+
     class Meta:
         model = User
-        fields = (
-            'ethereum_address',
-            'ens_name',
-            'ens_avatar',
-            'amount'
+        exclude = (
+            'password', 
+            'groups', 
+            'user_permissions'
         )
 
 class BadgeSerializer(
@@ -44,11 +51,14 @@ class BadgeSerializer(
     serializers.ModelSerializer
 ):
     id = serializers.IntegerField(read_only=True)
-    delegates = BadgeUserSerializer(many=True, read_only=True)
-    users = serializers.SerializerMethodField(read_only=True)
+    token_id = serializers.IntegerField(read_only=True)
+
+    delegates = WalletSerializer(many=True, read_only=True)
+
+    users = BadgeWalletSerializer(many=True, read_only=True)
 
     def get_users(self, obj):
-        return BadgeUserSerializer(
+        return BadgeWalletSerializer(
             obj.users.all(),
             many=True,
             context={

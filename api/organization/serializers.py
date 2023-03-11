@@ -5,55 +5,26 @@ from rest_framework import serializers
 from badge.serializers import BadgeSerializer
 
 from api.mixins import SerializerRepresentationMixin
+from wallet.serializers import WalletSerializer
 
 from .models import Organization
 
 User = get_user_model()
 
-
-class OrganizationUserSerializer(
-    SerializerRepresentationMixin,
-    serializers.ModelSerializer
-):
-    class Meta:
-        model = User
-        fields = (
-            'ethereum_address',
-            'ens_name',
-            'ens_avatar',
-        )
-
-
 class OrganizationSerializer(
     SerializerRepresentationMixin,
     serializers.ModelSerializer
 ):
-    owner = OrganizationUserSerializer(read_only=True)
+    chain_id = serializers.IntegerField(read_only=True)
+    ethereum_address = serializers.CharField(read_only=True)
+
+    owner = WalletSerializer(read_only=True)
+    delegates = WalletSerializer(many=True, read_only=True)
+
     badges = BadgeSerializer(many=True, read_only=True)
-    delegates = OrganizationUserSerializer(many=True, read_only=True)
 
-    # Assign the owner of the organization to the current user
-    def create(self, validated_data):
-        validated_data['owner'] = self.context['request'].user
-        return super().create(validated_data)
-
+    last_block = serializers.IntegerField(read_only=True)
+    
     class Meta:
         model = Organization
-        fields = (
-            'id',
-            'is_active',
-            'chain_id',
-            'name',
-            'symbol',
-            'description',
-            'image_hash',
-            'contract_uri_hash',
-            'ethereum_address',
-            'owner',
-            'badges',
-            'delegates',
-            'last_block',
-            'created',
-            'updated'
-        )
-        depth = 1
+        fields = "__all__"

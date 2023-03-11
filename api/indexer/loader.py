@@ -3,7 +3,7 @@ import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from balance.models import Balance
+from balance.models import Balance, Transaction
 from organization.models import Organization
 
 from .references import ListenerReference
@@ -89,7 +89,8 @@ class Loader(ListenerReference):
 
             balance, _ = Balance.objects.get_or_create(badge=badge, user=user)
 
-            _, created = balance.transactions.get_or_create(
+            _, created = Transaction.objects.get_or_create(
+                balance=balance,
                 tx_hash=event['transactionHash'].hex(),
                 log_index=event['logIndex']
             )
