@@ -14,10 +14,7 @@ ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 User = get_user_model()
 
 # TODO: Manager configured
-# TODO: Manager updated
-
 # TODO: Hook configured
-# TODO: Hook updated
 
 # To add a new manager we are going to implement it as simple wallets as they are all based on addresses.
 # This is also true for hooks -- they are all configured contract modules.
