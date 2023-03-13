@@ -49,7 +49,7 @@ class Loader(ListenerReference):
     def _organization_contract(self, ethereum_address):
         return self.connected_contract(
             self.summedAddress(ethereum_address),
-            settings.ORGANIZATION_ABI_FULL
+            settings.ORGANIZATION_ABI
         )
 
     """
