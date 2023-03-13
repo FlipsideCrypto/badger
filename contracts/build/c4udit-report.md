@@ -55,17 +55,17 @@ Issue Information: [G002](https://github.com/byterocket/c4-common-issues/blob/ma
 ../contracts/BadgerOrganization.sol::100 => fromsLength == _amounts.length,
 ../contracts/BadgerOrganization.sol::101 => "BadgerOrganization::revokeBatch: _from and _amounts must be the same length."
 ../contracts/BadgerOrganization.sol::149 => if (bytes(_uri).length != 0) {
-../contracts/BadgerOrganizationLogic.sol::118 => bytes(_uri).length != 0,
-../contracts/BadgerOrganizationLogic.sol::135 => bytes(_uri).length != 0,
-../contracts/BadgerOrganizationLogic.sol::152 => uint256 managersLength = _managers.length;
-../contracts/BadgerOrganizationLogic.sol::156 => managersLength == _isManager.length,
-../contracts/BadgerOrganizationLogic.sol::157 => "BadgerScout::setManagers: _managers and _isManager must be the same length."
-../contracts/BadgerOrganizationLogic.sol::186 => uint256 managersLength = _managers.length;
-../contracts/BadgerOrganizationLogic.sol::190 => managersLength == _isManager.length,
-../contracts/BadgerOrganizationLogic.sol::191 => "BadgerScout::setManagers: _managers and _isManager must be the same length."
-../contracts/BadgerOrganizationLogic.sol::220 => uint256 hooksLength = _hooks.length;
-../contracts/BadgerOrganizationLogic.sol::224 => hooksLength == _isHook.length,
-../contracts/BadgerOrganizationLogic.sol::225 => "BadgerScout::setHooks: _hooks and _isHook must be the same length."
+../contracts/BadgerOrganizationLogic.sol::121 => bytes(_uri).length != 0,
+../contracts/BadgerOrganizationLogic.sol::138 => bytes(_uri).length != 0,
+../contracts/BadgerOrganizationLogic.sol::166 => uint256 managersLength = _managers.length;
+../contracts/BadgerOrganizationLogic.sol::170 => managersLength == _isManager.length,
+../contracts/BadgerOrganizationLogic.sol::171 => "BadgerOrganizationLogic::setManagers: _managers and _isManager must be the same length."
+../contracts/BadgerOrganizationLogic.sol::200 => uint256 managersLength = _managers.length;
+../contracts/BadgerOrganizationLogic.sol::204 => managersLength == _isManager.length,
+../contracts/BadgerOrganizationLogic.sol::205 => "BadgerOrganizationLogic::setManagers: _managers and _isManager must be the same length."
+../contracts/BadgerOrganizationLogic.sol::234 => uint256 hooksLength = _hooks.length;
+../contracts/BadgerOrganizationLogic.sol::238 => hooksLength == _isHook.length,
+../contracts/BadgerOrganizationLogic.sol::239 => "BadgerOrganizationLogic::setHooks: _hooks and _isHook must be the same length."
 ../contracts/hooks/BadgerHooked.sol::81 => uint256 hooksLength = _hooks.length();
 ../contracts/hooks/BadgerHooked.sol::175 => uint256 slotHooksLength = slotHooks.length;
 ../contracts/hooks/transfer/BadgerTransferBound.sol::51 => uint256 idsLength = _ids.length;
@@ -118,16 +118,17 @@ Issue Information: [G007](https://github.com/byterocket/c4-common-issues/blob/ma
 ../contracts/BadgerOrganizationLogic.sol::9 => import {IBadgerOrganizationLogic} from "./interfaces/IBadgerOrganizationLogic.sol";
 ../contracts/BadgerOrganizationLogic.sol::12 => import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 ../contracts/BadgerOrganizationLogic.sol::13 => import {ERC1155Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
-../contracts/BadgerOrganizationLogic.sol::89 => "BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this."
-../contracts/BadgerOrganizationLogic.sol::101 => "BadgerScout::onlyBadgeManager: Only Managers can call this."
-../contracts/BadgerOrganizationLogic.sol::119 => "BadgerScout::setOrganizationURI: URI must be set."
-../contracts/BadgerOrganizationLogic.sol::136 => "BadgerScout::setBadgeURI: URI must be set."
-../contracts/BadgerOrganizationLogic.sol::157 => "BadgerScout::setManagers: _managers and _isManager must be the same length."
-../contracts/BadgerOrganizationLogic.sol::168 => "BadgerScout::setManagers: Manager cannot be the zero address."
-../contracts/BadgerOrganizationLogic.sol::191 => "BadgerScout::setManagers: _managers and _isManager must be the same length."
-../contracts/BadgerOrganizationLogic.sol::202 => "BadgerScout::setManagers: Manager cannot be the zero address."
-../contracts/BadgerOrganizationLogic.sol::225 => "BadgerScout::setHooks: _hooks and _isHook must be the same length."
-../contracts/BadgerOrganizationLogic.sol::236 => "BadgerScout::setHooks: Hook cannot be the zero address."
+../contracts/BadgerOrganizationLogic.sol::92 => "BadgerOrganizationLogic::onlyOrganizationManager: Only the Owner or Organization Manager can call this."
+../contracts/BadgerOrganizationLogic.sol::104 => "BadgerOrganizationLogic::onlyBadgeManager: Only Managers can call this."
+../contracts/BadgerOrganizationLogic.sol::122 => "BadgerOrganizationLogic::setOrganizationURI: URI must be set."
+../contracts/BadgerOrganizationLogic.sol::139 => "BadgerOrganizationLogic::setBadgeURI: URI must be set."
+../contracts/BadgerOrganizationLogic.sol::171 => "BadgerOrganizationLogic::setManagers: _managers and _isManager must be the same length."
+../contracts/BadgerOrganizationLogic.sol::182 => "BadgerOrganizationLogic::setManagers: Manager cannot be the zero address."
+../contracts/BadgerOrganizationLogic.sol::205 => "BadgerOrganizationLogic::setManagers: _managers and _isManager must be the same length."
+../contracts/BadgerOrganizationLogic.sol::216 => "BadgerOrganizationLogic::setManagers: Manager cannot be the zero address."
+../contracts/BadgerOrganizationLogic.sol::239 => "BadgerOrganizationLogic::setHooks: _hooks and _isHook must be the same length."
+../contracts/BadgerOrganizationLogic.sol::250 => "BadgerOrganizationLogic::setHooks: Hook cannot be the zero address."
+../contracts/BadgerOrganizationLogic.sol::377 => "BadgerOrganizationLogic::_mint: Cannot mint new tokens when Organization is archived."
 ../contracts/hooks/BadgerHook.sol::6 => import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 ../contracts/hooks/BadgerHook.sol::8 => import {IBadgerConfigured} from "../interfaces/IBadgerConfigured.sol";
 ../contracts/hooks/BadgerHooked.sol::8 => import {Address} from "@openzeppelin/contracts/utils/Address.sol";
