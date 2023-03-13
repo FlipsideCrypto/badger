@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 
 import { useUser } from "@hooks";
 
-import { ActionBar, Dashboard as DashboardContent, Empty, SEO } from "@components";
+import { ActionBar, ConnectButton, Dashboard as DashboardContent, Empty, SEO } from "@components";
 
 import { Badge, BadgeForm, Home, Org, OrgForm } from "@pages";
 
@@ -26,16 +26,19 @@ const Dashboard = () => {
                     {!isConnected && <Empty
                         title="Connect your wallet to view your Organizations!"
                         body="Connecting your wallet is simple and secure. Using Sign in with Ethereum, you can sign and create, manage, and share your Organizations and Badges in seconds just by signing a message."
+                        button={<ConnectButton className="primary" />}
                     />}
 
                     {isConnected && isWrongNetwork && <Empty
                         title="Wrong Network!"
                         body={`Please connect to ${primaryChain.name} network.`}
+                        button={<ConnectButton className="primary" />}
                     />}
 
                     {isConnected && (!isAuthenticated && <Empty
                         title="Authenticate your wallet to view your Organizations!"
                         body="Authentication is simple and secure. Using Sign in with Ethereum, you can sign and create, manage, and share your Organizations and Badges in seconds just by signing a message."
+                        button={<ConnectButton className="primary" />}
                     />)}
 
                     {isAuthenticated && !isLoaded && <Empty

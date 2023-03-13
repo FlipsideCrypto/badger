@@ -1,9 +1,10 @@
 .empty {
     display: grid;
+    grid-column: 1 / span 4;
     background: #FCFCFF;
     border-radius: 4px;
     text-align: center;
-    width: 100%;
+    margin: 20px;
 }
 
 .empty .dashboardContent {

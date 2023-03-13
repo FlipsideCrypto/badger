@@ -14,6 +14,8 @@ const Empty = ({ title, body, button, url }) => {
                 {url && button && <Link className="internal-link" to={url}>
                     <ActionButton className="primary" icon={['fal', 'arrow-right']} beforeText={button} />
                 </Link>}
+
+                {!url && button && button}
             </Dashboard>
         </div>
     )

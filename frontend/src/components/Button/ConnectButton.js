@@ -4,7 +4,7 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 import { useAuthentication, useAuthenticationModal } from "@hooks";
 
-const ConnectButton = () => {
+const ConnectButton = (props) => {
     const { switchNetwork } = useSwitchNetwork();
 
     const { isConnected, isLoading } = useAccount();
@@ -15,26 +15,37 @@ const ConnectButton = () => {
 
     const { openAuthenticationModal } = useAuthenticationModal();
 
+    const className = props.className || "secondary"
+
     if (!isConnected)
         return (
-            <button onClick={openConnectModal} disabled={isLoading}>
-                {isLoading ? "Loading..." : "Connect Wallet"}
+            <button
+                className={className}
+                onClick={openConnectModal}
+                disabled={isLoading}
+            >
+                <span>{isLoading ? "Loading..." : "Connect Wallet"}</span>
             </button>
         );
 
     if (isWrongNetwork && switchNetwork)
         return (
             <button
+                className={className}
                 disabled={!switchNetwork}
                 onClick={switchNetwork.bind(null, primaryChain.id)}
             >
-                Switch to {primaryChain.name}
+                <span>Switch to {primaryChain.name}</span>
             </button>
         );
 
     return (
-        <button disabled={isAuthenticating} onClick={openAuthenticationModal}>
-            Sign In
+        <button
+            className={className}
+            disabled={isAuthenticating}
+            onClick={openAuthenticationModal}
+        >
+            <span>Sign In</span>
         </button>
     );
 };
