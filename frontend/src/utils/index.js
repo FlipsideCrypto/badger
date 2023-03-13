@@ -1,15 +1,8 @@
 export {
-    postOrgRequest,
-    postBadgeRequest,
     postIPFSImage,
     postIPFSMetadata,
-    getUserRequest,
-    getOrgRequest,
-    putBadgeRolesRequest,
     getBadgeImage,
     getPFPImage,
-    getAttributesFromHash,
-    patchModelType,
 } from './api'
 
 export {

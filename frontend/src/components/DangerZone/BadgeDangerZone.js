@@ -3,8 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { ErrorContext, UserContext } from "@contexts";
 
-import { patchModelType } from "@utils";
-
 // import { useTransferOwnership, useRenounceOwnership } from "@hooks/contracts/useContracts";
 // import Input from "@components/Form/Input";
 
@@ -19,29 +17,29 @@ const BadgeDangerZone = () => {
     const orgId = parseInt(useParams().orgId);
 
     const onArchive = async () => {
-        const body = {
-            id: orgId,
-            is_active: false
-        }
-        const response = await patchModelType("badges", body);
+        // const body = {
+        //     id: orgId,
+        //     is_active: false
+        // }
+        // const response = await patchModelType("badges", body);
 
-        let newUserData = { ...userData }
-        const orgIndex = newUserData.organizations.findIndex(org => org.id === orgId);
-        const badgeIndex = newUserData.organizations[orgIndex].badges.findIndex(badge => badge.id === badgeId);
+        // let newUserData = { ...userData }
+        // const orgIndex = newUserData.organizations.findIndex(org => org.id === orgId);
+        // const badgeIndex = newUserData.organizations[orgIndex].badges.findIndex(badge => badge.id === badgeId);
 
-        if (response.error || badgeIndex === -1) {
-            setError({
-                label: 'Could not archive badge',
-                message: response?.error ?? response.detail ?? "Badge not found"
-            });
-            return;
-        }
+        // if (response.error || badgeIndex === -1) {
+        //     setError({
+        //         label: 'Could not archive badge',
+        //         message: response?.error ?? response.detail ?? "Badge not found"
+        //     });
+        //     return;
+        // }
 
-        let newUserDataBadges = [...newUserData.organizations[orgIndex].badges];
-        newUserDataBadges.splice(badgeIndex, 1);
-        newUserData.organizations = newUserDataBadges;
-        setUserData(newUserData);
-        navigate(`/dashboard/organizations/${orgId}`);
+        // let newUserDataBadges = [...newUserData.organizations[orgIndex].badges];
+        // newUserDataBadges.splice(badgeIndex, 1);
+        // newUserData.organizations = newUserDataBadges;
+        // setUserData(newUserData);
+        // navigate(`/dashboard/organizations/${orgId}`);
     }
 
     return (

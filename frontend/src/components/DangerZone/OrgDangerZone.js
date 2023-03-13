@@ -5,7 +5,7 @@ import { ErrorContext, UserContext } from "@contexts";
 
 import { FormActionBar } from "@components"
 
-import { patchModelType } from "@utils";
+// import { patchModelType } from "@utils";
 
 // import { useTransferOwnership } from "@hooks/contracts/useContracts";
 // import InputAddress from "@components/Form/InputAddress";
@@ -82,28 +82,28 @@ const OrgDangerZone = ({ orgAddress }) => {
     // }
 
     const onArchive = async () => {
-        const body = {
-            id: orgId,
-            is_active: false
-        }
-        const response = await patchModelType("organizations", body);
+        // const body = {
+        //     id: orgId,
+        //     is_active: false
+        // }
+        // // const response = await patchModelType("organizations", body);
 
-        let newUserData = { ...userData }
-        const orgIndex = newUserData.organizations.findIndex(org => org.id === orgId);
+        // let newUserData = { ...userData }
+        // const orgIndex = newUserData.organizations.findIndex(org => org.id === orgId);
 
-        if (response.error || orgIndex === -1) {
-            setError({
-                label: 'Could not archive org',
-                message: response?.error ?? response.detail ?? "Org not found"
-            });
-            return;
-        }
+        // if (response.error || orgIndex === -1) {
+        //     setError({
+        //         label: 'Could not archive org',
+        //         message: response?.error ?? response.detail ?? "Org not found"
+        //     });
+        //     return;
+        // }
 
-        let newUserDataOrgs = [...newUserData.organizations];
-        newUserDataOrgs.splice(orgIndex, 1);
-        newUserData.organizations = newUserDataOrgs;
-        setUserData(newUserData);
-        navigate(`/dashboard`);
+        // let newUserDataOrgs = [...newUserData.organizations];
+        // newUserDataOrgs.splice(orgIndex, 1);
+        // newUserData.organizations = newUserDataOrgs;
+        // setUserData(newUserData);
+        // navigate(`/dashboard`);
     }
 
     // useEffect(() => {
