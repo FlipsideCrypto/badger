@@ -20,7 +20,8 @@ const Org = () => {
     }];
 
     const titleActions = isOwner && [{
-        text: "Create Badge",
+        className: "secondary",
+        text: "Create",
         icon: ['fal', 'plus'],
         onClick: () => navigate(`${URL_BASE}/badge/new/`)
     }];
@@ -35,13 +36,12 @@ const Org = () => {
                 <Header back={() => navigate("/dashboard/")} actions={headerActions} />
 
                 <div className="dashboard__content">
-                    <ActionTitle title="Organization Badges" actions={titleActions} />
+                    <ActionTitle title="Badges" actions={titleActions} />
 
                     {badges && badges.length === 0 && <Empty
-                        title="No Badges in the Organization yet!"
-                        body="You are one step closer to having the credentials of your onchain Organization.
-                    Now you can create and distribute your badges that act as keys throughout the ecosystem in a matter of seconds."
-                        button="CREATE BADGE"
+                        title={`${organization.name} does not have any Badges yet.`}
+                        body="You're almost done setting up your Badger Organization. Now all you have to do is create and mint your Badges!"
+                        button="Create a badge"
                         url={`${URL_BASE}/badge/new/`}
                     />}
 

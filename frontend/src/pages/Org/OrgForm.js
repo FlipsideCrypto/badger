@@ -67,7 +67,7 @@ const OrgForm = ({ isEdit = false }) => {
     })
 
     const actions = [{
-        text: `${isEdit ? "Save" : "Create"} organization`,
+        text: "Save organization",
         icon: ["fal", "arrow-right"],
         loading: isLoading,
         disabled: isDisabled || !isPrepared,

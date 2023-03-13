@@ -41,7 +41,7 @@ button {
     border-radius: 5px;
     font-weight: 700;
     font-size: inherit;
-    transition: all 3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    transition: all .3s cubic-bezier(0.075, 0.82, 0.165, 1);
     box-shadow: 0 0 80px transparent;
 }
 
@@ -61,11 +61,13 @@ button.unstyled {
 
 button.primary {
     background: linear-gradient(30deg, #00FF94 0%, #00FFE0 35%);
-    color: #000000;
+    color: #000000 !important;
     position: relative;
+    filter: saturate(1);
 }
 
 button.primary span {
+    color: inherit !important;
     position: relative;
     z-index: 1;
 }
@@ -75,6 +77,10 @@ button.primary:focus,
 button.primary:active {
     background: linear-gradient(33deg, #00FFE0 0%, #00FF94 10%, #00FFE0 45%);
     box-shadow: 0 0 80px rgba(0, 255, 224, .35);
+}
+
+button.primary:disabled {
+    filter: saturate(0);
 }
 
 button.primary::after {
@@ -90,8 +96,24 @@ button.primary::after {
 
 button.secondary {
     background: #000;
-    color: #fff;
     white-space: nowrap;
+}
+
+button.secondary,
+button.secondary span {
+    color: #fff;
+}
+
+button.secondary:hover,
+button.secondary:focus,
+button.secondary:active {
+    background: #1b1b1b;
+    color: rgba(255, 255, 255, .85);
+}
+
+button.tertiary {
+    background: #FCFCFF;
+    color: rgba(0, 0, 0, .65);
 }
 
 .button__warning {
@@ -141,7 +163,7 @@ button.secondary {
     box-sizing: border-box;
 }
 
-.container.top { 
+.container.top {
     margin-top: 80px;
 }
 

@@ -1,28 +1,22 @@
 .empty {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    margin-inline: 20px;
+    background: #FCFCFF;
+    border-radius: 4px;
+    text-align: center;
+    width: 100%;
 }
 
-.empty,
 .empty .dashboardContent {
     grid-column: 1 / span 2;
+    max-width: 420px;
+    margin: auto;
+    padding: 15px;
+}
+
+.empty .dashboardContent h1 {
+    margin-top: 15px;
 }
 
 .empty .dashboardContent p {
     margin-bottom: 40px;
-}
-
-@media (max-width: 1024px) {
-    .empty,
-    .empty .dashboardContent {
-        grid-column: 1 / span 3;
-    }
-}
-
-@media (max-width: 768px) {
-    .empty,
-    .empty .dashboardContent {
-        grid-column: 1 / span 4;
-    }
 }

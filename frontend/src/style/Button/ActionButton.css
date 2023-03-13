@@ -1,17 +1,27 @@
 .action__button {
-    color: rgba(0, 0, 0, .35) !important;
+    /* color: rgba(0, 0, 0, .35) !important; */
     width: fit-content;
     text-decoration: none;
 }
-  
+
 .action__button:hover,
 .action__button:active,
-.action__button:focus { 
-    color: rgba(0, 0, 0, .65) !important;
+.action__button:focus {
+    /* color: rgba(0, 0, 0, .65) !important; */
 }
 
 .action__button svg {
     color: inherit !important;
+}
+
+.action__button span {
+    text-transform: none;
+    color: inherit !important;
+}
+
+.action__button .secondary {
+    background: #000;
+    color: #fff !important;
 }
 
 .action__button span {

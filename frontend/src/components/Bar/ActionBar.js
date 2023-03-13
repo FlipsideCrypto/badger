@@ -41,12 +41,12 @@ const ActionBar = () => {
             </div>
 
             <div className="action_bar__toggle">
-                <ActionButton icon={['fal', 'bars']} onClick={() => setCollapsed(!collapsed)} />
+                <ActionButton className="tertiary" icon={['fal', 'bars']} onClick={() => setCollapsed(!collapsed)} />
             </div>
 
             <div className={`action_bar__actions ${collapsed ? 'collapsed' : ''}`}>
                 <div className="actions">
-                    <ActionButton icon={['fal', 'star']} afterText="Star on GitHub"
+                    <ActionButton className="tertiary" icon={['fal', 'star']} afterText="Star on GitHub"
                         link="http://github.com/flipsidecrypto/badger" />
 
                     {isAuthenticated && authenticatedAddress && <LogoutButton />}

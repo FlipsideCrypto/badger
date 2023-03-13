@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { IconButton } from "@components"
+import { ActionButton } from "@components"
 
 import "@style/Bar/FormActionBar.css"
 
@@ -11,14 +11,16 @@ const FormActionBar = ({ actions, style, actionStyle }) => {
                 {actions && actions.map(action => (
                     <div key={action.text} style={actionStyle}>
                         {action.to ? <Link className="internal-link" to={action.to}>
-                            <IconButton
+                            <ActionButton
+                                className="primary"
                                 icon={action.icon}
-                                text={action.text}
+                                beforeText={action.text}
                                 disabled={action.disabled}
                             />
-                        </Link> : <IconButton
+                        </Link> : <ActionButton
+                            className="primary"
                             icon={action.icon}
-                            text={action.text}
+                            beforeText={action.text}
                             onClick={action.event}
                             disabled={action.disabled}
                             loading={action.loading}

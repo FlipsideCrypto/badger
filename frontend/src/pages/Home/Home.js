@@ -12,8 +12,8 @@ const Home = () => {
     const { isAuthenticated, organizations } = useUser();
 
     const titleActions = isAuthenticated && [{
-        className: "home__action-button",
-        text: "Create Organization",
+        className: "secondary",
+        text: "Create",
         icon: ['fal', 'plus'],
         onClick: () => navigate(`/dashboard/organization/new/`)
     }];
@@ -28,7 +28,7 @@ const Home = () => {
             {organizations && organizations.length === 0 && <Empty
                 title="No Organizations yet!"
                 body="Creating the Badges for your first Organization is easy. Choose and customize your Organization's name, logo, and description and your organization is live!"
-                button="CREATE ORGANIZATION"
+                button="Create organization"
                 url="/dashboard/organization/new/"
             />}
 
