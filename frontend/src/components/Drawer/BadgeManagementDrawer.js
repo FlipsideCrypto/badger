@@ -4,7 +4,7 @@ import { useManageHolders } from "@hooks";
 
 import { ErrorContext } from "@contexts";
 
-import { IconButton, InputListAddressAmountCSV, Select } from "@components";
+import { ActionButton, InputListAddressAmountCSV, Select } from "@components";
 
 // TODO: Still need to clean up the below functions
 // setDelegates hook
@@ -15,9 +15,9 @@ import { IconButton, InputListAddressAmountCSV, Select } from "@components";
 // useEffect
 
 const BadgeManagementDrawer = ({ drawer, badge, org, setDrawer }) => {
-    const [ addressAmounts, setAddressAmounts ] = useState({
+    const [addressAmounts, setAddressAmounts] = useState({
         addresses: [],
-        amounts: [] 
+        amounts: []
     })
     const { setError } = useContext(ErrorContext);
 
@@ -51,14 +51,14 @@ const BadgeManagementDrawer = ({ drawer, badge, org, setDrawer }) => {
             <Select label="Update Type" options={["Mint", "Revoke"]}
                 value={drawer.action} setValue={(e) => setDrawer({ ...drawer, action: e.target.value })} />
 
-            <InputListAddressAmountCSV 
+            <InputListAddressAmountCSV
                 label={"Holders to Update"}
                 obj={addressAmounts}
                 setObj={setAddressAmounts}
             />
 
-            <IconButton 
-                text={drawer.action === "Mint" ? "Mint Badges" : "Revoke Badges"}
+            <ActionButton
+                beforeText={drawer.action === "Mint" ? "Mint Badges" : "Revoke Badges"}
                 icon={['fal', 'arrow-right']}
                 onClick={onTransaction}
                 style={{ margin: "20px 0px 20px auto" }}

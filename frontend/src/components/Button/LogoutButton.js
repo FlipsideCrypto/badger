@@ -10,11 +10,12 @@ const LogoutButton = () => {
     const { logout } = useLogout();
 
     const { disconnect } = useDisconnect({
-        onSuccess: () => { logout(); }            
+        onSuccess: () => { logout(); }
     });
 
     return (
-        <ActionButton className="logout"
+        <ActionButton
+            className="logout tertiary"
             onClick={disconnect}
             afterText="Logout"
             icon={['fal', 'sign-out']}

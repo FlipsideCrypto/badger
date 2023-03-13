@@ -40,11 +40,11 @@ const ActionButton = (
     return (
         <>
             {!props.link ? <Button className={className} onClick={onClick} {...props}>
-                {buttonContent}
+                <span>{buttonContent}</span>
             </Button>
                 : <a className={className} href={props.link} target="_blank" rel="noreferrer" {...props} >
                     <Button className={className} {...props} >
-                        {buttonContent}
+                        <span>{buttonContent}</span>
                     </Button>
                 </a>}
         </>

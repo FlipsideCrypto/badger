@@ -8,6 +8,7 @@ const Header = ({ back, actions }) => {
             <div className="header__back">
                 {back &&
                     <ActionButton
+                        className="tertiary"
                         onClick={back}
                         afterText="Back"
                         icon={['fal', 'chevron-left']}
@@ -19,6 +20,7 @@ const Header = ({ back, actions }) => {
                 {actions.map((action, index) => (
                     <ActionButton
                         key={index}
+                        className="tertiary"
                         onClick={action.event || action.onClick}
                         icon={action.icon}
                         afterText={action.text}
