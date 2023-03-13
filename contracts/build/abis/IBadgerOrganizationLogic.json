@@ -4,6 +4,19 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "bool",
+        "name": "isArchived",
+        "type": "bool"
+      }
+    ],
+    "name": "OrganizationArchived",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "string",
         "name": "organizationURI",
         "type": "string"
@@ -117,6 +130,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bool",
+        "name": "_isArchived",
+        "type": "bool"
+      }
+    ],
+    "name": "setArchived",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
