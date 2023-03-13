@@ -11,7 +11,7 @@
 
 .dashboard__contents {
     display: grid;
-    grid-template-rows: 75px auto;
+    grid-template-rows: min-content auto;
     grid-row-gap: 20px;
     margin-bottom: 40px;
 }

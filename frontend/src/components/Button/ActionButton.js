@@ -3,10 +3,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import "@style/Button/ActionButton.css";
 
+const ActionButtonContent = ({ beforeText, afterText, icon, iconStyle }) => {
+    const marginStyle = beforeText ? { marginLeft: "10px" } : afterText ? { marginRight: "10px" } : {};
+
+    return (
+        <>
+            {beforeText && <span>{beforeText}</span>}
+            <FontAwesomeIcon icon={icon} style={{
+                ...iconStyle,
+                ...marginStyle
+            }} />
+            {afterText && <span>{afterText}</span>}
+        </>
+    )
+}
+
 const ActionButton = (
     {
-        children,
-        className,
+        className: buttonClass,
         onClick,
         beforeText,
         afterText,
@@ -15,39 +29,22 @@ const ActionButton = (
         ...props
     }
 ) => {
-    const marginStyle = beforeText ? { marginLeft: "10px" } : afterText ? { marginRight: "10px" } : {};
+    const className = buttonClass ? `action__button ${buttonClass}` : "action__button";
+
+    const buttonContent = <ActionButtonContent
+        beforeText={beforeText}
+        afterText={afterText}
+        icon={icon}
+        iconStyle={iconStyle} />
 
     return (
         <>
-            {!props.link ? <Button
-                className={`action__button ${className}`}
-                onClick={onClick}
-                {...props}
-            >
-                {beforeText && <span>{beforeText}</span>}
-                <FontAwesomeIcon icon={icon} style={{
-                    ...iconStyle,
-                    ...marginStyle
-                }} />
-                {afterText && <span>{afterText}</span>}
+            {!props.link ? <Button className={className} onClick={onClick} {...props}>
+                {buttonContent}
             </Button>
-                : <a
-                    className={`action__button ${className}`}
-                    href={props.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    {...props}
-                >
-                    <Button
-                        className={`action__button ${className}`}
-                        {...props}
-                    >
-                        {beforeText && <span>{beforeText}</span>}
-                        <FontAwesomeIcon icon={icon} style={{
-                            ...iconStyle,
-                            ...marginStyle
-                        }} />
-                        {afterText && <span>{afterText}</span>}
+                : <a className={className} href={props.link} target="_blank" rel="noreferrer" {...props} >
+                    <Button className={className} {...props} >
+                        {buttonContent}
                     </Button>
                 </a>}
         </>

@@ -1,4 +1,6 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useState } from "react";
+
+import { useLocation } from "react-router-dom";
 
 import { useENSProfile, useUser } from "@hooks";
 
@@ -22,6 +24,8 @@ const ActionBar = () => {
 
     const orgAddress = orgRegex.test(pathname) && orgRegex.exec(pathname)[2]
 
+    const [collapsed, setCollapsed] = useState(true);
+
     return (
         <div className="action_bar">
             <div className="action_bar__view">
@@ -36,11 +40,17 @@ const ActionBar = () => {
                 {isAuthenticated && isLoaded && orgAddress && <OrgView chainId={chainId} orgAddress={orgAddress} />}
             </div>
 
-            <div className="action_bar__actions">
-                <ActionButton icon={['fal', 'star']} afterText="Star on GitHub"
-                    link="http://github.com/flipsidecrypto/badger" />
+            <div className="action_bar__toggle">
+                <ActionButton icon={['fal', 'bars']} onClick={() => setCollapsed(!collapsed)} />
+            </div>
 
-                {isAuthenticated && authenticatedAddress && <LogoutButton />}
+            <div className={`action_bar__actions ${collapsed ? 'collapsed' : ''}`}>
+                <div className="actions">
+                    <ActionButton icon={['fal', 'star']} afterText="Star on GitHub"
+                        link="http://github.com/flipsidecrypto/badger" />
+
+                    {isAuthenticated && authenticatedAddress && <LogoutButton />}
+                </div>
             </div>
         </div >
     )
