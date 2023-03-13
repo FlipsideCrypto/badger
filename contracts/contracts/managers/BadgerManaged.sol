@@ -23,21 +23,59 @@ contract BadgerManaged is IBadgerManaged, BadgerNetwork {
     mapping(bytes32 => bool) public managerKeyToIsManager;
 
     ////////////////////////////////////////////////////////
-    ///                     SETTERS                      ///
+    ///                 INTERNAL SETTERS                 ///
     ////////////////////////////////////////////////////////
 
     /**
      * @notice Packs the logic for updating the state of a Manager into a reusable function.
      * @dev The key is a `keccak256` hash of the address of the Manager.
      * @param _key The key used to identify the Manager.
+     * @param _manager The address of the Manager.
      * @param _isManager The state of the Manager.
      */
-    function _setManager(bytes32 _key, bool _isManager) internal virtual {
+    function __setManager(
+        bytes32 _key,
+        address _manager,
+        bool _isManager
+    ) internal virtual {
         /// @dev Save the Manager state based on the encoded key.
         managerKeyToIsManager[_key] = _isManager;
 
         /// @dev Announce the change of Manager state.
-        emit ManagerUpdated(_key, _isManager);
+        emit ManagerUpdated(_key, _manager, _isManager);
+    }
+
+    /**
+     * @notice Packs the logic for updating the state of a Manager into a reusable function.
+     * @dev The key is a `keccak256` hash of the address of the Manager.
+     * @param _manager The address of the Manager.
+     * @param _isManager The state of the Manager.
+     */
+    function _setManager(address _manager, bool _isManager) internal virtual {
+        /// @dev Build the key for the Manager.
+        bytes32 _key = _managerHash(_manager);
+
+        /// @dev Save the Manager state based on the encoded key.
+        __setManager(_key, _manager, _isManager);
+    }
+
+    /**
+     * @notice Packs the logic for updating the state of a Manager into a reusable function.
+     * @dev The key is a `keccak256` hash of the address of the Manager.
+     * @param _id The id of the Badge.
+     * @param _manager The address of the Manager.
+     * @param _isManager The state of the Manager.
+     */
+    function _setManager(
+        uint256 _id,
+        address _manager,
+        bool _isManager
+    ) internal virtual {
+        /// @dev Build the key for the Manager.
+        bytes32 _key = _badgeManagerHash(_id, _manager);
+
+        /// @dev Save the Manager state based on the encoded key.
+        __setManager(_key, _manager, _isManager);
     }
 
     /**
@@ -76,5 +114,33 @@ contract BadgerManaged is IBadgerManaged, BadgerNetwork {
 
         /// @dev Configure the manager network object.
         _configNetwork(_manager, _config);
+    }
+
+    ////////////////////////////////////////////////////////
+    ///                 INTERNAL GETTERS                 ///
+    ////////////////////////////////////////////////////////
+
+    /**
+     * @notice Calculates the hash that would be used for this sender pointer reference.
+     * @param _manager The address of the alleged Manager.
+     * @return The hash of the Manager.
+     */
+    function _managerHash(address _manager) internal pure returns (bytes32) {
+        /// @dev Build the hash of the Manager.
+        return keccak256(abi.encode(_manager));
+    }
+
+    /**
+     * @notice Calculates the hash that would be used for this sender pointer reference.
+     * @param _id The id of the Badge.
+     * @param _manager The address of the alleged Manager.
+     * @return The hash of the Manager.
+     */
+    function _badgeManagerHash(
+        uint256 _id,
+        address _manager
+    ) internal pure returns (bytes32) {
+        /// @dev Build the hash of the Manager.
+        return keccak256(abi.encode(_id, _manager));
     }
 }

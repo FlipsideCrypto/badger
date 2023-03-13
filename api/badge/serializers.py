@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from api.mixins import SerializerRepresentationMixin
-from wallet.serializers import WalletSerializer
 
 from .models import Badge
 
@@ -18,8 +17,6 @@ class BadgeWalletSerializer(
 
     amount = serializers.IntegerField(read_only=True)
 
-    is_delegate = serializers.BooleanField(read_only=True)
-
     def get_amount(self, obj):
         badge = self.context.get('badge', None)
 
@@ -30,13 +27,6 @@ class BadgeWalletSerializer(
         if not balance: return 0
 
         return balance.amount
-
-    def get_is_delegate(self, obj):
-        badge = self.context.get('badge', None)
-
-        if not badge: return False
-
-        return badge.delegates.filter(ethereum_address=obj.ethereum_address).exists()
 
     class Meta:
         model = User
@@ -53,8 +43,6 @@ class BadgeSerializer(
     id = serializers.IntegerField(read_only=True)
     token_id = serializers.IntegerField(read_only=True)
 
-    delegates = WalletSerializer(many=True, read_only=True)
-
     users = BadgeWalletSerializer(many=True, read_only=True)
 
     def get_users(self, obj):
@@ -69,16 +57,4 @@ class BadgeSerializer(
 
     class Meta:
         model = Badge
-        fields = (
-            'id',
-            'is_active',
-            'token_id',
-            'name',
-            'description',
-            'image_hash',
-            'token_uri',
-            'delegates',
-            'users',
-            'created',
-            'updated'
-        )
+        fields = "__all__"

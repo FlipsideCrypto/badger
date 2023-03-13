@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 
 from badge.urls import router as badges_router
 from ipfs.urls import router as ipfs_router
+from module.urls import router as modules_router
 from organization.urls import router as organizations_router
 from wallet.urls import router as wallets_router
 
@@ -15,6 +16,7 @@ from .views import get_nonce
 router = routers.DefaultRouter()
 router.registry.extend(badges_router.registry)
 router.registry.extend(ipfs_router.registry)
+router.registry.extend(modules_router.registry)
 router.registry.extend(organizations_router.registry)
 router.registry.extend(wallets_router.registry)
 

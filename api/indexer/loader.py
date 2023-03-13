@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from balance.models import Balance, Transaction
+from module.models import Module
 from organization.models import Organization
 
 from .references import ListenerReference
@@ -13,10 +14,16 @@ ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 User = get_user_model()
 
 # TODO: Manager configured
-# TODO: Manager updated
-
 # TODO: Hook configured
-# TODO: Hook updated
+
+# To add a new manager we are going to implement it as simple wallets as they are all based on addresses.
+# This is also true for hooks -- they are all configured contract modules.
+# When we detect a new manager or hook configured, we need to add to the organization or badge.
+# When a new hook or manager is detected, we will add (or remove) to the organization relative to the key. 
+# Then, we will have a single list of managers and hooks on the organization, with a bunch of access keys.
+# Then, when we are localized to a specific object on the front-end, we can always determined that key and filter down by it.
+# This means that really the only thing the indexer needs to do is store these on organizations with a key.
+# When we enable real configuration, we will just add a new field to the configured object.
 
 class Loader(ListenerReference):
     def __init__(self):
@@ -29,6 +36,9 @@ class Loader(ListenerReference):
             "TransferSingle": self.handle_transfer_single,
             "TransferBatch": self.handle_transfer_batch,
             "URI": self.handle_uri,
+            # Manager and hook events
+            "ManagerUpdated": self.handle_manager_updated,
+            "HookUpdated": self.handle_hook_updated,
         }
 
         self.contracts = {}
@@ -222,6 +232,45 @@ class Loader(ListenerReference):
         badge.save()
 
         return ("Badge uri updated", event['args'])
+    
+    def handle_manager_updated(self, event):
+        organization = self._organization(event['address'])
+
+        key = event['args']['managerKey']
+
+        is_manager = event['args']['isManager']
+
+        module, created = organization.modules.get_or_create(
+            key=key,
+            ethereum_address = self.summedAddress(event['args']['manager']),
+            module_type=Module.MANAGER
+        )
+
+        module.is_active = is_manager
+
+        module.save()
+
+        return ("Organization manager updated", event['args'])
+    
+    def handle_hook_updated(self, event):
+        organization = self._organization(event['address'])
+
+        key = event['args']['hookKey']
+
+        is_manager = event['args']['isHook']
+
+        module, created = organization.modules.get_or_create(
+            key=key,
+            ethereum_address = self.summedAddress(event['args']['hook']),
+            module_type=Module.HOOK
+        )
+
+        module.is_active = is_manager
+
+        module.save()
+
+        return ("Organization manager updated", event['args'])
+        
 
     def load(self, events):
         event_responses = []

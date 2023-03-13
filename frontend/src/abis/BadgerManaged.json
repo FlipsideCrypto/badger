@@ -29,6 +29,12 @@
             },
             {
                 "indexed": true,
+                "internalType": "address",
+                "name": "manager",
+                "type": "address"
+            },
+            {
+                "indexed": true,
                 "internalType": "bool",
                 "name": "isManager",
                 "type": "bool"

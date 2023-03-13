@@ -8,7 +8,11 @@ interface IBadgerHooked {
     ////////////////////////////////////////////////////////
 
     /// @dev Event that announces when a hook is updated.
-    event HookUpdated(bytes32 indexed hookKey, address, bool indexed isHook);
+    event HookUpdated(
+        bytes32 indexed hookKey,
+        address indexed hook,
+        bool indexed isHook
+    );
 
     /// @dev Event that announces when the config of a hook changes.
     event HookConfigured(bytes32 indexed hookKey, bytes data);

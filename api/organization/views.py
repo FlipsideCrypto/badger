@@ -8,7 +8,7 @@ from api.permissions import generator, CanManageOrganization
 from .models import Organization
 from .serializers import OrganizationSerializer
 
-class OrganizationViewSet(viewsets.ModelViewSet):
+class OrganizationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
 

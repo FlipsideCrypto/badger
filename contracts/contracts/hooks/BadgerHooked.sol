@@ -70,12 +70,9 @@ abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
     /**
      * @dev See {IBadgerOrganizationHooked-getHooks}.
      */
-    function getHooks(bytes32 _slot)
-        external
-        view
-        override
-        returns (address[] memory)
-    {
+    function getHooks(
+        bytes32 _slot
+    ) external view override returns (address[] memory) {
         /// @dev Get the hooks for the specified slot.
         EnumerableSet.AddressSet storage _hooks = hooks[_slot];
 
@@ -102,40 +99,42 @@ abstract contract BadgerHooked is IBadgerHooked, BadgerNetwork {
     /**
      * @dev Update the state of hooks for a specified slot.
      * @param _slot The slot to update.
-     * @param _slotHook The hook to add or remove.
+     * @param _hookAddress The hook to add or remove.
      * @param _isHook Whether or not the hook is active.
      */
     function _setHook(
         bytes32 _slot,
-        address _slotHook,
+        address _hookAddress,
         bool _isHook
     ) internal {
         /// @dev Confirm the hook being configured is a contract.
         require(
-            _slotHook.isContract(),
+            _hookAddress.isContract(),
             "BadgerOrganizationHooked::_configManager: Manager is not a contract."
         );
 
         /// @dev Make sure the hook is a BadgerHook.
         require(
-            IERC165(_slotHook).supportsInterface(type(IBadgerHook).interfaceId),
+            IERC165(_hookAddress).supportsInterface(
+                type(IBadgerHook).interfaceId
+            ),
             "BadgerHooks::_setHook: Hook does not implement IBadgerHook."
         );
 
         /// @dev If the hook is active, add it to the set.
         if (_isHook) {
             /// @dev Add the hook to the set.
-            hooks[_slot].add(_slotHook);
+            hooks[_slot].add(_hookAddress);
         } else {
             /// @dev If the hook is not active, remove it from the set.
-            hooks[_slot].remove(_slotHook);
+            hooks[_slot].remove(_hookAddress);
         }
 
         /// @dev Announce updates to the hooks.
-        emit HookUpdated(_slot, _slotHook, _isHook);
+        emit HookUpdated(_slot, _hookAddress, _isHook);
 
         /// @dev Run any hooks.
-        _hook(BEFORE_SET_HOOK, abi.encode(_slot, _slotHook, _isHook));
+        _hook(BEFORE_SET_HOOK, abi.encode(_slot, _hookAddress, _isHook));
     }
 
     /**

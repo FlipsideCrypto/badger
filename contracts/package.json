@@ -17,7 +17,6 @@
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build-abis && npm run copy-files && tsc --build",
     "clean": "npx hardhat clean && tsc --build --clean",
     "build-abis": "npm run clean && npx hardhat compile",

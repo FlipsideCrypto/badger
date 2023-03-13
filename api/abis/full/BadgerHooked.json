@@ -28,9 +28,9 @@
         "type": "bytes32"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
-        "name": "",
+        "name": "hook",
         "type": "address"
       },
       {
