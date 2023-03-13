@@ -1,6 +1,6 @@
 // badger: 0x2f070d13
 // org: 0x7a3851dc
-// org logic: 0xd2779f52
+// org logic: 0xd97424c8
 // badger configured: 0x56dbdf14
 // hook: 0x6847c1d5
 // manager: 0x56dbdf14
@@ -130,7 +130,7 @@ describe("Badger", function () {
             const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
             await expect(organization.connect(otherAccount).mint(otherAccount.address, 0, 100, "0x"))
-                .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyBadgeManager: Only Managers can call this.")
         });
 
         it("call: mintBatch()", async function () {
@@ -145,7 +145,7 @@ describe("Badger", function () {
             const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
             await expect(organization.connect(otherAccount).mintBatch([otherAccount.address], 1, [100], "0x"))
-                .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyBadgeManager: Only Managers can call this.")
         });
 
         it("revert: mintBatch() invalid array lengths", async function () {
@@ -169,7 +169,7 @@ describe("Badger", function () {
             const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
             await expect(organization.connect(otherAccount).revoke(otherAccount.address, 0, 100))
-                .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyBadgeManager: Only Managers can call this.")
         });
 
         it("call: revokeBatch()", async function () {
@@ -186,7 +186,7 @@ describe("Badger", function () {
             const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
             await expect(organization.connect(otherAccount).revokeBatch([otherAccount.address], 1, [100]))
-                .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyBadgeManager: Only Managers can call this.")
         });
 
         it("revert: revokeBatch() invalid array lengths", async function () {
@@ -228,14 +228,14 @@ describe("Badger", function () {
             const { organization } = await loadFixture(deployNewOrganization);
 
             await expect(organization.setOrganizationURI(""))
-                .to.be.revertedWith("BadgerScout::setOrganizationURI: URI must be set.")
+                .to.be.revertedWith("BadgerOrganizationLogic::setOrganizationURI: URI must be set.")
         });
 
         it("revert: setOrganizationURI('placeholder') missing permission", async function () {
             const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
             await expect(organization.connect(otherAccount).setOrganizationURI("ipfs/newuri"))
-                .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
         });
 
         it("call: setBadgeURI(0, 'placeholder')", async function () {
@@ -270,35 +270,58 @@ describe("Badger", function () {
             const { organization } = await loadFixture(deployNewOrganization);
 
             expect(organization.setBadgeURI(0, ""))
-                .to.be.revertedWith("BadgerScout::setBadgeURI: URI must be set.")
+                .to.be.revertedWith("BadgerOrganizationLogic::setBadgeURI: URI must be set.")
         });
 
         it("revert: setBadgeURI(0, 'placeholder') missing permission", async function () {
             const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
             expect(organization.connect(otherAccount).setBadgeURI(0, "ipfs/newuri"))
-                .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyBadgeManager: Only Managers can call this.")
+        });
+
+        it("call: setArchived(true)", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.setArchived(true))
+                .to.emit(organization, "OrganizationArchived").withArgs(true)
+
+            expect(await organization.isArchived()).to.equal(true);
+
+            await expect(organization.setArchived(false))
+                .to.emit(organization, "OrganizationArchived").withArgs(false)
+
+            expect(await organization.isArchived()).to.equal(false);
+        });
+
+        it("revert: setArchived(true) missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.connect(otherAccount).setArchived(true))
+                .to.be.revertedWith("Ownable: caller is not the owner")
+
+            expect(await organization.isArchived()).to.equal(false);
         });
 
         it("revert: setManagers(0, [other], [true]) missing permission", async function () {
             const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
             await expect(organization.connect(otherAccount)['setManagers(uint256,address[],bool[])'](0, [otherAccount.address], [true]))
-                .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
         });
 
         it("revert: setManagers(0, [], [true]) arrays not equal", async function () {
             const { organization } = await loadFixture(deployNewOrganization);
 
             await expect(organization['setManagers(uint256,address[],bool[])'](0, [], [true]))
-                .to.be.revertedWith("BadgerScout::setManagers: _managers and _isManager must be the same length.")
+                .to.be.revertedWith("BadgerOrganizationLogic::setManagers: _managers and _isManager must be the same length.")
         });
 
         it("revert: setManagers([other], []) arrays not equal", async function () {
             const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
             await expect(organization['setManagers(address[],bool[])']([otherAccount.address], []))
-                .to.be.revertedWith("BadgerScout::setManagers: _managers and _isManager must be the same length.")
+                .to.be.revertedWith("BadgerOrganizationLogic::setManagers: _managers and _isManager must be the same length.")
         });
 
         it("revert: setManagers([other], [true]) missing permission", async function () {
@@ -312,14 +335,14 @@ describe("Badger", function () {
             const { organization } = await loadFixture(deployNewOrganization);
 
             await expect(organization['setManagers(address[],bool[])']([ethers.constants.AddressZero], [true]))
-                .to.be.revertedWith("BadgerScout::setManagers: Manager cannot be the zero address.")
+                .to.be.revertedWith("BadgerOrganizationLogic::setManagers: Manager cannot be the zero address.")
         });
 
         it("revert: setManagers(0, [address0], [true])", async function () {
             const { organization } = await loadFixture(deployNewOrganization);
 
             await expect(organization['setManagers(uint256,address[],bool[])'](0, [ethers.constants.AddressZero], [true]))
-                .to.be.revertedWith("BadgerScout::setManagers: Manager cannot be the zero address.")
+                .to.be.revertedWith("BadgerOrganizationLogic::setManagers: Manager cannot be the zero address.")
         });
 
         it("call: setManagers(0, [other], [true])", async function () {
@@ -356,7 +379,7 @@ describe("Badger", function () {
 
             await (
                 expect(organization.connect(otherAccount).setHooks(slot, [hook.address], [true]))
-                    .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+                    .to.be.revertedWith("BadgerOrganizationLogic::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
             );
         });
 
@@ -369,7 +392,7 @@ describe("Badger", function () {
 
             await (
                 expect(organization.connect(owner).setHooks(slot, [target.address], [true, true]))
-                    .to.be.revertedWith("BadgerScout::setHooks: _hooks and _isHook must be the same length.")
+                    .to.be.revertedWith("BadgerOrganizationLogic::setHooks: _hooks and _isHook must be the same length.")
             );
         });
 
@@ -379,7 +402,7 @@ describe("Badger", function () {
             const slot = ethers.utils.solidityKeccak256(["uint256", "address"], [0, ethers.constants.AddressZero]);
 
             await expect(organization.connect(owner).setHooks(slot, [ethers.constants.AddressZero], [true]))
-                .to.be.revertedWith("BadgerScout::setHooks: Hook cannot be the zero address.")
+                .to.be.revertedWith("BadgerOrganizationLogic::setHooks: Hook cannot be the zero address.")
         });
 
         it("revert: setHooks(0, [other], [true]) not a contract", async function () {
@@ -426,7 +449,7 @@ describe("Badger", function () {
             const hookConfig = ethers.utils.defaultAbiCoder.encode(["uint256", "bool"], [0, true]);
 
             await expect(organization.connect(otherAccount).configHook(slot, hook.address, hookConfig))
-                .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
         });
 
         // configManager
@@ -466,7 +489,7 @@ describe("Badger", function () {
             const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
 
             await expect(organization.connect(otherAccount)["configManager(address,bytes)"](manager.address, config))
-                .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
         });
 
         it("revert: configManager(0, manager, config) missing permission", async function () {
@@ -475,7 +498,7 @@ describe("Badger", function () {
             const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
 
             await expect(organization.connect(otherAccount)["configManager(uint256,address,bytes)"](0, manager.address, config))
-                .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.")
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyBadgeManager: Only Managers can call this.")
         });
 
         it("revert: configManager(manager, config) Manager not enabled", async function () {
@@ -494,7 +517,7 @@ describe("Badger", function () {
             const config = ethers.utils.defaultAbiCoder.encode(["uint256", "uint256"], [0, 1000]);
 
             await expect(organization.connect(otherAccount)["configManager(address,bytes)"](manager.address, config))
-                .to.be.revertedWith("BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
         });
 
         it("revert: configManager(manager, config) Manager not contract", async function () {
@@ -553,11 +576,11 @@ describe("Badger", function () {
         });
 
         // supportsInterface
-        it("call: supportsInterface(0xd2779f52)", async function () {
+        it("call: supportsInterface(0xd97424c8)", async function () {
             const { organization } = await loadFixture(deployNewOrganization);
 
             expect(await organization.supportsInterface("0x01ffc9a7")).to.equal(true);
-            expect(await organization.supportsInterface("0xd2779f52")).to.equal(true);
+            expect(await organization.supportsInterface("0xd97424c8")).to.equal(true);
             expect(await organization.supportsInterface("0x7a3851dc")).to.equal(true);
         });
 
@@ -573,6 +596,16 @@ describe("Badger", function () {
             }
 
             await expect(organization.initialize(org)).to.be.revertedWith("Initializable: contract is already initialized");
+        });
+
+        it("revert: mint() organization archived", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewHook);
+
+            await expect(organization.setArchived(true))
+                .to.emit(organization, "OrganizationArchived").withArgs(true)
+
+            await expect(organization.mint(otherAccount.address, 0, 1, "0x"))
+                .to.be.revertedWith("BadgerOrganizationLogic::_mint: Cannot mint new tokens when Organization is archived.")
         });
     });
 
