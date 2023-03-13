@@ -1,11 +1,10 @@
-import { formatAddresses, getCSRFToken, getFileFromBase64 } from "@utils";
+import { getCSRFToken, getFileFromBase64 } from "@utils";
 
 import { IPFS_GATEWAY_URL } from "@static"
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 async function postIPFSImage(image) {
-    // If the image is already a hash, return it.
     if (typeof (image) === "string") return { hash: image };
 
     const formData = new FormData();
