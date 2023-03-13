@@ -89,7 +89,7 @@ class Listener:
     def backfill_factories(self):
         print("Backfilling factories...")
         self.etl([settings.FACTORY_ADDRESS], 
-            settings.FACTORY_ABI, 
+            settings.FACTORY_ABI_FULL, 
             settings.FACTORY_TOPIC_SIGNATURES, 
             temp_from_block=settings.LISTENER_INIT_BLOCK,
             temp_to_block=w3.eth.blockNumber)
@@ -97,7 +97,7 @@ class Listener:
     def backfill_organizations(self):
         print("Backfilling organizations...")
         self.etl(Organization, 
-            settings.ORGANIZATION_ABI, 
+            settings.ORGANIZATION_ABI_FULL, 
             settings.ORGANIZATION_TOPIC_SIGNATURES, 
             temp_from_block=settings.LISTENER_INIT_BLOCK,
             temp_to_block=w3.eth.blockNumber)
@@ -105,11 +105,11 @@ class Listener:
     def listen_for_factories(self):
         print("Listening for factories...")
         self.etl([settings.FACTORY_ADDRESS], 
-            settings.FACTORY_ABI, 
+            settings.FACTORY_ABI_FULL, 
             settings.FACTORY_TOPIC_SIGNATURES)
         
     def listen_for_organizations(self):
         print("Listening for organizations...")
         self.etl(Organization, 
-            settings.ORGANIZATION_ABI, 
+            settings.ORGANIZATION_ABI_FULL, 
             settings.ORGANIZATION_TOPIC_SIGNATURES)

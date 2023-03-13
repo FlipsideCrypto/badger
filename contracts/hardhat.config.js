@@ -196,6 +196,12 @@ module.exports = {
         runOnCompile: true,
         clear: true,
         flat: true,
+        pretty: true
+    }, {
+        path: '../api/abis/full/',
+        runOnCompile: true,
+        clear: true,
+        flat: true,
         format: "json"
     }],
     typechain: {
