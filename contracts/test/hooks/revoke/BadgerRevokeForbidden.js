@@ -127,7 +127,7 @@ describe("Badger", function () {
                 .withArgs(owner.address, ethers.constants.AddressZero, random.address, 0, 1000)
 
             await expect(organization.connect(otherAccount).revoke(random.address, 0, 1000))
-                .to.be.revertedWith("BadgerScout::onlyBadgeManager: Only Managers can call this.");
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyBadgeManager: Only Managers can call this.");
         });
 
         it("revert: revoke() is manager", async function () {

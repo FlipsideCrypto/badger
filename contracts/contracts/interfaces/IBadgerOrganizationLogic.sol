@@ -13,6 +13,9 @@ interface IBadgerOrganizationLogic is IBadgerOrganizationStruct {
     /// @dev Event that announces when the Organization is updated.
     event OrganizationUpdated(string organizationURI);
 
+    /// @dev Event that announces when the Organization is archived.
+    event OrganizationArchived(bool isArchived);
+
     ////////////////////////////////////////////////////////
     ///                     SETTERS                      ///
     ////////////////////////////////////////////////////////
@@ -32,6 +35,16 @@ interface IBadgerOrganizationLogic is IBadgerOrganizationStruct {
      * - `_uri` cannot be empty.
      */
     function setBadgeURI(uint256 _id, string memory _uri) external;
+
+    /**
+     * @notice Allow the Owner of the Organization to archive the entire
+     *         Organization so that all interfaces know it's no longer active.
+     * @param _isArchived The status of the Organization.
+     *
+     * Requirements:
+     * - `_msgSender` must be the Organization Owner.
+     */
+    function setArchived(bool _isArchived) external;
 
     /**
      * @notice Allow the Owner of the Organization to control Organization Managers.
@@ -115,10 +128,9 @@ interface IBadgerOrganizationLogic is IBadgerOrganizationStruct {
      * @param _manager The address to check.
      * @return True if the address is an Organization Manager, otherwise false.
      */
-    function isOrganizationManager(address _manager)
-        external
-        view
-        returns (bool);
+    function isOrganizationManager(
+        address _manager
+    ) external view returns (bool);
 
     /**
      * @notice Determine if an address is a Badge Manager.
@@ -126,8 +138,8 @@ interface IBadgerOrganizationLogic is IBadgerOrganizationStruct {
      * @param _manager The address to check.
      * @return True if the address is a Badge Manager, otherwise false.
      */
-    function isBadgeManager(uint256 _id, address _manager)
-        external
-        view
-        returns (bool);
+    function isBadgeManager(
+        uint256 _id,
+        address _manager
+    ) external view returns (bool);
 }

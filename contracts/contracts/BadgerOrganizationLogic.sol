@@ -13,7 +13,7 @@ import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/Own
 import {ERC1155Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 
 /**
- * @dev BadgerScout contains the back-end logic of a Badger Organization.
+ * @dev BadgerOrganizationLogic contains the back-end logic of a Badger Organization.
  * @author CHANCE (@nftchance)
  * @author masonthechain (@masonthechain)
  */
@@ -27,6 +27,9 @@ contract BadgerOrganizationLogic is
     ////////////////////////////////////////////////////////
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
+
+    /// @dev Whether or not the Organization is archived.
+    bool public isArchived;
 
     /// @dev The name of the contract.
     string public name;
@@ -86,7 +89,7 @@ contract BadgerOrganizationLogic is
     modifier onlyOrganizationManager() {
         require(
             _isOrganizationManager(_msgSender()),
-            "BadgerScout::onlyOrganizationManager: Only the Owner or Organization Manager can call this."
+            "BadgerOrganizationLogic::onlyOrganizationManager: Only the Owner or Organization Manager can call this."
         );
         _;
     }
@@ -98,7 +101,7 @@ contract BadgerOrganizationLogic is
     modifier onlyBadgeManager(uint256 _id) {
         require(
             _isBadgeManager(_id, _msgSender()),
-            "BadgerScout::onlyBadgeManager: Only Managers can call this."
+            "BadgerOrganizationLogic::onlyBadgeManager: Only Managers can call this."
         );
         _;
     }
@@ -116,7 +119,7 @@ contract BadgerOrganizationLogic is
         /// @dev Confirm a valid URI was provided.
         require(
             bytes(_uri).length != 0,
-            "BadgerScout::setOrganizationURI: URI must be set."
+            "BadgerOrganizationLogic::setOrganizationURI: URI must be set."
         );
 
         /// @dev Set the URI of the Organization.
@@ -133,11 +136,22 @@ contract BadgerOrganizationLogic is
         /// @dev Confirm a valid URI was provided.
         require(
             bytes(_uri).length != 0,
-            "BadgerScout::setBadgeURI: URI must be set."
+            "BadgerOrganizationLogic::setBadgeURI: URI must be set."
         );
 
         /// @dev Set the URI of the Badge.
         _setBadgeURI(_id, _uri);
+    }
+
+    /**
+     * See {IBadgerOrganizationLogic.setArchived}
+     */
+    function setArchived(bool _isArchived) public virtual override onlyOwner {
+        /// @dev Set the archived state of the Organization.
+        isArchived = _isArchived;
+
+        /// @dev Emit the archived event.
+        emit OrganizationArchived(_isArchived);
     }
 
     /**
@@ -154,7 +168,7 @@ contract BadgerOrganizationLogic is
 
         require(
             managersLength == _isManager.length,
-            "BadgerScout::setManagers: _managers and _isManager must be the same length."
+            "BadgerOrganizationLogic::setManagers: _managers and _isManager must be the same length."
         );
 
         /// @dev Loop through the arrays and update the state of the Managers.
@@ -165,7 +179,7 @@ contract BadgerOrganizationLogic is
             /// @dev Confirm a valid address was provided.
             require(
                 manager != address(0),
-                "BadgerScout::setManagers: Manager cannot be the zero address."
+                "BadgerOrganizationLogic::setManagers: Manager cannot be the zero address."
             );
 
             /// @dev Update the state of the Manager for the Organization.
@@ -188,7 +202,7 @@ contract BadgerOrganizationLogic is
 
         require(
             managersLength == _isManager.length,
-            "BadgerScout::setManagers: _managers and _isManager must be the same length."
+            "BadgerOrganizationLogic::setManagers: _managers and _isManager must be the same length."
         );
 
         /// @dev Loop through the arrays and update the state of the Managers.
@@ -199,7 +213,7 @@ contract BadgerOrganizationLogic is
             /// @dev Confirm a valid address was provided.
             require(
                 manager != address(0),
-                "BadgerScout::setManagers: Manager cannot be the zero address."
+                "BadgerOrganizationLogic::setManagers: Manager cannot be the zero address."
             );
 
             /// @dev Update the state of the Manager for the Badge.
@@ -222,7 +236,7 @@ contract BadgerOrganizationLogic is
 
         require(
             hooksLength == _isHook.length,
-            "BadgerScout::setHooks: _hooks and _isHook must be the same length."
+            "BadgerOrganizationLogic::setHooks: _hooks and _isHook must be the same length."
         );
 
         /// @dev Loop through the arrays and update the state of the Hooks.
@@ -233,7 +247,7 @@ contract BadgerOrganizationLogic is
             /// @dev Confirm a valid address was provided.
             require(
                 hook != address(0),
-                "BadgerScout::setHooks: Hook cannot be the zero address."
+                "BadgerOrganizationLogic::setHooks: Hook cannot be the zero address."
             );
 
             /// @dev Update the state of the Hook for the Organization.
@@ -357,6 +371,12 @@ contract BadgerOrganizationLogic is
         uint256 _amount,
         bytes memory _data
     ) internal virtual {
+        /// @dev Prevent new tokens from being minted when Organization is archived.
+        require(
+            !isArchived,
+            "BadgerOrganizationLogic::_mint: Cannot mint new tokens when Organization is archived."
+        );
+
         /// @dev Before minting, process any Organization hooks.
         _hook(BEFORE_MINT, abi.encode(_operator, _to, _id, _amount, _data));
 
