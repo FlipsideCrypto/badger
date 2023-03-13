@@ -1,15 +1,243 @@
 [
-  "event OrganizationArchived(bool)",
-  "event OrganizationUpdated(string)",
-  "function configHook(bytes32,address,bytes)",
-  "function configManager(address,bytes)",
-  "function configManager(uint256,address,bytes)",
-  "function isBadgeManager(uint256,address) view returns (bool)",
-  "function isOrganizationManager(address) view returns (bool)",
-  "function setArchived(bool)",
-  "function setBadgeURI(uint256,string)",
-  "function setHooks(bytes32,address[],bool[])",
-  "function setManagers(address[],bool[])",
-  "function setManagers(uint256,address[],bool[])",
-  "function setOrganizationURI(string)"
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isArchived",
+        "type": "bool"
+      }
+    ],
+    "name": "OrganizationArchived",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "organizationURI",
+        "type": "string"
+      }
+    ],
+    "name": "OrganizationUpdated",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_slot",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "_hook",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
+    ],
+    "name": "configHook",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_manager",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
+    ],
+    "name": "configManager",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_manager",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
+    ],
+    "name": "configManager",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_manager",
+        "type": "address"
+      }
+    ],
+    "name": "isBadgeManager",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_manager",
+        "type": "address"
+      }
+    ],
+    "name": "isOrganizationManager",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bool",
+        "name": "_isArchived",
+        "type": "bool"
+      }
+    ],
+    "name": "setArchived",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_uri",
+        "type": "string"
+      }
+    ],
+    "name": "setBadgeURI",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_slot",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address[]",
+        "name": "_hooks",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bool[]",
+        "name": "_isHook",
+        "type": "bool[]"
+      }
+    ],
+    "name": "setHooks",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_managers",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bool[]",
+        "name": "_isManager",
+        "type": "bool[]"
+      }
+    ],
+    "name": "setManagers",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address[]",
+        "name": "_managers",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bool[]",
+        "name": "_isManager",
+        "type": "bool[]"
+      }
+    ],
+    "name": "setManagers",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_uri",
+        "type": "string"
+      }
+    ],
+    "name": "setOrganizationURI",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
 ]
