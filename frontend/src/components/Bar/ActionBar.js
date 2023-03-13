@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { useLocation } from "react-router-dom";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useENSProfile, useUser } from "@hooks";
 
