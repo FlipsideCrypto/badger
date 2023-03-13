@@ -13,9 +13,6 @@ import { sliceAddress } from "@utils";
 import '@rainbow-me/rainbowkit/styles.css'
 import "@style/Bar/ActionBar.css";
 
-// feat: make navbar mobile-friendly
-// In preparation of making Badger mobile-first, this is the first PR of many that focuses on mobile-first design while heavily prioritizing the 'average-joe' user experience
-
 const ActionBar = () => {
     const { pathname } = useLocation();
 
