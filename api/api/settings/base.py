@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "balance",
     "ipfs",
     "indexer",
+    "module",
     "organization",
     "wallet",
 ]

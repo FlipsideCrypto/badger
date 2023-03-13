@@ -3,6 +3,7 @@ from django.db import models
 from siwe_auth.models import validate_ethereum_address
 
 from badge.models import Badge
+from module.models import Module
 
 class Organization(models.Model):
     is_active = models.BooleanField(default=True)
@@ -14,8 +15,8 @@ class Organization(models.Model):
     symbol = models.CharField(max_length=52, blank=True, null=True)
     description = models.TextField(max_length=4000, blank=True, null=True)
 
-    owner = models.ForeignKey('siwe_auth.Wallet', on_delete=models.CASCADE, related_name='organization_owner', null=True)
-    delegates = models.ManyToManyField('siwe_auth.Wallet', blank=True, related_name='organization_delegates')
+    owner = models.ForeignKey('siwe_auth.Wallet', on_delete=models.CASCADE, null=True)
+    modules = models.ManyToManyField(Module, blank=True)
     badges = models.ManyToManyField(Badge, blank=True)
 
     image_hash = models.CharField(max_length=256, blank=True, null=True)
