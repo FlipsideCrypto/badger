@@ -7,6 +7,11 @@
     margin: 20px;
 }
 
+.dashboardContent .empty {
+    margin: 0px;
+    margin-top: 20px;
+}
+
 .empty .dashboardContent {
     grid-column: 1 / span 2;
     max-width: 420px;

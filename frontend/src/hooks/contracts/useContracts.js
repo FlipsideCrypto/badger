@@ -39,7 +39,6 @@ const useOrgForm = ({ obj }) => {
 
     const Badger = useMemo(() => {
         if (obj.ethereum_address) return getBadgerOrganizationAbi();
-
         return getBadgerAbi(chain.id);
     }, [functionName, chain.id]);
 

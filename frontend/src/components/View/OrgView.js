@@ -33,7 +33,7 @@ const OrgView = ({ chainId, orgAddress }) => {
                 </small>
 
                 <ActionButton className="tertiary" icon={['fal', 'clipboard']} onClick={() => copy(organization.ethereum_address)} />
-                <ActionButton className="tertiary" icon={['fal', 'link']} onClick={() => copy(window.location.href)} />
+                <ActionButton className="link tertiary" icon={['fal', 'link']} onClick={() => copy(window.location.href)} />
             </>}
         </div >
     )

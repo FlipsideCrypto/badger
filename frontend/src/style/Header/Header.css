@@ -1,14 +1,13 @@
 .header {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    margin-inline: 20px;
 }
 
 .header svg {
     margin-right: 10px;
 }
 
-.header .header__actions { 
+.header .header__actions {
     margin-left: auto;
     color: rgba(0, 0, 0, 0.35);
 }

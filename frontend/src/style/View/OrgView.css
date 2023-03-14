@@ -16,11 +16,12 @@
 
 .view .organization img {
     border-radius: 50%;
-    height: 36px;
-    width: 36px;
+    height: 25px;
+    width: 25px;
 }
 
-.view .organization span { 
-    font-size: 1.2rem;
-    font-weight: 600;
+@media screen and (max-width: 768px) {
+    .view button {
+        display: none;
+    }
 }
