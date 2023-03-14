@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ethers } from "ethers";
 
@@ -79,7 +79,6 @@ const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
 
     return (
         <>
-            {/* The object is good to go */}
             {!isLoading && children}
 
             {isLoading && <>
@@ -88,10 +87,8 @@ const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
 
                 <div className="loading short" />
 
-                {/* The object does not exist but we have seen it onchain */}
                 {isDeployed && <NotIndexedEmpty />}
 
-                {/* The object does not exist onchain */}
                 {!isDeployed && <NotDeployedEmpty />}
             </>}
         </>
