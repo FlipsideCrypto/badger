@@ -67,8 +67,7 @@ const OrgForm = ({ isEdit = false }) => {
     })
 
     const actions = [{
-        text: "Save organization",
-        icon: ["fal", "arrow-right"],
+        text: "Create organization",
         loading: isLoading,
         disabled: isDisabled || !isPrepared,
         event: () => openOrgFormTx({
@@ -125,14 +124,17 @@ const OrgForm = ({ isEdit = false }) => {
             <FormDrawer label="Advanced" open={!!obj.image_hash}>
                 <Input label="Custom Image" accept="image/*" disabled={true} append={
                     <button className="secondary" onClick={onImageUpload}>
-                        {`${customImage ? "Update" : "Upload"} image`}
+                        <span>{customImage ? "Update" : "Upload"}</span>
                     </button>}
                     value={imageURL || "Choose file..."} />
 
                 <input ref={imageInput} type="file" accept="image/*" onChange={onImageChange} />
             </FormDrawer>
 
-            <FormActionBar actions={actions} />
+            <FormActionBar 
+                className={!isEdit && "actionFixed"}                
+                actions={actions} 
+            />
 
             {isEdit && <>
                 <hr />

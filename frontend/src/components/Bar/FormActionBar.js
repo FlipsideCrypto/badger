@@ -4,9 +4,9 @@ import { ActionButton } from "@components"
 
 import "@style/Bar/FormActionBar.css"
 
-const FormActionBar = ({ actions, style, actionStyle }) => {
+const FormActionBar = ({ className, actions, style, actionStyle }) => {
     return (
-        <div className="actionBar" style={style}>
+        <div className={"actionBar " + className} style={style}>
             <div className="actions">
                 {actions && actions.map(action => (
                     <div key={action.text} style={actionStyle}>

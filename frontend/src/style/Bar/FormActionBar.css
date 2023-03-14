@@ -9,3 +9,20 @@
     justify-content: flex-end;
     column-gap: 20px;
 }
+
+@media (max-width: 768px) {
+    .actionBar .actions {
+        width: 100%;
+        display: block;
+    }
+    .actionBar .actions button {
+        width: 100%;
+    }
+    .actionFixed {
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        z-index: 100;
+    }
+}
