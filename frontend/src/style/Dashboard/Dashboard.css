@@ -36,6 +36,37 @@
     font-weight: 700;
 }
 
+.dashboard .loading {
+    background: linear-gradient(-46deg, #FCFCFF 0%, #f3f3f3 50%, #FCFCFF 100%);
+    background-size: 200% 100%;
+    background-position: 100% 0;
+    animation: loading 2s infinite;
+    min-height: 30px;
+}
+
+.dashboard .loading.big {
+    height: 69px;
+    margin-bottom: 20px;
+}
+
+.dashboard .loading.short {
+    width: 80px;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 100% 0;
+    }
+
+    50% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 100% 0;
+    }
+}
+
 .dashboard__margin__left {
     margin-left: 30px;
 }
@@ -53,8 +84,4 @@
     aspect-ratio: 1/1;
     width: max-content;
     height: max-content;
-}
-
-.dashboard__content {
-    margin-inline: 20px;
 }
