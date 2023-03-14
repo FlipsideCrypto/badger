@@ -36,8 +36,15 @@ const BadgeForm = ({ isEdit = false }) => {
 
     const [ obj, setObj ] = useState(badge || initialBadgeForm);
     const [ image, setImage ] = useState(null);
+    
+    const tokenId = obj.token_id || organization.badges.length
 
-    const { badgeArt } = useBadgeArt({organization: organization, name: obj.name})
+    const { badgeArt } = useBadgeArt({
+        orgName: organization.name, 
+        orgAddress: organization.ethereum_address,
+        badgeName: obj.name,
+        tokenId
+    })
 
     const activeImage = image || obj.image_hash || badgeArt;
     
@@ -48,7 +55,6 @@ const BadgeForm = ({ isEdit = false }) => {
 
     const isDisabled = !(obj.name && obj.description && activeImageURL);
 
-    const tokenId = obj.token_id || organization.badges.length
 
     const { imageHash, ipfsImage } = useIPFSImageHash(activeImage);
 
@@ -188,6 +194,7 @@ const BadgeForm = ({ isEdit = false }) => {
             </FormDrawer>
 
             <FormActionBar
+                className={!isEdit && "actionFixed"}
                 help={'After creating a badge, you (or your managers) can issue badges to team members.'}
                 actions={actions}
             />

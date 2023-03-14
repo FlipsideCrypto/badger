@@ -2,25 +2,28 @@ import { useEffect, useState } from 'react';
 
 import { getBadgeImage } from '@utils';
 
-const useBadgeArt = ({ organization, name }) => {
+const useBadgeArt = ({ orgName, orgAddress, badgeName, tokenId }) => {
     const [badgeArt, setBadgeArt] = useState(null);
 
-    useEffect(() => {
-        async function getImage() {
-            const image = await getBadgeImage(
-                organization.name,
-                organization.ethereum_address,
-                organization.badges.length,
-                name
-            );
-
+    useEffect(() => {        
+        async function getImage(args) {
+            console.log('getting image', args)
+            const image = await getBadgeImage(...args);
+            
             setBadgeArt(image);
         }
-
-        if (!name || !organization) return
         
-        getImage();
-    }, [name, organization]);
+        const args = [
+            orgName, 
+            orgAddress, 
+            tokenId,
+            badgeName
+        ];
+
+        if (!args.every(arg => arg || arg === 0)) return
+
+        getImage(args);
+    }, [badgeName]);
 
     return { badgeArt };
 }

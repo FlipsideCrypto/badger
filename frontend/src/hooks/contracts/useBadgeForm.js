@@ -6,7 +6,7 @@ import { usePrepareContractWrite, useContractWrite } from "wagmi"
 import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
 
 const getBadgeFormTxArgs = ({ data, functionName }) => {
-    if (functionName === "setBadgeURI" && data.uriHash && data.token_id)
+    if (functionName === "setBadgeURI" && data.uriHash)
         return [data.token_id, data.uriHash];
 }
 
