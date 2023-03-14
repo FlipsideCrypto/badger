@@ -16,7 +16,13 @@ export {
 } from './useBadgeForm';
 
 export { 
-    useManageHolders,
-    useSetDelegates,
-    useManageBadgeOwnership
+    useSetManagers
+} from './useSetManagers';
+
+export { 
+    useSetHooks
+} from './useSetHooks';
+
+export { 
+    useManageHolders
 } from './useManageHolders';
