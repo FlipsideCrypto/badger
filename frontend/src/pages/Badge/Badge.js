@@ -76,9 +76,9 @@ const Badge = () => {
                 />}
             </div>
 
-            {badge && badge.users.length + badge.delegates.length === 0 && <Empty
-                title="No Holders in the Badge yet!"
-                body="You've set up your Organization and your Badge. Now for the final step of sending the first set of keys to your team members."
+            {badge && badge.users.length === 0 && <Empty
+                title={`${badge.name} does not have any Holders yet!`}
+                body="When you add a Holder, they will appear on the list here."
             />}
 
             {badge && badge.users.length > 0 && <HolderTable delegates={badge.delegates} users={badge.users} />}
