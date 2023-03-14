@@ -11,7 +11,7 @@ th {
 }
 
 th:first-child {
-    padding-left: 40px !important;
+    padding-left: 20px !important;
 }
 
 th:last-child,

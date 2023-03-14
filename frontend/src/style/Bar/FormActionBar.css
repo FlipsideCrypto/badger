@@ -11,6 +11,10 @@
 }
 
 @media (max-width: 768px) {
+    .actionBar {
+        margin-inline: 0;
+    }
+
     .actionBar .actions {
         width: 100%;
         display: block;

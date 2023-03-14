@@ -118,17 +118,14 @@ button.tertiary {
     color: rgba(0, 0, 0, .65);
 }
 
-.button__warning {
-    height: 40px;
-    border-radius: 5px;
+button.warning {
+    border-radius: 4px;
     border: 1px solid #FF0000;
     color: #FF0000 !important;
-    font-size: 12px;
-    white-space: nowrap;
 }
 
-.button__warning:hover,
-.button__warning:focus {
+button.warning:hover,
+button.warning:focus {
     background: #FF0000;
     color: #fff !important;
 }

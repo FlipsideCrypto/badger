@@ -7,7 +7,7 @@ import {
 
 import { TableSortHead } from "@components";
 
-import { compareByProperty } from "@utils";
+import { compareByProperty, getTimeSince } from "@utils";
 
 import { BADGE_HEAD_ROWS, IPFS_GATEWAY_URL } from "@static";
 
@@ -98,7 +98,7 @@ const BadgeTable = ({ badges }) => {
                                     {badge.users.length}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                    {new Date(badge.updated).toLocaleString()}
+                                    {`${getTimeSince(new Date(badge.updated))} ago`}
                                 </TableCell>
                             </TableRow>
                         ))}
