@@ -6,7 +6,7 @@
     align-items: center;
     margin-inline: 20px;
     border-bottom: 1px solid #e0e0e0;
-    padding: 20px;
+    padding-block: 20px;
 }
 
 .action_bar .action_bar__actions {

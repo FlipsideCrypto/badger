@@ -9,10 +9,7 @@ const ProfileView = ({
 }) => {
     return (
         <div className="action_bar__header">
-            <ImageLoader
-                className="action_bar__header__image"
-                src={ensAvatar}
-            />
+            <ImageLoader className="action_bar__header__image" src={ensAvatar} />
 
             <Link
                 className="link-wrapper link-text text-clip"

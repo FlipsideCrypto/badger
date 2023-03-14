@@ -95,24 +95,26 @@ button.primary::after {
 }
 
 button.secondary {
-    background: #000;
-    white-space: nowrap;
+    background: #000 !important;
+    background-color: #000 !important;
 }
 
 button.secondary,
 button.secondary span {
-    color: #fff;
+    color: #fff !important;
 }
 
 button.secondary:hover,
 button.secondary:focus,
 button.secondary:active {
-    background: #1b1b1b;
+    background: #1b1b1b !important;
+    background-color: #1b1b1b !important;
     color: rgba(255, 255, 255, .85);
 }
 
 button.tertiary {
-    background: #FCFCFF;
+    background: #FCFCFF !important;
+    background-color: #FCFCFF !important;
     color: rgba(0, 0, 0, .65);
 }
 

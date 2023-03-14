@@ -41,7 +41,11 @@ const ActionBar = () => {
             </div>
 
             <div className="action_bar__toggle">
-                <ActionButton className="tertiary" icon={['fal', 'bars']} onClick={() => setCollapsed(!collapsed)} />
+                <ActionButton
+                    className="tertiary"
+                    icon={['fal', 'bars']}
+                    onClick={() => setCollapsed(!collapsed)}
+                />
             </div>
 
             <div className={`action_bar__actions ${collapsed ? 'collapsed' : ''}`}>

@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { useUser } from "@hooks";
 
-import { ActionTitle, BadgeTable, Empty, Header, SEO } from "@components";
+import { ActionTitle, BadgeTable, DashboardLoader, Empty, Header, SEO } from "@components";
 
 const Org = () => {
     const navigate = useNavigate();
@@ -28,13 +28,14 @@ const Org = () => {
 
     return (
         <>
-            {!organization && <Empty title="Organization not found" body="The organization you are looking for does not exist." />}
+            <SEO
+                title={`${organization ? organization.name : 'Not Found'} | Badger`}
+                description={`Browse ${organization?.name} and all its Badges and associated members.`}
+            />
 
-            {organization && <>
-                <SEO title={`${organization.name} | Badger`} description={`Browse ${organization.name} and all its Badges and associated members.`} />
+            <Header back={() => navigate("/dashboard/")} actions={headerActions} />
 
-                <Header back={() => navigate("/dashboard/")} actions={headerActions} />
-
+            <DashboardLoader chainId={chainId} orgAddress={orgAddress} obj={organization}>
                 <div className="dashboard__content">
                     <ActionTitle title="Badges" actions={titleActions} />
 
@@ -47,7 +48,7 @@ const Org = () => {
 
                     {badges && badges.length > 0 && <BadgeTable badges={badges} />}
                 </div>
-            </>}
+            </ DashboardLoader>
         </>
     )
 }
