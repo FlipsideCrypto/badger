@@ -98,9 +98,6 @@ const BadgeTable = ({ badges }) => {
                                     {badge.users.length}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                    {badge.delegates.length}
-                                </TableCell>
-                                <TableCell component="th" scope="row">
                                     {new Date(badge.updated).toLocaleString()}
                                 </TableCell>
                             </TableRow>
