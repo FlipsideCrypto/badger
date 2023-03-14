@@ -82,11 +82,18 @@ const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
             {/* The object is good to go */}
             {!isLoading && children}
 
-            {/* The object does not exist but we have seen it onchain */}
-            {isLoading && isDeployed && < NotIndexedEmpty />}
+            {isLoading && <>
+                <div className="loading big" />
+                <div className="loading big" />
 
-            {/* The object does not exist onchain */}
-            {isLoading && !isDeployed && <NotDeployedEmpty />}
+                <div className="loading short" />
+
+                {/* The object does not exist but we have seen it onchain */}
+                {isDeployed && <NotIndexedEmpty />}
+
+                {/* The object does not exist onchain */}
+                {!isDeployed && <NotDeployedEmpty />}
+            </>}
         </>
     )
 }

@@ -28,7 +28,10 @@ const Org = () => {
 
     return (
         <>
-            <SEO title={`${organization.name} | Badger`} description={`Browse ${organization.name} and all its Badges and associated members.`} />
+            <SEO
+                title={`${organization ? organization.name : 'Not Found'} | Badger`}
+                description={`Browse ${organization?.name} and all its Badges and associated members.`}
+            />
 
             <Header back={() => navigate("/dashboard/")} actions={headerActions} />
 
