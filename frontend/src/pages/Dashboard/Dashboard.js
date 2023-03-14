@@ -12,8 +12,39 @@ import "@style/Dashboard/Dashboard.css";
 const title = "Dashboard | Badger";
 const description = "Badger is a decentralized, open-source, and community-driven platform for creating, managing, and sharing onchain organizations and badges.";
 
+const connectButton = <ConnectButton className="primary" />;
+
+const ConnectWalletEmpty = () => <Empty
+    title="Connect your wallet to view your Organizations!"
+    body="Connecting your wallet is simple and secure. Using Sign in with Ethereum, you can sign and create, manage, and share your Organizations and Badges in seconds just by signing a message."
+    button={connectButton}
+/>
+
+const WrongNetworkEmpty = (primaryChain) => <Empty
+    title="Wrong Network!"
+    body={`Please connect to ${primaryChain.name} network.`}
+    button={connectButton}
+/>
+
+const AuthenticateEmpty = () => <Empty
+    title="Authenticate your wallet to view your Organizations!"
+    body="Authentication is simple and secure. Using Sign in with Ethereum, you can sign and create, manage, and share your Organizations and Badges in seconds just by signing a message."
+    button={connectButton}
+/>
+
+const LoadingEmpty = () => <Empty
+    title="Loading Organizations and Badges..."
+    body="This may take a few seconds. If this takes longer than 10 seconds, please refresh the page."
+/>
+
 const Dashboard = () => {
-    const { isAuthenticated, isConnected, isLoaded, isWrongNetwork, primaryChain } = useUser();
+    const {
+        isAuthenticated,
+        isConnected,
+        isLoaded,
+        isWrongNetwork,
+        primaryChain
+    } = useUser();
 
     return (
         <>
@@ -23,28 +54,13 @@ const Dashboard = () => {
                 <div className="dashboard__contents">
                     <ActionBar />
 
-                    {!isConnected && <Empty
-                        title="Connect your wallet to view your Organizations!"
-                        body="Connecting your wallet is simple and secure. Using Sign in with Ethereum, you can sign and create, manage, and share your Organizations and Badges in seconds just by signing a message."
-                        button={<ConnectButton className="primary" />}
-                    />}
+                    {!isConnected && <ConnectWalletEmpty />}
 
-                    {isConnected && isWrongNetwork && <Empty
-                        title="Wrong Network!"
-                        body={`Please connect to ${primaryChain.name} network.`}
-                        button={<ConnectButton className="primary" />}
-                    />}
+                    {isConnected && isWrongNetwork && <WrongNetworkEmpty primaryChain={primaryChain} />}
 
-                    {isConnected && (!isAuthenticated && <Empty
-                        title="Authenticate your wallet to view your Organizations!"
-                        body="Authentication is simple and secure. Using Sign in with Ethereum, you can sign and create, manage, and share your Organizations and Badges in seconds just by signing a message."
-                        button={<ConnectButton className="primary" />}
-                    />)}
+                    {isConnected && (!isAuthenticated && !isWrongNetwork) && <AuthenticateEmpty />}
 
-                    {isAuthenticated && !isLoaded && <Empty
-                        title="Loading Organizations and Badges..."
-                        body="This may take a few seconds. If this takes longer than 10 seconds, please refresh the page."
-                    />}
+                    {isAuthenticated && !isLoaded && <LoadingEmpty />}
 
                     {isAuthenticated && isLoaded && <DashboardContent>
                         <Routes>
