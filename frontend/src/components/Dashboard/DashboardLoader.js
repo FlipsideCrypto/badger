@@ -9,8 +9,8 @@ import { ActionButton, Empty } from "@components";
 import { getBadgerAbi } from "@hooks";
 
 const NotDeployedEmpty = ({ badgeId }) => {
-    const title = badgeId ? "A Badge with this does not exist." : "There are no Organizations deployed at this address.";
-    const body = badgeId ? "Badger hasn't detected setup of a Badge with this token ID yet. If you are sure you are in the correct place, please give us a few minutes to check the chain." : "Badger hasn't detected any Organizations at this address yet. If you are sure you are in the correct place, please give us a few minutes to check the chain."
+    const title = badgeId ? "A Badge with this does token ID not exist." : "There are no Organizations deployed at this address.";
+    const body = badgeId ? "Badger hasn't detected setup of a Badge with this ID yet. If you are sure you are in the correct place, please give us a few minutes to check the chain." : "Badger hasn't detected any Organizations at this address yet. If you are sure you are in the correct place, please give us a few minutes to check the chain."
 
     return (
         < Empty
