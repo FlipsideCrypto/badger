@@ -8,12 +8,12 @@ import { ActionButton, TableSortHead } from "@components";
 
 import { compareByProperty } from "@utils";
 
-import { holderHeadRows } from "@static";
+import { HOLDER_HEAD_ROWS } from "@static";
 
 import "@style/Table/HolderTable.css";
 
 const HolderTable = ({ delegates, users }) => {
-    const [headRows, setHeadRows] = useState(holderHeadRows);
+    const [headRows, setHeadRows] = useState(HOLDER_HEAD_ROWS);
     const [sortedList, setSortedList] = useState(users);
 
     const onSortChange = (key) => {

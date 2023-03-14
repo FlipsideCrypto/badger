@@ -46,13 +46,13 @@ const getRandomEmoji = (address) => {
     return pfpEmojis[randomIndex];
 }
 
-const badgeHeadRows = {
+const BADGE_HEAD_ROWS = {
     name: {
         label: 'Badge',
         sortable: true,
         method: "",
         align: 'left',
-        width: '40%',
+        width: '50%',
     },
     holders: {
         label: 'Holders',
@@ -61,23 +61,16 @@ const badgeHeadRows = {
         align: 'right',
         width: '10%',
     },
-    managers: { 
-        label: 'Managers',
-        sortable: true,
-        method: "",
-        align: 'right',
-        width: '10%',
-    }, 
     updated: { 
         label: 'Last Updated',
         sortable: true,
         method: "",
         align: 'right',
-        width: '20%',
+        width: '40%',
     }
 }
 
-const holderHeadRows = {
+const HOLDER_HEAD_ROWS = {
     ethereum_address: {
         label: "Address",
         sortable: true,
@@ -118,7 +111,7 @@ const badgeDrawerSelectActions = [
 export { 
     pfpEmojis,
     getRandomEmoji,
-    badgeHeadRows,
-    holderHeadRows,
+    BADGE_HEAD_ROWS,
+    HOLDER_HEAD_ROWS,
     badgeDrawerSelectActions
 }

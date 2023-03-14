@@ -7,9 +7,8 @@ const TableSortHead = ({ id, label, sortMethod, onSortChange, align, width }) =>
     return (
         <TableCell align={align} sx={{ width: width }}>
             <button
-                className="button__unstyled"
+                className="table__sort__button"
                 onClick={() => onSortChange(id)}
-                style={{ width: "100%" }}
             >
                 <div className="table__sort__head">
                     <div className="table__sort__head__label">

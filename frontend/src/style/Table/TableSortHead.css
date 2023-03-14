@@ -7,9 +7,9 @@
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
     color: transparent;
     align-items: center;
+    color: #06061C;
 }
 .table__sort__head__label {
-    color: rgba(0, 0, 0, .35);
     padding-right: 8px;
     height: 100%;
     align-items: center;
@@ -29,6 +29,15 @@
     height: 20px;
 }
 
-.table__sort__head:hover {
-    color: rgba(0, 0, 0, .35);
+.table__sort__button {
+    padding-inline: 0;
+    /* width: 100%; */
+}
+
+th:last-child .table__sort__head {
+    float: right;
+}
+
+th:last-child {
+    text-align: right;
 }
