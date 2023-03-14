@@ -26,6 +26,7 @@ const ActionButton = (
         afterText,
         icon,
         iconStyle,
+        loading,
         ...props
     }
 ) => {
