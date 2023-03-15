@@ -9,10 +9,10 @@ const ActionButtonContent = ({ beforeText, afterText, icon, iconStyle }) => {
     return (
         <>
             {beforeText && <span>{beforeText}</span>}
-            <FontAwesomeIcon icon={icon} style={{
+            {icon && <FontAwesomeIcon icon={icon} style={{
                 ...iconStyle,
                 ...marginStyle
-            }} />
+            }} />}
             {afterText && <span>{afterText}</span>}
         </>
     )
