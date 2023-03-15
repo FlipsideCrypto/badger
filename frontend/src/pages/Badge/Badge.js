@@ -18,11 +18,6 @@ const Badge = () => {
 
     const { authenticatedAddress, organization, badge } = useUser({ chainId, orgAddress, badgeId });
 
-    const [drawer, setDrawer] = useState({
-        collapsed: true,
-        action: "Mint"
-    });
-
     const isManager = organization && badge && (
         organization.owner.ethereum_address === authenticatedAddress ||
         badge.delegates.find(delegate => delegate.ethereum_address === authenticatedAddress)
@@ -49,10 +44,16 @@ const Badge = () => {
         }
     }]
 
-    const holderActions = [{
+    const holderActions = false ? [{
         className: "primary",
         text: "Save changes",
-        onClick: () => {
+        event: () => {
+
+        }
+    }] : [{
+        className: "secondary",
+        text: "Create",
+        event: () => {
 
         }
     }]
