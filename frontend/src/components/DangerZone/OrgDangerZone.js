@@ -23,9 +23,9 @@ const OrgDangerZone = ({ orgAddress }) => {
             </FormDrawer>
 
             <FormActionBar
-                className="warning"
                 actions={[{
                     text: "Update ownership",
+                    className: "warning",
                     onClick: () => onArchive()
                 }]}
             />
