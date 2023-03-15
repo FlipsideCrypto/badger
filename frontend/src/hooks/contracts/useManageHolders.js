@@ -46,8 +46,8 @@ const useManageHolders = ({ obj, functionName }) => {
     
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
         enabled: isReady && isInputValid,
-        addressOrName: orgAddress,
-        contractInterface: BadgerOrg.abi,
+        address: orgAddress,
+        abi: BadgerOrg.abi,
         functionName,
         chainId: chain.id,
         args,
@@ -117,8 +117,8 @@ const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) => {
 
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
-        addressOrName: orgAddress,
-        contractInterface: BadgerOrganization.abi,
+        address: orgAddress,
+        abi: BadgerOrganization.abi,
         functionName: functionName,
         args: args,
         enabled: Boolean(fees && isTxReady),
@@ -182,8 +182,8 @@ const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, action, amou
 
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
-        addressOrName: orgAddress,
-        contractInterface: BadgerOrganization.abi,
+        address: orgAddress,
+        abi: BadgerOrganization.abi,
         functionName: functionName,
         args: args,
         enabled: Boolean(fees && isTxReady),

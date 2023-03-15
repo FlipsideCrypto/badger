@@ -33,8 +33,8 @@ const useBadgeForm = ({ obj, functionName }) => {
     
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
         enabled: isReady,
-        addressOrName: orgAddress,
-        contractInterface: BadgerOrg.abi,
+        address: orgAddress,
+        abi: BadgerOrg.abi,
         functionName,
         chainId: chain.id,
         args,

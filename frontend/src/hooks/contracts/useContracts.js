@@ -57,8 +57,8 @@ const useOrgForm = ({ obj }) => {
 
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
         enabled: isReady,
-        addressOrName: obj.ethereum_address || Badger.address,
-        contractInterface: Badger.abi,
+        address: obj.ethereum_address || Badger.address,
+        abi: Badger.abi,
         functionName,
         args,
         overrides,
@@ -112,8 +112,8 @@ const useTransferOwnership = (isTxReady, orgAddress, newOwner) => {
 
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
-        addressOrName: orgAddress,
-        contractInterface: BadgerOrganization.abi,
+        address: orgAddress,
+        abi: BadgerOrganization.abi,
         functionName: "transferOwnership",
         args: args,
         enabled: Boolean(fees && isTxReady),
@@ -140,8 +140,8 @@ const useRenounceOwnership = (isTxReady, orgAddress) => {
 
     const fees = useFees();
     const { config, isSuccess } = usePrepareContractWrite({
-        addressOrName: orgAddress,
-        contractInterface: BadgerOrganization.abi,
+        address: orgAddress,
+        abi: BadgerOrganization.abi,
         functionName: "renounceOwnership",
         args: [],
         enabled: Boolean(fees && isTxReady),

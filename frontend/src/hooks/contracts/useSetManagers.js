@@ -34,8 +34,8 @@ const useSetManagers = ({ obj }) => {
     
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
         enabled: isReady && isInputValid,
-        addressOrName: orgAddress,
-        contractInterface: BadgerOrg.abi,
+        address: orgAddress,
+        abi: BadgerOrg.abi,
         functionName,
         chainId: chain.id,
         args,
