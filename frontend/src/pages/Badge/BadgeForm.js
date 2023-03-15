@@ -87,7 +87,6 @@ const BadgeForm = ({ isEdit = false }) => {
 
     const actions = [{
         text: isEdit ? "Update badge" : "Create badge",
-        icon: ["fal", "arrow-right"],
         disabled: isDisabled || !isPrepared,
         loading: isLoading,
         event: () => openBadgeFormTransaction({
@@ -103,6 +102,14 @@ const BadgeForm = ({ isEdit = false }) => {
                 navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${tokenId}/`);
             }
         })
+    }]
+
+    const warningActions = [{
+        className: "warning",
+        text: "Revoke all",
+        event: () => {
+
+        }
     }]
     
     // Updates generative image and Name field
@@ -208,6 +215,14 @@ const BadgeForm = ({ isEdit = false }) => {
                 help={'After creating a badge, you (or your managers) can issue badges to team members.'}
                 actions={actions}
             />
+
+            {isEdit && <>
+                <h1>Danger zone</h1>
+                <FormActionBar
+                    className="warning"
+                    actions={warningActions}
+                />
+            </>}
         </>
     )
 }

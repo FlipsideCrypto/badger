@@ -34,26 +34,26 @@ const Badge = () => {
         event: () => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badgeId}/edit/`)
     }]
 
-    const titleActions = [{
-        className: "home__action-button",
-        icon: ['fal', 'fa-user'],
-        text: "Update holders",
+    const managerActions = [{
+        className: "secondary",
+        text: "Add New",
         onClick: () => {
-            setDrawer({
-                collapsed: selectActions.slice(0, 2).includes(drawer.action) ? !drawer.collapsed : false,
-                action: "Mint"
-            })
+
         }
     },
     {
-        className: "home__action-button",
-        icon: ['fal', 'fa-people-roof'],
-        text: "Update managers",
+        className: "primary",
+        text: "Save changes",
         onClick: () => {
-            setDrawer({
-                collapsed: selectActions.slice(2, 4).includes(drawer.action) ? !drawer.collapsed : false,
-                action: "Add Manager"
-            })
+
+        }
+    }]
+
+    const holderActions = [{
+        className: "primary",
+        text: "Save changes",
+        onClick: () => {
+
         }
     }]
 
@@ -67,14 +67,9 @@ const Badge = () => {
 
             <BadgePreview badge={badge} />
 
-            <div className="dashboard__content">
-                <ActionTitle title="Badge Holders" actions={titleActions} />
+            {/* <ActionTitle title="Managers" actions={isManager && managerActions} /> */}
 
-                {isManager && <BadgeManagementDrawer
-                    drawer={drawer} setDrawer={setDrawer}
-                    badge={badge} org={organization} isManager={isManager}
-                />}
-            </div>
+            <ActionTitle title="Holders" actions={isManager && holderActions} />
 
             {badge && badge.users.length === 0 && <Empty
                 title={`${badge.name} does not have any Holders yet!`}

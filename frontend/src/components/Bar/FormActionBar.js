@@ -5,9 +5,6 @@ import { ActionButton } from "@components"
 import "@style/Bar/FormActionBar.css"
 
 const FormActionBar = ({ className, actions, style, actionStyle }) => {
-    /// Applies any button classes to button elements.
-    const buttonClass = className === "secondary" || className === "warning" ? className : "primary";
-
     return (
         <div className={"actionBar " + className} style={style}>
             <div className="actions">
@@ -15,13 +12,13 @@ const FormActionBar = ({ className, actions, style, actionStyle }) => {
                     <div key={action.text} style={actionStyle}>
                         {action.to ? <Link className="internal-link" to={action.to}>
                             <ActionButton
-                                className={buttonClass}
+                                className={action.className || "primary"}
                                 icon={action.icon}
                                 beforeText={action.text}
                                 disabled={action.disabled}
                             />
                         </Link> : <ActionButton
-                            className={buttonClass}
+                            className={action.className || "primary"}
                             icon={action.icon}
                             beforeText={action.text}
                             onClick={action.event}

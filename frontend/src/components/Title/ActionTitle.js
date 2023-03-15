@@ -1,5 +1,7 @@
 import { ActionButton } from "@components";
 
+import "@style/Title/ActionTitle.css";
+
 const ActionTitle = ({ title, actions }) => {
     return (
         <div style={{
@@ -9,10 +11,7 @@ const ActionTitle = ({ title, actions }) => {
         }}>
             <h2>{title}</h2>
 
-            {actions && <div style={{
-                display: "flex",
-                justifyContent: "flex-end",
-            }}>
+            {actions && <div className="actions">
                 {actions.map((action, index) => (
                     <ActionButton
                         key={index}
