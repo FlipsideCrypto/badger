@@ -1,6 +1,6 @@
 .preview__image {
-    width: 250px;
-    height: 250px;
+    width: 122px;
+    height: 122px;
     aspect-ratio: 1/1;
     object-fit: contain;
 }
@@ -19,12 +19,24 @@
 
 .preview__container::after {
     box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.15);
-    max-width: 250px;
-    max-height: 250px;
+    max-width: 122px;
+    max-height: 122px;
     content: '';
     display: block;
     height: 100%;
     position: absolute;
     top: 0;
     width: 100%;
+}
+
+@media (max-width: 768px) {
+    .badge__form__general {
+        grid-template-columns: 1fr;
+    }
+    .badge__form__general .form__group.mobile__hidden {
+        display: none;
+    }
+    .badge__form__access {
+        grid-template-columns: 1fr;
+    }
 }

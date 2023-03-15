@@ -18,7 +18,8 @@ import {
     initialBadgeForm, 
     Input, 
     Header, 
-    ImageLoader 
+    ImageLoader,
+    Select
 } from "@components";
 
 import { IPFS_GATEWAY_URL } from "@static";
@@ -35,6 +36,8 @@ const BadgeForm = ({ isEdit = false }) => {
     const { organization, badge } = useUser({ chainId, orgAddress, badgeId });
 
     const [ obj, setObj ] = useState(badge || initialBadgeForm);
+    const [ isAccountBound, setIsAccountBound ] = useState(true); // TODO; This needs to be either added to the obj after cleaning it up or everything else comes out.
+
     const [ image, setImage ] = useState(null);
     
     const tokenId = obj.token_id || organization.badges.length
@@ -54,7 +57,6 @@ const BadgeForm = ({ isEdit = false }) => {
         badgeArt ? URL.createObjectURL(badgeArt) : null;
 
     const isDisabled = !(obj.name && obj.description && activeImageURL);
-
 
     const { imageHash, ipfsImage } = useIPFSImageHash(activeImage);
 
@@ -121,6 +123,10 @@ const BadgeForm = ({ isEdit = false }) => {
         }
     }
 
+    const onAccountBoundChange = (event) => {
+        setIsAccountBound(event.target.value === "True");
+    }
+
     return (
         <>
             <Header back={() => navigate(`/dashboard/organization/${chainId}/${orgAddress}`)} />
@@ -150,7 +156,7 @@ const BadgeForm = ({ isEdit = false }) => {
                             onChange={onDescriptionChange}
                         />
                     </div>
-                    <div className="form__group" style={{ gridTemplateRows: "min-content" }}>
+                    <div className="form__group mobile__hidden" style={{ gridTemplateRows: "min-content" }}>
                         <label className="form__label">Live Badge Preview</label>
                         <div className="preview__container">
                             <ImageLoader
@@ -163,7 +169,14 @@ const BadgeForm = ({ isEdit = false }) => {
                 </div>
             </FormDrawer>
 
-            <FormDrawer label="Appearance" open={false}>
+            <FormDrawer label="Advanced" open={false}>
+                <Select
+                    label="Account Bound" 
+                    options={['True', 'False']} 
+                    value={isAccountBound ? 'True' : 'False'} 
+                    setValue={onAccountBoundChange}
+                />
+
                 <Input
                     name="Custom Image"
                     accept="image/*"
@@ -176,10 +189,7 @@ const BadgeForm = ({ isEdit = false }) => {
                             onClick={() => imageInput.current.click()}
                             style={{ width: "auto" }}
                         >
-                            {image ?
-                                "Change image" :
-                                "Upload image"
-                            }
+                            <span>{image ? "Change" : "Upload"}</span>
                         </button>
                     }
                 />

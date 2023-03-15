@@ -13,7 +13,6 @@
     display: flex;
     justify-content: flex-end;
 }
-
 .action_bar .action_bar__toggle {
     display: none;
     cursor: pointer;
