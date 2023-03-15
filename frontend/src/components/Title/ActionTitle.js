@@ -19,6 +19,7 @@ const ActionTitle = ({ title, actions }) => {
                         onClick={action.onClick}
                         icon={action.icon}
                         afterText={action.text || action.afterText}
+                        disabled={action.disabled}
                     />
                 ))}
             </div>}

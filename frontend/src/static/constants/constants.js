@@ -76,29 +76,22 @@ const HOLDER_HEAD_ROWS = {
         sortable: true,
         method: "",
         align: "left",
-        width: "40%"
+        width: "50%"
     },
     ens_name: {
         label: "ENS Name",
         sortable: true,
         method: "",
         align: "left",
-        width: "40%"
+        width: "30%"
     },
-    holder: {
-        label: "Holder",
+    balance: {
+        label: "Balance",
         sortable: true,
         method: "",
-        align: "center",
-        width: "10%"
-    },
-    delegate: {
-        label: "Manager",
-        sortable: true,
-        method: "",
-        align: "center",
-        width: "10%"
-    },
+        align: "right",
+        width: "20%"
+    }
 }
 
 const badgeDrawerSelectActions = [

@@ -1,11 +1,10 @@
 import { useState } from "react";
+
 import { useNavigate, useParams } from "react-router-dom";
 
-import { ActionTitle, BadgeManagementDrawer, BadgePreview, Header, HolderTable, Empty, SEO } from "@components";
+import { ActionTitle, BadgePreview, Header, HolderTable, Empty, SEO, DashboardLoader } from "@components";
 
 import { useUser } from "@hooks";
-
-import { badgeDrawerSelectActions as selectActions } from "@static";
 
 import "@style/pages/Badge.css";
 
@@ -15,7 +14,7 @@ const Badge = () => {
     const navigate = useNavigate();
 
     const { chainId, orgAddress, badgeId } = useParams();
-
+    
     const { authenticatedAddress, organization, badge } = useUser({ chainId, orgAddress, badgeId });
 
     const isManager = organization && badge && (
@@ -26,36 +25,7 @@ const Badge = () => {
     const headerActions = [{
         text: "Settings",
         icon: ["fal", "fa-gear"],
-        event: () => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badgeId}/edit/`)
-    }]
-
-    const managerActions = [{
-        className: "secondary",
-        text: "Add New",
-        onClick: () => {
-
-        }
-    },
-    {
-        className: "primary",
-        text: "Save changes",
-        onClick: () => {
-
-        }
-    }]
-
-    const holderActions = false ? [{
-        className: "primary",
-        text: "Save changes",
-        event: () => {
-
-        }
-    }] : [{
-        className: "secondary",
-        text: "Create",
-        event: () => {
-
-        }
+        onClick: () => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badgeId}/edit/`)
     }]
 
     return (
@@ -66,18 +36,12 @@ const Badge = () => {
                 navigate(`/dashboard/organization/${chainId}/${orgAddress}/`)} 
                 actions={isManager && headerActions} />
 
-            <BadgePreview badge={badge} />
+            <DashboardLoader chainId={chainId} orgAddress={orgAddress} obj={organization}>
+                <BadgePreview badge={badge} />
 
-            {/* <ActionTitle title="Managers" actions={isManager && managerActions} /> */}
 
-            <ActionTitle title="Holders" actions={isManager && holderActions} />
-
-            {badge && badge.users.length === 0 && <Empty
-                title={`${badge.name} does not have any Holders yet!`}
-                body="When you add a Holder, they will appear on the list here."
-            />}
-
-            {badge && badge.users.length > 0 && <HolderTable delegates={badge.delegates} users={badge.users} />}
+                <HolderTable badge={badge} isManager={isManager} />
+            </DashboardLoader>
         </>
     )
 }

@@ -5,9 +5,8 @@ import { getBadgeImage } from '@utils';
 const useBadgeArt = ({ orgName, orgAddress, badgeName, tokenId }) => {
     const [badgeArt, setBadgeArt] = useState(null);
 
-    useEffect(() => {        
+    useEffect(() => {
         async function getImage(args) {
-            console.log('getting image', args)
             const image = await getBadgeImage(...args);
             
             setBadgeArt(image);

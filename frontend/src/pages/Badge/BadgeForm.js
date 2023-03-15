@@ -99,7 +99,7 @@ const BadgeForm = ({ isEdit = false }) => {
 
                 if (!event) throw new Error("Error submitting transaction.");
 
-                navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${tokenId}/`);
+                navigate(`/dashboard/organization/${chainId}/${orgAddress}/`);
             }
         })
     }]

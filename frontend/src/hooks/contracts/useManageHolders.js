@@ -3,20 +3,53 @@ import { useParams } from "react-router-dom";
 
 import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
+import { ethers } from "ethers";
+
 import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
 
-const getManageHolderArgs = ({ data, functionName }) => {
-    if (functionName === "mint")
-        return [data.addresses[0], data.tokenId, data.amounts[0], "0x"];
-    if (functionName === "mintBatch")
-        return [data.addresses, data.tokenId, data.amounts, "0x"];
-    if (functionName === "revoke")
-        return [data.addresses, data.tokenId, data.amount];
-    if (functionName === "revokeBatch")
-        return [data.addresses, data.tokenId, data.amounts];
+// TODO: Make this it's own modular piece and flesh it out
+const cleanAndValidateAddresses = (addresses) => {
+    let invalid = []
+    let cleanedAddresses = []
+
+    addresses.forEach((address, index) => {
+        address = address.trim().toLowerCase();
+        
+        /// if empty string, skip
+        if (!address)
+            return
+            
+        if (address.length !== 42 || !ethers.utils.isAddress(address))
+            invalid.push({index: index, address: address})
+    
+        cleanedAddresses.push(address);    
+    })
+
+    if (invalid.length > 0)
+        console.error("Invalid addresses: " + invalid.map(i => i.index).join(", ") + " (" + invalid.map(i => i.address).join(", ") + ")");
+        // throw new Error("Invalid addresses at index: " + invalid.map(i => i.index).join(", ") + " (" + invalid.map(i => i.address).join(", ") + ")")
+
+    return { cleanedAddresses, invalid }
 }
 
-const useManageHolders = ({ obj, functionName }) => {
+const getManageHolderArgs = ({ data, functionName }) => {
+    const { cleanedAddresses: addresses, invalid } = cleanAndValidateAddresses(data.addresses);
+    const amounts = data.amounts.map(amount => parseInt(amount || 1));
+    const tokenId = parseInt(data.tokenId);
+
+    if (invalid.length !== 0 || addresses.length === 0 || addresses.length !== amounts.length)
+        return []
+    if (functionName === "mint")
+        return [addresses[0], tokenId, amounts[0], "0x"];
+    if (functionName === "mintBatch")
+        return [addresses, tokenId, amounts, "0x"];
+    if (functionName === "revoke")
+        return [addresses[0], tokenId, amounts[0]];
+    if (functionName === "revokeBatch")
+        return [addresses, tokenId, amounts];
+}
+
+const useManageHolders = ({ obj }) => {
     const fees = useFees();
 
     const { orgAddress } = useParams();
@@ -29,23 +62,18 @@ const useManageHolders = ({ obj, functionName }) => {
     const BadgerOrg = useMemo(() => { return getBadgerOrganizationAbi() }, [])
 
     const isReady = BadgerOrg && fees && authenticatedAddress;
-    const isInputValid = obj.addresses.length > 0 && obj.addresses.length === obj.amounts.length;
-
-    functionName = obj.addresses.length > 1 ? functionName + "Batch" : functionName;
+    
+    const functionName = obj.addresses.length > 1 ? obj.functionName + "Batch" : obj.functionName;
 
     const args = getManageHolderArgs({
-        data: {
-            amounts: obj.amounts, 
-            addresses: obj.addresses,
-            tokenId: obj.tokenId
-        },
+        data: obj,
         functionName: functionName
     });
 
     const overrides = { gasPrice: fees?.gasPrice };
     
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
-        enabled: isReady && isInputValid,
+        enabled: isReady && args.length > 0,
         address: orgAddress,
         abi: BadgerOrg.abi,
         functionName,
