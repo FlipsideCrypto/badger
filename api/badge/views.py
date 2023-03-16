@@ -83,8 +83,8 @@ class ArtViewSet(viewsets.ViewSet):
 
         # rotate blob position animation
         for i in range(blob_count):
-            x_random = random.randint(0, size * 2)
-            y_random = random.randint(0, size * 2)
+            x_random = random.randint(0, size)
+            y_random = random.randint(0, size)
 
             # create random svg blog
             x_random_rotation = random.randint(0, 360)
@@ -169,6 +169,9 @@ class ArtViewSet(viewsets.ViewSet):
         invert = request.query_params.get('inverse', False)
 
         fingerprint = self._handle_fingerprint(address, badge_name)
+
+        if address:
+            random.seed(f"{organization}{address}{badge_name}{'1' if invert else '0'}")
 
         fill = "#fff"
         if invert:
@@ -315,7 +318,7 @@ class ArtViewSet(viewsets.ViewSet):
                 <feGaussianBlur in="SourceGraphic" stdDeviation="30" />
             </filter>
             {useblob}
-            <rect width="100%" height="100%" fill="{fill}" opacity="{0.93 if fill == "#fff" else 0.75}" />
+            <rect width="100%" height="100%" fill="{fill}" opacity="{0.55 if fill == "#fff" else 0.75}" />
 
             {fingerprint_svg}
 
