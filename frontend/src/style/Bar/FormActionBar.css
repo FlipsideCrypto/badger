@@ -5,7 +5,25 @@
 }
 
 .actionBar .actions {
-    display: flex;
-    justify-content: flex-end;
-    column-gap: 20px;
+    width: 100%;
+    display: block;
+}
+
+.actionBar .actions button {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .actionBar {
+        margin-inline: 0px;
+    }
+
+    .actionFixed {
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        margin-inline: 20px;
+        z-index: 100;
+    }
 }

@@ -17,7 +17,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.8.7",
-    "@rainbow-me/rainbowkit": "^0.7.1",
+    "@rainbow-me/rainbowkit": "^0.12.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
@@ -34,7 +34,7 @@
     "react-scripts": "5.0.0",
     "reconnecting-websocket": "^4.4.0",
     "siwe": "^1.1.6",
-    "wagmi": "^0.6.8",
+    "wagmi": "^0.12.1",
     "web-vitals": "^2.1.4",
     "webpack": "^5.74.0",
     "websocket": "^1.0.34"

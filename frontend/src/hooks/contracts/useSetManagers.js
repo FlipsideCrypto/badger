@@ -5,12 +5,14 @@ import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
 import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
 
-const getBadgeFormTxArgs = ({ data, functionName }) => {
-    if (functionName === "setBadgeURI" && data.uriHash)
-        return [data.token_id, data.uriHash];
+const getManagerArgs = ({ data }) => {
+    if (data.tokenId)
+        return [data.tokenId, data.addresses, data.statuses];
+    else
+        return [data.addresses, data.statuses];
 }
 
-const useBadgeForm = ({ obj, functionName }) => {
+const useSetManagers = ({ obj }) => {
     const fees = useFees();
 
     const { orgAddress } = useParams();
@@ -22,17 +24,16 @@ const useBadgeForm = ({ obj, functionName }) => {
 
     const BadgerOrg = useMemo(() => { return getBadgerOrganizationAbi() }, [])
 
-    const args = getBadgeFormTxArgs({
-        data: obj,
-        functionName: functionName
-    });
-
-    const isReady = BadgerOrg && fees && authenticatedAddress && !!args;
+    const isReady = BadgerOrg && fees && authenticatedAddress;
+    const isInputValid = obj.addresses.length > 0 && obj.addresses.length === obj.statuses.length;
+    
+    const functionName = obj.tokenId ? "setManagers(uint256,address[],bool[])" : "setManagers(address[],bool[])";
+    const args = getManagerArgs({ data: obj });
 
     const overrides = { gasPrice: fees?.gasPrice };
     
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
-        enabled: isReady,
+        enabled: isReady && isInputValid,
         address: orgAddress,
         abi: BadgerOrg.abi,
         functionName,
@@ -47,7 +48,7 @@ const useBadgeForm = ({ obj, functionName }) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const openBadgeFormTransaction = async ({
+    const openSetManagers = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
         onSuccess = ({ config, chain, tx, receipt }) => { }
@@ -70,18 +71,15 @@ const useBadgeForm = ({ obj, functionName }) => {
 
             onSuccess({ config, chain, tx, receipt })
         } catch (e) {
+            console.error('e', e)
+
             onError(e);
         }
     }
 
-    return { openBadgeFormTransaction, isPrepared, isLoading, isSuccess }
-}
-
-const useBadge = ({ obj, image, functionName }) => {
-
+    return { openSetManagers, isPrepared, isLoading, isSuccess }
 }
 
 export { 
-    useBadgeForm, 
-    useBadge
+    useSetManagers
 }

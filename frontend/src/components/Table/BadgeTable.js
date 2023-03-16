@@ -7,9 +7,9 @@ import {
 
 import { TableSortHead } from "@components";
 
-import { compareByProperty } from "@utils";
+import { compareByProperty, getTimeSince } from "@utils";
 
-import { badgeHeadRows, IPFS_GATEWAY_URL } from "@static";
+import { BADGE_HEAD_ROWS, IPFS_GATEWAY_URL } from "@static";
 
 import "@style/Table/HolderTable.css";
 
@@ -18,7 +18,7 @@ const BadgeTable = ({ badges }) => {
 
     const { orgAddress, chainId } = useParams();
 
-    const [headRows, setHeadRows] = useState(badgeHeadRows);
+    const [headRows, setHeadRows] = useState(BADGE_HEAD_ROWS);
     const [sortedList, setSortedList] = useState(badges);
 
     const onSortChange = (key) => {
@@ -98,10 +98,7 @@ const BadgeTable = ({ badges }) => {
                                     {badge.users.length}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                    {badge.delegates.length}
-                                </TableCell>
-                                <TableCell component="th" scope="row">
-                                    {new Date(badge.updated).toLocaleString()}
+                                    {`${getTimeSince(new Date(badge.updated))} ago`}
                                 </TableCell>
                             </TableRow>
                         ))}

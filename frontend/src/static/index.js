@@ -1,4 +1,4 @@
-export { badgeHeadRows, holderHeadRows, pfpEmojis, getRandomEmoji, badgeDrawerSelectActions, ERRORS, HOME_LINKS, IPFS_GATEWAY_URL } from './constants'
+export { BADGE_HEAD_ROWS, HOLDER_HEAD_ROWS, pfpEmojis, getRandomEmoji, badgeDrawerSelectActions, ERRORS, HOME_LINKS, IPFS_GATEWAY_URL } from './constants'
 
 export { default as ImageErrorFallback } from './images/imgerror.svg'
 export { default as logo } from './images/logo.png'

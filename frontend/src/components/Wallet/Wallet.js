@@ -1,7 +1,7 @@
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
-import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { getDefaultWallets, RainbowKitProvider, lightTheme } from '@rainbow-me/rainbowkit';
 import { polygon, localhost } from 'wagmi/chains';
 
 import { AuthenticationContextProvider, OrgContextProvider, UserContextProvider } from '@contexts';
@@ -28,7 +28,15 @@ const Wallet = ({ children }) => {
 
     return (
         <WagmiConfig client={wagmiClient}>
-            <RainbowKitProvider chains={chains}>
+            <RainbowKitProvider chains={chains} modalSize="compact" theme={
+                lightTheme({
+                    accentColor: '#00FFE0',
+                    accentColorForeground: 'white',
+                    overlayBlur: 'small',
+                    borderRadius: 'small',
+                    fontStack: 'rounded'
+                })}
+            >
                 <AuthenticationContextProvider>
                     <OrgContextProvider>
                         <UserContextProvider>

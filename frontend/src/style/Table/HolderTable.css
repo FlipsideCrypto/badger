@@ -1,5 +1,5 @@
 tr {
-    height: 48px !important;
+    height: 40px !important;
 }
 
 td {
@@ -11,7 +11,7 @@ th {
 }
 
 th:first-child {
-    padding-left: 40px !important;
+    padding-left: 20px !important;
 }
 
 th:last-child,
@@ -23,27 +23,52 @@ th:not(:last-child) {
     padding-right: 20px !important;
 }
 
-
 #holder__table {
     margin-inline: -20px;
 }
 
-.delegate__status__true {
-    /* border: 2px solid #00FF9D; */
-    color: #00FF9D;
-    border-radius: 50px;
-    text-align: center;
-    width: 40px;
-    padding: 1px;
-    /* margin: auto; */
+input.table__input {
+    border: none;
+    outline: none;
+    width: 100%;
+    min-height: 40px;
+    min-width: 40px;
 }
 
-.delegate__status__false {
-    /* border: 2px solid #FF0000; */
+input.table__input:hover,
+input.table__input:active,
+input.table__input:focus {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.table__inline {
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+}
+
+.table__inline input {
+    text-align: right;
+}
+
+button.delete {
+    display: flex;
+    color:rgba(0, 0, 0, 0.65);
+    width: 20px;
+    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+button.delete:hover,
+button.delete:focus,
+button.delete:active {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     color: #FF0000;
-    border-radius: 50px;
-    text-align: center;
-    width: 40px;
-    padding: 1px;
-    /* margin: auto; */
+}
+
+.table__inline button.delete {
+    height: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
 }

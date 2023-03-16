@@ -11,7 +11,7 @@ const BadgePreview = ({ badge }) => {
 
             <div className="content">
                 <div className="title">
-                    <h2>{badge.name}</h2>
+                    <h1>{badge.name}</h1>
 
                     <div className="icons">
                         {badge.account_bound && <FontAwesomeIcon icon={["fal", "fa-lock"]} />}
@@ -20,7 +20,7 @@ const BadgePreview = ({ badge }) => {
 
                 <p>{badge.description}</p>
 
-                <div className="pill"><span>{`#${badge.token_id}`}</span></div>
+                {/* <div className="pill"><span>{`#${badge.token_id}`}</span></div> */}
             </div>
         </div>
     )

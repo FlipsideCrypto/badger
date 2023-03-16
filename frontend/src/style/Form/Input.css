@@ -64,6 +64,10 @@
     height: 26px;
 }
 
+.form__append {
+    font-size: 14px;
+}
+
 input:disabled {
     background-color: #F0F0F0;
 }

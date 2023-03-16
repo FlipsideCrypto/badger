@@ -59,8 +59,8 @@
     align-items: center;
 }
 
-.badge__header .title h2 {
-    margin: 0;
+.badge__header .title h1 {
+    margin-block: 8px;
 }
 
 .badge__header .title .icons {
@@ -81,7 +81,7 @@
 
 .badge__header .content {
     display: grid;
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: min-content 1fr;
     gap: 10px;
 }
 

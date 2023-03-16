@@ -18,7 +18,8 @@ import {
     initialBadgeForm, 
     Input, 
     Header, 
-    ImageLoader 
+    ImageLoader,
+    Select
 } from "@components";
 
 import { IPFS_GATEWAY_URL } from "@static";
@@ -35,9 +36,18 @@ const BadgeForm = ({ isEdit = false }) => {
     const { organization, badge } = useUser({ chainId, orgAddress, badgeId });
 
     const [ obj, setObj ] = useState(badge || initialBadgeForm);
-    const [ image, setImage ] = useState(null);
+    const [ isAccountBound, setIsAccountBound ] = useState(true); // TODO; This needs to be either added to the obj after cleaning it up or everything else comes out.
 
-    const { badgeArt } = useBadgeArt({organization: organization, name: obj.name})
+    const [ image, setImage ] = useState(null);
+    
+    const tokenId = obj.token_id || organization.badges.length
+
+    const { badgeArt } = useBadgeArt({
+        orgName: organization.name, 
+        orgAddress: organization.ethereum_address,
+        badgeName: obj.name,
+        tokenId
+    })
 
     const activeImage = image || obj.image_hash || badgeArt;
     
@@ -47,8 +57,6 @@ const BadgeForm = ({ isEdit = false }) => {
         badgeArt ? URL.createObjectURL(badgeArt) : null;
 
     const isDisabled = !(obj.name && obj.description && activeImageURL);
-
-    const tokenId = obj.token_id || organization.badges.length
 
     const { imageHash, ipfsImage } = useIPFSImageHash(activeImage);
 
@@ -79,7 +87,6 @@ const BadgeForm = ({ isEdit = false }) => {
 
     const actions = [{
         text: isEdit ? "Update badge" : "Create badge",
-        icon: ["fal", "arrow-right"],
         disabled: isDisabled || !isPrepared,
         loading: isLoading,
         event: () => openBadgeFormTransaction({
@@ -92,9 +99,17 @@ const BadgeForm = ({ isEdit = false }) => {
 
                 if (!event) throw new Error("Error submitting transaction.");
 
-                navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${tokenId}/`);
+                navigate(`/dashboard/organization/${chainId}/${orgAddress}/`);
             }
         })
+    }]
+
+    const warningActions = [{
+        className: "warning",
+        text: "Revoke all",
+        event: () => {
+
+        }
     }]
     
     // Updates generative image and Name field
@@ -113,6 +128,10 @@ const BadgeForm = ({ isEdit = false }) => {
         reader.onload = () => {
             setImage(reader.result)
         }
+    }
+
+    const onAccountBoundChange = (event) => {
+        setIsAccountBound(event.target.value === "True");
     }
 
     return (
@@ -144,7 +163,7 @@ const BadgeForm = ({ isEdit = false }) => {
                             onChange={onDescriptionChange}
                         />
                     </div>
-                    <div className="form__group" style={{ gridTemplateRows: "min-content" }}>
+                    <div className="form__group mobile__hidden" style={{ gridTemplateRows: "min-content" }}>
                         <label className="form__label">Live Badge Preview</label>
                         <div className="preview__container">
                             <ImageLoader
@@ -157,7 +176,14 @@ const BadgeForm = ({ isEdit = false }) => {
                 </div>
             </FormDrawer>
 
-            <FormDrawer label="Appearance" open={false}>
+            <FormDrawer label="Advanced" open={false}>
+                <Select
+                    label="Account Bound" 
+                    options={['True', 'False']} 
+                    value={isAccountBound ? 'True' : 'False'} 
+                    setValue={onAccountBoundChange}
+                />
+
                 <Input
                     name="Custom Image"
                     accept="image/*"
@@ -170,10 +196,7 @@ const BadgeForm = ({ isEdit = false }) => {
                             onClick={() => imageInput.current.click()}
                             style={{ width: "auto" }}
                         >
-                            {image ?
-                                "Change image" :
-                                "Upload image"
-                            }
+                            <span>{image ? "Change" : "Upload"}</span>
                         </button>
                     }
                 />
@@ -188,9 +211,18 @@ const BadgeForm = ({ isEdit = false }) => {
             </FormDrawer>
 
             <FormActionBar
+                className={!isEdit && "actionFixed"}
                 help={'After creating a badge, you (or your managers) can issue badges to team members.'}
                 actions={actions}
             />
+
+            {isEdit && <>
+                <h1>Danger zone</h1>
+                <FormActionBar
+                    className="warning"
+                    actions={warningActions}
+                />
+            </>}
         </>
     )
 }

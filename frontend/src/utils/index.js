@@ -18,5 +18,6 @@ export {
     compareByProperty,
     formatAddresses,
     getCSRFToken,
-    getFileFromBase64
+    getFileFromBase64,
+    getTimeSince
 } from './helpers'
