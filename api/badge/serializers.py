@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from api.mixins import SerializerRepresentationMixin
+from organization.models import Organization
 
 from .models import Badge
 
@@ -43,6 +44,8 @@ class BadgeSerializer(
     id = serializers.IntegerField(read_only=True)
     token_id = serializers.IntegerField(read_only=True)
 
+    ethereum_address = serializers.SerializerMethodField()
+
     users = BadgeWalletSerializer(many=True, read_only=True)
 
     def get_users(self, obj):
@@ -54,6 +57,12 @@ class BadgeSerializer(
                 'badge': obj
             }
         ).data
+
+    def get_ethereum_address(self, obj):
+        return Organization.objects.filter(
+            badges__id__in=[obj.id],
+            badges__isnull=False
+        ).first().ethereum_address
 
     class Meta:
         model = Badge
