@@ -1,14 +1,14 @@
 .preview__image {
-    width: 122px;
-    height: 122px;
+    width: 200px;
+    height: 200px;
     aspect-ratio: 1/1;
     object-fit: contain;
 }
 
 .badge__form__general {
     display: grid;
-    grid-template-columns: 10fr 2fr; 
-    grid-column-gap: 20px;
+    grid-template-columns: 1fr auto; 
+    grid-column-gap: 40px;
 }
 
 .badge__form__access {

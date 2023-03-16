@@ -58,7 +58,7 @@ const BADGE_HEAD_ROWS = {
         label: 'Holders',
         sortable: true,
         method: "",
-        align: 'right',
+        align: 'left',
         width: '10%',
     },
     updated: { 
@@ -76,14 +76,14 @@ const HOLDER_HEAD_ROWS = {
         sortable: true,
         method: "",
         align: "left",
-        width: "50%"
+        width: "70%"
     },
     balance: {
         label: "Balance",
         sortable: true,
         method: "",
         align: "right",
-        width: "20%"
+        width: "30%"
     }
 }
 
