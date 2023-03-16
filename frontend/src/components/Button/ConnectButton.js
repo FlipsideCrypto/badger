@@ -13,7 +13,6 @@ const ConnectButton = (props) => {
     const { openConnectModal } = useConnectModal();
 
     const { primaryChain, isWrongNetwork } = useAuthentication();
-    const { primaryChain, isWrongNetwork } = useAuthentication();
 
     const className = props.className || "secondary"
 
