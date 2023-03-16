@@ -3,7 +3,6 @@ import { useAccount, useSwitchNetwork } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 import { useAuthentication } from "@hooks";
-import { useAuthentication } from "@hooks";
 
 const ConnectButton = (props) => {
     const { switchNetwork } = useSwitchNetwork();
