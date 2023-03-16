@@ -14,20 +14,20 @@ const cleanAndValidateAddresses = (addresses) => {
 
     addresses.forEach((address, index) => {
         address = address.trim().toLowerCase();
-        
+
         /// if empty string, skip
         if (!address)
             return
-            
+
         if (address.length !== 42 || !ethers.utils.isAddress(address))
-            invalid.push({index: index, address: address})
-    
-        cleanedAddresses.push(address);    
+            invalid.push({ index: index, address: address })
+
+        cleanedAddresses.push(address);
     })
 
     if (invalid.length > 0)
         console.error("Invalid addresses: " + invalid.map(i => i.index).join(", ") + " (" + invalid.map(i => i.address).join(", ") + ")");
-        // throw new Error("Invalid addresses at index: " + invalid.map(i => i.index).join(", ") + " (" + invalid.map(i => i.address).join(", ") + ")")
+    // throw new Error("Invalid addresses at index: " + invalid.map(i => i.index).join(", ") + " (" + invalid.map(i => i.address).join(", ") + ")")
 
     return { cleanedAddresses, invalid }
 }
@@ -54,15 +54,15 @@ const useManageHolders = ({ obj }) => {
 
     const { orgAddress } = useParams();
 
-    const { authenticatedAddress, chain } = useUser();
+    const { chain, address } = useUser();
 
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
 
     const BadgerOrg = useMemo(() => { return getBadgerOrganizationAbi() }, [])
 
-    const isReady = BadgerOrg && fees && authenticatedAddress;
-    
+    const isReady = BadgerOrg && fees && address;
+
     const functionName = obj.addresses.length > 1 ? obj.functionName + "Batch" : obj.functionName;
 
     const args = getManageHolderArgs({
@@ -71,7 +71,7 @@ const useManageHolders = ({ obj }) => {
     });
 
     const overrides = { gasPrice: fees?.gasPrice };
-    
+
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
         enabled: isReady && args.length > 0,
         address: orgAddress,
@@ -105,7 +105,7 @@ const useManageHolders = ({ obj }) => {
             if (receipt.status === 0) throw new Error("Error submitting transaction");
 
             receipt.events = receipt.logs.filter((log) => log.address === orgAddress).map((log) => BadgerOrg.abi.parseLog(log))
-    
+
             setIsLoading(false)
             setIsSuccess(true)
 
@@ -230,7 +230,7 @@ const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, action, amou
     return { write: writeAsync, isSuccess, error };
 }
 
-export { 
+export {
     useManageHolders,
     useSetDelegates,
     useManageBadgeOwnership

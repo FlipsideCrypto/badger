@@ -4,7 +4,13 @@ import { useLocation } from "react-router-dom";
 
 import { useENSProfile, useUser } from "@hooks";
 
-import { ActionButton, ConnectButton, LogoutButton, OrgView, ProfileView } from "@components"
+import {
+    ActionButton,
+    ConnectButton,
+    LogoutButton,
+    OrgView,
+    ProfileView
+} from "@components"
 
 import { sliceAddress } from "@utils";
 
@@ -14,9 +20,11 @@ import "@style/Bar/ActionBar.css";
 const ActionBar = () => {
     const { pathname } = useLocation();
 
-    const { authenticatedAddress, isAuthenticated, isLoaded } = useUser();
+    const { address, isConnected, isLoaded } = useUser();
 
-    const { ensAvatar, ensName } = useENSProfile(authenticatedAddress);
+    const { ensAvatar, ensName } = useENSProfile(address);
+
+    const [collapsed, setCollapsed] = useState(true);
 
     const orgRegex = /\/dashboard\/organization\/(\w+)\/(\w+)/
 
@@ -24,20 +32,18 @@ const ActionBar = () => {
 
     const orgAddress = orgRegex.test(pathname) && orgRegex.exec(pathname)[2]
 
-    const [collapsed, setCollapsed] = useState(true);
-
     return (
         <div className="action_bar">
             <div className="action_bar__view">
-                {!isAuthenticated && <ConnectButton />}
+                {!isConnected && <ConnectButton />}
 
-                {isAuthenticated && (!orgAddress || orgAddress && !isLoaded) && <ProfileView
+                {isConnected && (!orgAddress || orgAddress && !isLoaded) && <ProfileView
                     ensAvatar={ensAvatar}
                     ensName={ensName}
-                    address={sliceAddress(authenticatedAddress)}
+                    address={sliceAddress(address)}
                 />}
 
-                {isAuthenticated && isLoaded && orgAddress && <OrgView chainId={chainId} orgAddress={orgAddress} />}
+                {isConnected && isLoaded && orgAddress && <OrgView chainId={chainId} orgAddress={orgAddress} />}
             </div>
 
             <div className="action_bar__toggle">
@@ -53,7 +59,7 @@ const ActionBar = () => {
                     <ActionButton className="tertiary" icon={['fal', 'star']} afterText="Star on GitHub"
                         link="http://github.com/flipsidecrypto/badger" />
 
-                    {isAuthenticated && authenticatedAddress && <LogoutButton />}
+                    {isConnected && address && <LogoutButton />}
                 </div>
             </div>
         </div >

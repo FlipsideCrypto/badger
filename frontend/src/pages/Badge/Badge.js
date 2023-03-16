@@ -14,12 +14,12 @@ const Badge = () => {
     const navigate = useNavigate();
 
     const { chainId, orgAddress, badgeId } = useParams();
-    
-    const { authenticatedAddress, organization, badge } = useUser({ chainId, orgAddress, badgeId });
+
+    const { address, organization, badge } = useUser({ chainId, orgAddress, badgeId });
 
     const isManager = organization && badge && (
-        organization.owner.ethereum_address === authenticatedAddress ||
-        badge.delegates.find(delegate => delegate.ethereum_address === authenticatedAddress)
+        organization.owner.ethereum_address === address ||
+        badge.delegates.find(delegate => delegate.ethereum_address === address)
     );
 
     const headerActions = [{
@@ -32,8 +32,8 @@ const Badge = () => {
         <>
             <SEO title={`${organization.name} | ${badge.name} | Badger`} description={badge.description} />
 
-            <Header back={() => 
-                navigate(`/dashboard/organization/${chainId}/${orgAddress}/`)} 
+            <Header back={() =>
+                navigate(`/dashboard/organization/${chainId}/${orgAddress}/`)}
                 actions={isManager && headerActions} />
 
             <DashboardLoader chainId={chainId} orgAddress={orgAddress} obj={organization}>
