@@ -71,6 +71,7 @@ const BadgeForm = ({ isEdit = false }) => {
         ...obj,
         imageHash: imageHash,
         uriHash: metadataHash,
+        accountBound: isAccountBound,
         token_id: tokenId
     }
     
@@ -78,7 +79,7 @@ const BadgeForm = ({ isEdit = false }) => {
         openBadgeFormTransaction, 
         isPrepared,
         isLoading 
-    } = useBadgeForm({ obj: transactionParams, functionName: "setBadgeURI" });
+    } = useBadgeForm({ obj: transactionParams });
 
     const { pinImage, pinMetadata } = useIPFS({
         image: ipfsImage,

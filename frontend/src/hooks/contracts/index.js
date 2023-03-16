@@ -20,9 +20,5 @@ export {
 } from './useSetManagers';
 
 export { 
-    useSetHooks
-} from './useSetHooks';
-
-export { 
     useManageHolders
 } from './useManageHolders';

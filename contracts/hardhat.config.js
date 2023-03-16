@@ -80,6 +80,19 @@ task("deploy", "Deploys the protocol")
         }
         console.table(badgerDeployment);
 
+        const AccountBoundHook = await ethers.getContractFactory("BadgerTransferBound");
+        accountBoundHook = await AccountBoundHook.deploy();
+        accountBoundHook = await accountBoundHook.deployed();
+        console.log("✅ Account Bound Hook Deployed.");
+
+        accountBoundHookDeployment = {
+            "Chain ID": chainId,
+            "Deployer": deployer.address,
+            "Hook Address": accountBoundHook.address,
+            "Remaining ETH Balance": parseInt((await deployer.getBalance()).toString()) / 1000000000000000000
+        }
+        console.table(accountBoundHookDeployment);
+
         // Verifying
         if (taskArgs.verify !== false && chainId != '31337') {
 
@@ -97,6 +110,13 @@ task("deploy", "Deploys the protocol")
                 constructorArguments: [badger.address],
             });
             console.log("✅ Badger Verified.")
+
+            await new Promise(r => setTimeout(r, 30000));
+            await hre.run("verify:verify", {
+                address: accountBoundHook.address,
+                constructorArguments: [],
+            });
+            console.log("✅ Transfer Bound Verified.")
         }
 
         console.log("✅ Deployment Complete.")

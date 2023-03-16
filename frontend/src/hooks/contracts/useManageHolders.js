@@ -3,37 +3,12 @@ import { useParams } from "react-router-dom";
 
 import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
-import { ethers } from "ethers";
-
 import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
 
-// TODO: Make this it's own modular piece and flesh it out
-const cleanAndValidateAddresses = (addresses) => {
-    let invalid = []
-    let cleanedAddresses = []
-
-    addresses.forEach((address, index) => {
-        address = address.trim().toLowerCase();
-        
-        /// if empty string, skip
-        if (!address)
-            return
-            
-        if (address.length !== 42 || !ethers.utils.isAddress(address))
-            invalid.push({index: index, address: address})
-    
-        cleanedAddresses.push(address);    
-    })
-
-    if (invalid.length > 0)
-        console.error("Invalid addresses: " + invalid.map(i => i.index).join(", ") + " (" + invalid.map(i => i.address).join(", ") + ")");
-        // throw new Error("Invalid addresses at index: " + invalid.map(i => i.index).join(", ") + " (" + invalid.map(i => i.address).join(", ") + ")")
-
-    return { cleanedAddresses, invalid }
-}
+import { addressValidator } from "@utils";
 
 const getManageHolderArgs = ({ data, functionName }) => {
-    const { cleanedAddresses: addresses, invalid } = cleanAndValidateAddresses(data.addresses);
+    const { cleanedAddresses: addresses, invalid } = addressValidator(data.addresses);
     const amounts = data.amounts.map(amount => parseInt(amount || 1));
     const tokenId = parseInt(data.tokenId);
 

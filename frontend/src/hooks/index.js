@@ -5,7 +5,6 @@ export {
     useOrgForm,
     useBadgeForm,
     useManageHolders,
-    useSetHooks,
     useSetManagers,
     useTransferOwnership,
     useRenounceOwnership
