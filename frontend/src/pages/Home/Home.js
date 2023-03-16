@@ -11,6 +11,12 @@ const Home = () => {
 
     const { isAuthenticated, organizations } = useUser();
 
+    const announcementMessage = (
+        <p>As of March 21st, 2023 organizations deployed before that date have been migrated to 
+            <a href="https://legacy.trybadger.com" target="_blank" rel="noreferrer"> legacy.trybadger.com</a>. 
+        </p>
+    )
+
     const titleActions = isAuthenticated && [{
         className: "secondary",
         text: "Create",
@@ -20,6 +26,14 @@ const Home = () => {
 
     return (
         <div className="home">
+            {announcementMessage && 
+                <div className="home__announcement">
+                    <div className="announcement__message">
+                        {announcementMessage}
+                    </div>
+                </div>
+            }
+
             <ActionTitle
                 title="Organizations"
                 actions={titleActions}

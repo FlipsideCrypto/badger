@@ -1,20 +1,8 @@
-.home .home__announcement .card {
+.home__announcement {
+    background-color: #FCFCFF;
+    color: #06061C;
     padding: 20px;
-    display: grid;
-    grid-template-columns: 32px auto;
-    margin-top: 20px;
-    align-items: center;
-}
-
-.home .home__announcement .card .announcement__status {
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
-    border: 1px solid #E0E0E0;
-}
-
-.home .home__announcement .card .announcement__message {
-    line-height: 16px;
+    margin-bottom: 20px;
 }
 
 .home__cards {
@@ -26,5 +14,11 @@
 @media screen and (max-width: 990px) {
     .home__cards {
         grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .home__cards {
+        grid-template-columns: 1fr;
     }
 }
