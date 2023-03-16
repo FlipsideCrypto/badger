@@ -11,12 +11,12 @@ import {
 
 import { IPFS_GATEWAY_URL } from "@static";
 
-const getOrgFormTxArgs = ({ functionName, authenticatedAddress, name, symbol, imageHash, contractHash }) => {
+const getOrgFormTxArgs = ({ functionName, address, name, symbol, imageHash, contractHash }) => {
     if (functionName === "setOrganizationURI") {
         return [IPFS_GATEWAY_URL + contractHash]
     } else if (functionName === "createOrganization") {
         const organizationStruct = {
-            deployer: authenticatedAddress,
+            deployer: address,
             uri: IPFS_GATEWAY_URL + imageHash,
             organizationURI: IPFS_GATEWAY_URL + contractHash,
             name,
@@ -30,7 +30,7 @@ const getOrgFormTxArgs = ({ functionName, authenticatedAddress, name, symbol, im
 const useOrgForm = ({ obj }) => {
     const fees = useFees();
 
-    const { authenticatedAddress, chain } = useUser();
+    const { chain, address } = useUser();
 
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -42,11 +42,11 @@ const useOrgForm = ({ obj }) => {
         return getBadgerAbi(chain.id);
     }, [functionName, chain.id]);
 
-    const isReady = Badger && fees && !!authenticatedAddress;
+    const isReady = Badger && fees && !!address;
 
     const args = getOrgFormTxArgs({
         functionName,
-        authenticatedAddress,
+        address,
         name: obj.name,
         symbol: obj.symbol,
         imageHash: obj.imageHash,

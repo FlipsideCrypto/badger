@@ -6,13 +6,6 @@ export {
 } from './api'
 
 export {
-    getAuthentication,
-    getNonce,
-    getAuthenticationMessage,
-    getAuthenticationStatus,
-} from './auth'
-
-export {
     csvFileToArray,
     sliceAddress,
     compareByProperty,
