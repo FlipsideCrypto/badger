@@ -3,6 +3,7 @@ import { useAccount, useSwitchNetwork } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 import { useAuthentication } from "@hooks";
+import { useAuthentication } from "@hooks";
 
 const ConnectButton = (props) => {
     const { switchNetwork } = useSwitchNetwork();
@@ -11,6 +12,7 @@ const ConnectButton = (props) => {
 
     const { openConnectModal } = useConnectModal();
 
+    const { primaryChain, isWrongNetwork } = useAuthentication();
     const { primaryChain, isWrongNetwork } = useAuthentication();
 
     const className = props.className || "secondary"

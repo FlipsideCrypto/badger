@@ -5,24 +5,15 @@ const CHAIN_ID = process.env.REACT_APP_CHAIN_ID
 
 const AuthenticationContext = createContext();
 
-const getAuthenticatedAddress = () => {
-    return document.cookie.split(';').find(c => c.includes('authenticatedAddress'))?.split('=')[1];
-}
-
 const AuthenticationContextProvider = ({ children }) => {
     const { chain } = useNetwork();
     const { chains, isError, switchNetwork } = useSwitchNetwork();
 
     const { address, isConnected } = useAccount();
 
-    const [authenticatedAddress, setAuthenticatedAddress] = useState(getAuthenticatedAddress());
-    const [isAuthenticating, setIsAuthenticating] = useState(false);
-
     const primaryChain = chains.find(c => c.id === parseInt(CHAIN_ID));
 
     const isWrongNetwork = isConnected && chain && primaryChain && chains && chain.id !== primaryChain.id;
-
-    const isAuthenticated = isConnected && !isWrongNetwork && address === authenticatedAddress;
 
     const isReadyToSwitch = !isError && switchNetwork && isWrongNetwork;
 
@@ -32,13 +23,11 @@ const AuthenticationContextProvider = ({ children }) => {
 
     return (
         <AuthenticationContext.Provider value={{
+            chain,
             primaryChain,
-            authenticatedAddress,
-            isAuthenticating,
-            isAuthenticated,
+            address,
+            isConnected,
             isWrongNetwork,
-            setIsAuthenticating,
-            setAuthenticatedAddress
         }}>
             {children}
         </AuthenticationContext.Provider>

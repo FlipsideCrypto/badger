@@ -29,12 +29,12 @@ const OrgForm = ({ isEdit = false }) => {
 
     const { chainId, orgAddress } = useParams();
 
-    const { organization, authenticatedAddress } = useUser({ chainId, orgAddress });
+    const { address, organization } = useUser({ chainId, orgAddress });
 
     const [obj, setObj] = useState(organization || initialOrgForm);
     const [image, setImage] = useState(null);
 
-    const { characterPFP } = usePFP({ name: obj.name, address: authenticatedAddress });
+    const { characterPFP } = usePFP({ name: obj.name, address });
 
     const customImage = image || obj.image_hash;
 
@@ -131,9 +131,9 @@ const OrgForm = ({ isEdit = false }) => {
                 <input ref={imageInput} type="file" accept="image/*" onChange={onImageChange} />
             </FormDrawer>
 
-            <FormActionBar 
-                className={!isEdit && "actionFixed"}                
-                actions={actions} 
+            <FormActionBar
+                className={!isEdit && "actionFixed"}
+                actions={actions}
             />
 
             {isEdit && <>
