@@ -5,7 +5,6 @@ export {
     useOrgForm,
     useBadgeForm,
     useManageHolders,
-    useSetManagers,
     useTransferOwnership,
     useRenounceOwnership
 } from './contracts';

@@ -16,9 +16,5 @@ export {
 } from './useBadgeForm';
 
 export { 
-    useSetManagers
-} from './useSetManagers';
-
-export { 
     useManageHolders
 } from './useManageHolders';
