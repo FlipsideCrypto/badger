@@ -130,12 +130,9 @@ const HolderTable = ({ badge, isManager }) => {
                                     <input
                                         className="table__input"
                                         value={holder.ethereum_address} 
-                                        placeholder="Ethereum address..."
+                                        placeholder="Ethereum address or ENS..."
                                         onChange={(e) => onAddressChange(e, index)} 
                                     />
-                                </TableCell>
-                                <TableCell component="th" scope="row">
-                                    <span>{holder?.ens_name}</span>
                                 </TableCell>
                                 <TableCell component="th" scope="row">
                                     <div className="table__inline">
