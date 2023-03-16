@@ -4,10 +4,6 @@ import uuid
 from djangochannelsrestframework.mixins import (
     ListModelMixin,
     RetrieveModelMixin,
-    PatchModelMixin,
-    UpdateModelMixin,
-    CreateModelMixin,
-    DeleteModelMixin,
 )
 from djangochannelsrestframework.generics import GenericAsyncAPIConsumer
 
@@ -44,10 +40,6 @@ class ManagedModelMixin(
     ConnectedMixin,
     ListModelMixin,
     RetrieveModelMixin,
-    PatchModelMixin,
-    UpdateModelMixin,
-    CreateModelMixin,
-    DeleteModelMixin,
     GenericAsyncAPIConsumer
 ):
     async def connect(self, **kwargs):

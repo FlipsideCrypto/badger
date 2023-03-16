@@ -3,25 +3,20 @@ import random
 
 from django.contrib.auth import get_user_model
 
-from rest_framework import status, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import (
-    IsAuthenticated,
-)
 from rest_framework.response import Response
-
-from api.permissions import generator, CanManageBadge
-
-from organization.models import Organization
 
 from .models import Badge
 from .serializers import BadgeSerializer
 
 User = get_user_model()
 
-class ArtViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated] 
+class BadgeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Badge.objects.all()
+    serializer_class = BadgeSerializer
 
+class ArtViewSet(viewsets.ViewSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -342,16 +337,3 @@ class ArtViewSet(viewsets.ViewSet):
         return Response({
             "image": url_ready_base64,
         })
-
-class BadgeViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Badge.objects.all()
-    serializer_class = BadgeSerializer
-
-    permission_classes = [IsAuthenticated]
-
-    def get_permissions(self):
-        permission_classes = []
-        if self.action in ['update', 'partial_update', 'destroy']:
-            permission_classes += [CanManageBadge]
-
-        return generator(self.permission_classes + permission_classes)

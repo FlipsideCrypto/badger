@@ -11,8 +11,6 @@ from module.urls import router as modules_router
 from organization.urls import router as organizations_router
 from wallet.urls import router as wallets_router
 
-from .views import get_nonce
-
 router = routers.DefaultRouter()
 router.registry.extend(badges_router.registry)
 router.registry.extend(ipfs_router.registry)
@@ -32,7 +30,6 @@ urlpatterns = router.urls + [
     path("admin/", admin.site.urls),
     # Authentication urls
     path("api/auth/", include("siwe_auth.urls")),
-    path("api/auth/get-nonce", get_nonce, name="get-nonce"),
     # Documentation urls
     path('api/docs/', TemplateView.as_view(
         template_name='docs.html',
