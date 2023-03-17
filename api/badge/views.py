@@ -58,6 +58,16 @@ class ArtViewSet(viewsets.ViewSet):
             fingerprint.append(self._encode(char))
 
         return fingerprint
+    
+    def _handle_line(self, lines, word):
+        if len(word) > 12:
+            for i in range(0, len(word), 12):
+                connector = "-" if i + 12 < len(word) else ""
+                lines.append(word[i:i + 12] + connector)
+        else:
+            lines.append(word)
+
+        return lines
 
     @action(
         detail=False, 
@@ -262,27 +272,13 @@ class ArtViewSet(viewsets.ViewSet):
                           
             newLine = len(lines) > 0 and lineLength > 14
 
-            print(lineLength, newLine)
-
             if newLine:
-                if len(word) > 14:
-                    for i in range(0, len(word), 13):
-                        connector = "-" if i + 13 < len(word) else ""
-                        lines.append(word[i:i + 13] + connector)
-                else:
-                    lines.append(word)
+                self._handle_line(lines, word)
             else:
                 if len(lines) > 0:
                     lines[-1] += " " + word
                 else:
-                    if len(word) > 14:
-                        for i in range(0, len(word), 13):
-                            connector = "-" if i + 13 < len(word) else ""
-                            lines.append(word[i:i + 13] + connector)
-                    else:
-                        lines.append(word)
-
-        print(lines)
+                    self._handle_line(lines, word)
 
         text_color = "#000" if fill == "#fff" else "#fff"
 
