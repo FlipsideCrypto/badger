@@ -2,6 +2,7 @@ export {
     getBadgerAddress,
     getBadgerOrganizationAbi,
     getBadgerAbi,
+    getTransferBoundAddress,
     useOrgForm,
     useBadgeForm,
     useManageHolders,

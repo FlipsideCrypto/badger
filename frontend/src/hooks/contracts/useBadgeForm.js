@@ -4,12 +4,11 @@ import { useParams } from "react-router-dom";
 import { usePrepareContractWrite, useContractWrite } from "wagmi";
 import { ethers } from "ethers";
 
-import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
+import { getBadgerOrganizationAbi, getTransferBoundAddress, useFees, useUser } from "@hooks";
 
 const getBadgeFormTxArgs = ({ obj }) => {
     if (!obj.uriHash) return { args: [], functionName: "" };
 
-    console.log('obj', obj)
     // For now, we're hard coding the setHook and configHook if the badge is account bound. A more modular piece is being built out for hooks and managers.
     const functionName = obj.accountBound ? "multicall" : "setBadgeURI";
     let args = [];
@@ -21,17 +20,14 @@ const getBadgeFormTxArgs = ({ obj }) => {
     if (functionName === "multicall") {
         const config = ethers.utils.defaultAbiCoder.encode(["uint256","bool"], [obj.token_id, true])
 
-        // TODO: DON'T HARD CODE THIS
-        const BEFORE_TRANSFER_SLOT = "0x844bb459abe62f824043e42caa262ad6859731fc48abd8966db11d779c0fe669"
-
         const setBadgeURI = obj.organization.abi.encodeFunctionData(
             "setBadgeURI", [obj.token_id, obj.uriHash]
         );
         const setHook = obj.organization.abi.encodeFunctionData(
-            "setHooks", [BEFORE_TRANSFER_SLOT, [obj.address], [true]]
+            "setHooks", [obj.slot, [obj.address], [true]]
         );
         const configHook = obj.organization.abi.encodeFunctionData(
-            "configHook", [BEFORE_TRANSFER_SLOT, obj.address, config]
+            "configHook", [obj.slot, obj.address, config]
         );
 
         args = [[setBadgeURI, setHook, configHook]];
@@ -53,11 +49,14 @@ const useBadgeForm = ({ obj }) => {
 
     const BadgerOrg = useMemo(() => { return getBadgerOrganizationAbi() }, []);
 
+    const transferBoundAddress = getTransferBoundAddress(chain.id)
+
     const { functionName, args } = getBadgeFormTxArgs({ 
         obj: {
             ...obj, 
             organization: BadgerOrg,
-            address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0" // TODO: Get the hook implementation address
+            address: transferBoundAddress,
+            slot: "0x844bb459abe62f824043e42caa262ad6859731fc48abd8966db11d779c0fe669" // TODO: Don't hardcode this (BEFORE_TRANSFER bytes32 slot)
         }
      });
 
@@ -98,7 +97,6 @@ const useBadgeForm = ({ obj }) => {
             if (receipt.status === 0) throw new Error("Error submitting transaction");
 
             receipt.events = receipt.logs.filter((log) => log.address === orgAddress).map((log) => BadgerOrg.abi.parseLog(log))
-            console.log('receipt', receipt)
     
             setIsLoading(false)
             setIsSuccess(true)

@@ -1,7 +1,8 @@
 export {
     getBadgerAddress,
     getBadgerOrganizationAbi,
-    getBadgerAbi
+    getBadgerAbi,
+    getTransferBoundAddress
 } from './contractVersions';
 
 export {

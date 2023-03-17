@@ -100,6 +100,8 @@ const BadgeForm = ({ isEdit = false }) => {
 
                 if (!event) throw new Error("Error submitting transaction.");
 
+                console.log('receipt', receipt);
+
                 navigate(`/dashboard/organization/${chainId}/${orgAddress}/`);
             }
         })
