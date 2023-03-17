@@ -39,7 +39,6 @@ const Badge = () => {
             <DashboardLoader chainId={chainId} orgAddress={orgAddress} obj={organization}>
                 <BadgePreview badge={badge} />
 
-
                 <HolderTable badge={badge} isManager={isManager} />
             </DashboardLoader>
         </>

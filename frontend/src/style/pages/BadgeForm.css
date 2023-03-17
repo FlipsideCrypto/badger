@@ -7,7 +7,7 @@
 
 .badge__form__general {
     display: grid;
-    grid-template-columns: 10fr 2fr; 
+    grid-template-columns: 10fr 2fr;
     grid-column-gap: 20px;
 }
 
@@ -17,23 +17,15 @@
     grid-column-gap: 10px;
 }
 
-.preview__container::after {
-    box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.15);
-    content: '';
-    display: block;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    width: 100%;
-}
-
 @media (max-width: 768px) {
     .badge__form__general {
         grid-template-columns: 1fr;
     }
+
     .badge__form__general .form__group.mobile__hidden {
         display: none;
     }
+
     .badge__form__access {
         grid-template-columns: 1fr;
     }
