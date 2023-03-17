@@ -23,6 +23,7 @@ const OrgCard = ({ org }) => {
 
                 <h2 className="title">
                     <ImageLoader className="viewImage"
+                        bypassed={true}
                         src={IPFS_GATEWAY_URL + org.image_hash}
                         onLoad={handleImageLoad} />
 
