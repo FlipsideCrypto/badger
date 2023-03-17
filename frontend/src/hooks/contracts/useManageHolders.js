@@ -7,21 +7,73 @@ import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
 
 import { addressValidator } from "@utils";
 
-const getManageHolderArgs = ({ data, functionName }) => {
-    const { cleanedAddresses: addresses, invalid } = addressValidator(data.addresses);
-    const amounts = data.amounts.map(amount => parseInt(amount || 1));
-    const tokenId = parseInt(data.tokenId);
+const getMintArgs = ({ data }) => {
+    const functionName = data.mints.length > 1 ? "mintBatch" : "mint";
 
-    if (invalid.length !== 0 || addresses.length === 0 || addresses.length !== amounts.length)
-        return []
-    if (functionName === "mint")
-        return [addresses[0], tokenId, amounts[0], "0x"];
-    if (functionName === "mintBatch")
-        return [addresses, tokenId, amounts, "0x"];
-    if (functionName === "revoke")
-        return [addresses[0], tokenId, amounts[0]];
-    if (functionName === "revokeBatch")
-        return [addresses, tokenId, amounts];
+    // Build cleaned amounts and addresses
+    const mintAmounts = data.mints.map(mint => parseInt(mint.pendingAmount || 1) - parseInt(mint.amount || 0));
+    const { cleanedAddresses: mintAddresses, invalid } = addressValidator(data.mints.map(mint => mint.ethereum_address));
+
+    // Make sure everything is valid for the transaction.
+    if (invalid.length !== 0 || mintAddresses.length === 0 || mintAmounts.length !== mintAddresses.length) {
+        // console.error("Invalid mint args", invalid, mintAmounts)
+        return { functionName: "", args: [] };
+    }
+
+    const args = functionName === "mint" ? 
+        [mintAddresses[0], data.tokenId, mintAmounts[0], "0x"] :
+        [mintAddresses, data.tokenId, mintAmounts, "0x"]
+
+    return { functionName, args };
+}
+
+const getRevokeArgs = ({ data }) => {
+    const functionName = data.revokes.length > 1 ? "revokeBatch" : "revoke";
+    
+    // Build cleaned amounts and addresses
+    const revokeAmounts = data.revokes.map(mint => Math.abs(parseInt(mint.amount) - parseInt(mint.pendingAmount || mint.amount)));
+    const { cleanedAddresses: revokeAddresses, invalid } = addressValidator(data.revokes.map(revoke => revoke.ethereum_address));
+
+    // Make sure everything is valid for the transaction.
+    if (invalid.length !== 0 || revokeAddresses.length === 0 || revokeAmounts.length !== revokeAddresses.length) {
+        // console.error("Invalid revoke args", invalid, revokeAmounts)
+        return { functionName: "", args: [] };
+    }
+
+    const args = functionName === "revoke" ?
+        [revokeAddresses[0], data.tokenId, revokeAmounts[0]] :
+        [revokeAddresses, data.tokenId, revokeAmounts];
+
+    return { functionName, args };
+}
+
+const getManageHolderArgs = ({ data }) => {
+    const { functionName: mintFunction, args: mintArgs } = getMintArgs({ data: data });
+    const { functionName: revokeFunction, args: revokeArgs} = getRevokeArgs({ data: data });
+
+    // if multi call is necessary
+    if (mintFunction && revokeFunction) {
+        // Build mint and revoke args
+        
+        console.log('data', data, mintArgs, revokeArgs)
+
+        // Encode the mint and revoke args
+        const args = [[
+            data.organization.abi.encodeFunctionData(mintFunction, mintArgs),
+            data.organization.abi.encodeFunctionData(revokeFunction, revokeArgs)
+        ]]
+
+        return { functionName: "multicall", args };
+    }
+    else if (data.mints.length > 0) {
+        return getMintArgs({ data: data });
+    }
+
+    else if (data.revokes.length > 0) {
+        return getRevokeArgs({ data: data });
+    }
+
+    return { functionName: "", args: [] };
 }
 
 const useManageHolders = ({ obj }) => {
@@ -38,17 +90,12 @@ const useManageHolders = ({ obj }) => {
 
     const isReady = BadgerOrg && fees && address;
 
-    const functionName = obj.addresses.length > 1 ? obj.functionName + "Batch" : obj.functionName;
-
-    const args = getManageHolderArgs({
-        data: obj,
-        functionName: functionName
-    });
+    const { functionName, args } = getManageHolderArgs({ data: {...obj, organization: BadgerOrg }});
 
     const overrides = { gasPrice: fees?.gasPrice };
 
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
-        enabled: isReady && args.length > 0,
+        enabled: isReady && functionName,
         address: orgAddress,
         abi: BadgerOrg.abi,
         functionName,
@@ -60,6 +107,8 @@ const useManageHolders = ({ obj }) => {
             throw new Error(err);
         }
     });
+
+    console.log('config', config, isPrepared)
 
     const { writeAsync } = useContractWrite(config);
 

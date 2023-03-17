@@ -18,18 +18,19 @@ import "@style/Table/HolderTable.css";
 
 const HolderTable = ({ badge, isManager }) => {
     const [headRows, setHeadRows] = useState(HOLDER_HEAD_ROWS);
+    
+    // The new holder objects being created by the user.
     const [newHolders, setNewHolders] = useState([]);
+    // used as a clone of badge.users with changed amounts.
+    const [balanceChanges, setBalanceChanges] = useState([]);
 
     const obj = {
-        addresses: newHolders.map(holder => holder.ethereum_address),
-        amounts: newHolders.map(holder => holder.amount),
-        tokenId: badge.token_id,
-        functionName: "mint" // TODO: Update this when we get to multicall?
+        mints: [...newHolders, ...balanceChanges.filter(change => change.pendingAmount > change.amount)],
+        revokes: [...balanceChanges.filter(change => change.pendingAmount < change.amount)],
+        tokenId: badge.token_id
     }
 
     const { openHolderTransaction, isPrepared, isLoading } = useManageHolders({obj: obj});
-
-    const list = [...newHolders, ...badge.users];
 
     const onSortChange = (key) => {
         // // Get the current sort method and inverse it for chevron display.
@@ -48,26 +49,24 @@ const HolderTable = ({ badge, isManager }) => {
     }
 
     const onAddNew = () => {
-        setNewHolders([{ethereum_address: "", amount: ""}, ...newHolders])
+        setNewHolders([{ethereum_address: "", pendingAmount: ""}, ...newHolders])
     }
 
-    const onAmountChange = (e, index) => {
-        let newObj = [...newHolders];
-        newObj[index] = { ...newObj[index], amount: e.target.value };
-        setNewHolders(newObj);
+    const onAmountChange = (e, index, isActive) => {
+        isActive ?
+            setBalanceChanges(balanceChanges => balanceChanges.map((holder, i) => i === index ? {...holder, pendingAmount: e.target.value} : holder)) :
+            setNewHolders(newHolders => newHolders.map((holder, i) => i === index ? {...holder, pendingAmount: e.target.value} : holder))
     }
     
     const onAddressChange = (e, index) => {
-        let newObj = [...newHolders];
-        newObj[index] = { ...newObj[index], ethereum_address: e.target.value };
-        setNewHolders(newObj);
+        setNewHolders(newHolders => newHolders.map((holder, i) => i === index ? {...holder, ethereum_address: e.target.value} : holder))
     }
     
     // TODO: If they're a current holder.
-    const onDelete = (index) => {
-        let newObj = [...newHolders];
-        newObj.splice(index, 1);
-        setNewHolders(newObj);
+    const onDelete = (index, isActive) => {
+        isActive ?
+            setBalanceChanges(balanceChanges => balanceChanges.map((holder, i) => i === index ? {...holder, pendingAmount: "0"} : holder)) :
+            setNewHolders(newHolders => newHolders.filter((holder, i) => i !== index))
     }
 
     const saveAction = {
@@ -77,12 +76,13 @@ const HolderTable = ({ badge, isManager }) => {
         loading: isLoading,
         onClick: () => {
             openHolderTransaction({
-                onLoading: () => {},
-                onSuccess: ({ chain, receipt }) => {
-                    console.log('receipt', receipt)
-
+                onLoading: () => {
                     // Reset the form.
                     setNewHolders([]);
+                    setBalanceChanges([]);
+                },
+                onSuccess: ({ chain, receipt }) => {
+                    console.log('receipt', receipt)
                 }
             });
         }
@@ -93,8 +93,10 @@ const HolderTable = ({ badge, isManager }) => {
         text: "Add New",
         onClick: () => onAddNew()
     }
+
+    console.log('balanceChanges', balanceChanges)
     
-    const actions = newHolders.length > 0 ? [saveAction, addAction] : [addAction]
+    const actions = newHolders.length + balanceChanges.length > 0 ? [saveAction, addAction] : [addAction]
     
     return (
         <>
@@ -105,8 +107,7 @@ const HolderTable = ({ badge, isManager }) => {
                 body="When you add a Holder, they will appear on the list here."
             />}
 
-            {badge && (badge.users.length > 0 || newHolders.length > 0) && 
-                <div id="holder__table">
+            {badge && (badge.users.length !== 0 || newHolders.length !== 0) && <div id="holder__table">
                 <TableContainer>
                   <Table>
                     <TableHead>
@@ -126,20 +127,20 @@ const HolderTable = ({ badge, isManager }) => {
                     </TableHead>
 
                     <TableBody>
-                        {list?.length > 0 && list.map((holder, index) => (
+                        {newHolders.length > 0 && newHolders.map((holder, index) => (
                             <TableRow key={index}>
                                 <TableCell component="th" scope="row">
                                     <input
-                                        className="table__input"
+                                        className="table__input form__list__address"
                                         value={holder.ethereum_address} 
                                         placeholder="Ethereum address or ENS..."
-                                        onChange={(e) => onAddressChange(e, index)} 
+                                        onChange={(e) => onAddressChange(e, index)}
                                     />
                                 </TableCell>
                                 <TableCell component="th" scope="row">
                                     <div className="table__inline">
                                         <input className="table__input"
-                                            value={holder.amount} 
+                                            value={holder.pendingAmount} 
                                             placeholder="1"
                                             onChange={(e) => onAmountChange(e, index)} 
                                         />
@@ -150,6 +151,26 @@ const HolderTable = ({ badge, isManager }) => {
                                 </TableCell>
                             </TableRow>
                         ))}
+                        {badge.users.length > 0 && badge.users.map((holder, index) => (
+                            <TableRow key={index}>
+                                <TableCell component="th" scope="row">
+                                    <input className="table__input form__list__address" value={holder.ethereum_address} disabled={true} />
+                                </TableCell>
+                                <TableCell component="th" scope="row">
+                                    <div className="table__inline">
+                                        <input className="table__input"
+                                            value={balanceChanges?.[index]?.pendingAmount || holder.amount} // im sorry
+                                            placeholder="1"
+                                            onChange={(e) => onAmountChange(e, index, true)} 
+                                        />
+                                        <button className='delete' onClick={() => onDelete(index, true)}>
+                                            <FontAwesomeIcon icon={["fal","fa-trash"]} />
+                                        </button>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+
                     </TableBody>
                   </Table>
                 </TableContainer>

@@ -54,7 +54,7 @@ const BadgeForm = ({ isEdit = false }) => {
         obj.image_hash ? IPFS_GATEWAY_URL + obj.image_hash : 
         badgeArt ? URL.createObjectURL(badgeArt) : null;
 
-    const isDisabled = !(obj.name && obj.description && activeImageURL);
+    const isDisabled = !(obj.name && obj.description && activeImage);
 
     const { imageHash, ipfsImage } = useIPFSImageHash(activeImage);
 
