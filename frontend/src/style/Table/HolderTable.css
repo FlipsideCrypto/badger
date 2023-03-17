@@ -81,3 +81,8 @@ button.delete:disabled:active {
     box-shadow: none;
     visibility: hidden;
 }
+
+.mono {
+    font-family: monospace;
+    font-variant-numeric: tabular-nums lining-nums;
+}

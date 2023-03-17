@@ -6,11 +6,10 @@ const addressValidator = (addresses) => {
     let cleanedAddresses = []
 
     addresses.forEach((address, index) => {
-        address = address.trim().toLowerCase();
-        
         /// if empty string, skip
-        if (!address)
-            return
+        if (!address || !address.trim()) return
+
+        address = address.trim().toLowerCase();
             
         if (address.length !== 42 || !ethers.utils.isAddress(address))
             invalid.push({index: index, address: address})

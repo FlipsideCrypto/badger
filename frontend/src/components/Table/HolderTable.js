@@ -22,39 +22,42 @@ const HolderTable = ({ badge, isManager }) => {
     // The new holder objects being created by the user.
     const [newHolders, setNewHolders] = useState([]);
     // used as a clone of badge.users with changed amounts.
-    const [balanceChanges, setBalanceChanges] = useState([]);
+    const [balanceChanges, setBalanceChanges] = useState({});
 
     const obj = {
-        mints: [...newHolders, ...balanceChanges.filter(change => change.pendingAmount > change.amount)],
-        revokes: [...balanceChanges.filter(change => change.pendingAmount < change.amount)],
+        mints: [...newHolders, ...Object.values(balanceChanges).filter(change => change.pendingAmount > change.amount)],
+        revokes: Object.values(balanceChanges).filter(change => parseInt(change.pendingAmount) < parseInt(change.amount)),
         tokenId: badge.token_id
     }
 
     const { openHolderTransaction, isPrepared, isLoading } = useManageHolders({obj: obj});
 
+    // TODO: Come back to this.
     const onSortChange = (key) => {
-        // // Get the current sort method and inverse it for chevron display.
-        // let newHeadRows = { ...headRows };
-        // let method = newHeadRows[key].method;
-        // method = !method || method === "desc" ? "asc" : "desc";
-        // newHeadRows[key].method = method;
-        // setHeadRows(newHeadRows);
+    //     // Get the current sort method and inverse it for chevron display.
+    //     let newHeadRows = { ...headRows };
+    //     let method = newHeadRows[key].method;
+    //     method = !method || method === "desc" ? "asc" : "desc";
+    //     newHeadRows[key].method = method;
+    //     setHeadRows(newHeadRows);
 
-        // // Sort the list by the key and the method.
-        // let newHolders = [...sortedList];
-        // newHolders = newHolders.sort((a, b) =>
-        //     compareByProperty(key, method, a, b)
-        // );
-        // setSortedList(newHolders);
+    //     // Sort the list by the key and the method.
+    //     let newHolders = [...sortedList];
+    //     newHolders = newHolders.sort((a, b) =>
+    //         compareByProperty(key, method, a, b)
+    //     );
+    //     setSortedList(newHolders);
     }
 
     const onAddNew = () => {
         setNewHolders([{ethereum_address: "", pendingAmount: ""}, ...newHolders])
     }
 
+    // If they're a new holder, update the newHolders object,
+    // If they're a current holder, we need to update the balanceChanges object to give them a new balance.
     const onAmountChange = (e, index, isActive) => {
         isActive ?
-            setBalanceChanges(balanceChanges => balanceChanges.map((holder, i) => i === index ? {...holder, pendingAmount: e.target.value} : holder)) :
+            setBalanceChanges({...balanceChanges, [index]: {...badge.users[index], pendingAmount: e.target.value }}) :
             setNewHolders(newHolders => newHolders.map((holder, i) => i === index ? {...holder, pendingAmount: e.target.value} : holder))
     }
     
@@ -62,10 +65,11 @@ const HolderTable = ({ badge, isManager }) => {
         setNewHolders(newHolders => newHolders.map((holder, i) => i === index ? {...holder, ethereum_address: e.target.value} : holder))
     }
     
-    // TODO: If they're a current holder.
+    // If they're a new holder, delete the input,
+    // If they're a current holder, we need to update the balanceChanges object to give them a new balance of 0.
     const onDelete = (index, isActive) => {
         isActive ?
-            setBalanceChanges(balanceChanges => balanceChanges.map((holder, i) => i === index ? {...holder, pendingAmount: "0"} : holder)) :
+            setBalanceChanges({...balanceChanges, [index]: {...badge.users[index], pendingAmount: "0" }}) :
             setNewHolders(newHolders => newHolders.filter((holder, i) => i !== index))
     }
 
@@ -93,10 +97,8 @@ const HolderTable = ({ badge, isManager }) => {
         text: "Add New",
         onClick: () => onAddNew()
     }
-
-    console.log('balanceChanges', balanceChanges)
     
-    const actions = newHolders.length + balanceChanges.length > 0 ? [saveAction, addAction] : [addAction]
+    const actions = newHolders.length + Object.entries(balanceChanges).length > 0 ? [saveAction, addAction] : [addAction]
     
     return (
         <>
@@ -131,7 +133,7 @@ const HolderTable = ({ badge, isManager }) => {
                             <TableRow key={index}>
                                 <TableCell component="th" scope="row">
                                     <input
-                                        className="table__input form__list__address"
+                                        className="table__input mono"
                                         value={holder.ethereum_address} 
                                         placeholder="Ethereum address or ENS..."
                                         onChange={(e) => onAddressChange(e, index)}
@@ -139,7 +141,7 @@ const HolderTable = ({ badge, isManager }) => {
                                 </TableCell>
                                 <TableCell component="th" scope="row">
                                     <div className="table__inline">
-                                        <input className="table__input"
+                                        <input className="table__input mono"
                                             value={holder.pendingAmount} 
                                             placeholder="1"
                                             onChange={(e) => onAmountChange(e, index)} 
@@ -154,12 +156,12 @@ const HolderTable = ({ badge, isManager }) => {
                         {badge.users.length > 0 && badge.users.map((holder, index) => (
                             <TableRow key={index}>
                                 <TableCell component="th" scope="row">
-                                    <input className="table__input form__list__address" value={holder.ethereum_address} disabled={true} />
+                                    <input className="table__input mono" value={holder.ethereum_address} disabled={true} />
                                 </TableCell>
                                 <TableCell component="th" scope="row">
                                     <div className="table__inline">
-                                        <input className="table__input"
-                                            value={balanceChanges?.[index]?.pendingAmount || holder.amount} // im sorry
+                                        <input className="table__input mono"
+                                            value={balanceChanges[index]?.pendingAmount || holder.amount} // im sorry for the ?
                                             placeholder="1"
                                             onChange={(e) => onAmountChange(e, index, true)} 
                                         />
