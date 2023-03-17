@@ -16,6 +16,7 @@ class Module(models.Model):
 
     module_type = models.CharField(max_length=10, choices=MODULE_TYPE_CHOICES, default=MANAGER)
     module_key = models.CharField(max_length=128, blank=False, default=None)
+    module_config = models.TextField(null=True, blank=True, default=None)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

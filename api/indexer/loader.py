@@ -13,18 +13,6 @@ ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 User = get_user_model()
 
-# TODO: Manager configured
-# TODO: Hook configured
-
-# To add a new manager we are going to implement it as simple wallets as they are all based on addresses.
-# This is also true for hooks -- they are all configured contract modules.
-# When we detect a new manager or hook configured, we need to add to the organization or badge.
-# When a new hook or manager is detected, we will add (or remove) to the organization relative to the key. 
-# Then, we will have a single list of managers and hooks on the organization, with a bunch of access keys.
-# Then, when we are localized to a specific object on the front-end, we can always determined that key and filter down by it.
-# This means that really the only thing the indexer needs to do is store these on organizations with a key.
-# When we enable real configuration, we will just add a new field to the configured object.
-
 class Loader(ListenerReference):
     def __init__(self):
         self.loader_mapping = {
@@ -39,6 +27,8 @@ class Loader(ListenerReference):
             # Manager and hook events
             "ManagerUpdated": self.handle_manager_updated,
             "HookUpdated": self.handle_hook_updated,
+            "ManagerConfigured": self.handle_manager_configured,
+            "HookConfigured": self.handle_hook_configured,
         }
 
         self.contracts = {}
@@ -251,7 +241,29 @@ class Loader(ListenerReference):
         module.save()
 
         return ("Organization manager updated", event['args'])
-    
+
+    def handle_manager_configured(self, event):
+        organization = self._organization(event['address'])
+
+        key = event['args']['managerKey']
+        config_data = event['args']['data']
+
+        modules = organization.modules.filter(
+            module_key=key,
+            module_type=Module.MANAGER
+        )
+
+        if not modules.exists():
+            return ("Organization manager not found", event['args'])
+
+        module = modules.first()
+
+        module.module_config = config_data
+
+        module.save()
+
+        return ("Organization manager updated", event['args'])
+
     def handle_hook_updated(self, event):
         organization = self._organization(event['address'])
 
@@ -270,6 +282,28 @@ class Loader(ListenerReference):
         module.save()
 
         return ("Organization manager updated", event['args'])
+
+    def handle_hook_configured(self, event):
+        organization = self._organization(event['address'])
+
+        key = event['args']['hookKey']
+        config_data = event['args']['data']
+
+        modules = organization.modules.filter(
+            module_key=key,
+            module_type=Module.HOOK
+        )
+
+        if not modules.exists():
+            return ("Organization hook not found", event['args'])
+
+        module = modules.first()
+
+        module.module_config = config_data
+
+        module.save()
+
+        return ("Organization hook updated", event['args'])
         
 
     def load(self, events):
