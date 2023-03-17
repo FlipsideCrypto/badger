@@ -1,4 +1,5 @@
 import base64
+import django
 import random
 
 from django.contrib.auth import get_user_model
@@ -95,7 +96,6 @@ class ArtViewSet(viewsets.ViewSet):
             animation_from = f"0 {x_random} {y_random}"
             animation_to = f"360 {x_random} {y_random}"
 
-            # random direction of rotation
             if random.randint(0, 1) == 0:
                 animation_from = f"360 {x_random_rotation} {y_random_rotation}"
                 animation_to = f"0 {x_random_rotation} {y_random_rotation}"
@@ -159,7 +159,7 @@ class ArtViewSet(viewsets.ViewSet):
         detail=False, 
         methods=['get'], 
         url_name='badge',
-        url_path="pfp/(?P<organization_name>[a-zA-Z0-9]+)/(?P<ethereum_address>[a-zA-Z0-9]+)/(?P<badge_name>[a-zA-Z0-9]+)"
+        url_path="pfp/(?P<organization_name>[\w\-\.\ ]+)/(?P<ethereum_address>[\w\-\.\ ]+)/(?P<badge_name>[\w\-\.\ ]+)"
     )
     def badge_art(self, request, **kwargs):
         organization = kwargs.get('organization_name', None)
@@ -170,8 +170,10 @@ class ArtViewSet(viewsets.ViewSet):
 
         fingerprint = self._handle_fingerprint(address, badge_name)
 
+        todays_date = django.utils.timezone.now().strftime("%Y-%m-%d")
+
         if address:
-            random.seed(f"{organization}{address}{badge_name}{'1' if invert else '0'}")
+            random.seed(f"{todays_date}{organization}{address}{'1' if invert else '0'}")
 
         fill = "#fff"
         if invert:
@@ -255,11 +257,32 @@ class ArtViewSet(viewsets.ViewSet):
         lines = []
 
         for word in words:
-            if len(word) > 14:
-                for i in range(0, len(word), 14):
-                    lines.append(word[i:i + 14])
+            # determine if the last line already has 14 characters
+            lineLength = (len(lines[-1]) if len(lines) > 0 else 0) + len(word) + (1 if len(lines) > 0 else 0) 
+                          
+            newLine = len(lines) > 0 and lineLength > 14
+
+            print(lineLength, newLine)
+
+            if newLine:
+                if len(word) > 14:
+                    for i in range(0, len(word), 13):
+                        connector = "-" if i + 13 < len(word) else ""
+                        lines.append(word[i:i + 13] + connector)
+                else:
+                    lines.append(word)
             else:
-                lines.append(word)
+                if len(lines) > 0:
+                    lines[-1] += " " + word
+                else:
+                    if len(word) > 14:
+                        for i in range(0, len(word), 13):
+                            connector = "-" if i + 13 < len(word) else ""
+                            lines.append(word[i:i + 13] + connector)
+                    else:
+                        lines.append(word)
+
+        print(lines)
 
         text_color = "#000" if fill == "#fff" else "#fff"
 

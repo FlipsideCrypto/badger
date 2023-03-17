@@ -259,7 +259,7 @@ class Loader(ListenerReference):
         module = modules.first()
 
         module.module_config = config_data
-
+# 
         module.save()
 
         return ("Organization manager updated", event['args'])
