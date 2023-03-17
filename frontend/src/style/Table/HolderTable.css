@@ -27,6 +27,12 @@ th:not(:last-child) {
     margin-inline: -20px;
 }
 
+#holder__table .badge__image,
+#holder__table .badge__image img {
+    width: 25px;
+    height: 25px;
+}
+
 input.table__input {
     border: none;
     outline: none;
@@ -54,7 +60,7 @@ input.table__input:focus {
 
 button.delete {
     display: flex;
-    color:rgba(0, 0, 0, 0.65);
+    color: rgba(0, 0, 0, 0.65);
     width: 20px;
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }

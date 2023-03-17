@@ -5,7 +5,7 @@ import {
     TableContainer, TableCell, TableBody
 } from "@mui/material"
 
-import { TableSortHead } from "@components";
+import { ImageLoader, TableSortHead } from "@components";
 
 import { compareByProperty, getTimeSince } from "@utils";
 
@@ -74,22 +74,19 @@ const BadgeTable = ({ badges }) => {
                             >
                                 <TableCell component="th" scope="row">
                                     <div style={{
-                                        display: "inline-grid",
+                                        display: "inline-flex",
                                         alignItems: "center",
-                                        gridTemplateColumns: "min-content auto",
                                         textDecoration: "none",
                                         fontWeight: "700",
                                         color: "black",
+                                        gap: "10px"
                                     }}>
-                                        <img
-                                            src={IPFS_GATEWAY_URL + badge.image_hash}
-                                            alt="badge"
-                                            style={{
-                                                width: "20px",
-                                                height: "20px",
-                                                marginRight: "10px"
-                                            }}
-                                        />
+                                        <div className="badge__image">
+                                            <ImageLoader
+                                                prependGateway={true}
+                                                src={badge.image_hash}
+                                            />
+                                        </div>
 
                                         {badge.name}
                                     </div>
