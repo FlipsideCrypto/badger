@@ -6,28 +6,28 @@ import { ethers } from "ethers";
 
 import { getBadgerOrganizationAbi, getTransferBoundAddress, useFees, useUser } from "@hooks";
 
-const getBadgeFormTxArgs = ({ obj }) => {
-    if (!obj.uriHash) return { args: [], functionName: "" };
+const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, accountBound, address, slot }) => {
+    if (!uriHash) return { args: [], functionName: "" };
 
     // For now, we're hard coding the setHook and configHook if the badge is account bound. A more modular piece is being built out for hooks and managers.
-    const functionName = obj.accountBound ? "multicall" : "setBadgeURI";
+    const functionName = accountBound ? "multicall" : "setBadgeURI";
     let args = [];
 
-    if (functionName === "setBadgeURI" && obj.uriHash)
-         args = [obj.token_id, obj.uriHash];
+    if (functionName === "setBadgeURI" && uriHash)
+         args = [tokenId, uriHash];
 
     // If we are initializing as account bound, we need to set the badge URI, set the manager, and config it
     if (functionName === "multicall") {
-        const config = ethers.utils.defaultAbiCoder.encode(["uint256","bool"], [obj.token_id, true])
+        const config = ethers.utils.defaultAbiCoder.encode(["uint256","bool"], [tokenId, true])
 
-        const setBadgeURI = obj.organization.abi.encodeFunctionData(
-            "setBadgeURI", [obj.token_id, obj.uriHash]
+        const setBadgeURI = organization.abi.encodeFunctionData(
+            "setBadgeURI", [tokenId, uriHash]
         );
-        const setHook = obj.organization.abi.encodeFunctionData(
-            "setHooks", [obj.slot, [obj.address], [true]]
+        const setHook = organization.abi.encodeFunctionData(
+            "setHooks", [slot, [address], [true]]
         );
-        const configHook = obj.organization.abi.encodeFunctionData(
-            "configHook", [obj.slot, obj.address, config]
+        const configHook = organization.abi.encodeFunctionData(
+            "configHook", [slot, address, config]
         );
 
         args = [[setBadgeURI, setHook, configHook]];
@@ -52,13 +52,13 @@ const useBadgeForm = ({ obj }) => {
     const transferBoundAddress = getTransferBoundAddress(chain.id)
 
     const { functionName, args } = getBadgeFormTxArgs({ 
-        obj: {
-            ...obj, 
-            organization: BadgerOrg,
-            address: transferBoundAddress,
-            slot: "0x844bb459abe62f824043e42caa262ad6859731fc48abd8966db11d779c0fe669" // TODO: Don't hardcode this (BEFORE_TRANSFER bytes32 slot)
-        }
-     });
+        organization: BadgerOrg,
+        uriHash: obj.uriHash,
+        tokenId: obj.tokenId,
+        accountBound: obj.accountBound,
+        address: transferBoundAddress,
+        slot: "0x844bb459abe62f824043e42caa262ad6859731fc48abd8966db11d779c0fe669" // TODO: Don't hardcode this (BEFORE_TRANSFER bytes32 slot)
+    });
 
     const isReady = BadgerOrg && fees && address && !!args;
 

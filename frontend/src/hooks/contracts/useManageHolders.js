@@ -7,13 +7,13 @@ import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
 
 import { addressValidator } from "@utils";
 
-const getMintArgs = ({ data }) => {
+const getMintArgs = ({ mints, tokenId }) => {
     // Determine if we need to mintBatch
-    const functionName = data.mints.length > 1 ? "mintBatch" : "mint";
+    const functionName = mints.length > 1 ? "mintBatch" : "mint";
 
     // Build cleaned amounts and addresses
-    const mintAmounts = data.mints.map(mint => parseInt(mint.pendingAmount || 1) - parseInt(mint.amount || 0));
-    const { cleanedAddresses: mintAddresses, invalid } = addressValidator(data.mints.map(mint => mint.ethereum_address));
+    const mintAmounts = mints.map(mint => parseInt(mint.pendingAmount || 1) - parseInt(mint.amount || 0));
+    const { cleanedAddresses: mintAddresses, invalid } = addressValidator(mints.map(mint => mint.ethereum_address));
 
     // Make sure everything is valid for the transaction.
     if (invalid.length !== 0 || mintAddresses.length === 0 || mintAmounts.length !== mintAddresses.length) {
@@ -23,19 +23,19 @@ const getMintArgs = ({ data }) => {
 
     // Build the args
     const args = functionName === "mint" ? 
-        [mintAddresses[0], data.tokenId, mintAmounts[0], "0x"] :
-        [mintAddresses, data.tokenId, mintAmounts, "0x"]
+        [mintAddresses[0], tokenId, mintAmounts[0], "0x"] :
+        [mintAddresses, tokenId, mintAmounts, "0x"]
 
     return { functionName, args };
 }
 
-const getRevokeArgs = ({ data }) => {
+const getRevokeArgs = ({ revokes, tokenId }) => {
     // Determine if we need to revokeBatch
-    const functionName = data.revokes.length > 1 ? "revokeBatch" : "revoke";
+    const functionName = revokes.length > 1 ? "revokeBatch" : "revoke";
     
     // Build cleaned amounts and addresses
-    const revokeAmounts = data.revokes.map(mint => Math.abs(parseInt(mint.amount) - parseInt(mint.pendingAmount || mint.amount)));
-    const { cleanedAddresses: revokeAddresses, invalid } = addressValidator(data.revokes.map(revoke => revoke.ethereum_address));
+    const revokeAmounts = revokes.map(mint => Math.abs(parseInt(mint.amount) - parseInt(mint.pendingAmount || mint.amount)));
+    const { cleanedAddresses: revokeAddresses, invalid } = addressValidator(revokes.map(revoke => revoke.ethereum_address));
 
     // Make sure everything is valid for the transaction.
     if (invalid.length !== 0 || revokeAddresses.length === 0 || revokeAmounts.length !== revokeAddresses.length) {
@@ -44,18 +44,18 @@ const getRevokeArgs = ({ data }) => {
     }
 
     const args = functionName === "revoke" ?
-        [revokeAddresses[0], data.tokenId, revokeAmounts[0]] :
-        [revokeAddresses, data.tokenId, revokeAmounts];
+        [revokeAddresses[0], tokenId, revokeAmounts[0]] :
+        [revokeAddresses, tokenId, revokeAmounts];
 
     return { functionName, args };
 }
 
-const getManageHolderArgs = ({ data }) => {
+const getManageHolderArgs = ({ revokes, mints, tokenId, organization }) => {
     // if multi call is necessary
-    if (data.mints.length > 0 && data.revokes.length > 0) {
+    if (mints.length > 0 && revokes.length > 0) {
         // Build mint and revoke args
-        const { functionName: mintFunction, args: mintArgs } = getMintArgs({ data: data });
-        const { functionName: revokeFunction, args: revokeArgs} = getRevokeArgs({ data: data });
+        const { functionName: mintFunction, args: mintArgs } = getMintArgs({ mints: mints, tokenId: tokenId });
+        const { functionName: revokeFunction, args: revokeArgs} = getRevokeArgs({ revokes: revokes, tokenId: tokenId });
         
         // If either of the functions are invalid, return empty args
         if (!mintFunction || !revokeFunction)
@@ -63,16 +63,16 @@ const getManageHolderArgs = ({ data }) => {
 
         // Encode the mint and revoke args
         const args = [[
-            data.organization.abi.encodeFunctionData(mintFunction, mintArgs),
-            data.organization.abi.encodeFunctionData(revokeFunction, revokeArgs)
+            organization.abi.encodeFunctionData(mintFunction, mintArgs),
+            organization.abi.encodeFunctionData(revokeFunction, revokeArgs)
         ]]
 
         return { functionName: "multicall", args };
     }
-    else if (data.mints.length > 0)
-        return getMintArgs({ data: data });
-    else if (data.revokes.length > 0)
-        return getRevokeArgs({ data: data });
+    else if (mints.length > 0)
+        return getMintArgs({ mints: mints, tokenId: tokenId });
+    else if (revokes.length > 0)
+        return getRevokeArgs({ revokes: revokes, tokenId: tokenId });
 
     return { functionName: "", args: [] };
 }
@@ -91,7 +91,12 @@ const useManageHolders = ({ obj }) => {
 
     const isReady = BadgerOrg && fees && address;
 
-    const { functionName, args } = getManageHolderArgs({ data: {...obj, organization: BadgerOrg }});
+    const { functionName, args } = getManageHolderArgs({ 
+        organization: BadgerOrg,
+        mints: obj.mints,
+        revokes: obj.revokes,
+        tokenId: obj.tokenId
+     });
 
     const overrides = { gasPrice: fees?.gasPrice };
 
