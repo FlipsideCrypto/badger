@@ -1,8 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-// import BadgeDangerZone from "@components/Badge/BadgeDangerZone";
-
 import { 
     useUser, 
     useBadgeForm,
@@ -221,6 +219,7 @@ const BadgeForm = ({ isEdit = false }) => {
 
             {isEdit && <>
                 <h1>Danger zone</h1>
+
                 <FormActionBar
                     className="warning"
                     actions={warningActions}
