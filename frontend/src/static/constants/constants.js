@@ -76,14 +76,14 @@ const HOLDER_HEAD_ROWS = {
         sortable: true,
         method: "",
         align: "left",
-        width: "70%"
+        width: "80%"
     },
     balance: {
         label: "Balance",
         sortable: true,
         method: "",
         align: "right",
-        width: "30%"
+        width: "20%"
     }
 }
 
