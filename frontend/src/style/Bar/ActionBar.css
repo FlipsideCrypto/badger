@@ -13,6 +13,7 @@
     display: flex;
     justify-content: flex-end;
 }
+
 .action_bar .action_bar__toggle {
     display: none;
     cursor: pointer;
@@ -43,6 +44,14 @@
 
 .action_bar .action_bar__header * {
     margin: 0;
+}
+
+.action_bar .action_bar__header .profile__image {
+    border-radius: 50%;
+    height: 24px;
+    width: 24px;
+    margin-right: 10px;
+    background-color: #FCFCFF;
 }
 
 .action_bar .action_bar__header {
