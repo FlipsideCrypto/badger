@@ -50,14 +50,14 @@ const HolderTable = ({ badge, isManager }) => {
     }
 
     const onAddNew = () => {
-        setNewHolders([{ethereum_address: "", pendingAmount: ""}, ...newHolders])
+        setNewHolders(newHolders => ([{ethereum_address: "", pendingAmount: ""}, ...newHolders]))
     }
 
     // If they're a new holder, update the newHolders object,
     // If they're a current holder, we need to update the balanceChanges object to give them a new balance.
     const onAmountChange = (e, index, isActive) => {
         isActive ?
-            setBalanceChanges({...balanceChanges, [index]: {...badge.users[index], pendingAmount: e.target.value }}) :
+            setBalanceChanges(balanceChanges => ({...balanceChanges, [index]: {...badge.users[index], pendingAmount: e.target.value }})) :
             setNewHolders(newHolders => newHolders.map((holder, i) => i === index ? {...holder, pendingAmount: e.target.value} : holder))
     }
     
@@ -69,7 +69,7 @@ const HolderTable = ({ badge, isManager }) => {
     // If they're a current holder, we need to update the balanceChanges object to give them a new balance of 0.
     const onDelete = (index, isActive) => {
         isActive ?
-            setBalanceChanges({...balanceChanges, [index]: {...badge.users[index], pendingAmount: "0" }}) :
+            setBalanceChanges(balanceChanges => ({...balanceChanges, [index]: {...badge.users[index], pendingAmount: "0" }})) :
             setNewHolders(newHolders => newHolders.filter((holder, i) => i !== index))
     }
 
