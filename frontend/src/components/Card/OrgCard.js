@@ -4,8 +4,6 @@ import { handleImageLoad } from "@hooks";
 
 import { Card, ChainIcon, ImageLoader } from "@components";
 
-import { IPFS_GATEWAY_URL } from "@static";
-
 import { sliceAddress } from "@utils";
 
 import "@style/Card/OrgCard.css"
