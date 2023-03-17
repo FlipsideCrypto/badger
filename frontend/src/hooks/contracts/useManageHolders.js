@@ -7,21 +7,74 @@ import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
 
 import { addressValidator } from "@utils";
 
-const getManageHolderArgs = ({ data, functionName }) => {
-    const { cleanedAddresses: addresses, invalid } = addressValidator(data.addresses);
-    const amounts = data.amounts.map(amount => parseInt(amount || 1));
-    const tokenId = parseInt(data.tokenId);
+const getMintArgs = ({ mints, tokenId }) => {
+    // Determine if we need to mintBatch
+    const functionName = mints.length > 1 ? "mintBatch" : "mint";
 
-    if (invalid.length !== 0 || addresses.length === 0 || addresses.length !== amounts.length)
-        return []
-    if (functionName === "mint")
-        return [addresses[0], tokenId, amounts[0], "0x"];
-    if (functionName === "mintBatch")
-        return [addresses, tokenId, amounts, "0x"];
-    if (functionName === "revoke")
-        return [addresses[0], tokenId, amounts[0]];
-    if (functionName === "revokeBatch")
-        return [addresses, tokenId, amounts];
+    // Build cleaned amounts and addresses
+    const mintAmounts = mints.map(mint => parseInt(mint.pendingAmount || 1) - parseInt(mint.amount || 0));
+    const { cleanedAddresses: mintAddresses, invalid } = addressValidator(mints.map(mint => mint.ethereum_address));
+
+    // Make sure everything is valid for the transaction.
+    if (invalid.length !== 0 || mintAddresses.length === 0 || mintAmounts.length !== mintAddresses.length) {
+        // console.error("Invalid mint args", invalid, mintAmounts)
+        return { functionName: "", args: [] };
+    }
+
+    // Build the args
+    const args = functionName === "mint" ? 
+        [mintAddresses[0], tokenId, mintAmounts[0], "0x"] :
+        [mintAddresses, tokenId, mintAmounts, "0x"]
+
+    return { functionName, args };
+}
+
+const getRevokeArgs = ({ revokes, tokenId }) => {
+    // Determine if we need to revokeBatch
+    const functionName = revokes.length > 1 ? "revokeBatch" : "revoke";
+    
+    // Build cleaned amounts and addresses
+    const revokeAmounts = revokes.map(mint => Math.abs(parseInt(mint.amount) - parseInt(mint.pendingAmount || mint.amount)));
+    const { cleanedAddresses: revokeAddresses, invalid } = addressValidator(revokes.map(revoke => revoke.ethereum_address));
+
+    // Make sure everything is valid for the transaction.
+    if (invalid.length !== 0 || revokeAddresses.length === 0 || revokeAmounts.length !== revokeAddresses.length) {
+        // console.error("Invalid revoke args", invalid, revokeAmounts)
+        return { functionName: "", args: [] };
+    }
+
+    const args = functionName === "revoke" ?
+        [revokeAddresses[0], tokenId, revokeAmounts[0]] :
+        [revokeAddresses, tokenId, revokeAmounts];
+
+    return { functionName, args };
+}
+
+const getManageHolderArgs = ({ revokes, mints, tokenId, organization }) => {
+    // if multi call is necessary
+    if (mints.length > 0 && revokes.length > 0) {
+        // Build mint and revoke args
+        const { functionName: mintFunction, args: mintArgs } = getMintArgs({ mints: mints, tokenId: tokenId });
+        const { functionName: revokeFunction, args: revokeArgs} = getRevokeArgs({ revokes: revokes, tokenId: tokenId });
+        
+        // If either of the functions are invalid, return empty args
+        if (!mintFunction || !revokeFunction)
+            return { functionName: "", args: [] };
+
+        // Encode the mint and revoke args
+        const args = [[
+            organization.abi.encodeFunctionData(mintFunction, mintArgs),
+            organization.abi.encodeFunctionData(revokeFunction, revokeArgs)
+        ]]
+
+        return { functionName: "multicall", args };
+    }
+    else if (mints.length > 0)
+        return getMintArgs({ mints: mints, tokenId: tokenId });
+    else if (revokes.length > 0)
+        return getRevokeArgs({ revokes: revokes, tokenId: tokenId });
+
+    return { functionName: "", args: [] };
 }
 
 const useManageHolders = ({ obj }) => {
@@ -38,17 +91,17 @@ const useManageHolders = ({ obj }) => {
 
     const isReady = BadgerOrg && fees && address;
 
-    const functionName = obj.addresses.length > 1 ? obj.functionName + "Batch" : obj.functionName;
-
-    const args = getManageHolderArgs({
-        data: obj,
-        functionName: functionName
-    });
+    const { functionName, args } = getManageHolderArgs({ 
+        organization: BadgerOrg,
+        mints: obj.mints,
+        revokes: obj.revokes,
+        tokenId: obj.tokenId
+     });
 
     const overrides = { gasPrice: fees?.gasPrice };
 
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
-        enabled: isReady && args.length > 0,
+        enabled: isReady && functionName,
         address: orgAddress,
         abi: BadgerOrg.abi,
         functionName,
@@ -95,118 +148,6 @@ const useManageHolders = ({ obj }) => {
     return { openHolderTransaction, isPrepared, isLoading, isSuccess }
 }
 
-// Changes delegates of badge(s) with id(s) from orgAddress. 
-// If revoke is true then delegates are removed.
-const useSetDelegates = (isTxReady, orgAddress, ids, delegates, action) => {
-    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    const [error, setError] = useState();
-
-    const revoke = action === "Remove Manager" ? true : false
-    const isDelegateArray = Array(delegates.length).fill(!revoke);
-    const functionName = typeof (ids) === "number" ? "setDelegates" : "setDelegatesBatch";
-
-    // This should also clean/check the addresses as well.
-    delegates.forEach((delegate, index) => {
-        if (delegate === "") {
-            delegates.pop(index)
-        }
-    })
-
-    const args = [
-        ids,
-        delegates,
-        isDelegateArray,
-    ]
-
-    const fees = useFees();
-    const { config, isSuccess } = usePrepareContractWrite({
-        address: orgAddress,
-        abi: BadgerOrganization.abi,
-        functionName: functionName,
-        args: args,
-        enabled: Boolean(fees && isTxReady),
-        overrides: {
-            gasPrice: fees?.gasPrice,
-        },
-        onError(e) {
-            const err = e?.error?.message || e?.data?.message || e
-            setError(err);
-            console.error('Error setting delegates: ', err);
-        }
-    })
-
-    const { writeAsync } = useContractWrite(config);
-
-    return { write: writeAsync, isSuccess, error };
-}
-
-// Determines which function to call based on if it is a revoke or a mint,
-// if there are multiple badge ids, and if there are multiple holders.
-const useManageBadgeOwnership = (isTxReady, orgAddress, ids, users, action, amounts) => {
-    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    const [error, setError] = useState();
-
-    // Might look a little funky but cleaner than a switch IMO.
-    // If revoke is true, then we check if there is just one holder for a single revoke.
-    // If ids is a single id, then we call the revoke function with multiple holders.
-    // If ids is an array, then we call revoke with multiple different badges.
-    // If revoke is false, same checks but for minting instead of revoke
-    const revoke = action === "Revoke" ? true : false
-    const functionName = revoke ?
-        users.length === 1 ? "revoke" :
-            typeof (ids) === "number" ? "revokeBatch" : "revokeFullBatch"
-        :
-        users.length === 1 ? "leaderMint" :
-            typeof (ids) === "number" ? "leaderMintBatch" : "leaderMintFullBatch"
-
-    // This should also clean/check the addresses as well.
-    users.forEach((user, index) => {
-        if (user === "") {
-            users.pop(index)
-        }
-    })
-
-    // TODO: Amounts will need to be changed to be an array for 
-    // each badge. For now it's standard for just one.
-    amounts = Array(users.length).fill(amounts)
-
-    if (users.length === 1)
-        users = users[0]
-
-    const args = [
-        users,
-        ids,
-        amounts,
-    ]
-
-    // Contracts currently have bytes data if it's a mint only, not revoke.
-    if (!revoke)
-        args.push("0x")
-
-    const fees = useFees();
-    const { config, isSuccess } = usePrepareContractWrite({
-        address: orgAddress,
-        abi: BadgerOrganization.abi,
-        functionName: functionName,
-        args: args,
-        enabled: Boolean(fees && isTxReady),
-        overrides: {
-            gasPrice: fees?.gasPrice,
-        },
-        onError(e) {
-            const err = e?.error?.message || e?.data?.message || e
-            setError(err);
-            console.error('Error managing badge ownership: ', err);
-        }
-    })
-
-    const { writeAsync } = useContractWrite(config);
-
-    return { write: writeAsync, isSuccess, error };
-}
-
 export {
-    useManageHolders,
-    useSetDelegates,
-    useManageBadgeOwnership
+    useManageHolders
 }

@@ -48,10 +48,18 @@ input.table__input:focus {
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
+input.table__input:disabled,
+input.table__input:disabled:hover,
+input.table__input:disabled:active,
+input.table__input:disabled:focus {
+    background-color: transparent;
+    color: inherit;
+    box-shadow: none;
+}
+
 .table__inline {
     display: flex;
     align-items: center;
-    column-gap: 8px;
 }
 
 .table__inline input {
@@ -72,9 +80,15 @@ button.delete:active {
     color: #FF0000;
 }
 
-.table__inline button.delete {
-    height: 100%;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
+button.delete:disabled,
+button.delete:disabled:hover,
+button.delete:disabled:focus,
+button.delete:disabled:active {
+    box-shadow: none;
+    visibility: hidden;
+}
+
+.mono {
+    font-family: monospace;
+    font-variant-numeric: tabular-nums lining-nums;
 }
