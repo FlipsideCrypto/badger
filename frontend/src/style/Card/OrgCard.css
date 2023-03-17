@@ -4,7 +4,7 @@
     padding: 20px;
     position: relative;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.3s ease-in-out;
     background-color: rgb(252, 252, 255);
 }
 
@@ -32,4 +32,40 @@
     border-radius: 50%;
     height: 24px;
     width: 24px;
+}
+
+.home__cards .card:nth-child(2) {
+    transition-delay: 0.05s;
+}
+
+.home__cards .card:nth-child(3) {
+    transition-delay: 0.1s;
+}
+
+.home__cards .card:nth-child(4) {
+    transition-delay: 0.15s;
+}
+
+.home__cards .card:nth-child(5) {
+    transition-delay: 0.2s;
+}
+
+.home__cards .card:nth-child(6) {
+    transition-delay: 0.25s;
+}
+
+.home__cards .card:nth-child(7) {
+    transition-delay: 0.3s;
+}
+
+.home__cards .card:nth-child(8) {
+    transition-delay: 0.35s;
+}
+
+.home__cards .card:nth-child(9) {
+    transition-delay: 0.4s;
+}
+
+.home__cards .card:nth-child(10) {
+    transition-delay: 0.45s;
 }

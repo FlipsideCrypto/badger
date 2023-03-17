@@ -6,6 +6,7 @@ const ImageLoader = ({
     className,
     src,
     alt,
+    bypassed,
     prependGateway,
     onLoad = () => { },
 }) => {
@@ -15,6 +16,15 @@ const ImageLoader = ({
         e.onError = null;
         e.currentTarget.src = ImageErrorFallback;
     }
+
+    const style = bypassed ? (
+        loaded ? {} : { display: 'none' }
+    ) : (loaded ? {
+        transition: 'all .3s ease-in-out',
+    } : {
+        transition: 'all .3s ease-in-out',
+        opacity: '0',
+    })
 
     return (
         <>
@@ -29,7 +39,7 @@ const ImageLoader = ({
                     onLoad(e.target);
                 }}
                 onError={(e) => onError(e)}
-                style={loaded ? {} : { display: "none" }}
+                style={style}
             />
         </>
     )
