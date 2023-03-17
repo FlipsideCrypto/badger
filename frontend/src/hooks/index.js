@@ -11,7 +11,6 @@ export {
 } from './contracts';
 
 export { useAuthentication } from './useAuthentication';
-export { useAuthenticationModal } from './useAuthenticationModal';
 export { getAverageColor, handleImageLoad } from './useColor';
 export { useENSProfile } from './useENSProfile';
 export { useFees } from './useFees';

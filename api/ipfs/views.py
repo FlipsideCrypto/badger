@@ -1,14 +1,10 @@
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .utils import pin_image, pin_json
 
-
 class IPFSViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
-
     @action(detail=False, methods=['post'], url_path='pin-image', url_name='pin-image')
     def upload_image(self, request):
         # Get the image from the request

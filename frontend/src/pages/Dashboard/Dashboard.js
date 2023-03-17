@@ -26,12 +26,6 @@ const WrongNetworkEmpty = (primaryChain) => <Empty
     button={connectButton}
 />
 
-const AuthenticateEmpty = () => <Empty
-    title="Authenticate your wallet to view your Organizations!"
-    body="Authentication is simple and secure. Using Sign in with Ethereum, you can sign and create, manage, and share your Organizations and Badges in seconds just by signing a message."
-    button={connectButton}
-/>
-
 const LoadingEmpty = () => <Empty
     title="Loading Organizations and Badges..."
     body="This may take a few seconds. If this takes longer than 10 seconds, please refresh the page."
@@ -39,7 +33,6 @@ const LoadingEmpty = () => <Empty
 
 const Dashboard = () => {
     const {
-        isAuthenticated,
         isConnected,
         isLoaded,
         isWrongNetwork,
@@ -58,11 +51,9 @@ const Dashboard = () => {
 
                     {isConnected && isWrongNetwork && <WrongNetworkEmpty primaryChain={primaryChain} />}
 
-                    {isConnected && (!isAuthenticated && !isWrongNetwork) && <AuthenticateEmpty />}
+                    {isConnected && !isWrongNetwork && !isLoaded && <LoadingEmpty />}
 
-                    {isAuthenticated && !isLoaded && <LoadingEmpty />}
-
-                    {isAuthenticated && isLoaded && <DashboardContent>
+                    {isConnected && !isWrongNetwork && isLoaded && <DashboardContent>
                         <Routes>
                             <Route path="/" element={<Home />} />
                             <Route path="/organization/new/" element={<OrgForm />} />

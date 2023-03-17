@@ -42,7 +42,7 @@ const useBadgeForm = ({ obj }) => {
 
     const { orgAddress } = useParams();
 
-    const { authenticatedAddress, chain } = useUser();
+    const { chain, address } = useUser();
 
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -60,10 +60,10 @@ const useBadgeForm = ({ obj }) => {
         }
      });
 
-    const isReady = BadgerOrg && fees && authenticatedAddress && !!functionName;
+    const isReady = BadgerOrg && fees && address && !!args;
 
     const overrides = { gasPrice: fees?.gasPrice };
-    
+
     const { config, isSuccess: isPrepared } = usePrepareContractWrite({
         enabled: isReady,
         address: orgAddress,
@@ -97,7 +97,7 @@ const useBadgeForm = ({ obj }) => {
             if (receipt.status === 0) throw new Error("Error submitting transaction");
 
             receipt.events = receipt.logs.filter((log) => log.address === orgAddress).map((log) => BadgerOrg.abi.parseLog(log))
-    
+
             setIsLoading(false)
             setIsSuccess(true)
 
@@ -114,7 +114,7 @@ const useBadge = ({ obj, image, functionName }) => {
 
 }
 
-export { 
-    useBadgeForm, 
+export {
+    useBadgeForm,
     useBadge
 }

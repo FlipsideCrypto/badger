@@ -26,4 +26,3 @@ class Transaction(models.Model):
 
     class Meta:
         ordering = ['-created']
-        unique_together = ('tx_hash', 'log_index')

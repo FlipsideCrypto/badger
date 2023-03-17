@@ -29,7 +29,12 @@ const ImageLoader = ({
                     onLoad(e.target);
                 }}
                 onError={(e) => onError(e)}
-                style={loaded ? {} : { display: 'none' }}
+                style={loaded ? {
+                    transition: 'all 0.3s ease-in-out',
+                } : {
+                    transition: 'all 0.3s ease-in-out',
+                    display: 'none'
+                }}
             />
         </>
     )

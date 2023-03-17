@@ -17,7 +17,7 @@ const useENSProfile = (address) => {
     useEffect(() => {
         const getGeneratedAvatar = async (address) => {
             // Emojis no longer supported by the api, so what do we use for personal pfps instead?
-            const firstChar = ensName ? ensName.charAt(0).toUpperCase() : 'x';
+            const firstChar = ensName ? ensName.charAt(0).toUpperCase() : 'null';
             const response = await getPFPImage(firstChar, address);
 
             if (response.error) return;

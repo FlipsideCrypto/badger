@@ -9,15 +9,15 @@ import "@style/pages/Home.css";
 const Home = () => {
     const navigate = useNavigate();
 
-    const { isAuthenticated, organizations } = useUser();
+    const { organizations } = useUser();
 
     const announcementMessage = (
-        <p>As of March 21st, 2023 organizations deployed before that date have been migrated to 
-            <a href="https://legacy.trybadger.com" target="_blank" rel="noreferrer"> legacy.trybadger.com</a>. 
+        <p>As of March 21st, 2023 organizations deployed before that date have been migrated to
+            <a href="https://legacy.trybadger.com" target="_blank" rel="noreferrer"> legacy.trybadger.com</a>.
         </p>
     )
 
-    const titleActions = isAuthenticated && [{
+    const titleActions = [{
         className: "secondary",
         text: "Create",
         icon: ['fal', 'plus'],
@@ -26,7 +26,7 @@ const Home = () => {
 
     return (
         <div className="home">
-            {announcementMessage && 
+            {announcementMessage &&
                 <div className="home__announcement">
                     <div className="announcement__message">
                         {announcementMessage}

@@ -19,7 +19,12 @@ const OrgView = ({ chainId, orgAddress }) => {
         <div className="view">
             {organization && <>
                 <Link className="organization" to="/dashboard/">
-                    <ImageLoader src={IPFS_GATEWAY_URL + organization.image_hash} />
+                    <div className="organization__image">
+                        <ImageLoader
+                            bypass={true}
+                            src={IPFS_GATEWAY_URL + organization.image_hash}
+                        />
+                    </div>
                     <span>{organization.name}</span>
                 </Link>
 

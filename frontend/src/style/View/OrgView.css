@@ -14,10 +14,17 @@
     margin-right: 30px;
 }
 
+.view .organization .organization__image {
+    border-radius: 50%;
+    height: 25px !important;
+    width: 25px !important;
+    background-color: #FCFCFF;
+}
+
 .view .organization img {
     border-radius: 50%;
-    height: 25px;
-    width: 25px;
+    height: 25px !important;
+    width: 25px !important;
 }
 
 @media screen and (max-width: 768px) {

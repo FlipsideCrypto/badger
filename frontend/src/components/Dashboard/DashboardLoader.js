@@ -89,9 +89,6 @@ const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
             {!isLoading && children}
 
             {isLoading && <>
-                <div className="loading big" />
-                <div className="loading big" />
-
                 <div className="loading short" />
 
                 {isDeployed && <NotIndexedEmpty />}
