@@ -28,7 +28,8 @@
     column-gap: 10px;
 }
 
-.home__cards .card .text .title .viewImage {
+.home__cards .card .text .title .viewImage__container,
+.home__cards .card .text .title .viewImage__container .viewImage {
     border-radius: 50%;
     height: 24px;
     width: 24px;

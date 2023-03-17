@@ -35,7 +35,7 @@ const handleImageLoad = (el) => {
     const average = getAverageColor(el);
 
     // Get an item up in the dom tree
-    const card = el.parentNode.parentNode.parentNode;
+    const card = el.parentNode.parentNode.parentNode.parentNode;
 
     if (el.offsetWidth === 0) return;
 
