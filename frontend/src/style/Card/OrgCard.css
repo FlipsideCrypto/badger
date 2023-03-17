@@ -4,6 +4,8 @@
     padding: 20px;
     position: relative;
     cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    background-color: rgb(252, 252, 255);
 }
 
 .home__cards .card .text {

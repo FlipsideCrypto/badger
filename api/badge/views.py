@@ -24,7 +24,6 @@ class ArtViewSet(viewsets.ViewSet):
             "#f06",
             "#00FF9D",
             "#00FFEB",
-            "#FF00EB",
             "#FFBB00",
             "#C668B9",
             "#B823AF",
@@ -33,7 +32,6 @@ class ArtViewSet(viewsets.ViewSet):
             "#0fd3b2",
             "#30E64C",
             "#5540EA",
-            "#F19021"
         ]
 
     def _encode(self, value):
@@ -64,22 +62,24 @@ class ArtViewSet(viewsets.ViewSet):
         detail=False, 
         methods=['get'], 
         url_name='pfp',
-        url_path='pfp/(?P<char>[a-zA-Z])/(?P<ethereum_address>[a-zA-Z0-9]+)'
+        # instead of char being required i want it to be optional
+        url_path='pfp/(?P<char>[a-zA-Z]+)?/(?P<ethereum_address>[a-zA-Z0-9]+)'
     )
     def pfp_art(self, request, **kwargs):
         char = kwargs.get('char', None)
         address = kwargs.get('ethereum_address', None)
 
+        if char == "null": char = None
+
         fill = "#fff"
 
         size = 500
 
+        if address:
+            random.seed(f"{address}{char}")
+
         blob_count = random.randint(2, 4)
         blob, useblob = "", ""
-
-        # set seed of random
-        if address:
-            random.seed(address)
 
         # rotate blob position animation
         for i in range(blob_count):
@@ -127,26 +127,22 @@ class ArtViewSet(viewsets.ViewSet):
                 <use href="#{"blob-%s" % i}" filter="url(#blur)" />
             """
 
-        text = ""
-        if char:
-            text = f"""
-                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="250" fill="#000" font-family="'Poppins', sans-serif">
-                    {char[0]}
-                </text>
-            """
+        text = "" if not char else f"""
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="250" fill="#000" font-family="'Poppins', sans-serif">
+                {char[0].upper()}
+            </text>
+        """
 
         svg = f"""
             <svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500" >
                 <rect width="100%" height="100%" fill="#fff" />
-
                 {blob}
                 <rect width="100%" height="100%" fill="{fill}" />
                 <filter id="blur">
                     <feGaussianBlur in="SourceGraphic" stdDeviation="30" />
                 </filter>
                 {useblob}
-                <rect width="100%" height="100%" fill="{fill}" opacity="{0.93 if fill == "#fff" else 0.75}" />
- 
+                <rect width="100%" height="100%" fill="{fill}" opacity="{0.55 if fill == "#fff" else 0.75}" />
                 {text}
             </svg>
         """
@@ -173,6 +169,9 @@ class ArtViewSet(viewsets.ViewSet):
         invert = request.query_params.get('inverse', False)
 
         fingerprint = self._handle_fingerprint(address, badge_name)
+
+        if address:
+            random.seed(f"{organization}{address}{badge_name}{'1' if invert else '0'}")
 
         fill = "#fff"
         if invert:
@@ -319,7 +318,7 @@ class ArtViewSet(viewsets.ViewSet):
                 <feGaussianBlur in="SourceGraphic" stdDeviation="30" />
             </filter>
             {useblob}
-            <rect width="100%" height="100%" fill="{fill}" opacity="{0.93 if fill == "#fff" else 0.75}" />
+            <rect width="100%" height="100%" fill="{fill}" opacity="{0.55 if fill == "#fff" else 0.75}" />
 
             {fingerprint_svg}
 

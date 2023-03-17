@@ -36,7 +36,6 @@ const ConnectButton = (props) => {
                 <span>Switch to {primaryChain.name}</span>
             </button>
         );
-
 };
 
 export { ConnectButton };
