@@ -59,10 +59,14 @@ class BadgeSerializer(
         ).data
 
     def get_ethereum_address(self, obj):
-        return Organization.objects.filter(
+        organization = Organization.objects.filter(
             badges__id__in=[obj.id],
             badges__isnull=False
-        ).first().ethereum_address
+        ).first()
+
+        if not organization: return None
+
+        return organization.ethereum_address
 
     class Meta:
         model = Badge

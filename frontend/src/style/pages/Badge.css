@@ -18,12 +18,12 @@
 }
 
 .badge__action span {
-    color:rgba(0, 0, 0, 0.65);
+    color: rgba(0, 0, 0, 0.65);
 }
 
 #manage__button {
-    float: right; 
-    margin-top: 20px; 
+    float: right;
+    margin-top: 20px;
     margin-bottom: 20px;
 }
 
@@ -35,21 +35,18 @@
     margin-top: 20px;
 }
 
-.badge__header img {
-    width: 140px;
-    height: 140px;
+@media screen and (max-width: 768px) {
+    .badge__header {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
-.badge__header img::after {
-    box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.15);
-    max-width: 140px;
-    max-height: 140px;
-    content: '';
-    display: block;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    width: 100%;
+.badge__header .preview__container,
+.badge__header .preview__container img {
+    width: 140px;
+    height: 140px;
+    border-radius: 4px;
+    background-color: #ffffff;
 }
 
 .badge__header .title {
