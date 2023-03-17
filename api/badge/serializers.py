@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from api.mixins import SerializerRepresentationMixin
+from balance.models import Balance
 from organization.models import Organization
 
 from .models import Badge
@@ -13,7 +14,7 @@ class BadgeWalletSerializer(
     SerializerRepresentationMixin,
     serializers.ModelSerializer
 ):
-    amount = serializers.SerializerMethodField(default=0)
+    amount = serializers.SerializerMethodField()
 
     def get_amount(self, obj):
         badge = self.context.get('badge', None)
@@ -40,7 +41,7 @@ class BadgeSerializer(
 ):
     ethereum_address = serializers.SerializerMethodField()
 
-    users = BadgeWalletSerializer(many=True, read_only=True)
+    users = serializers.SerializerMethodField()
 
     def get_users(self, obj):
         return BadgeWalletSerializer(

@@ -241,7 +241,7 @@ class Loader(ListenerReference):
         is_manager = event['args']['isManager']
 
         module, created = organization.modules.get_or_create(
-            key=key,
+            module_key=key,
             ethereum_address = self.summedAddress(event['args']['manager']),
             module_type=Module.MANAGER
         )
@@ -260,7 +260,7 @@ class Loader(ListenerReference):
         is_manager = event['args']['isHook']
 
         module, created = organization.modules.get_or_create(
-            key=key,
+            module_key=key,
             ethereum_address = self.summedAddress(event['args']['hook']),
             module_type=Module.HOOK
         )
