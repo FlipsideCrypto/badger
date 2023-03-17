@@ -13,7 +13,7 @@ class BadgeWalletSerializer(
     SerializerRepresentationMixin,
     serializers.ModelSerializer
 ):
-    amount = serializers.SerializerMethodField()
+    amount = serializers.SerializerMethodField(default=0)
 
     def get_amount(self, obj):
         badge = self.context.get('badge', None)
