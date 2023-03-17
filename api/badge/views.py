@@ -60,10 +60,10 @@ class ArtViewSet(viewsets.ViewSet):
         return fingerprint
     
     def _handle_line(self, lines, word):
-        if len(word) > 12:
-            for i in range(0, len(word), 12):
-                connector = "-" if i + 12 < len(word) else ""
-                lines.append(word[i:i + 12] + connector)
+        if len(word) > 11:
+            for i in range(0, len(word), 11):
+                connector = "-" if i + 11 < len(word) else ""
+                lines.append(word[i:i + 11] + connector)
         else:
             lines.append(word)
 
@@ -137,7 +137,7 @@ class ArtViewSet(viewsets.ViewSet):
             """
 
         text = "" if not char else f"""
-            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="250" fill="#000" font-family="'Poppins', sans-serif">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="250" fill="#000" font-family="sans-serif">
                 {char[0].upper()}
             </text>
         """
@@ -269,7 +269,7 @@ class ArtViewSet(viewsets.ViewSet):
             # determine if the last line already has 14 characters
             lineLength = (len(lines[-1]) if len(lines) > 0 else 0) + len(word) + (1 if len(lines) > 0 else 0) 
                           
-            newLine = len(lines) > 0 and lineLength > 14
+            newLine = len(lines) > 0 and lineLength > 10
 
             if newLine:
                 self._handle_line(lines, word)
@@ -305,7 +305,7 @@ class ArtViewSet(viewsets.ViewSet):
                     y="{line_y + (line_height + line_buffer) * i}"
                     font-size="{line_height}"
                     fill="{text_color}"
-                    font-family="'Poppins', sans-serif"
+                    font-family="sans-serif"
                     font-weight="bold"
                 >
                     {line.upper()}
