@@ -9,13 +9,13 @@
     height: 40px;
     width: min-content;
     white-space: nowrap;
-    background: #000;
+    background: #1B1B1B;
     color: #fff;
 }
 
 .button__text {
     padding-inline: 16px;
-    color: #000;
+    color: #1B1B1B;
     background: #fff;
     border-radius: 4px;
     height: 100%;
@@ -34,7 +34,7 @@
     height: stretch;
     display: flex;
     color: #fff;
-    background: #000;
+    background: #1B1B1B;
     align-items: center;
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
     padding: 7px 12px 8px 12px;
@@ -53,7 +53,7 @@
 .button__icon:hover .button__text,
 .button__icon:active .button__text,
 .button__icon:focus .button__text {
-    background: #000;
+    background: #1B1B1B;
     color: #fff;
 }
 
@@ -99,7 +99,7 @@
 .button__icon.button__loading:hover .button__text,
 .button__icon.button__loading:active .button__text,
 .button__icon.button__loading:focus .button__text {
-    color: #000;
+    color: #1B1B1B;
     background: inherit;
 }
 

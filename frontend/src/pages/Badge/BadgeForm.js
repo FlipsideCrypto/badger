@@ -1,8 +1,8 @@
 import { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { 
-    useUser, 
+import {
+    useUser,
     useBadgeForm,
     useIPFS,
     useIPFSImageHash,
@@ -10,12 +10,12 @@ import {
     useBadgeArt
 } from "@hooks";
 
-import { 
-    FormActionBar, 
+import {
+    FormActionBar,
     FormDrawer,
-    initialBadgeForm, 
-    Input, 
-    Header, 
+    initialBadgeForm,
+    Input,
+    Header,
     ImageLoader,
     Select
 } from "@components";
@@ -26,33 +26,33 @@ import "@style/pages/BadgeForm.css";
 
 const BadgeForm = ({ isEdit = false }) => {
     const imageInput = useRef();
-    
+
     const navigate = useNavigate();
 
     const { chainId, orgAddress, badgeId } = useParams();
 
     const { organization, badge } = useUser({ chainId, orgAddress, badgeId });
 
-    const [ obj, setObj ] = useState(badge || initialBadgeForm);
-    const [ isAccountBound, setIsAccountBound ] = useState(true); // TODO; This needs to be either added to the obj after cleaning it up or everything else comes out.
+    const [obj, setObj] = useState(badge || initialBadgeForm);
+    const [isAccountBound, setIsAccountBound] = useState(true); // TODO; This needs to be either added to the obj after cleaning it up or everything else comes out.
 
-    const [ image, setImage ] = useState(null);
-    
+    const [image, setImage] = useState(null);
+
     const tokenId = obj.token_id || organization.badges.length
 
     const { badgeArt } = useBadgeArt({
-        orgName: organization.name, 
+        orgName: organization.name,
         orgAddress: organization.ethereum_address,
         badgeName: obj.name,
         tokenId
     })
 
     const activeImage = image || obj.image_hash || badgeArt;
-    
+
     /// Prioritizes an uploaded image, then the ipfs gateway image, then the generated image
-    const activeImageURL = image ? URL.createObjectURL(image) : 
-        obj.image_hash ? IPFS_GATEWAY_URL + obj.image_hash : 
-        badgeArt ? URL.createObjectURL(badgeArt) : null;
+    const activeImageURL = image ? URL.createObjectURL(image) :
+        obj.image_hash ? IPFS_GATEWAY_URL + obj.image_hash :
+            badgeArt ? URL.createObjectURL(badgeArt) : null;
 
     const isDisabled = !(obj.name && obj.description && activeImageURL);
 
@@ -72,11 +72,11 @@ const BadgeForm = ({ isEdit = false }) => {
         accountBound: isAccountBound,
         token_id: tokenId
     }
-    
-    const { 
-        openBadgeFormTransaction, 
+
+    const {
+        openBadgeFormTransaction,
         isPrepared,
-        isLoading 
+        isLoading
     } = useBadgeForm({ obj: transactionParams });
 
     const { pinImage, pinMetadata } = useIPFS({
@@ -93,7 +93,7 @@ const BadgeForm = ({ isEdit = false }) => {
                 pinImage();
                 pinMetadata();
             },
-            onSuccess: async({ chain, receipt }) => {
+            onSuccess: async ({ chain, receipt }) => {
                 const event = receipt.events.find((event) => event.name === "URI");
 
                 if (!event) throw new Error("Error submitting transaction.");
@@ -112,14 +112,14 @@ const BadgeForm = ({ isEdit = false }) => {
 
         }
     }]
-    
+
     // Updates generative image and Name field
     const onNameChange = async (event) => {
-        setObj({...obj, name: event.target.value });
+        setObj({ ...obj, name: event.target.value });
     }
 
     const onDescriptionChange = (event) => {
-        setObj({...obj, description: event.target.value });
+        setObj({ ...obj, description: event.target.value });
     }
 
     const onCustomImageChange = (file, uploaded) => {
@@ -179,9 +179,9 @@ const BadgeForm = ({ isEdit = false }) => {
 
             <FormDrawer label="Advanced" open={false}>
                 <Select
-                    label="Account Bound" 
-                    options={['True', 'False']} 
-                    value={isAccountBound ? 'True' : 'False'} 
+                    label="Account Bound"
+                    options={['True', 'False']}
+                    value={isAccountBound ? 'True' : 'False'}
                     setValue={onAccountBoundChange}
                 />
 
@@ -212,7 +212,7 @@ const BadgeForm = ({ isEdit = false }) => {
             </FormDrawer>
 
             <FormActionBar
-                className={!isEdit && "actionFixed"}
+                className={isEdit == false && "actionFixed" || "full"}
                 help={'After creating a badge, you (or your managers) can issue badges to team members.'}
                 actions={actions}
             />

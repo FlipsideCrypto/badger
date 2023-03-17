@@ -132,7 +132,7 @@ const OrgForm = ({ isEdit = false }) => {
             </FormDrawer>
 
             <FormActionBar
-                className={!isEdit && "actionFixed"}
+                className={!isEdit && "actionFixed" || "full"}
                 actions={actions}
             />
 

@@ -51,7 +51,7 @@
     height: 24px;
     width: 24px;
     margin-right: 10px;
-    background-color: #FCFCFF;
+    background-color: #FAFAFA;
 }
 
 .action_bar .action_bar__header {
@@ -76,7 +76,7 @@
 }
 
 .action_bar .action_bar__header a {
-    color: #000;
+    color: #1B1B1B;
 }
 
 .action_bar .action_bar__header .action_bar__header__subtext {

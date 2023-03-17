@@ -1,7 +1,7 @@
 .empty {
     display: grid;
     grid-column: 1 / span 4;
-    background: #FCFCFF;
+    background: #FAFAFA;
     border-radius: 4px;
     text-align: center;
     margin: 20px;

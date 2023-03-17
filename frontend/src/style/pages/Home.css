@@ -1,8 +1,12 @@
 .home__announcement {
-    background-color: #FCFCFF;
+    background-color: #FAFAFA;
     color: #06061C;
     padding: 20px;
     margin-bottom: 20px;
+}
+
+.home__announcement p {
+    margin: 0;
 }
 
 .home__cards {

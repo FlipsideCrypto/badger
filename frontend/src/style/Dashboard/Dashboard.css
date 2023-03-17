@@ -37,7 +37,7 @@
 }
 
 .dashboard .loading {
-    background: linear-gradient(-46deg, #FCFCFF 0%, #f3f3f3 50%, #FCFCFF 100%);
+    background: linear-gradient(-46deg, #FAFAFA 0%, #f3f3f3 50%, #FAFAFA 100%);
     background-size: 200% 100%;
     background-position: 100% 0;
     animation: loading 2s infinite;
