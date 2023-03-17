@@ -179,7 +179,7 @@ class ArtViewSet(viewsets.ViewSet):
 
         fingerprint = self._handle_fingerprint(address, badge_name)
 
-        todays_date = django.utils.timezone.now().strftime("%Y-%m-%d")
+        todays_date = django.utils.timezone.now().strftime("%Y-%m-%d %H")
 
         if address:
             random.seed(f"{todays_date}{organization}{address}{'1' if invert else '0'}")
@@ -320,7 +320,7 @@ class ArtViewSet(viewsets.ViewSet):
                 font-size="{organization_line_height}"
                 fill="{text_color}"
                 font-family="'Poppins', sans-serif"
-                opacity=".45"
+                opacity=".85"
             >
                 {organization}
             </text>
