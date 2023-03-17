@@ -4,7 +4,7 @@
 
 .landing p,
 .landing .section a {
-    color: rgba(0, 0, 0, .65);
+    color: rgba(27, 27, 27, .85);
     font-size: 1.2rem;
 }
 
@@ -163,9 +163,9 @@
 }
 
 .landing .section .cta {
-    color: #000;
+    color: #1B1B1B;
     padding-bottom: 4px;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid #1B1B1B;
     text-decoration: none;
     font-weight: 700;
     font-size: 1.2rem;
@@ -210,9 +210,9 @@
 }
 
 .landing .help .container .card a {
-    color: #000;
+    color: #1B1B1B;
     padding-bottom: 4px;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid #1B1B1B;
     text-decoration: none;
     font-weight: 700;
     font-size: 1.2rem;

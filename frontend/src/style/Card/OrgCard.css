@@ -5,7 +5,22 @@
     position: relative;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    background-color: rgb(252, 252, 255);
+    background-color: #FAFAFA;
+}
+
+.home__cards .card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    transition: all 0.3s ease-in-out;
+}
+
+.home__cards .card:hover::before {
+    backdrop-filter: brightness(0.97);
 }
 
 .home__cards .card .text {
@@ -28,7 +43,8 @@
     column-gap: 10px;
 }
 
-.home__cards .card .text .title .viewImage {
+.home__cards .card .text .title .viewImage__container,
+.home__cards .card .text .title .viewImage__container .viewImage {
     border-radius: 50%;
     height: 24px;
     width: 24px;

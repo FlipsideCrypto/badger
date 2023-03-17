@@ -12,6 +12,7 @@ export {
 
 export { useAuthentication } from './useAuthentication';
 export { getAverageColor, handleImageLoad } from './useColor';
+export { useDebounce } from './useDebounce';
 export { useENSProfile } from './useENSProfile';
 export { useFees } from './useFees';
 export { useIPFS, useIPFSImageHash, useIPFSMetadataHash } from './useIPFS';

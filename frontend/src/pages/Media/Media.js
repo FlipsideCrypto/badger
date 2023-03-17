@@ -8,7 +8,7 @@ const Media = () => {
     const colors = [
         "#00FF94",
         "#00FFE0",
-        "#000000",
+        "#1B1B1B",
         "#577088",
         "#F6FFFE",
         "#E1FEF9"

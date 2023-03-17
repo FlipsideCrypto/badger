@@ -1,4 +1,5 @@
 import base64
+import django
 import random
 
 from django.contrib.auth import get_user_model
@@ -57,12 +58,21 @@ class ArtViewSet(viewsets.ViewSet):
             fingerprint.append(self._encode(char))
 
         return fingerprint
+    
+    def _handle_line(self, lines, word):
+        if len(word) > 11:
+            for i in range(0, len(word), 11):
+                connector = "-" if i + 11 < len(word) else ""
+                lines.append(word[i:i + 11] + connector)
+        else:
+            lines.append(word)
+
+        return lines
 
     @action(
         detail=False, 
         methods=['get'], 
         url_name='pfp',
-        # instead of char being required i want it to be optional
         url_path='pfp/(?P<char>[a-zA-Z]+)?/(?P<ethereum_address>[a-zA-Z0-9]+)'
     )
     def pfp_art(self, request, **kwargs):
@@ -95,7 +105,6 @@ class ArtViewSet(viewsets.ViewSet):
             animation_from = f"0 {x_random} {y_random}"
             animation_to = f"360 {x_random} {y_random}"
 
-            # random direction of rotation
             if random.randint(0, 1) == 0:
                 animation_from = f"360 {x_random_rotation} {y_random_rotation}"
                 animation_to = f"0 {x_random_rotation} {y_random_rotation}"
@@ -128,7 +137,7 @@ class ArtViewSet(viewsets.ViewSet):
             """
 
         text = "" if not char else f"""
-            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="250" fill="#000" font-family="'Poppins', sans-serif">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="250" fill="#000" font-family="sans-serif">
                 {char[0].upper()}
             </text>
         """
@@ -159,7 +168,7 @@ class ArtViewSet(viewsets.ViewSet):
         detail=False, 
         methods=['get'], 
         url_name='badge',
-        url_path="pfp/(?P<organization_name>[a-zA-Z0-9]+)/(?P<ethereum_address>[a-zA-Z0-9]+)/(?P<badge_name>[a-zA-Z0-9]+)"
+        url_path="pfp/(?P<organization_name>[\w\-\.\ ]+)/(?P<ethereum_address>[\w\-\.\ ]+)/(?P<badge_name>[\w\-\.\ ]+)"
     )
     def badge_art(self, request, **kwargs):
         organization = kwargs.get('organization_name', None)
@@ -170,8 +179,10 @@ class ArtViewSet(viewsets.ViewSet):
 
         fingerprint = self._handle_fingerprint(address, badge_name)
 
+        todays_date = django.utils.timezone.now().strftime("%Y-%m-%d %H")
+
         if address:
-            random.seed(f"{organization}{address}{badge_name}{'1' if invert else '0'}")
+            random.seed(f"{todays_date}{organization}{address}{'1' if invert else '0'}")
 
         fill = "#fff"
         if invert:
@@ -255,11 +266,18 @@ class ArtViewSet(viewsets.ViewSet):
         lines = []
 
         for word in words:
-            if len(word) > 14:
-                for i in range(0, len(word), 14):
-                    lines.append(word[i:i + 14])
+            # determine if the last line already has 14 characters
+            lineLength = (len(lines[-1]) if len(lines) > 0 else 0) + len(word) + (1 if len(lines) > 0 else 0) 
+                          
+            newLine = len(lines) > 0 and lineLength > 10
+
+            if newLine:
+                self._handle_line(lines, word)
             else:
-                lines.append(word)
+                if len(lines) > 0:
+                    lines[-1] += " " + word
+                else:
+                    self._handle_line(lines, word)
 
         text_color = "#000" if fill == "#fff" else "#fff"
 
@@ -287,7 +305,7 @@ class ArtViewSet(viewsets.ViewSet):
                     y="{line_y + (line_height + line_buffer) * i}"
                     font-size="{line_height}"
                     fill="{text_color}"
-                    font-family="'Poppins', sans-serif"
+                    font-family="sans-serif"
                     font-weight="bold"
                 >
                     {line.upper()}
@@ -302,7 +320,7 @@ class ArtViewSet(viewsets.ViewSet):
                 font-size="{organization_line_height}"
                 fill="{text_color}"
                 font-family="'Poppins', sans-serif"
-                opacity=".45"
+                opacity=".85"
             >
                 {organization}
             </text>

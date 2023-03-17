@@ -4,8 +4,6 @@ import { handleImageLoad } from "@hooks";
 
 import { Card, ChainIcon, ImageLoader } from "@components";
 
-import { IPFS_GATEWAY_URL } from "@static";
-
 import { sliceAddress } from "@utils";
 
 import "@style/Card/OrgCard.css"
@@ -22,10 +20,13 @@ const OrgCard = ({ org }) => {
                 </div>
 
                 <h2 className="title">
-                    <ImageLoader className="viewImage"
-                        bypassed={true}
-                        src={IPFS_GATEWAY_URL + org.image_hash}
-                        onLoad={handleImageLoad} />
+                    <div className="viewImage__container">
+                        <ImageLoader className="viewImage"
+                            bypassed={true}
+                            prependGateway={true}
+                            src={org.image_hash}
+                            onLoad={handleImageLoad} />
+                    </div>
 
                     {org.name}
                 </h2>

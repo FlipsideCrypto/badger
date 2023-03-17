@@ -7,7 +7,7 @@
 
 .view .organization {
     text-decoration: none;
-    color: #000;
+    color: #1B1B1B;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -18,7 +18,7 @@
     border-radius: 50%;
     height: 25px !important;
     width: 25px !important;
-    background-color: #FCFCFF;
+    background-color: #FAFAFA;
 }
 
 .view .organization img {

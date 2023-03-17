@@ -26,7 +26,7 @@
 }
 
 .accordion .card h3 svg {
-    color: rgba(0, 0, 0, .65);
+    color: rgba(27, 27, 27, .85);
     margin-right: 20px;
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
@@ -71,7 +71,7 @@
 }
 
 .accordion .card h3 svg {
-    color: rgba(0, 0, 0, .65);
+    color: rgba(27, 27, 27, .85);
 }
 
 .accordion .card:hover h3,

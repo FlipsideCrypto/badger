@@ -1,11 +1,11 @@
 a.arrowLink {
-    color: #000;
+    color: #1B1B1B;
     font-size: inherit;
     font-weight: 700;
     text-decoration: none;
     font-size: inherit;
     display: flex;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid #1B1B1B;
     gap: 10px;
 }
 

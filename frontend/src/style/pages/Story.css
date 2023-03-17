@@ -83,7 +83,7 @@
 .story .stats h3,
 h4 {
     margin: 0;
-    color: #000;
+    color: #1B1B1B;
 }
 
 .story .stats h3 {
@@ -130,7 +130,7 @@ h4 {
     bottom: -50%;
     left: 50%;
     transform: translate(-50%, 50%);
-    background: #000;
+    background: #1B1B1B;
     height: 50%;
     width: 1px;
 }

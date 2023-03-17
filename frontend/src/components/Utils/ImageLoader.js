@@ -28,7 +28,7 @@ const ImageLoader = ({
 
     return (
         <>
-            {!loaded && <div className={className} />}
+            {!loaded && <div className={className} style={style} />}
 
             <img
                 className={className}
