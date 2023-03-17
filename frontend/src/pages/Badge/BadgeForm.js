@@ -1,8 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-// import BadgeDangerZone from "@components/Badge/BadgeDangerZone";
-
 import { 
     useUser, 
     useBadgeForm,
@@ -71,6 +69,7 @@ const BadgeForm = ({ isEdit = false }) => {
         ...obj,
         imageHash: imageHash,
         uriHash: metadataHash,
+        accountBound: isAccountBound,
         token_id: tokenId
     }
     
@@ -78,7 +77,7 @@ const BadgeForm = ({ isEdit = false }) => {
         openBadgeFormTransaction, 
         isPrepared,
         isLoading 
-    } = useBadgeForm({ obj: transactionParams, functionName: "setBadgeURI" });
+    } = useBadgeForm({ obj: transactionParams });
 
     const { pinImage, pinMetadata } = useIPFS({
         image: ipfsImage,
@@ -98,6 +97,8 @@ const BadgeForm = ({ isEdit = false }) => {
                 const event = receipt.events.find((event) => event.name === "URI");
 
                 if (!event) throw new Error("Error submitting transaction.");
+
+                console.log('receipt', receipt);
 
                 navigate(`/dashboard/organization/${chainId}/${orgAddress}/`);
             }
@@ -218,6 +219,7 @@ const BadgeForm = ({ isEdit = false }) => {
 
             {isEdit && <>
                 <h1>Danger zone</h1>
+
                 <FormActionBar
                     className="warning"
                     actions={warningActions}

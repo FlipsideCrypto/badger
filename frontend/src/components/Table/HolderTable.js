@@ -29,6 +29,8 @@ const HolderTable = ({ badge, isManager }) => {
 
     const { openHolderTransaction, isPrepared, isLoading } = useManageHolders({obj: obj});
 
+    const list = [...newHolders, ...badge.users];
+
     const onSortChange = (key) => {
         // // Get the current sort method and inverse it for chevron display.
         // let newHeadRows = { ...headRows };
@@ -124,18 +126,15 @@ const HolderTable = ({ badge, isManager }) => {
                     </TableHead>
 
                     <TableBody>
-                        {newHolders?.length > 0 && newHolders.map((holder, index) => (
+                        {list?.length > 0 && list.map((holder, index) => (
                             <TableRow key={index}>
                                 <TableCell component="th" scope="row">
                                     <input
                                         className="table__input"
                                         value={holder.ethereum_address} 
-                                        placeholder="Ethereum address..."
+                                        placeholder="Ethereum address or ENS..."
                                         onChange={(e) => onAddressChange(e, index)} 
                                     />
-                                </TableCell>
-                                <TableCell component="th" scope="row">
-                                    <span>{holder?.ens_name}</span>
                                 </TableCell>
                                 <TableCell component="th" scope="row">
                                     <div className="table__inline">

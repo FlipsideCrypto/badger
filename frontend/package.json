@@ -34,6 +34,7 @@
     "react-scripts": "5.0.0",
     "reconnecting-websocket": "^4.4.0",
     "siwe": "^1.1.6",
+    "trybadger": "^1.2.2",
     "wagmi": "^0.12.1",
     "web-vitals": "^2.1.4",
     "webpack": "^5.74.0",

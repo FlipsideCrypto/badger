@@ -1,15 +1,12 @@
-import { useState } from "react";
-
 import { useNavigate, useParams } from "react-router-dom";
 
-import { ActionTitle, BadgePreview, Header, HolderTable, Empty, SEO, DashboardLoader } from "@components";
+import { BadgePreview, Header, HolderTable, SEO, DashboardLoader } from "@components";
 
 import { useUser } from "@hooks";
 
 import "@style/pages/Badge.css";
 
 // TODO: Make sure that empty is all good
-
 const Badge = () => {
     const navigate = useNavigate();
 

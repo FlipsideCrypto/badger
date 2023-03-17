@@ -2,11 +2,10 @@ export {
     getBadgerAddress,
     getBadgerOrganizationAbi,
     getBadgerAbi,
+    getTransferBoundAddress,
     useOrgForm,
     useBadgeForm,
     useManageHolders,
-    useSetHooks,
-    useSetManagers,
     useTransferOwnership,
     useRenounceOwnership
 } from './contracts';

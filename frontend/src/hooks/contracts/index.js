@@ -1,7 +1,8 @@
 export {
     getBadgerAddress,
     getBadgerOrganizationAbi,
-    getBadgerAbi
+    getBadgerAbi,
+    getTransferBoundAddress
 } from './contractVersions';
 
 export {
@@ -14,14 +15,6 @@ export {
     useBadgeForm,
     useBadge
 } from './useBadgeForm';
-
-export { 
-    useSetManagers
-} from './useSetManagers';
-
-export { 
-    useSetHooks
-} from './useSetHooks';
 
 export { 
     useManageHolders

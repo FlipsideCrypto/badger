@@ -1,10 +1,10 @@
 import { ethers } from "ethers";
 
-const BADGER_ADDRESSES = JSON.parse(process.env.REACT_APP_BADGER_ADDRESSES);
+import { BADGER_DEPLOYMENTS } from "trybadger";
 
 function getBadgerAddress(chainID) {
     try {
-        return BADGER_ADDRESSES[chainID];
+        return BADGER_DEPLOYMENTS[chainID]["badger"];
     } catch {
         console.error(`Badger contract address not found in .env.`)
         return null;
@@ -35,8 +35,18 @@ function getBadgerAbi(chainID) {
     }
 }
 
+function getTransferBoundAddress(chainId) {
+    try {
+        return BADGER_DEPLOYMENTS[chainId]["transferBoundHook"];
+    } catch {
+        console.error(`Transfer Bound contract address not found in .env.`)
+        return null;
+    }
+}
+
 export {
     getBadgerAddress,
     getBadgerOrganizationAbi,
-    getBadgerAbi
+    getBadgerAbi,
+    getTransferBoundAddress
 }

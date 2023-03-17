@@ -2,7 +2,7 @@ export { Avatar } from './Avatar/Avatar';
 export { ActionBar, FormActionBar } from './Bar';
 export { Button, ActionButton, ConnectButton, LogoutButton } from './Button';
 export { Card, ErrorCard, OrgCard, StoryCard } from './Card';
-export { BadgeDangerZone, OrgDangerZone } from './DangerZone';
+export { OrgDangerZone } from './DangerZone';
 export { Dashboard, DashboardLoader } from './Dashboard';
 export { BadgeManagementDrawer } from './Drawer';
 export { Empty } from './Empty/Empty';

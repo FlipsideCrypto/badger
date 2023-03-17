@@ -58,7 +58,7 @@ const BADGE_HEAD_ROWS = {
         label: 'Holders',
         sortable: true,
         method: "",
-        align: 'right',
+        align: 'left',
         width: '10%',
     },
     updated: { 
@@ -72,18 +72,11 @@ const BADGE_HEAD_ROWS = {
 
 const HOLDER_HEAD_ROWS = {
     ethereum_address: {
-        label: "Address",
+        label: "Holder",
         sortable: true,
         method: "",
         align: "left",
-        width: "50%"
-    },
-    ens_name: {
-        label: "ENS Name",
-        sortable: true,
-        method: "",
-        align: "left",
-        width: "30%"
+        width: "80%"
     },
     balance: {
         label: "Balance",
