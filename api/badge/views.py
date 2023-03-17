@@ -73,7 +73,6 @@ class ArtViewSet(viewsets.ViewSet):
         detail=False, 
         methods=['get'], 
         url_name='pfp',
-        # instead of char being required i want it to be optional
         url_path='pfp/(?P<char>[a-zA-Z]+)?/(?P<ethereum_address>[a-zA-Z0-9]+)'
     )
     def pfp_art(self, request, **kwargs):
