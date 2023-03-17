@@ -1,3 +1,7 @@
+.preview__container {
+    background-color: #fff;
+}
+
 .preview__image {
     width: 200px;
     height: 200px;
