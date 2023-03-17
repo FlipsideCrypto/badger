@@ -17,6 +17,7 @@ class OrganizationSerializer(
     serializers.ModelSerializer
 ):
     owner = WalletSerializer()
+
     modules = ModuleSerializer(many=True)
 
     badges = BadgeSerializer(many=True)

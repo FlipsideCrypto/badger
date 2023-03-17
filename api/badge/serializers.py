@@ -13,10 +13,7 @@ class BadgeWalletSerializer(
     SerializerRepresentationMixin,
     serializers.ModelSerializer
 ):
-    ens_name = serializers.CharField(read_only=True)
-    ens_avatar = serializers.CharField(read_only=True)
-
-    amount = serializers.IntegerField(read_only=True)
+    amount = serializers.SerializerMethodField()
 
     def get_amount(self, obj):
         badge = self.context.get('badge', None)
@@ -41,9 +38,6 @@ class BadgeSerializer(
     SerializerRepresentationMixin,
     serializers.ModelSerializer
 ):
-    id = serializers.IntegerField(read_only=True)
-    token_id = serializers.IntegerField(read_only=True)
-
     ethereum_address = serializers.SerializerMethodField()
 
     users = BadgeWalletSerializer(many=True, read_only=True)
