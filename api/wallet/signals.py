@@ -16,3 +16,5 @@ def get_wallet_ens_name(sender, instance, created, **kwargs):
         
         if 'avatar' in ens:
             instance.ens_avatar = ens['avatar']
+
+        instance.save()
