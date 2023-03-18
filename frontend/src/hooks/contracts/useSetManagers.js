@@ -22,7 +22,7 @@ const getSetManagerArgs = ({ organization, tokenId, managers, isManagers, config
     let args = [];
     let functionName = "";
 
-    const { cleanedAddresses } = addressValidator({ addresses: managers });
+    const { cleanedAddresses } = addressValidator(managers);
     
     // TokenId determines whether it is an org or token manager.
     if (tokenId) {
@@ -49,6 +49,7 @@ const getSetManagerArgs = ({ organization, tokenId, managers, isManagers, config
             );
 
             args.push(configTx);
+        }
             
 
         return { functionName: "multicall", args: [args] };
@@ -98,7 +99,7 @@ const useSetManagers = ({ obj }) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const openBadgeFormTransaction = async ({
+    const openManagerTransaction = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
         onSuccess = ({ config, chain, tx, receipt }) => { }
@@ -125,7 +126,7 @@ const useSetManagers = ({ obj }) => {
         }
     }
 
-    return { openBadgeFormTransaction, isPrepared, isLoading, isSuccess }
+    return { openManagerTransaction, isPrepared, isLoading, isSuccess }
 }
 
 export {
