@@ -7,7 +7,7 @@ import { ethers } from "ethers";
 import { getBadgerOrganizationAbi, getTransferBoundAddress, useFees, useUser } from "@hooks";
 
 const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, accountBound, address, slot }) => {
-    if (!uriHash || !tokenId || !accountBound || !address || !slot) 
+    if (!uriHash || !address || !slot || tokenId === null) 
         return { args: [], functionName: "" };
 
     // For now, we're hard coding the setHook and configHook if the badge is account bound. A more modular piece is being built out for hooks and managers.

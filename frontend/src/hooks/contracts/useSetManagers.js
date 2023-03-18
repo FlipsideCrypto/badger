@@ -24,6 +24,9 @@ const getSetManagerArgs = ({ organization, tokenId, managers, isManagers, config
 
     const { cleanedAddresses } = addressValidator(managers);
     
+    if (cleanedAddresses.length === 0 || isManagers.length !== cleanedAddresses.length || tokenId === null)
+        return { functionName: "", args: [] };
+
     // TokenId determines whether it is an org or token manager.
     if (tokenId) {
         functionName = "setManagers(uint256,address[],bool[])"
