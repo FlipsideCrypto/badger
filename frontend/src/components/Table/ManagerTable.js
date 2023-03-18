@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import {
     Table, TableHead, TableRow,
     TableContainer, TableCell, TableBody
@@ -8,16 +9,25 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { ActionTitle, TableSortHead } from "@components";
 
-import { compareByProperty } from "@utils";
+import { compareByProperty, getTimeSince } from "@utils";
 
 import { useSetManagers } from "@hooks";
 
-import { HOLDER_HEAD_ROWS } from "@static";
-
-// import "@style/Table/ManagerTable.css";
+import "@style/Table/HolderTable.css";
 
 const ManagerTable = ({ badge, isManager }) => {
-    const [headRows, setHeadRows] = useState(HOLDER_HEAD_ROWS);
+    const headRows = {
+        name: {
+            label: 'Manager',
+            sortable: true,
+            method: "",
+        },
+        updated: { 
+            label: 'Last Login',
+            sortable: true,
+            method: "",
+        }
+    }
     
     // The new holder objects being created by the user.
     const [newManagers, setNewManagers] = useState([]);
@@ -87,16 +97,16 @@ const ManagerTable = ({ badge, isManager }) => {
         <>
             <ActionTitle title="Managers" actions={isManager && actions} />
 
-            {/* {badge && !badge?.managers?.length && newManagers.length === 0 && <Empty
+            {/* {badge && badge.managers.length === 0 && newManagers.length === 0 && <Empty
                 title={`${badge.name} does not have any Managers yet!`}
                 body="When you add a Manager, they will appear on the list here."
             />} */}
 
-            {badge && (badge?.managers?.length !== 0 || newManagers.length !== 0) && <div id="holder__table">
-                <TableContainer>
-                  <Table>
+            {/* {badge && (badge.managers.length !== 0 || newManagers.length !== 0) && <div id="manager__table"> */}
+            {badge && newManagers.length !== 0 && <TableContainer className="table">
+                <Table>
                     <TableHead>
-                      <TableRow>
+                        <TableRow>
                         {Object.keys(headRows).map((key) => (
                             <TableSortHead
                                 key={key}
@@ -104,11 +114,9 @@ const ManagerTable = ({ badge, isManager }) => {
                                 label={headRows[key].label}
                                 sortMethod={headRows[key].method}
                                 onSortChange={onSortChange}
-                                align={headRows[key].align}
-                                width={headRows[key].width}
                             />
                         ))}
-                      </TableRow>
+                        </TableRow>
                     </TableHead>
 
                     <TableBody>
@@ -124,11 +132,11 @@ const ManagerTable = ({ badge, isManager }) => {
                                 </TableCell>
                                 <TableCell component="th" scope="row">
                                     <div className="table__inline">
-                                        <span>
-                                            {manager.last_login || "---"}
+                                        <span className="mono">
+                                            {getTimeSince(manager.last_login) || "---"}
                                         </span>
                                         <button 
-                                            className={"delete" + managersToRemove?.[index] && " active"} 
+                                            className={`delete ${managersToRemove?.[index] && "active"}`} 
                                             onClick={() => onDelete(index)}
                                         >
                                             <FontAwesomeIcon icon={["fal","fa-trash"]} />
@@ -138,9 +146,8 @@ const ManagerTable = ({ badge, isManager }) => {
                             </TableRow>
                         ))}
                     </TableBody>
-                  </Table>
-                </TableContainer>
-            </div>}
+                </Table>
+            </TableContainer>}
         </>
     )
 }

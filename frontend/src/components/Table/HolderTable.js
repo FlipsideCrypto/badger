@@ -12,12 +12,25 @@ import { compareByProperty } from "@utils";
 
 import { useManageHolders } from "@hooks";
 
-import { HOLDER_HEAD_ROWS } from "@static";
-
 import "@style/Table/HolderTable.css";
 
 const HolderTable = ({ badge, isManager }) => {
-    const [headRows, setHeadRows] = useState(HOLDER_HEAD_ROWS);
+    const [headRows, setHeadRows] = useState({
+        ethereum_address: {
+            label: "Holder",
+            sortable: true,
+            method: "",
+            align: "left",
+            width: "80%"
+        },
+        balance: {
+            label: "Balance",
+            sortable: true,
+            method: "",
+            align: "right",
+            width: "20%"
+        }
+    });
     
     // The new holder objects being created by the user.
     const [newHolders, setNewHolders] = useState([]);
@@ -109,11 +122,10 @@ const HolderTable = ({ badge, isManager }) => {
                 body="When you add a Holder, they will appear on the list here."
             />}
 
-            {badge && (badge.users.length !== 0 || newHolders.length !== 0) && <div id="holder__table">
-                <TableContainer>
-                  <Table>
+            {badge && (badge.users.length !== 0 || newHolders.length !== 0) && <TableContainer className="table">
+                <Table>
                     <TableHead>
-                      <TableRow>
+                        <TableRow>
                         {Object.keys(headRows).map((key) => (
                             <TableSortHead
                                 key={key}
@@ -125,7 +137,7 @@ const HolderTable = ({ badge, isManager }) => {
                                 width={headRows[key].width}
                             />
                         ))}
-                      </TableRow>
+                        </TableRow>
                     </TableHead>
 
                     <TableBody>
@@ -174,9 +186,8 @@ const HolderTable = ({ badge, isManager }) => {
                         ))}
 
                     </TableBody>
-                  </Table>
-                </TableContainer>
-            </div>}
+                </Table>
+            </TableContainer>}
         </>
     )
 }
