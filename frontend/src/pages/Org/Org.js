@@ -11,8 +11,6 @@ const Org = () => {
 
     const { badges, isOwner, organization } = useUser({ chainId, orgAddress });
 
-    console.log(badges, isOwner, organization)
-
     const URL_BASE = `/dashboard/organization/${chainId}/${orgAddress}`;
 
     const headerActions = isOwner && [{
@@ -43,8 +41,7 @@ const Org = () => {
                         title={`${organization.name} does not have any Badges yet.`}
                         body="You're almost done setting up your Badger Organization. Now all you have to do is create and mint your Badges!"
                         button="Create a badge"
-                        url={`${URL_BASE}/badge/new/`}
-                    />}
+                        url={`${URL_BASE}/badge/new/`} />}
 
                     {badges && badges.length > 0 && <BadgeTable badges={badges} />}
                 </div>

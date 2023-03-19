@@ -28,15 +28,11 @@ const useUser = (props) => {
         isLoaded
     } = useContext(UserContext);
 
-    console.log(isLoaded, organizations, _badges)
-
     const {
         chainId = chain?.id,
         orgAddress = null,
         badgeId = null
     } = props || {};
-
-    console.log(isLoaded, chainId, orgAddress, badgeId)
 
     const states = useMemo(() => {
         if (!isLoaded || organizations.length == 0) return {
@@ -63,11 +59,7 @@ const useUser = (props) => {
     }, [isLoaded, chainId, orgAddress, badgeId, organizations, _badges])
 
     const managers = useMemo(() => {
-        console.log('in managers')
-
         if (!states.organization) return null;
-
-        console.log('in managers search', states.organization.modules)
 
         const _managers = states.organization.modules.filter((module) => {
             return module.module_type === "manager";
@@ -83,8 +75,6 @@ const useUser = (props) => {
                 module.module_key == getOrgManagerKey(module.ethereum_address))
         })
     }, [states])
-
-    console.log(managers)
 
     const roles = useMemo(() => {
         const isOwner = states.organization && states.organization.owner.ethereum_address === address;

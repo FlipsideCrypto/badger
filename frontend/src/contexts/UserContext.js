@@ -20,8 +20,6 @@ const UserContextProvider = ({ children }) => {
     const { organizations } = useContext(OrgContext);
     const { badges } = useContext(BadgeContext);
 
-    console.log(organizations, badges)
-
     const isLoaded = organizations !== null && badges !== null;
 
     return (
