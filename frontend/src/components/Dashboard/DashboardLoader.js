@@ -75,7 +75,6 @@ const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
             provider.getLogs(filter)
                 .then(logs => {
                     setLogs(logs);
-                    console.log("logs: ", logs)
                 });
         }
 

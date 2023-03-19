@@ -5,6 +5,7 @@
     border-radius: 4px;
     text-align: center;
     margin: 20px;
+    padding: 20px;
 }
 
 .dashboardContent .empty {
@@ -23,6 +24,23 @@
     margin-top: 15px;
 }
 
-.empty .dashboardContent p {
+.empty .dashboardContent {
     margin-bottom: 40px;
+    max-width: 540px;
+}
+
+.empty h1 {
+    max-width: 480px;
+    margin-inline: auto;
+    margin-bottom: 0px;
+}
+
+.empty p {
+    max-width: 420px;
+    margin-inline: auto;
+    margin-bottom: 20px;
+}
+
+.empty button {
+    margin-inline: auto;
 }

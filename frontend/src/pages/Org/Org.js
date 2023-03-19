@@ -11,6 +11,8 @@ const Org = () => {
 
     const { badges, isOwner, organization } = useUser({ chainId, orgAddress });
 
+    console.log(badges, isOwner, organization)
+
     const URL_BASE = `/dashboard/organization/${chainId}/${orgAddress}`;
 
     const headerActions = isOwner && [{
@@ -28,10 +30,8 @@ const Org = () => {
 
     return (
         <>
-            <SEO
-                title={`${organization ? organization.name : 'Not Found'} | Badger`}
-                description={`Browse ${organization?.name} and all its Badges and associated members.`}
-            />
+            <SEO title={`${organization ? organization.name : 'Not Found'} | Badger`}
+                description={`Browse ${organization?.name} and all its Badges and associated members.`} />
 
             <Header back={() => navigate("/dashboard/")} actions={headerActions} />
 

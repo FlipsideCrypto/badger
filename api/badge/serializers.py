@@ -43,6 +43,8 @@ class BadgeSerializer(
 
     users = serializers.SerializerMethodField()
 
+    chain_id = serializers.SerializerMethodField()
+
     def get_users(self, obj):
         return BadgeWalletSerializer(
             obj.users.all(),
@@ -62,6 +64,16 @@ class BadgeSerializer(
         if not organization: return None
 
         return organization.ethereum_address
+
+    def get_chain_id(self, obj):
+        organization = Organization.objects.filter(
+            badges__id__in=[obj.id],
+            badges__isnull=False
+        ).first()
+
+        if not organization: return None
+
+        return organization.chain_id
 
     class Meta:
         model = Badge
