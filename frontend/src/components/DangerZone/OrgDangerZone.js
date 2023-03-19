@@ -1,17 +1,42 @@
 import { useState } from "react";
 
+import { useNavigate, useParams } from "react-router-dom";
+
 import { FormActionBar, FormDrawer, Input } from "@components"
 
+import { useTransferOwnership } from "@hooks";
 
-const OrgDangerZone = ({ orgAddress }) => {
+const OrgDangerZone = () => {
+    const navigate = useNavigate();
+    
     const [ newOwner, setNewOwner ] = useState("");
 
-    const onArchive = async () => {
-    
-    }
+    const { chainId, orgAddress } = useParams();
+
+    const { 
+        openTransferOwnershipTransaction,
+        isSuccess
+    } = useTransferOwnership({ address: newOwner });
 
     const onOwnerChange = (e) => {
         setNewOwner(e.target.value);
+    }
+
+    const action = {
+        text: "Update ownership",
+        className: "warning",
+        disabled: isSuccess,
+        event: () => {
+            openTransferOwnershipTransaction({
+                onLoading: () => { },
+                onSuccess: ({ chain, receipt }) => {
+                    console.log('receipt', receipt);
+                    setNewOwner("");
+                    navigate(`/dashboard/organization/${chainId}/${orgAddress}`)
+                }
+
+            })
+        }
     }
 
     return (
@@ -22,13 +47,7 @@ const OrgDangerZone = ({ orgAddress }) => {
                 <Input label="Owner" value={newOwner} onChange={(e) => onOwnerChange(e)} />
             </FormDrawer>
 
-            <FormActionBar
-                actions={[{
-                    text: "Update ownership",
-                    className: "warning",
-                    onClick: () => onArchive()
-                }]}
-            />
+            <FormActionBar actions={[action]} />
         </>
     )
 }
