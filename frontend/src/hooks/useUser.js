@@ -4,13 +4,13 @@ import { ethers } from "ethers";
 
 import { UserContext } from "@contexts";
 
-function getOrgManagerKey(manager) {
+function getOrganizationKey(manager) {
     return ethers.utils.solidityKeccak256(["bytes"], [
         ethers.utils.defaultAbiCoder.encode(["address"], [manager])
     ]);
 }
 
-function getManagerKey(badgeId, manager) {
+function getBadgeKey(badgeId, manager) {
     return ethers.utils.solidityKeccak256(["bytes"], [
         ethers.utils.defaultAbiCoder.encode(["uint256", "address"], [badgeId, manager])
     ]);
@@ -67,12 +67,12 @@ const useUser = (props) => {
 
         if (!states.badge)
             return _managers.filter((module) => {
-                return module.module_key == getOrgManagerKey(module.ethereum_address);
+                return module.module_key == getOrganizationKey(module.ethereum_address);
             })
 
         return _managers.filter((module) => {
-            return (module.module_key == getManagerKey(states.badge.id, module.ethereum_address) ||
-                module.module_key == getOrgManagerKey(module.ethereum_address))
+            return (module.module_key == getBadgeKey(states.badge.id, module.ethereum_address) ||
+                module.module_key == getOrganizationKey(module.ethereum_address))
         })
     }, [states])
 
