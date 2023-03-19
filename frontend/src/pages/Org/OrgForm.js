@@ -35,7 +35,7 @@ const OrgForm = ({ isEdit = false }) => {
 
     const [obj, setObj] = useState(organization || initialOrgForm);
 
-    const { pfp } = usePFP({
+    const { characterPFP: pfp } = usePFP({
         name: obj.name,
         address
     });

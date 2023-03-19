@@ -40,25 +40,15 @@ const Dashboard = ({ children }) => {
     return (
         <OrgContextProvider>
             <UserContextProvider chainId={chainId}>
-                {children}
+                {!isConnected && <ConnectWalletEmpty />}
+
+                {isConnected && isWrongNetwork && <WrongNetworkEmpty primaryChain={primaryChain} />}
+
+                {isConnected && !isWrongNetwork && children}
             </UserContextProvider>
         </OrgContextProvider>
 
-        //     <UserContextProvider chainId={chainId}>
-        //         <div className="dashboardContent">
-        //             <ConnectWalletEmpty />
-        //             {/* {!isConnected && <ConnectWalletEmpty />}
-
-        //             {isConnected && isWrongNetwork && <WrongNetworkEmpty primaryChain={primaryChain} />}
-
-        //             {isConnected && !isWrongNetwork && !isLoaded && <LoadingEmpty />}
-
-        //             {isConnected && !isWrongNetwork && isLoaded && <>
-        //                 {children}
-        //             </>} */}
-        //             {children}
-        //         </div>
-        //     </UserContextProvider>
+        // {isConnected && !isWrongNetwork && !isLoaded && <LoadingEmpty />}
     )
 }
 
