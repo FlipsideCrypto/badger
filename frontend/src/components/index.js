@@ -17,7 +17,7 @@ export { BadgePreview, StoryPreview } from './Preview';
 export { ScrollToTop } from './Scroll/ScrollToTop';
 export { SEO } from './SEO/SEO';
 export { StatusIndicators } from './StatusIndicators/StatusIndicators';
-export { BadgeTable, HolderTable, ObjectTable, TableSortHead } from './Table';
+export { BadgeTable, HolderTable, ManagerTable, ObjectTable, TableSortHead } from './Table';
 export { ActionTitle } from './Title/ActionTitle';
 export { ImageLoader } from "./Utils";
 export { OrgView, ProfileView } from './View';

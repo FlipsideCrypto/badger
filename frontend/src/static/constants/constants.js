@@ -70,34 +70,7 @@ const BADGE_HEAD_ROWS = {
     }
 }
 
-const HOLDER_HEAD_ROWS = {
-    ethereum_address: {
-        label: "Holder",
-        sortable: true,
-        method: "",
-        align: "left",
-        width: "80%"
-    },
-    balance: {
-        label: "Balance",
-        sortable: true,
-        method: "",
-        align: "right",
-        width: "20%"
-    }
-}
-
-const badgeDrawerSelectActions = [
-    "Mint",
-    "Revoke",
-    // "Add Manager",
-    // "Remove Manager"
-]
-
 export { 
     pfpEmojis,
-    getRandomEmoji,
-    BADGE_HEAD_ROWS,
-    HOLDER_HEAD_ROWS,
-    badgeDrawerSelectActions
+    getRandomEmoji
 }
