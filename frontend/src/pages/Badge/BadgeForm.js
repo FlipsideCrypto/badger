@@ -70,7 +70,7 @@ const BadgeForm = ({ isEdit = false }) => {
         imageHash: imageHash,
         uriHash: metadataHash,
         accountBound: isAccountBound,
-        token_id: tokenId
+        tokenId
     }
 
     const {
