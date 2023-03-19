@@ -39,7 +39,7 @@ const NotIndexedEmpty = () => <Empty
 const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
     const [logs, setLogs] = useState([]);
 
-    const isLoading = obj === undefined;
+    const isLoading = !obj;
 
     useEffect(() => {
         const getFilter = ({ ethereum_address }) => {

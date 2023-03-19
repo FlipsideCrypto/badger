@@ -39,7 +39,7 @@ const useUser = (props) => {
     console.log(isLoaded, chainId, orgAddress, badgeId)
 
     const states = useMemo(() => {
-        if (!isLoaded) return {
+        if (!isLoaded || organizations.length == 0) return {
             organization: null,
             badges: null,
             badge: null
@@ -49,10 +49,11 @@ const useUser = (props) => {
             return org.chain_id === parseInt(chainId) && org.ethereum_address === orgAddress;
         })
 
-        // TODO: Need to add a chain id check here once the serializer returns chain id on the Badge.
         const badges = organization && _badges.filter((badge) => {
             return badge.chain_id === parseInt(chainId) && badge.ethereum_address === orgAddress;
         })
+
+        if (!badges) return { organization, badges: null, badge: null }
 
         const badge = badgeId && badges.find((badge) => {
             return badge.id === parseInt(badgeId);
@@ -62,7 +63,11 @@ const useUser = (props) => {
     }, [isLoaded, chainId, orgAddress, badgeId, organizations, _badges])
 
     const managers = useMemo(() => {
+        console.log('in managers')
+
         if (!states.organization) return null;
+
+        console.log('in managers search', states.organization.modules)
 
         const _managers = states.organization.modules.filter((module) => {
             return module.module_type === "manager";
@@ -78,6 +83,8 @@ const useUser = (props) => {
                 module.module_key == getOrgManagerKey(module.ethereum_address))
         })
     }, [states])
+
+    console.log(managers)
 
     const roles = useMemo(() => {
         const isOwner = states.organization && states.organization.owner.ethereum_address === address;
