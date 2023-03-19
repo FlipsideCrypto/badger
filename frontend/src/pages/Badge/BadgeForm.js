@@ -17,7 +17,8 @@ import {
     Input,
     Header,
     ImageLoader,
-    Select
+    Select,
+    BadgeDangerZone
 } from "@components";
 
 import { IPFS_GATEWAY_URL } from "@static";
@@ -103,14 +104,6 @@ const BadgeForm = ({ isEdit = false }) => {
                 navigate(`/dashboard/organization/${chainId}/${orgAddress}/`);
             }
         })
-    }]
-
-    const warningActions = [{
-        className: "warning",
-        text: "Revoke all",
-        event: () => {
-
-        }
     }]
 
     // Updates generative image and Name field
@@ -212,19 +205,12 @@ const BadgeForm = ({ isEdit = false }) => {
             </FormDrawer>
 
             <FormActionBar
-                className={isEdit == false && "actionFixed" || "full"}
+                className={!isEdit && ("actionFixed" || "full")}
                 help={'After creating a badge, you (or your managers) can issue badges to team members.'}
                 actions={actions}
             />
 
-            {isEdit && <>
-                <h1>Danger zone</h1>
-
-                <FormActionBar
-                    className="warning"
-                    actions={warningActions}
-                />
-            </>}
+            {isEdit && <BadgeDangerZone badge={badge} />}
         </>
     )
 }
