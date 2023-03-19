@@ -9,17 +9,17 @@ const Org = () => {
 
     const { chainId, orgAddress } = useParams();
 
-    const { badges, isOwner, organization } = useUser({ chainId, orgAddress });
+    const { organization, badges, canManage } = useUser({ chainId, orgAddress });
 
     const URL_BASE = `/dashboard/organization/${chainId}/${orgAddress}`;
 
-    const headerActions = isOwner && [{
+    const headerActions = canManage && [{
         text: "Settings",
         icon: ['fal', 'fa-gear'],
         onClick: () => navigate(`${URL_BASE}/edit/`)
     }];
 
-    const titleActions = isOwner && [{
+    const titleActions = canManage && [{
         className: "secondary",
         text: "Create",
         icon: ['fal', 'plus'],

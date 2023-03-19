@@ -14,11 +14,10 @@ const Badge = () => {
     const {
         organization,
         badge,
-        isOwner,
-        isManager
+        canManage
     } = useUser({ chainId, orgAddress, badgeId });
 
-    const headerActions = [{
+    const headerActions = canManage && [{
         text: "Settings",
         icon: ["fal", "fa-gear"],
         onClick: () => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badgeId}/edit/`)
@@ -31,12 +30,12 @@ const Badge = () => {
 
             <Header back={() =>
                 navigate(`/dashboard/organization/${chainId}/${orgAddress}/`)}
-                actions={isManager && headerActions} />
+                actions={headerActions} />
 
             <DashboardLoader chainId={chainId} orgAddress={orgAddress} obj={badge}>
                 <BadgePreview badge={badge} />
 
-                <HolderTable badge={badge} isManager={isManager} />
+                <HolderTable badge={badge} isManager={canManage} />
             </DashboardLoader>
         </>
     )

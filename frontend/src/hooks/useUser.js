@@ -90,6 +90,10 @@ const useUser = (props) => {
         return { isOwner, isManager, isMember }
     }, [address, states, managers])
 
+    const canManage = useMemo(() => {
+        return roles.isOwner || roles.isManager;
+    }, [roles])
+
     return {
         chain,
         primaryChain,
@@ -100,7 +104,8 @@ const useUser = (props) => {
         isConnected,
         isWrongNetwork,
         isLoaded,
-        ...roles
+        ...roles,
+        canManage
     }
 }
 
