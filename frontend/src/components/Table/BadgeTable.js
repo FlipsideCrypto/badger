@@ -84,7 +84,7 @@ const BadgeTable = ({ badges }) => {
                         {sortedList.map((badge, index) => (
                             <TableRow
                                 key={index}
-                                onClick={() => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badge.id}/`)}
+                                onClick={() => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badge.token_id}/`)}
                                 style={{
                                     cursor: "pointer"
                                 }}
