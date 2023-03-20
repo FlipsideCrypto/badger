@@ -6,8 +6,10 @@ export {
 } from './contractVersions';
 
 export {
-    useOrgForm
-} from './useOrgForm';
+    useOrgForm,
+    useTransferOwnership,
+    useRenounceOwnership
+} from './useContracts';
 
 export {
     useBadgeForm,
@@ -17,11 +19,3 @@ export {
 export { 
     useManageHolders
 } from './useManageHolders';
-
-export { 
-    useSetManagers
-} from './useSetManagers';
-
-export {
-    useTransferOwnership
-} from './useTransferOwnership';

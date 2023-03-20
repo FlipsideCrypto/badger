@@ -6,8 +6,8 @@ export {
     useOrgForm,
     useBadgeForm,
     useManageHolders,
-    useSetManagers,
-    useTransferOwnership
+    useTransferOwnership,
+    useRenounceOwnership
 } from './contracts';
 
 export { useAuthentication } from './useAuthentication';

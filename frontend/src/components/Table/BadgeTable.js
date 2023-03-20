@@ -9,7 +9,7 @@ import { ImageLoader, TableSortHead } from "@components";
 
 import { compareByProperty, getTimeSince } from "@utils";
 
-import { IPFS_GATEWAY_URL } from "@static";
+import { BADGE_HEAD_ROWS, IPFS_GATEWAY_URL } from "@static";
 
 import "@style/Table/HolderTable.css";
 
@@ -18,24 +18,7 @@ const BadgeTable = ({ badges }) => {
 
     const { orgAddress, chainId } = useParams();
 
-    const [headRows, setHeadRows] = useState({
-        name: {
-            label: 'Badge',
-            sortable: true,
-            method: "",
-        },
-        holders: {
-            label: 'Holders',
-            sortable: true,
-            method: ""
-        },
-        updated: { 
-            label: 'Last Updated',
-            sortable: true,
-            method: "",
-        }
-    });
-
+    const [headRows, setHeadRows] = useState(BADGE_HEAD_ROWS);
     const [sortedList, setSortedList] = useState(badges);
 
     const onSortChange = (key) => {

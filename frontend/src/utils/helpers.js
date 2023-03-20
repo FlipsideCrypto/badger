@@ -73,8 +73,6 @@ const getFileFromBase64 = (base64, filename) => {
 const getTimeSince = (date) => {
     var seconds = Math.floor((new Date() - date) / 1000);
 
-    if (isNaN(seconds)) return
-
     var interval = seconds / 31536000;
     if (interval > 1) {
         return Math.floor(interval) + " years";
