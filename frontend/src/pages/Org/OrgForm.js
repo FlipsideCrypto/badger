@@ -142,7 +142,7 @@ const OrgForm = ({ isEdit = false }) => {
 
             {isEdit && <>
                 <hr />
-                <OrgDangerZone orgAddress={organization.ethereum_address} />
+                <OrgDangerZone />
             </>}
         </>
     )

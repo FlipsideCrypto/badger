@@ -37,13 +37,11 @@ const HolderTable = ({ badge, isManager }) => {
     // used as a clone of badge.users with changed amounts.
     const [balanceChanges, setBalanceChanges] = useState({});
 
-    const obj = {
+    const { openHolderTransaction, isPrepared, isLoading } = useManageHolders({
         mints: [...newHolders, ...Object.values(balanceChanges).filter(change => change.pendingAmount > change.amount)],
         revokes: Object.values(balanceChanges).filter(change => parseInt(change.pendingAmount) < parseInt(change.amount)),
         tokenId: badge.token_id
-    }
-
-    const { openHolderTransaction, isPrepared, isLoading } = useManageHolders({obj: obj});
+    });
 
     // TODO: Come back to this.
     const onSortChange = (key) => {

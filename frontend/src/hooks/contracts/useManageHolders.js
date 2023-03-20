@@ -34,7 +34,7 @@ const getRevokeArgs = ({ revokes, tokenId }) => {
     const functionName = revokes.length > 1 ? "revokeBatch" : "revoke";
     
     // Build cleaned amounts and addresses
-    const revokeAmounts = revokes.map(mint => Math.abs(parseInt(mint.amount) - parseInt(mint.pendingAmount || mint.amount)));
+    const revokeAmounts = revokes.map(mint => Math.abs(parseInt(mint.amount) - parseInt(mint.pendingAmount)));
     const { cleanedAddresses: revokeAddresses, invalid } = addressValidator(revokes.map(revoke => revoke.ethereum_address));
 
     // Make sure everything is valid for the transaction.
@@ -52,7 +52,7 @@ const getRevokeArgs = ({ revokes, tokenId }) => {
 
 const getManageHolderArgs = ({ revokes, mints, tokenId, organization }) => {
     // if multi call is necessary
-    if (mints.length > 0 && revokes.length > 0) {
+    if (mints && revokes && mints.length > 0 && revokes.length > 0) {
         // Build mint and revoke args
         const { functionName: mintFunction, args: mintArgs } = getMintArgs({ mints: mints, tokenId: tokenId });
         const { functionName: revokeFunction, args: revokeArgs} = getRevokeArgs({ revokes: revokes, tokenId: tokenId });
@@ -69,15 +69,15 @@ const getManageHolderArgs = ({ revokes, mints, tokenId, organization }) => {
 
         return { functionName: "multicall", args };
     }
-    else if (mints.length > 0)
+    else if (mints && mints.length > 0)
         return getMintArgs({ mints: mints, tokenId: tokenId });
-    else if (revokes.length > 0)
+    else if (revokes && revokes.length > 0)
         return getRevokeArgs({ revokes: revokes, tokenId: tokenId });
 
     return { functionName: "", args: [] };
 }
 
-const useManageHolders = ({ obj }) => {
+const useManageHolders = ({ mints, revokes, tokenId }) => {
     const fees = useFees();
 
     const { orgAddress } = useParams();
@@ -93,9 +93,9 @@ const useManageHolders = ({ obj }) => {
 
     const { functionName, args } = getManageHolderArgs({ 
         organization: BadgerOrg,
-        mints: obj.mints,
-        revokes: obj.revokes,
-        tokenId: obj.tokenId
+        mints: mints,
+        revokes: revokes,
+        tokenId: tokenId
      });
 
     const overrides = { gasPrice: fees?.gasPrice };
