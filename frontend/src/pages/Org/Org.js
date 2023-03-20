@@ -9,17 +9,17 @@ const Org = () => {
 
     const { chainId, orgAddress } = useParams();
 
-    const { badges, isOwner, organization } = useUser({ chainId, orgAddress });
+    const { organization, badges, canManage } = useUser({ chainId, orgAddress });
 
     const URL_BASE = `/dashboard/organization/${chainId}/${orgAddress}`;
 
-    const headerActions = isOwner && [{
+    const headerActions = canManage && [{
         text: "Settings",
         icon: ['fal', 'fa-gear'],
         onClick: () => navigate(`${URL_BASE}/edit/`)
     }];
 
-    const titleActions = isOwner && [{
+    const titleActions = canManage && [{
         className: "secondary",
         text: "Create",
         icon: ['fal', 'plus'],
@@ -28,10 +28,8 @@ const Org = () => {
 
     return (
         <>
-            <SEO
-                title={`${organization ? organization.name : 'Not Found'} | Badger`}
-                description={`Browse ${organization?.name} and all its Badges and associated members.`}
-            />
+            <SEO title={`${organization ? organization.name : 'Not Found'} | Badger`}
+                description={`Browse ${organization?.name} and all its Badges and associated members.`} />
 
             <Header back={() => navigate("/dashboard/")} actions={headerActions} />
 
@@ -43,8 +41,7 @@ const Org = () => {
                         title={`${organization.name} does not have any Badges yet.`}
                         body="You're almost done setting up your Badger Organization. Now all you have to do is create and mint your Badges!"
                         button="Create a badge"
-                        url={`${URL_BASE}/badge/new/`}
-                    />}
+                        url={`${URL_BASE}/badge/new/`} />}
 
                     {badges && badges.length > 0 && <BadgeTable badges={badges} />}
                 </div>

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useMemo, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -31,25 +31,31 @@ const BadgeForm = ({ isEdit = false }) => {
 
     const { chainId, orgAddress, badgeId } = useParams();
 
-    const { organization, badge } = useUser({ chainId, orgAddress, badgeId });
-
-    const [obj, setObj] = useState(badge || initialBadgeForm);
-    const [isAccountBound, setIsAccountBound] = useState(true); // TODO; This needs to be either added to the obj after cleaning it up or everything else comes out.
+    const {
+        organization,
+        badges,
+        badge
+    } = useUser({ chainId, orgAddress, badgeId });
 
     const [image, setImage] = useState(null);
 
-    const tokenId = obj.token_id || organization.badges.length
+    // TODO; This needs to be either added to the obj after cleaning it up or everything else comes out.
+    const [isAccountBound, setIsAccountBound] = useState(true);
+
+    const [obj, setObj] = useState(badge || initialBadgeForm);
+
+    const tokenId = obj.token_id || (badges && badges.length) || 0;
 
     const { badgeArt } = useBadgeArt({
-        orgName: organization.name,
-        orgAddress: organization.ethereum_address,
+        orgName: organization && organization.name,
+        orgAddress: orgAddress,
         badgeName: obj.name,
         tokenId
     })
 
     const activeImage = image || obj.image_hash || badgeArt;
 
-    /// Prioritizes an uploaded image, then the ipfs gateway image, then the generated image
+    // Prioritizes an uploaded image, then the ipfs gateway image, then the generated image
     const activeImageURL = image ? URL.createObjectURL(image) :
         obj.image_hash ? IPFS_GATEWAY_URL + obj.image_hash :
             badgeArt ? URL.createObjectURL(badgeArt) : null;
@@ -65,19 +71,19 @@ const BadgeForm = ({ isEdit = false }) => {
         attributes: obj.attributes
     })
 
-    const transactionParams = {
-        ...obj,
-        imageHash: imageHash,
-        uriHash: metadataHash,
-        accountBound: isAccountBound,
-        tokenId
-    }
-
     const {
         openBadgeFormTransaction,
         isPrepared,
         isLoading
-    } = useBadgeForm({ obj: transactionParams });
+    } = useBadgeForm({
+        obj: {
+            ...obj,
+            imageHash: imageHash,
+            uriHash: metadataHash,
+            accountBound: isAccountBound,
+            tokenId
+        }
+    });
 
     const { pinImage, pinMetadata } = useIPFS({
         image: ipfsImage,
@@ -113,7 +119,6 @@ const BadgeForm = ({ isEdit = false }) => {
         }
     }]
 
-    // Updates generative image and Name field
     const onNameChange = async (event) => {
         setObj({ ...obj, name: event.target.value });
     }
@@ -139,9 +144,7 @@ const BadgeForm = ({ isEdit = false }) => {
         <>
             <Header back={() => navigate(`/dashboard/organization/${chainId}/${orgAddress}`)} />
 
-            <h2>
-                {isEdit ? "Update Badge" : "Create Badge"}
-            </h2>
+            <h2>{isEdit ? "Update" : "Create"} Badge</h2>
 
             <FormDrawer label="General" open={true}>
                 <div className="badge__form__general">

@@ -31,14 +31,18 @@ const OrgForm = ({ isEdit = false }) => {
 
     const { address, organization } = useUser({ chainId, orgAddress });
 
-    const [obj, setObj] = useState(organization || initialOrgForm);
     const [image, setImage] = useState(null);
 
-    const { characterPFP } = usePFP({ name: obj.name, address });
+    const [obj, setObj] = useState(organization || initialOrgForm);
+
+    const { characterPFP: pfp } = usePFP({
+        name: obj.name,
+        address
+    });
 
     const customImage = image || obj.image_hash;
 
-    const activeImage = customImage || characterPFP;
+    const activeImage = customImage || pfp;
 
     const imageURL = customImage && (image ? image.name : IPFS_GATEWAY_URL + obj.image_hash);
 
@@ -53,13 +57,13 @@ const OrgForm = ({ isEdit = false }) => {
         attributes: obj.attributes
     })
 
-    const org = {
-        ...obj,
-        imageHash: imageHash,
-        contractHash: metadataHash
-    }
-
-    const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({ obj: org })
+    const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({
+        obj: {
+            ...obj,
+            imageHash: imageHash,
+            contractHash: metadataHash
+        }
+    })
 
     const { pinImage, pinMetadata } = useIPFS({
         image: ipfsImage,

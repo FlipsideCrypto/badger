@@ -10,6 +10,8 @@ const useBadgeArt = ({ orgName, orgAddress, badgeName, tokenId }) => {
     const debouncedBadgeName = useDebounce(badgeName, 300);
 
     useEffect(() => {
+        if (!orgName) return;
+
         async function getImage(args) {
             const image = await getBadgeImage(...args);
 
@@ -20,13 +22,13 @@ const useBadgeArt = ({ orgName, orgAddress, badgeName, tokenId }) => {
             orgName,
             orgAddress,
             tokenId,
-            badgeName
+            debouncedBadgeName
         ];
 
         if (!args.every(arg => arg || arg === 0)) return
 
         getImage(args);
-    }, [debouncedBadgeName]);
+    }, [orgName, orgAddress, debouncedBadgeName, tokenId]);
 
     return { badgeArt };
 }

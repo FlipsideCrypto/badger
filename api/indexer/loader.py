@@ -226,8 +226,7 @@ class Loader(ListenerReference):
     def handle_manager_updated(self, event):
         organization = self._organization(event['address'])
 
-        key = event['args']['managerKey']
-
+        key = event['args']['managerKey'].hex()
         is_manager = event['args']['isManager']
 
         module, created = organization.modules.get_or_create(
@@ -245,8 +244,8 @@ class Loader(ListenerReference):
     def handle_manager_configured(self, event):
         organization = self._organization(event['address'])
 
-        key = event['args']['managerKey']
-        config_data = event['args']['data']
+        key = event['args']['managerKey'].hex()
+        config_data = event['args']['data'].hex()
 
         modules = organization.modules.filter(
             module_key=key,
@@ -267,8 +266,7 @@ class Loader(ListenerReference):
     def handle_hook_updated(self, event):
         organization = self._organization(event['address'])
 
-        key = event['args']['hookKey']
-
+        key = event['args']['hookKey'].hex()
         is_manager = event['args']['isHook']
 
         module, created = organization.modules.get_or_create(
@@ -286,8 +284,8 @@ class Loader(ListenerReference):
     def handle_hook_configured(self, event):
         organization = self._organization(event['address'])
 
-        key = event['args']['hookKey']
-        config_data = event['args']['data']
+        key = event['args']['hookKey'].hex()
+        config_data = event['args']['data'].hex()
 
         modules = organization.modules.filter(
             module_key=key,
