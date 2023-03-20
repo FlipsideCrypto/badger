@@ -52,7 +52,7 @@ const useUser = (props) => {
         if (!badges) return { organization, badges: null, badge: null }
 
         const badge = badgeId && badges.find((badge) => {
-            return badge.id === parseInt(badgeId);
+            return badge.token_id === parseInt(badgeId);
         })
 
         return { organization, badges, badge }
@@ -71,7 +71,7 @@ const useUser = (props) => {
             })
 
         return _managers.filter((module) => {
-            return (module.module_key == getBadgeKey(states.badge.id, module.ethereum_address) ||
+            return (module.module_key == getBadgeKey(states.badge.token_id, module.ethereum_address) ||
                 module.module_key == getOrganizationKey(module.ethereum_address))
         })
     }, [states])

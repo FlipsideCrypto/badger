@@ -15,7 +15,7 @@ const BadgeDangerZone = ({ badge }) => {
 
     const { openHolderTransaction } = useManageHolders({ 
         revokes: !isLoading && badge.users.map(user => ({...user, pendingAmount: 0})),
-        tokenId: badge.token_id
+        tokenId: badgeId
     })
 
     const actions = [{
