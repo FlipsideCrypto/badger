@@ -5,7 +5,7 @@ import {
 
 import { useAuthentication } from '@hooks';
 
-import { ConnectButton, Empty } from '@components';
+import { ConnectButton, Empty, ActionBar } from '@components';
 
 const connectButton = <ConnectButton className="primary" />;
 
@@ -40,6 +40,8 @@ const Dashboard = ({ children }) => {
     return (
         <OrgContextProvider>
             <UserContextProvider chainId={chainId}>
+                <ActionBar />
+
                 {!isConnected && <ConnectWalletEmpty />}
 
                 {isConnected && isWrongNetwork && <WrongNetworkEmpty primaryChain={primaryChain} />}

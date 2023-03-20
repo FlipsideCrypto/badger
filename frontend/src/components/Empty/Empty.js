@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 
-import { Dashboard, ActionButton } from "@components";
+import { ActionButton } from "@components";
 
 import "@style/Empty/Empty.css";
 
 const Empty = ({ title, body, button, url }) => {
     return (
         <div className="empty">
-            <Dashboard>
+            <div className="dashboardContent">
                 <h1>{title}</h1>
                 <p>{body}</p>
 
@@ -16,7 +16,7 @@ const Empty = ({ title, body, button, url }) => {
                 </Link>}
 
                 {!url && button && button}
-            </Dashboard>
+            </div>
         </div>
     )
 }

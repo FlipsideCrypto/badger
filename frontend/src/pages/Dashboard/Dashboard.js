@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 
-import { ActionBar, Dashboard as DashboardContent, SEO } from "@components";
+import { Dashboard as DashboardContent, SEO } from "@components";
 
 import { Badge, BadgeForm, Home, Org, OrgForm } from "@pages";
 
@@ -17,8 +17,6 @@ const Dashboard = () => {
             <div className="dashboard">
                 <div className="dashboard__contents">
                     <DashboardContent>
-                        <ActionBar />
-
                         <div className="dashboardContent">
                             <Routes>
                                 <Route path="/" element={<Home />} />
