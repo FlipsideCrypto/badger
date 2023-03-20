@@ -87,7 +87,8 @@ button.delete {
 
 button.delete:hover,
 button.delete:focus,
-button.delete:active {
+button.delete:active,
+button.delete.active {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     color: #FF0000;
 }

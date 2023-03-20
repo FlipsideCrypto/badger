@@ -6,7 +6,7 @@ export { OrgDangerZone, BadgeDangerZone } from './DangerZone';
 export { Dashboard, DashboardLoader } from './Dashboard';
 export { BadgeManagementDrawer } from './Drawer';
 export { Empty } from './Empty/Empty';
-export { Checkbox, Input, InputAddress, InputListCSV, InputListKeyValue, InputListAddressAmountCSV, Select, Switch, FormDrawer, FormReducer, initialBadgeForm, initialOrgForm } from './Form';
+export { Checkbox, Input, InputAddress, InputListCSV, InputListKeyValue, InputListAddressAmountCSV, InputAmountDelete, Select, Switch, FormDrawer, FormReducer, initialBadgeForm, initialOrgForm } from './Form';
 export { Footer } from './Footer/Footer';
 export { ArrowLink } from './Link';
 export { Navbar } from './Navbar/Navbar';

@@ -7,15 +7,26 @@ import {
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { ActionTitle, TableSortHead } from "@components";
+import { ActionTitle, TableSortHead, Empty } from "@components";
 
 import { compareByProperty, getTimeSince } from "@utils";
 
-import { useSetManagers } from "@hooks";
+import { useSetManagers, useUser } from "@hooks";
 
 import "@style/Table/HolderTable.css";
 
+const LastLogin = ({ lastLogin, active, onClick }) => (
+    <div className="table__inline mono">
+        <span>{getTimeSince(lastLogin) || "---"}</span>
+        <button className={active ? 'delete active' : 'delete'} onClick={onClick}>
+            <FontAwesomeIcon icon={["fal","fa-trash"]} />
+        </button>
+    </div>
+)
+
 const ManagerTable = ({ badge, isManager }) => {
+    const { managers } = useUser();
+
     const headRows = {
         name: {
             label: 'Manager',
@@ -36,14 +47,17 @@ const ManagerTable = ({ badge, isManager }) => {
 
     const combinedChanges = [...newManagers, ...managersToRemove];
 
-    const obj = {
-        tokenId: badge.token_id,
-        managers: combinedChanges.map(manager => manager.ethereum_address),
-        isManagers: combinedChanges.map(manager => manager.isManager),
-        configs: []
-    }
+    const isTableHidden = !isManager || (!newManagers.length && (!managers || managers.length === 0));
 
-    const { openManagerTransaction, isPrepared, isLoading } = useSetManagers({obj: obj});
+    const { openManagerTransaction, isPrepared, isLoading } = useSetManagers({
+        obj: {
+            tokenId: badge.token_id,
+            managers: combinedChanges.map(manager => manager.ethereum_address),
+            isManagers: combinedChanges.map(manager => manager.isManager),
+            configs: []
+        }    
+    });
+
 
     // TODO: Come back to this.
     const onSortChange = (key) => {
@@ -62,7 +76,7 @@ const ManagerTable = ({ badge, isManager }) => {
     // If they're a current holder, we need to update the balanceChanges object to give them a new balance of 0.
     const onDelete = (index, isActive) => {
         isActive ?
-            setManagersToRemove(managersToRemove => ({...managersToRemove, [index]: {...badge.users[index], isManager: false }})) :
+            setManagersToRemove(managersToRemove => ({...managersToRemove, [index]: {...managers[index], isManager: false }})) :
             setNewManagers(newManagers => newManagers.filter((manager, i) => i !== index))
     }
 
@@ -91,63 +105,65 @@ const ManagerTable = ({ badge, isManager }) => {
         onClick: () => onAddNew()
     }
     
-    const actions = newManagers.length + Object.entries(managersToRemove).length > 0 ? [saveAction, addAction] : [addAction]
-    
+    const actions = newManagers.length + Object.entries(managersToRemove).length > 0 ? 
+        [saveAction, addAction] : [addAction]
+
     return (
         <>
             <ActionTitle title="Managers" actions={isManager && actions} />
 
-            {/* {badge && badge.managers.length === 0 && newManagers.length === 0 && <Empty
+            {badge && isTableHidden &&  <Empty
                 title={`${badge.name} does not have any Managers yet!`}
                 body="When you add a Manager, they will appear on the list here."
-            />} */}
+            />}
 
-            {/* {badge && (badge.managers.length !== 0 || newManagers.length !== 0) && <div id="manager__table"> */}
-            {badge && newManagers.length !== 0 && <TableContainer className="table">
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                        {Object.keys(headRows).map((key) => (
-                            <TableSortHead
-                                key={key}
-                                id={key}
-                                label={headRows[key].label}
-                                sortMethod={headRows[key].method}
-                                onSortChange={onSortChange}
-                            />
-                        ))}
-                        </TableRow>
-                    </TableHead>
-
-                    <TableBody>
-                        {newManagers.length > 0 && newManagers.map((manager, index) => (
-                            <TableRow key={index}>
-                                <TableCell component="th" scope="row">
-                                    <input
-                                        className="table__input mono"
-                                        value={manager.ethereum_address} 
-                                        placeholder="Ethereum address or ENS..."
-                                        onChange={(e) => onAddressChange(e, index)}
-                                    />
-                                </TableCell>
-                                <TableCell component="th" scope="row">
-                                    <div className="table__inline">
-                                        <span className="mono">
-                                            {getTimeSince(manager.last_login) || "---"}
-                                        </span>
-                                        <button 
-                                            className={`delete ${managersToRemove?.[index] && "active"}`} 
-                                            onClick={() => onDelete(index)}
-                                        >
-                                            <FontAwesomeIcon icon={["fal","fa-trash"]} />
-                                        </button>
-                                    </div>
-                                </TableCell>
+            {!isTableHidden && 
+                <TableContainer className="table">
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                            {Object.keys(headRows).map((key) => (
+                                <TableSortHead
+                                    key={key}
+                                    id={key}
+                                    label={headRows[key].label}
+                                    sortMethod={headRows[key].method}
+                                    onSortChange={onSortChange}
+                                />
+                            ))}
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>}
+                        </TableHead>
+
+                        <TableBody>
+                            {newManagers.length !== 0 && newManagers.map((manager, index) => (
+                                <TableRow key={index}>
+                                    <TableCell component="th" scope="row">
+                                        <input
+                                            className="table__input mono"
+                                            value={manager.ethereum_address} 
+                                            placeholder="Ethereum address or ENS..."
+                                            onChange={(e) => onAddressChange(e, index)}
+                                        />
+                                    </TableCell>
+                                    <TableCell component="th" scope="row">
+                                        <LastLogin lastLogin={manager.last_login} onClick={() => onDelete(index, false)} />
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                            {managers && managers.length !== 0 && managers.map((manager, index) => (
+                                <TableRow key={index}>
+                                    <TableCell component="th" scope="row">
+                                        <input className="table__input mono" value={manager.ethereum_address} disabled={true} />
+                                    </TableCell>
+                                    <TableCell component="th" scope="row">
+                                        <LastLogin lastLogin={manager.last_login} active={managersToRemove?.[index]} onClick={() => onDelete(index, true)} />
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            }
         </>
     )
 }

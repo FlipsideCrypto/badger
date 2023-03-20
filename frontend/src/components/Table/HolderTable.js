@@ -4,9 +4,7 @@ import {
     TableContainer, TableCell, TableBody
 } from "@mui/material"
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import { ActionTitle, TableSortHead, Empty } from "@components";
+import { ActionTitle, TableSortHead, Empty, InputAmountDelete } from "@components";
 
 import { compareByProperty } from "@utils";
 
@@ -109,8 +107,8 @@ const HolderTable = ({ badge, isManager }) => {
         onClick: () => onAddNew()
     }
     
-    const actions = newHolders.length + Object.entries(balanceChanges).length > 0 ? [saveAction, addAction] : [addAction]
-    
+    const actions = newHolders.length + Object.entries(balanceChanges).length > 0 ? [saveAction, addAction] : [addAction];
+
     return (
         <>
             <ActionTitle title="Holders" actions={isManager && actions} />
@@ -143,6 +141,7 @@ const HolderTable = ({ badge, isManager }) => {
                             <TableRow key={index}>
                                 <TableCell component="th" scope="row">
                                     <input
+                                        key={`input-${index}`}
                                         className="table__input mono"
                                         value={holder.ethereum_address} 
                                         placeholder="Ethereum address or ENS..."
@@ -150,16 +149,11 @@ const HolderTable = ({ badge, isManager }) => {
                                     />
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                    <div className="table__inline">
-                                        <input className="table__input mono"
-                                            value={holder.pendingAmount} 
-                                            placeholder="1"
-                                            onChange={(e) => onAmountChange(e, index)} 
-                                        />
-                                        <button className="delete" onClick={() => onDelete(index)}>
-                                            <FontAwesomeIcon icon={["fal","fa-trash"]} />
-                                        </button>
-                                    </div>
+                                    <InputAmountDelete 
+                                        value={holder.pendingAmount} 
+                                        onChange={(e) => onAmountChange(e, index, false)} 
+                                        onDelete={() => onDelete(index, false)} 
+                                    />
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -169,16 +163,12 @@ const HolderTable = ({ badge, isManager }) => {
                                     <input className="table__input mono" value={holder.ethereum_address} disabled={true} />
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                    <div className="table__inline">
-                                        <input className="table__input mono"
-                                            value={balanceChanges[index]?.pendingAmount || holder.amount} // im sorry for the ?
-                                            placeholder="1"
-                                            onChange={(e) => onAmountChange(e, index, true)} 
-                                        />
-                                        <button className='delete' onClick={() => onDelete(index, true)}>
-                                            <FontAwesomeIcon icon={["fal","fa-trash"]} />
-                                        </button>
-                                    </div>
+                                    <InputAmountDelete
+                                        value={balanceChanges[index] ? balanceChanges[index].pendingAmount : holder.amount}
+                                        onChange={(e) => onAmountChange(e, index, true)}
+                                        onDelete={() => onDelete(index, true)}
+                                        isDeleting={balanceChanges[index] && balanceChanges[index].pendingAmount === "0"}
+                                    />
                                 </TableCell>
                             </TableRow>
                         ))}
