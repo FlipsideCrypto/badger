@@ -26,11 +26,9 @@ function App() {
 
                 <Routes>
                     <Route exact path="/dashboard/*" element={
-                        <ErrorContextProvider>
-                            <Wallet>
-                                <Dashboard />
-                            </Wallet>
-                        </ErrorContextProvider>
+                        <Wallet>
+                            <Dashboard />
+                        </Wallet>
                     } />
 
                     <Route path="/*" element={<Page />} />

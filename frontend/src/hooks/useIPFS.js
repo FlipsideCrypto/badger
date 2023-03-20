@@ -1,6 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-
-import { ErrorContext } from "@contexts";
+import { useEffect, useState } from "react";
 
 import { postIPFSImage, postIPFSMetadata } from "@utils";
 
@@ -9,17 +7,11 @@ import { IPFS_GATEWAY_URL } from "@static"
 const Hash = require("ipfs-only-hash");
 
 const useIPFS = ({ image, data }) => {
-    const { setError } = useContext(ErrorContext);
-
     const pinImage = async () => {
         const response = await postIPFSImage(image);
 
         if (response?.error) {
-            setError({
-                label: "Error uploading image to IPFS",
-                message: response.error
-            })
-
+            console.error(response.error)
             return;
         }
 
@@ -30,10 +22,7 @@ const useIPFS = ({ image, data }) => {
         const response = await postIPFSMetadata(data);
 
         if (response.error) {
-            setError({
-                label: 'Error creating Org URI',
-                message: response.error
-            });
+            console.error(response.error)
             return;
         }
 

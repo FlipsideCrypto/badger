@@ -60,8 +60,6 @@ const useTransferOwnership = ({ address }) => {
         }
     });
 
-    console.log('transfer', config)
-
     const { writeAsync } = useContractWrite(config);
 
     const openTransferOwnershipTransaction = async ({
