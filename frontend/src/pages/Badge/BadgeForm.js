@@ -71,8 +71,21 @@ const BadgeForm = ({ isEdit = false }) => {
         attributes: obj.attributes
     })
 
+<<<<<<< HEAD
     const {
         openBadgeFormTransaction,
+=======
+    const transactionParams = {
+        ...obj,
+        imageHash: imageHash,
+        uriHash: metadataHash,
+        accountBound: isAccountBound,
+        tokenId
+    }
+    
+    const { 
+        openBadgeFormTransaction, 
+>>>>>>> feat/managers
         isPrepared,
         isLoading
     } = useBadgeForm({

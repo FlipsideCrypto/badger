@@ -23,8 +23,16 @@ th:not(:last-child) {
     padding-right: 20px !important;
 }
 
-#holder__table {
+.table {
     margin-inline: -20px;
+    width: calc(100% + 40px);
+}
+
+.table__input {
+    width: 100%;
+    min-height: 40px;
+    min-width: 40px;
+    padding: 1px 2px;
 }
 
 #holder__table .badge__image,
@@ -36,9 +44,6 @@ th:not(:last-child) {
 input.table__input {
     border: none;
     outline: none;
-    width: 100%;
-    min-height: 40px;
-    min-width: 40px;
 }
 
 input.table__input:hover,
@@ -60,10 +65,16 @@ input.table__input:disabled:focus {
 .table__inline {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
+    text-align: right;
 }
 
 .table__inline input {
     text-align: right;
+}
+
+.table__inline div {
+    float: right;
 }
 
 button.delete {
@@ -71,6 +82,7 @@ button.delete {
     color: rgba(0, 0, 0, 0.65);
     width: 20px;
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    padding: 8px;
 }
 
 button.delete:hover,

@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 
-import { BadgePreview, Header, HolderTable, SEO, DashboardLoader } from "@components";
+import { BadgePreview, Header, HolderTable, ManagerTable, SEO, DashboardLoader } from "@components";
 
 import { useUser } from "@hooks";
 
@@ -34,6 +34,8 @@ const Badge = () => {
 
             <DashboardLoader chainId={chainId} orgAddress={orgAddress} obj={badge}>
                 <BadgePreview badge={badge} />
+
+                <ManagerTable badge={badge} isManager={canManage} />
 
                 <HolderTable badge={badge} isManager={canManage} />
             </DashboardLoader>
