@@ -47,8 +47,6 @@ const ManagerTable = ({ badge, managers, isManager }) => {
 
     const isTableHidden = !isManager || (!newManagers.length && (!managers || managers.length === 0));
 
-    console.log(badge.token_id)
-
     const { openManagerTransaction, isPrepared, isLoading } = useSetManagers({
         obj: {
             tokenId: badge.token_id,
