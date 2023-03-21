@@ -81,7 +81,7 @@ const useUser = (props) => {
             canManage: false
         }
 
-        const isOwner = states.organization && states.organization.owner.ethereum_address === address;
+        const isOwner = states.organization.owner && states.organization.owner.ethereum_address === address;
 
         const isManager = states.managers && states.managers.some((manager) => {
             return manager.ethereum_address === address;
