@@ -18,6 +18,7 @@ const UserContextProvider = ({ children }) => {
     } = useContext(AuthenticationContext);
 
     const { organizations } = useContext(OrgContext);
+
     const { badges } = useContext(BadgeContext);
 
     const isLoaded = organizations !== null && badges !== null;

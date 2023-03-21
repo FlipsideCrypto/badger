@@ -14,6 +14,7 @@ const Badge = () => {
     const {
         organization,
         badge,
+        managers,
         canManage
     } = useUser({ chainId, orgAddress, badgeId });
 
@@ -35,7 +36,11 @@ const Badge = () => {
             <DashboardLoader chainId={chainId} orgAddress={orgAddress} obj={badge}>
                 <BadgePreview badge={badge} />
 
-                <ManagerTable badge={badge} isManager={canManage} />
+                <ManagerTable
+                    badge={badge}
+                    managers={managers}
+                    isManager={canManage}
+                />
 
                 <HolderTable badge={badge} isManager={canManage} />
             </DashboardLoader>

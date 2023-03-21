@@ -105,9 +105,9 @@ const BadgeForm = ({ isEdit = false }) => {
 
                 if (!event) throw new Error("Error submitting transaction.");
 
-                console.log('receipt', receipt);
+                const id = event.args.id;
 
-                navigate(`/dashboard/organization/${chainId}/${orgAddress}/`);
+                navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${id}/`);
             }
         })
     }]
@@ -135,7 +135,9 @@ const BadgeForm = ({ isEdit = false }) => {
 
     return (
         <>
-            <Header back={() => navigate(`/dashboard/organization/${chainId}/${orgAddress}`)} />
+            <Header back={() => {
+                navigate(`/dashboard/organization/${chainId}/${orgAddress}/${isEdit ? `badge/${badgeId}/` : ''}`)
+            }} />
 
             <h2>{isEdit ? "Update" : "Create"} Badge</h2>
 

@@ -8,7 +8,7 @@ import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
 
 import { addressValidator } from "@utils";
 
-const getManagerKey = ({badgeId, manager}) => {
+const getManagerKey = ({ badgeId, manager }) => {
     const encoded = ethers.utils.defaultAbiCoder.encode(["uint256", "address"], [badgeId, manager]);
     return ethers.utils.solidityKeccak256(["bytes"], [encoded]);
 }
@@ -23,19 +23,19 @@ const getSetManagerArgs = ({ organization, tokenId, managers, isManagers, config
     let functionName = "";
 
     const { cleanedAddresses } = addressValidator(managers);
-    
+
     if (cleanedAddresses.length === 0 || isManagers.length !== cleanedAddresses.length || tokenId === null)
         return { functionName: "", args: [] };
 
     // TokenId determines whether it is an org or token manager.
-    if (tokenId) {
+    if (tokenId != null) {
         functionName = "setManagers(uint256,address[],bool[])"
         args = [tokenId, cleanedAddresses, isManagers];
     } else {
         functionName = "setManagers(address[],bool[])"
         args = [cleanedAddresses, isManagers];
     }
-    
+
     // If any managers have a config, we are multicalling the config function with the setManagers function.
     if (configs.length > 0) {
         // Make the setManagers function the first argument of the multicall.
@@ -45,7 +45,7 @@ const getSetManagerArgs = ({ organization, tokenId, managers, isManagers, config
             // const configSchema = await getManagerConfigSchema({manager: config.manager});
             // const configHash = ethers.utils.defaultAbiCoder.encode([configSchema], [config.args])
 
-            const configHash = ethers.utils.defaultAbiCoder.encode(["uint256","bool"], [tokenId, true])
+            const configHash = ethers.utils.defaultAbiCoder.encode(["uint256", "bool"], [tokenId, true])
             const configTx = organization.abi.encodeFunctionData(
                 tokenId ? "configManager(uint256,address,bytes)" : "configManager(address,bytes)",
                 [tokenId, config.manager, configHash]
@@ -53,7 +53,7 @@ const getSetManagerArgs = ({ organization, tokenId, managers, isManagers, config
 
             args.push(configTx);
         }
-            
+
 
         return { functionName: "multicall", args: [args] };
     }
@@ -74,13 +74,13 @@ const useSetManagers = ({ obj }) => {
 
     const BadgerOrg = useMemo(() => { return getBadgerOrganizationAbi() }, []);
 
-    const { functionName, args } = getSetManagerArgs({ 
+    const { functionName, args } = getSetManagerArgs({
         organization: BadgerOrg,
         tokenId: obj.tokenId,
         managers: obj.managers,
         isManagers: obj.isManagers,
         configs: obj.configs
-     });
+    });
 
     const isReady = BadgerOrg && fees && address && !!args;
 
