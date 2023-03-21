@@ -35,7 +35,7 @@ const useUser = (props) => {
     } = props || {};
 
     const states = useMemo(() => {
-        if (!isLoaded || organizations.length == 0) return {
+        if (!isLoaded || organizations.length == 0 || !orgAddress) return {
             organization: null,
             badges: null,
             badge: null
@@ -65,16 +65,22 @@ const useUser = (props) => {
             return module.module_type === "manager";
         })
 
+        console.log(_managers, states.badge)
+
         if (!states.badge)
             return _managers.filter((module) => {
                 return module.module_key == getOrganizationKey(module.ethereum_address);
             })
 
         return _managers.filter((module) => {
+            console.log(module.module_key, getBadgeKey(states.badge.token_id, module.ethereum_address), getOrganizationKey(module.ethereum_address))
+
             return (module.module_key == getBadgeKey(states.badge.token_id, module.ethereum_address) ||
                 module.module_key == getOrganizationKey(module.ethereum_address))
         })
     }, [states])
+
+    console.log('final managers', managers)
 
     const roles = useMemo(() => {
         const isOwner = states.organization && states.organization.owner.ethereum_address === address;
