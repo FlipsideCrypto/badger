@@ -28,18 +28,14 @@ const LoadingEmpty = () => <Empty
 
 const Dashboard = ({ children }) => {
     const {
-        chain,
         primaryChain,
-        address,
         isConnected,
         isWrongNetwork
     } = useAuthentication();
 
-    const chainId = chain && parseInt(chain.id);
-
     return (
         <OrgContextProvider>
-            <UserContextProvider chainId={chainId}>
+            <UserContextProvider>
                 <ActionBar />
 
                 {!isConnected && <ConnectWalletEmpty />}
