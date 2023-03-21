@@ -15,7 +15,7 @@ const ConnectWalletEmpty = () => <Empty
     button={connectButton}
 />
 
-const WrongNetworkEmpty = (primaryChain) => <Empty
+const WrongNetworkEmpty = ({ primaryChain }) => <Empty
     title="Wrong Network!"
     body={`Please connect to ${primaryChain.name} network.`}
     button={connectButton}
