@@ -46,7 +46,7 @@ const useUser = (props) => {
             return org.chain_id === parseInt(chainId) && org.ethereum_address === orgAddress;
         })
 
-        const organizationManagers = organization.modules.filter((module) => {
+        const organizationManagers = organization && organization.modules.filter((module) => {
             return module.module_type === "manager";
         })
 
