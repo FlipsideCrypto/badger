@@ -11,7 +11,7 @@ import { ActionTitle, TableSortHead, Empty } from "@components";
 
 import { compareByProperty, getTimeSince } from "@utils";
 
-import { useSetManagers, useUser } from "@hooks";
+import { useSetManagers } from "@hooks";
 
 import "@style/Table/HolderTable.css";
 
@@ -70,12 +70,19 @@ const ManagerTable = ({ badge, managers, isManager }) => {
         setNewManagers(newManagers => newManagers.map((manager, i) => i === index ? { ...manager, ethereum_address: e.target.value } : manager))
     }
 
-    // If they're a new holder, delete the input,
-    // If they're a current holder, we need to update the balanceChanges object to give them a new balance of 0.
+    // Remove or undo a remove action if a current holder. 
+    // If they're a new holder, delete the input.
     const onDelete = (index, isActive) => {
-        isActive ?
-            setManagersToRemove(managersToRemove => ({ ...managersToRemove, [index]: { ...managers[index], isManager: false } })) :
+        if (isActive && isSelected(managers[index].ethereum_address))
+            setManagersToRemove(managersToRemove => managersToRemove.filter((manager) => manager.ethereum_address !== managers[index].ethereum_address))
+        else if (isActive)
+            setManagersToRemove(managersToRemove => ([...managersToRemove, { ethereum_address: managers[index].ethereum_address, isManager: false }]))
+        else
             setNewManagers(newManagers => newManagers.filter((manager, i) => i !== index))
+    }
+
+    const isSelected = (managerAddress) => {
+        return managersToRemove.find((manager, i) => manager.ethereum_address === managerAddress);
     }
 
     const saveAction = {
@@ -154,7 +161,7 @@ const ManagerTable = ({ badge, managers, isManager }) => {
                                         <input className="table__input mono" value={manager.ethereum_address} disabled={true} />
                                     </TableCell>
                                     <TableCell component="th" scope="row">
-                                        <LastLogin lastLogin={manager.last_login} active={managersToRemove?.[index]} onClick={() => onDelete(index, true)} />
+                                        <LastLogin lastLogin={manager.last_login} active={isSelected(manager.ethereum_address)} onClick={() => onDelete(index, true)} />
                                     </TableCell>
                                 </TableRow>
                             ))}

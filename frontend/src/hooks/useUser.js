@@ -62,10 +62,12 @@ const useUser = (props) => {
 
         const filter = (module) => {
             if (badge)
-                return module.module_key == getBadgeKey(badge.token_id, module.ethereum_address) ||
-                    module.module_key == getOrganizationKey(module.ethereum_address)
+                return module.is_active && (
+                    module.module_key === getBadgeKey(badge.token_id, module.ethereum_address) ||
+                    module.module_key === getOrganizationKey(module.ethereum_address)
+                )
 
-            return module.module_key == getOrganizationKey(module.ethereum_address)
+            return module.module_key === getOrganizationKey(module.ethereum_address)
         }
 
         const managers = organizationManagers && organizationManagers.filter(filter)
