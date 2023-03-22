@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useLocation, useNavigate } from "react-router-dom";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useENSProfile, useUser } from "@hooks";
 
@@ -34,13 +36,9 @@ const ActionBar = () => {
 
     const orgAddress = orgRegex.test(pathname) && orgRegex.exec(pathname)[2]
 
-    // const navbarActions = [{
-    //     className: "tertiary",
-    //     text: "Discover",
-    //     icon: ['fal', 'magnifying-glass'],
-    //     to: "/discover/",
-    //     onClick: () => { navigate("/discover/") }
-    // }]
+    useEffect(() => {
+        setCollapsed(true);
+    }, [pathname])
 
     return (
         <div className="action_bar">
@@ -57,11 +55,9 @@ const ActionBar = () => {
             </div>
 
             <div className="action_bar__toggle">
-                <ActionButton
-                    className="tertiary"
-                    icon={['fal', 'bars']}
-                    onClick={() => setCollapsed(!collapsed)}
-                />
+                <button className="tertiary" onClick={() => setCollapsed(!collapsed)}>
+                    <FontAwesomeIcon icon={['fal', 'bars']} />
+                </button>
             </div>
 
             <div className={`action_bar__actions ${collapsed ? 'collapsed' : ''}`}>
@@ -71,9 +67,6 @@ const ActionBar = () => {
                         icon={['fal', 'globe']}
                         afterText="Discover"
                         onClick={() => { navigate("/discover/") }} />
-
-                    {/* <ActionButton className="tertiary" icon={['fal', 'star']} afterText="Star on GitHub"
-                        link="http://github.com/flipsidecrypto/badger" /> */}
 
                     {isConnected && address && <LogoutButton />}
                 </div>
