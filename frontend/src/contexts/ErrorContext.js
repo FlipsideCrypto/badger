@@ -6,8 +6,9 @@ import { ErrorCard } from "@components";
 const ErrorContext = createContext();
 
 const ErrorContextProvider = ({ children }) => {
-    const [error, setError] = useState({ label: "", message: "" });
     const { pathname } = useLocation();
+
+    const [error, setError] = useState({ label: "", message: "" });
 
     // Clear the error if the path changes.
     useEffect(() => {
