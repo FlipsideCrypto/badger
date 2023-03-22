@@ -1,11 +1,8 @@
-import {
-    OrgContextProvider,
-    UserContextProvider
-} from '@contexts';
+
 
 import { useAuthentication } from '@hooks';
 
-import { ConnectButton, Empty, ActionBar } from '@components';
+import { ConnectButton, Empty } from '@components';
 
 const connectButton = <ConnectButton className="primary" />;
 
@@ -34,18 +31,13 @@ const Dashboard = ({ children }) => {
     } = useAuthentication();
 
     return (
-        <OrgContextProvider>
-            <UserContextProvider>
-                <ActionBar />
+        <>
+            {!isConnected && <ConnectWalletEmpty />}
 
-                {!isConnected && <ConnectWalletEmpty />}
+            {isConnected && isWrongNetwork && <WrongNetworkEmpty primaryChain={primaryChain} />}
 
-                {isConnected && isWrongNetwork && <WrongNetworkEmpty primaryChain={primaryChain} />}
-
-                {isConnected && !isWrongNetwork && children}
-            </UserContextProvider>
-        </OrgContextProvider>
-
+            {isConnected && !isWrongNetwork && children}
+        </>
         // {isConnected && !isWrongNetwork && !isLoaded && <LoadingEmpty />}
     )
 }

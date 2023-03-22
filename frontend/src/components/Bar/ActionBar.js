@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useENSProfile, useUser } from "@hooks";
 
@@ -18,6 +18,8 @@ import '@rainbow-me/rainbowkit/styles.css'
 import "@style/Bar/ActionBar.css";
 
 const ActionBar = () => {
+    const navigate = useNavigate();
+
     const { pathname } = useLocation();
 
     const { address, isConnected, isLoaded } = useUser();
@@ -31,6 +33,14 @@ const ActionBar = () => {
     const chainId = orgRegex.test(pathname) && orgRegex.exec(pathname)[1]
 
     const orgAddress = orgRegex.test(pathname) && orgRegex.exec(pathname)[2]
+
+    // const navbarActions = [{
+    //     className: "tertiary",
+    //     text: "Discover",
+    //     icon: ['fal', 'magnifying-glass'],
+    //     to: "/discover/",
+    //     onClick: () => { navigate("/discover/") }
+    // }]
 
     return (
         <div className="action_bar">
@@ -56,8 +66,14 @@ const ActionBar = () => {
 
             <div className={`action_bar__actions ${collapsed ? 'collapsed' : ''}`}>
                 <div className="actions">
-                    <ActionButton className="tertiary" icon={['fal', 'star']} afterText="Star on GitHub"
-                        link="http://github.com/flipsidecrypto/badger" />
+                    <ActionButton
+                        className="tertiary"
+                        icon={['fal', 'globe']}
+                        afterText="Discover"
+                        onClick={() => { navigate("/discover/") }} />
+
+                    {/* <ActionButton className="tertiary" icon={['fal', 'star']} afterText="Star on GitHub"
+                        link="http://github.com/flipsidecrypto/badger" /> */}
 
                     {isConnected && address && <LogoutButton />}
                 </div>
