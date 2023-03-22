@@ -20,5 +20,6 @@ export { useLogout } from './useLogout';
 export { usePFP } from './usePFP';
 export { useSocket } from './useSocket';
 export { useStories, useStory } from './useStories';
+export { useTabActive } from './useTabActive';
 export { useUser } from './useUser';
 export { useBadgeArt } from './useBadgeArt';
