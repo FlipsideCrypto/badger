@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+
+import { useNavigate } from "react-router-dom";
 import {
     Table, TableHead, TableRow,
     TableContainer, TableCell, TableBody
@@ -7,9 +8,7 @@ import {
 
 import { ImageLoader, TableSortHead } from "@components";
 
-import { compareByProperty, getTimeSince } from "@utils";
-
-import { IPFS_GATEWAY_URL } from "@static";
+import { compareByProperty } from "@utils";
 
 import "@style/Table/HolderTable.css";
 
@@ -17,8 +16,6 @@ const OrgTable = ({ organizations }) => {
     console.log(organizations)
 
     const navigate = useNavigate();
-
-    const { orgAddress, chainId } = useParams();
 
     const [headRows, setHeadRows] = useState({
         name: {
@@ -64,8 +61,6 @@ const OrgTable = ({ organizations }) => {
         setSortedList(organizations);
     }, [organizations])
 
-    console.log(organizations)
-
     return (
         <div id="holder__table">
             {sortedList && <TableContainer>
@@ -90,10 +85,8 @@ const OrgTable = ({ organizations }) => {
                         {sortedList.map((org, index) => (
                             <TableRow
                                 key={index}
-                                onClick={() => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${org.token_id}/`)}
-                                style={{
-                                    cursor: "pointer"
-                                }}
+                                onClick={() => navigate(`/dashboard/organization/${org.chain_id}/${org.ethereum_address}`)}
+                                style={{ cursor: "pointer" }}
                             >
                                 <TableCell component="th" scope="row">
                                     <div style={{

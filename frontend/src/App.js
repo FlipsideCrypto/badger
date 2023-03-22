@@ -22,13 +22,14 @@ const description = "Level up the access-controls of your onchain organization a
 
 const DashboardUserWrapper = ({ children }) => {
     return (
-        <OrgContextProvider>
-            <UserContextProvider>
-                <ActionBar />
-
-                {children}
-            </UserContextProvider>
-        </OrgContextProvider>
+        <>
+            <OrgContextProvider>
+                <UserContextProvider>
+                    <ActionBar />
+                    {children}
+                </UserContextProvider>
+            </OrgContextProvider >
+        </>
     )
 }
 
@@ -40,7 +41,7 @@ const DashboardWrapper = ({ children }) => {
                     {children}
                 </DashboardUserWrapper>
             </Wallet>
-        </ErrorContextProvider>
+        </ErrorContextProvider >
     )
 }
 
