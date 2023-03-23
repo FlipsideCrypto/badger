@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 
 import { getProvider } from "@wagmi/core";
+import { useAccount } from "wagmi";
 
 import { ActionButton, Empty } from "@components";
 
@@ -37,6 +38,8 @@ const NotIndexedEmpty = () => <Empty
 />
 
 const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
+    const { address } = useAccount();
+
     const [logs, setLogs] = useState([]);
 
     const isLoading = !obj;
@@ -88,7 +91,7 @@ const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
             {!isLoading && children}
 
             {isLoading && <>
-                <div className="loading short" />
+                {!address && <div className="loading short" />}
 
                 {isDeployed && <NotIndexedEmpty />}
 

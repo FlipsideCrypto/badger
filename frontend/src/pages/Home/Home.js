@@ -32,10 +32,7 @@ const Home = () => {
                 </div>
             }
 
-            <ActionTitle
-                title="Organizations"
-                actions={titleActions}
-            />
+            <ActionTitle title="Organizations" actions={titleActions} />
 
             {organizations && organizations.length === 0 && <Empty
                 title="No Organizations yet!"
