@@ -14,8 +14,6 @@ import { compareByProperty } from "@utils";
 import "@style/Table/HolderTable.css";
 
 const OrgTable = ({ organizations }) => {
-    console.log(organizations)
-
     const navigate = useNavigateAddress();
 
     const [headRows, setHeadRows] = useState({

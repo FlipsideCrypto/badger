@@ -10,7 +10,7 @@ import {
     useIPFSMetadataHash,
 } from "@hooks";
 
-import { initialOrgForm, FormActionBar, FormDrawer, Header, Input, OrgDangerZone } from "@components"
+import { initialOrgForm, FormActionBar, FormDrawer, Header, Input, OrgDangerZone, SEO } from "@components"
 
 import { IPFS_GATEWAY_URL } from "@static";
 
@@ -116,6 +116,8 @@ const OrgForm = ({ isEdit = false }) => {
 
     return (
         <>
+            <SEO title={`${isEdit ? "Update" : "Create"} ${obj?.name || "Organization"} // Badger`} />
+
             <Header back={() => navigate((isEdit ? `/dashboard/organization/${chainId}/${organization.ethereum_address}/` : '/dashboard/'))} />
 
             <h2 className="dashboard__content">{`${isEdit ? "Update" : "Create"} Organization`}</h2>

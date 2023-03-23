@@ -25,7 +25,8 @@ const useUser = (props) => {
         organizations,
         isConnected,
         isWrongNetwork,
-        isLoaded
+        isLoaded,
+        send
     } = useContext(UserContext);
 
     const {
@@ -108,7 +109,8 @@ const useUser = (props) => {
         isConnected,
         isWrongNetwork,
         isLoaded,
-        ...roles
+        ...roles,
+        send
     }
 }
 

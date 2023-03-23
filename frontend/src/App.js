@@ -11,8 +11,8 @@ import "@style/App.css"
 
 library.add(fal, fab)
 
-const title = "No-Code Onchain Access Policies | Badger";
-const description = "Level up the access-controls of your onchain organization and enjoy the benefits of a Web3 focused key solution."
+const title = "No-Code Onchain Access Policies // Badger";
+const description = "Level up the access-controls of your onchain organization and enjoy the benefits of a Web3 focused key solution with modular ERC1155s."
 
 function App() {
     return (
@@ -24,7 +24,10 @@ function App() {
 
                 <Routes>
                     <Route exact path="/discover/" element={
-                        <DashboardWrapper children={<Discover />} />
+                        <DashboardWrapper
+                            children={<Discover />}
+                            paramAddress='all'
+                        />
                     } />
 
                     <Route exact path="/dashboard/*" element={

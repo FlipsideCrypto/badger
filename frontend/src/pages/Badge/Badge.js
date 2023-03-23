@@ -26,7 +26,7 @@ const Badge = () => {
 
     return (
         <>
-            <SEO title={`${badge ? `${organization.name} | ${badge.name}` : 'Not Found'} | Badger`}
+            <SEO title={`${badge ? `${organization.name} // ${badge.name}` : 'Not Found'} // Badger`}
                 description={badge?.description} />
 
             <Header back={() =>

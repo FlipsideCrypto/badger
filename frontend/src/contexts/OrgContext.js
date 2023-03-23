@@ -1,4 +1,5 @@
-import { createContext } from "react"
+import { createContext, useMemo } from "react"
+
 import { useAccount } from "wagmi"
 
 import { useSocket } from "@hooks"
@@ -8,18 +9,24 @@ const OrgContext = createContext();
 const OrgContextProvider = ({ children, paramAddress }) => {
     const { address } = useAccount();
 
-    const enabled = !!(paramAddress || address);
+    const enabled = !!(paramAddress === 'all' || paramAddress || address);
 
-    const focusedAddress = paramAddress || address;
+    const queryAddress = paramAddress || address;
+    const focusedAddress = queryAddress === 'all' ? address : queryAddress;
+
+    const url = useMemo(() => {
+        if (queryAddress === 'all') {
+            return `ws://localhost:8000/ws/organization/`
+        } else if (queryAddress !== null) {
+            return `ws://localhost:8000/ws/organization/?address=${focusedAddress}`
+        }
+    }, [address, enabled, focusedAddress, paramAddress])
 
     const {
         connected,
         data: organizations,
         send
-    } = useSocket({
-        enabled,
-        url: `ws://localhost:8000/ws/organization/?address=${focusedAddress}`
-    })
+    } = useSocket({ enabled, url })
 
     return (
         <OrgContext.Provider value={{
@@ -28,9 +35,10 @@ const OrgContextProvider = ({ children, paramAddress }) => {
             send,
             address: focusedAddress,
             viewing: paramAddress && paramAddress !== address
-        }}>
+        }
+        }>
             {children}
-        </OrgContext.Provider>
+        </OrgContext.Provider >
     )
 }
 

@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -18,7 +18,8 @@ import {
     Header,
     ImageLoader,
     Select,
-    BadgeDangerZone
+    BadgeDangerZone,
+    SEO
 } from "@components";
 
 import { IPFS_GATEWAY_URL } from "@static";
@@ -135,6 +136,12 @@ const BadgeForm = ({ isEdit = false }) => {
 
     return (
         <>
+            <SEO title={`
+                ${isEdit ? "Update" : "Create"} 
+                ${`${organization?.name} //` || ""}
+                ${obj?.name || "Badge"} // Badger`}
+            />
+
             <Header back={() => {
                 navigate(`/dashboard/organization/${chainId}/${orgAddress}/${isEdit ? `badge/${badgeId}/` : ''}`)
             }} />
