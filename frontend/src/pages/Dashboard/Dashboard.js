@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 
-import { Dashboard as DashboardContent, SEO } from "@components";
+import { DashboardContent, SEO } from "@components";
 
 import { Badge, BadgeForm, Home, Org, OrgForm } from "@pages";
 

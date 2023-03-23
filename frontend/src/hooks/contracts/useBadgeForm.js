@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { usePrepareContractWrite, useContractWrite } from "wagmi";
 import { ethers } from "ethers";
 
-import { getBadgerOrganizationAbi, getTransferBoundAddress, useFees, useUser } from "@hooks";
+import { getBadgerOrganizationAbi, getTransferBoundAddress, useFees, useUser, useWindowMessage } from "@hooks";
 
 const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, accountBound, address, slot }) => {
     if (!uriHash || !address || !slot || tokenId === null) 
@@ -81,6 +81,8 @@ const useBadgeForm = ({ obj }) => {
 
     const { writeAsync } = useContractWrite(config);
 
+    const { window } = useWindowMessage();
+
     const openBadgeFormTransaction = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
@@ -89,10 +91,19 @@ const useBadgeForm = ({ obj }) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
-            onLoading();
-
+            
             const tx = await writeAsync();
-
+            
+            onLoading();
+            window.onLoading({ 
+                className: "transaction",
+                message: {
+                    title: "Mining transaction. This may take a few seconds.",
+                    body: "Badger hasn't detected your Badge changes yet. Please give us a few minutes to check the chain.",
+                    details: tx.hash
+                }
+            })
+            
             const receipt = await tx.wait();
 
             if (receipt.status === 0) throw new Error("Error submitting transaction");
@@ -103,8 +114,10 @@ const useBadgeForm = ({ obj }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
+            window.onSuccess({ status: '' });
         } catch (e) {
             onError(e);
+            window.onError();
         }
     }
 

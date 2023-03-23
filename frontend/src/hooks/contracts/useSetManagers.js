@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { usePrepareContractWrite, useContractWrite } from "wagmi";
 import { ethers } from "ethers";
 
-import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
+import { getBadgerOrganizationAbi, useFees, useUser, useWindowMessage } from "@hooks";
 
 import { addressValidator } from "@utils";
 
@@ -102,6 +102,8 @@ const useSetManagers = ({ obj }) => {
 
     const { writeAsync } = useContractWrite(config);
 
+    const { window } = useWindowMessage();
+
     const openManagerTransaction = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
@@ -110,9 +112,18 @@ const useSetManagers = ({ obj }) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
-            onLoading();
-
+            
             const tx = await writeAsync();
+            
+            onLoading();
+            window.onLoading({
+                className: "transaction",
+                message: {
+                    title: "Mining transaction. This may take a few seconds.",
+                    body: "Badger hasn't detected your Manager changes yet. Please give us a few minutes to check the chain.",
+                    details: tx.hash
+                }
+            })
 
             const receipt = await tx.wait();
 
@@ -124,8 +135,10 @@ const useSetManagers = ({ obj }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
+            window.onSuccess();
         } catch (e) {
             onError(e);
+            window.onError();
         }
     }
 

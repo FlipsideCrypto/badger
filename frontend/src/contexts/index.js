@@ -2,3 +2,4 @@ export { AuthenticationContext, AuthenticationContextProvider } from './Authenti
 export { BadgeContext, BadgeContextProvider } from './BadgeContext';
 export { OrgContext, OrgContextProvider } from './OrgContext';
 export { UserContext, UserContextProvider } from './UserContext';
+export { WindowContext, WindowContextProvider } from './WindowContext';

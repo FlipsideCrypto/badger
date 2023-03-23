@@ -1,2 +1,3 @@
-export { Dashboard } from './Dashboard';
+export { DashboardContent } from './DashboardContent';
 export { DashboardLoader } from './DashboardLoader';
+export { DashboardWindow } from './DashboardWindow';

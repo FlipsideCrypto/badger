@@ -6,7 +6,8 @@ import {
     getBadgerOrganizationAbi,
     getBadgerAbi,
     useFees,
-    useUser
+    useUser,
+    useWindowMessage
 } from "@hooks";
 
 import { IPFS_GATEWAY_URL } from "@static";
@@ -71,6 +72,8 @@ const useOrgForm = ({ obj }) => {
 
     const { writeAsync } = useContractWrite(config);
 
+    const { window } = useWindowMessage();
+
     const openOrgFormTx = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
@@ -79,9 +82,18 @@ const useOrgForm = ({ obj }) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
-            onLoading()
-
+            
             const tx = await writeAsync()
+            
+            onLoading()
+            window.onLoading({
+                className: "transaction",
+                message: {
+                    title: "Mining transaction. This may take a few seconds.",
+                    body: "Badger hasn't detected your Organization changes yet. Please give us a few minutes to check the chain.",
+                    details: tx.hash
+                }
+            })
 
             const receipt = await tx.wait()
 
@@ -91,10 +103,10 @@ const useOrgForm = ({ obj }) => {
             setIsSuccess(true);
 
             onSuccess({ config, chain, tx, receipt })
+            window.onSuccess();
         } catch (e) {
-            console.error(e);
-
             onError(e);
+            window.onError();
         }
     }
 

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
-import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
+import { getBadgerOrganizationAbi, useFees, useUser, useWindowMessage } from "@hooks";
 
 import { addressValidator } from "@utils";
 
@@ -114,6 +114,8 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
         }
     });
 
+    const { window } = useWindowMessage();
+
     const { writeAsync } = useContractWrite(config);
 
     const openHolderTransaction = async ({
@@ -124,9 +126,18 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
-            onLoading();
-
+            
             const tx = await writeAsync();
+
+            onLoading();
+            window.onLoading({ 
+                className: "transaction",
+                message: {
+                    title: "Mining transaction. This may take a few seconds.",
+                    body: "Badger hasn't detected your Holder changes yet. Please give us a few minutes to check the chain.",
+                    details: tx.hash
+                }
+            })
 
             const receipt = await tx.wait();
 
@@ -138,10 +149,11 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
-        } catch (e) {
-            console.error('e', e)
+            window.onSuccess();
 
+        } catch (e) {
             onError(e);
+            window.onError();
         }
     }
 

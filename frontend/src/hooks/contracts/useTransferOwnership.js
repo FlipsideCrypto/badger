@@ -7,7 +7,8 @@ import { usePrepareContractWrite, useContractWrite } from "wagmi"
 import {
     getBadgerOrganizationAbi,
     useFees,
-    useUser
+    useUser,
+    useWindowMessage
 } from "@hooks";
 
 import { addressValidator } from "@utils";
@@ -62,6 +63,8 @@ const useTransferOwnership = ({ address }) => {
 
     const { writeAsync } = useContractWrite(config);
 
+    const { window } = useWindowMessage();
+
     const openTransferOwnershipTransaction = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
@@ -70,9 +73,18 @@ const useTransferOwnership = ({ address }) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
-            onLoading();
-
+            
             const tx = await writeAsync();
+            
+            onLoading();
+            window.onLoading({
+                className: "transaction",
+                message: {
+                    title: "Mining transaction. This may take a few seconds.",
+                    body: "Badger hasn't detected your Organization transfer yet. Please give us a few minutes to check the chain.",
+                    details: tx.hash
+                }
+            })
 
             const receipt = await tx.wait();
 
@@ -84,8 +96,10 @@ const useTransferOwnership = ({ address }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
+            window.onSuccess();
         } catch (e) {
             onError(e);
+            window.onError(e);
         }
     }
 

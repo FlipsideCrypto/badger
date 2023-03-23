@@ -4,9 +4,9 @@ import { ActionButton } from "@components";
 
 import "@style/Empty/Empty.css";
 
-const Empty = ({ title, body, button, url }) => {
+const Empty = ({ title, body, button, url, className }) => {
     return (
-        <div className="empty">
+        <div className={"empty " + className}>
             <div className="dashboardContent">
                 <h1>{title}</h1>
                 <p>{body}</p>
