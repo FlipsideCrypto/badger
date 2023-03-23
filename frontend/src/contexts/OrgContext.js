@@ -7,22 +7,29 @@ import { useSocket } from "@hooks"
 
 const OrgContext = createContext();
 
-const OrgContextProvider = ({ children }) => {
+const OrgContextProvider = ({ children, paramAddress }) => {
     const { address } = useAccount();
 
-    const enabled = !!address;
+    const enabled = !!(paramAddress || address);
+
+    const focusedAddress = paramAddress || address;
 
     const {
         connected,
         data: organizations,
         send
-    } = useSocket({ enabled, url: 'ws://localhost:8000/ws/organization/' })
+    } = useSocket({
+        enabled,
+        url: `ws://localhost:8000/ws/organization/?address=${focusedAddress}`
+    })
 
     return (
         <OrgContext.Provider value={{
             connected,
             organizations,
-            send
+            send,
+            address: focusedAddress,
+            viewing: paramAddress && paramAddress !== address
         }}>
             <BadgeContextProvider>
                 {children}

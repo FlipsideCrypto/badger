@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
     Table, TableHead, TableRow,
     TableContainer, TableCell, TableBody
@@ -7,14 +7,14 @@ import {
 
 import { ImageLoader, TableSortHead } from "@components";
 
-import { compareByProperty, getTimeSince } from "@utils";
+import { useNavigateAddress } from "@hooks";
 
-import { IPFS_GATEWAY_URL } from "@static";
+import { compareByProperty, getTimeSince } from "@utils";
 
 import "@style/Table/HolderTable.css";
 
 const BadgeTable = ({ badges }) => {
-    const navigate = useNavigate();
+    const navigate = useNavigateAddress();
 
     const { orgAddress, chainId } = useParams();
 
@@ -29,7 +29,7 @@ const BadgeTable = ({ badges }) => {
             sortable: true,
             method: ""
         },
-        updated: { 
+        updated: {
             label: 'Last Updated',
             sortable: true,
             method: "",

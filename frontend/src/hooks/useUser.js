@@ -21,6 +21,7 @@ const useUser = (props) => {
         chain,
         primaryChain,
         address,
+        viewing,
         organizations,
         badges: _badges,
         isConnected,
@@ -97,7 +98,7 @@ const useUser = (props) => {
             isOwner,
             isManager,
             isMember,
-            canManage: isOwner || isManager
+            canManage: !viewing && (isOwner || isManager)
         }
     }, [address, states])
 

@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { ActionButton, Header, Input, OrgTable } from "@components";
 
-import { useDebounce } from "@hooks";
+import { useDebounce, useNavigateAddress } from "@hooks";
 
 const Discover = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigateAddress();
 
     const [organizations, setOrganizations] = useState(null);
     const [search, setSearch] = useState("");

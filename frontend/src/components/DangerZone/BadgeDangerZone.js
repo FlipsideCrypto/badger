@@ -7,14 +7,14 @@ import { FormActionBar } from "@components"
 import { useManageHolders } from "@hooks"
 
 const BadgeDangerZone = ({ badge }) => {
-    const [ isLoading, setIsLoading ] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const { chainId, orgAddress, badgeId } = useParams();
 
     const navigate = useNavigate()
 
-    const { openHolderTransaction } = useManageHolders({ 
-        revokes: !isLoading && badge.users.map(user => ({...user, pendingAmount: 0})),
+    const { openHolderTransaction } = useManageHolders({
+        revokes: !isLoading && badge.users.map(user => ({ ...user, pendingAmount: 0 })),
         tokenId: badgeId
     })
 
@@ -23,10 +23,10 @@ const BadgeDangerZone = ({ badge }) => {
         text: "Revoke all",
         event: () => {
             openHolderTransaction({
-                onLoading: () => { 
+                onLoading: () => {
                     setIsLoading(true)
                 },
-                onSuccess: ({ chain, receipt }) => { 
+                onSuccess: ({ chain, receipt }) => {
                     console.log(receipt)
                     navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badgeId}`)
                     setIsLoading(false)

@@ -7,10 +7,13 @@ import {
 import { ActionBar, Wallet } from '@components';
 
 const DashboardWrapper = ({ children }) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const address = urlParams.get('address');
+
     return (
         <ErrorContextProvider>
             <Wallet>
-                <OrgContextProvider>
+                <OrgContextProvider paramAddress={address}>
                     <UserContextProvider>
                         <ActionBar />
                         {children}

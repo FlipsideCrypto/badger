@@ -15,16 +15,16 @@ import { useSetManagers } from "@hooks";
 
 import "@style/Table/HolderTable.css";
 
-const LastLogin = ({ lastLogin, active, onClick }) => (
+const LastLogin = ({ canManage, lastLogin, active, onClick }) => (
     <div className="table__inline mono">
         <span>{getTimeSince(lastLogin) || "---"}</span>
-        <button className={active ? 'delete active' : 'delete'} onClick={onClick}>
+        {canManage && <button className={active ? 'delete active' : 'delete'} onClick={onClick}>
             <FontAwesomeIcon icon={["fal", "fa-trash"]} />
-        </button>
+        </button>}
     </div>
 )
 
-const ManagerTable = ({ badge, managers, isManager }) => {
+const ManagerTable = ({ badge, managers, canManage }) => {
     const headRows = {
         name: {
             label: 'Manager',
@@ -45,7 +45,7 @@ const ManagerTable = ({ badge, managers, isManager }) => {
 
     const combinedChanges = [...newManagers, ...managersToRemove];
 
-    const isTableHidden = !isManager || (!newManagers.length && (!managers || managers.length === 0));
+    const isTableHidden = (!newManagers.length && (!managers || managers.length === 0));
 
     const { openManagerTransaction, isPrepared, isLoading } = useSetManagers({
         obj: {
@@ -115,7 +115,7 @@ const ManagerTable = ({ badge, managers, isManager }) => {
 
     return (
         <>
-            <ActionTitle title="Managers" actions={isManager && actions} />
+            <ActionTitle title="Managers" actions={canManage && actions} />
 
             {badge && isTableHidden && <Empty
                 title={`${badge.name} does not have any Managers yet!`}

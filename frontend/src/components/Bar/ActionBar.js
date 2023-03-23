@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { useENSProfile, useUser } from "@hooks";
+import { useENSProfile, useNavigateAddress, useUser } from "@hooks";
 
 import {
     ActionButton,
@@ -20,7 +20,7 @@ import '@rainbow-me/rainbowkit/styles.css'
 import "@style/Bar/ActionBar.css";
 
 const ActionBar = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigateAddress();
 
     const { pathname } = useLocation();
 

@@ -12,12 +12,11 @@ const UserContextProvider = ({ children }) => {
     const {
         chain,
         primaryChain,
-        address,
         isConnected,
         isWrongAddress
     } = useContext(AuthenticationContext);
 
-    const { organizations } = useContext(OrgContext);
+    const { address, viewing, organizations } = useContext(OrgContext);
 
     const { badges } = useContext(BadgeContext);
 
@@ -28,6 +27,7 @@ const UserContextProvider = ({ children }) => {
             chain,
             primaryChain,
             address,
+            viewing,
             organizations,
             badges,
             isConnected,

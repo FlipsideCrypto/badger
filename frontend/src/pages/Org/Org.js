@@ -1,11 +1,11 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-import { useUser } from "@hooks";
+import { useNavigateAddress, useUser } from "@hooks";
 
 import { ActionTitle, BadgeTable, DashboardLoader, Empty, Header, SEO } from "@components";
 
 const Org = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigateAddress();
 
     const { chainId, orgAddress } = useParams();
 

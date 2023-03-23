@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
 import {
     Table, TableHead, TableRow,
     TableContainer, TableCell, TableBody
 } from "@mui/material"
 
 import { ImageLoader, TableSortHead } from "@components";
+
+import { useNavigateAddress } from "@hooks";
 
 import { compareByProperty } from "@utils";
 
@@ -15,7 +16,7 @@ import "@style/Table/HolderTable.css";
 const OrgTable = ({ organizations }) => {
     console.log(organizations)
 
-    const navigate = useNavigate();
+    const navigate = useNavigateAddress();
 
     const [headRows, setHeadRows] = useState({
         name: {

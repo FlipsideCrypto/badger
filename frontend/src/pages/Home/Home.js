@@ -1,13 +1,11 @@
-import { useNavigate } from "react-router-dom";
-
-import { useUser } from "@hooks";
+import { useNavigateAddress, useUser } from "@hooks";
 
 import { ActionTitle, Empty, OrgCard } from "@components"
 
 import "@style/pages/Home.css";
 
 const Home = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigateAddress();
 
     const { organizations } = useUser();
 

@@ -17,6 +17,7 @@ export { useENSProfile } from './useENSProfile';
 export { useFees } from './useFees';
 export { useIPFS, useIPFSImageHash, useIPFSMetadataHash } from './useIPFS';
 export { useLogout } from './useLogout';
+export { useNavigateAddress } from './useNavigateAddress';
 export { usePFP } from './usePFP';
 export { useSocket } from './useSocket';
 export { useStories, useStory } from './useStories';
