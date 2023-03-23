@@ -124,11 +124,6 @@ const useBadgeForm = ({ obj }) => {
     return { openBadgeFormTransaction, isPrepared, isLoading, isSuccess }
 }
 
-const useBadge = ({ obj, image, functionName }) => {
-
-}
-
 export {
-    useBadgeForm,
-    useBadge
+    useBadgeForm
 }

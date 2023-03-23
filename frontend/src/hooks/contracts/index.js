@@ -10,8 +10,7 @@ export {
 } from './useOrgForm';
 
 export {
-    useBadgeForm,
-    useBadge
+    useBadgeForm
 } from './useBadgeForm';
 
 export { 
