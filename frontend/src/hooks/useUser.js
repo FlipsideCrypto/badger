@@ -23,7 +23,6 @@ const useUser = (props) => {
         address,
         viewing,
         organizations,
-        badges: _badges,
         isConnected,
         isWrongNetwork,
         isLoaded
@@ -51,9 +50,7 @@ const useUser = (props) => {
             return module.module_type === "manager";
         })
 
-        const badges = organization && _badges.filter((badge) => {
-            return badge.chain_id === parseInt(chainId) && badge.ethereum_address === orgAddress;
-        })
+        const badges = organization && organization.badges;
 
         if (!badges) return { organization, badges: null, badge: null }
 
@@ -74,7 +71,7 @@ const useUser = (props) => {
         const managers = organizationManagers && organizationManagers.filter(filter)
 
         return { organization, badges, badge, managers }
-    }, [isLoaded, chainId, orgAddress, badgeId, organizations, _badges])
+    }, [isLoaded, chainId, orgAddress, badgeId, organizations])
 
     const roles = useMemo(() => {
         if (!address || !states.organization) return {

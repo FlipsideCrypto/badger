@@ -2,7 +2,6 @@ import { createContext, useContext } from "react";
 
 import {
     AuthenticationContext,
-    BadgeContext,
     OrgContext
 } from "@contexts";
 
@@ -18,9 +17,7 @@ const UserContextProvider = ({ children }) => {
 
     const { address, viewing, organizations } = useContext(OrgContext);
 
-    const { badges } = useContext(BadgeContext);
-
-    const isLoaded = organizations !== null && badges !== null;
+    const isLoaded = organizations !== null;
 
     return (
         <UserContext.Provider value={{
@@ -29,7 +26,6 @@ const UserContextProvider = ({ children }) => {
             address,
             viewing,
             organizations,
-            badges,
             isConnected,
             isWrongAddress,
             isLoaded

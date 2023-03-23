@@ -1,8 +1,6 @@
 import { createContext } from "react"
 import { useAccount } from "wagmi"
 
-import { BadgeContextProvider } from "@contexts"
-
 import { useSocket } from "@hooks"
 
 const OrgContext = createContext();
@@ -31,9 +29,7 @@ const OrgContextProvider = ({ children, paramAddress }) => {
             address: focusedAddress,
             viewing: paramAddress && paramAddress !== address
         }}>
-            <BadgeContextProvider>
-                {children}
-            </BadgeContextProvider>
+            {children}
         </OrgContext.Provider>
     )
 }
