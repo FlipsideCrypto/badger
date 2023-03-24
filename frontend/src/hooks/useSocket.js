@@ -95,8 +95,6 @@ const useSocket = ({ enabled, url }) => {
     useEffect(() => {
         if (!enabled) return;
 
-        setObjects(null);
-
         client.onopen = () => {
             client.send(JSON.stringify({
                 action: 'list',

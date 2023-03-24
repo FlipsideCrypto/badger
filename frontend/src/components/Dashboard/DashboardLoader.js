@@ -113,7 +113,9 @@ const DashboardLoader = ({
     const isLogged = logs.length > 0;
 
     useEffect(() => {
-        if (!retrieve) return
+        if (!isLoading || !retrieve) return
+
+        if (orgAddress && obj?.ethereum_address === orgAddress) return
 
         retrieve();
     }, [address, isLoading, isLogged, retrieve])
