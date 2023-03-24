@@ -23,3 +23,4 @@ export { useStories, useStory } from './useStories';
 export { useUser } from './useUser';
 export { useBadgeArt } from './useBadgeArt';
 export { useWindowMessage } from './useWindowMessage';
+export { useMouse } from './useMouse';

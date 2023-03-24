@@ -100,7 +100,7 @@ const useBadgeForm = ({ obj }) => {
                 message: {
                     title: "Mining transaction. This may take a few seconds.",
                     body: "Badger hasn't detected your Badge changes yet. Please give us a few minutes to check the chain.",
-                    details: tx.hash
+                    txHash: tx.hash
                 }
             })
             

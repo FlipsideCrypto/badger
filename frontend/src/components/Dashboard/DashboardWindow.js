@@ -1,11 +1,8 @@
-import { useAuthentication, useUser } from '@hooks';
+import { useAuthentication, useUser, useMouse } from "@hooks";
 
-import { ConnectButton, Empty, ActionButton } from '@components';
+import { ConnectButton, Empty, LoadingTransaction } from "@components";
 
-import { CHAIN_EXPLORER_URLS } from '@static';
-import { useWindowMessage } from '../../hooks';
-
-import "@style/Dashboard/DashboardWindow.css";
+import { useWindowMessage } from "@hooks";
 
 const connectButton = <ConnectButton className="primary" />;
 
@@ -26,17 +23,6 @@ const LoadingEmpty = () => <Empty
     body="This may take a few seconds. If this takes longer than 10 seconds, please refresh the page."
 />
 
-const LoadingTransaction = ({ chainId, txHash }) => <Empty
-    className="transaction"
-    title="Mining transaction. This may take a few seconds."
-    body="Badger hasn’t detected any Organizations at this address yet. If you are sure you are in the correct place, please give us a few minutes to check the chain."
-    button={<ActionButton
-        className="secondary"
-        afterText="Check the chain"
-        link={`${CHAIN_EXPLORER_URLS[chainId]}/tx/${txHash}`}
-    />}
-/>
-
 const DashboardWindow = ({ children }) => {
     const {
         primaryChain,
@@ -46,15 +32,19 @@ const DashboardWindow = ({ children }) => {
 
     const { isLoaded } = useUser();
     
-    const { window, isVisible } = useWindowMessage();
+    const { windowState: window, isMessage } = useWindowMessage();
+
+    const { lastClick } = useMouse();
     
     if (!isConnected)
         return <ConnectWalletEmpty />
     
-    if (window && isVisible)
+    if (isMessage)
         return <LoadingTransaction 
-            chainId={primaryChain.id} 
-            txHash={window?.message?.details}
+            title={window.message.title}
+            body={window.message.body}
+            txHash={window.message.details}
+            lastClick={lastClick}
         />;
 
     if (isConnected && isWrongNetwork)

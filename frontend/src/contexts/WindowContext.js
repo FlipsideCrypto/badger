@@ -3,7 +3,7 @@ import { createContext, useState } from 'react';
 const WindowContext = createContext();
 
 const initialState = {
-    status: '',
+    status: "",
     className: "",
     message: {
         title: "",
@@ -16,39 +16,43 @@ const initialState = {
 const WindowContextProvider = ({ children }) => {
     const [windowState, setWindowState] = useState(initialState);
 
-    const isVisible = windowState.status !== '';
+    const isMessage = windowState.status !== '';
 
-    const window = () => {
-        const onLoading = (obj) => {
-            setWindowState({
-                status: 'loading',
-                ...obj
-            })
-        }
-    
-        const onSuccess = (obj) => {
-            setWindowState({
-                status: 'success',
-                ...obj
-            })
-        }
-    
-        const onError = () => {
-            setWindowState(initialState);
-        }
+    const onLoading = (obj) => {
+        setWindowState({
+            status: 'loading',
+            ...obj
+        })
+    }
 
-        const onClose = () => {
-            setWindowState(initialState);
-        }
+    const onSuccess = (obj) => {
+        setWindowState({
+            status: '', // Empty for now. Success message when we have it
+            ...obj
+        })
+    }
 
-        return { onLoading, onSuccess, onError, onClose }
+    const onError = () => {
+        setWindowState(initialState);
+    }
+
+    const onClose = () => {
+        setWindowState(initialState);
+    }
+
+    const window = {
+        onLoading,
+        onSuccess,
+        onError,
+        onClose
     }
 
     return (
         <WindowContext.Provider value={{
             window,
             windowState,
-            isVisible,
+            isMessage,
+            ...window
         }}>
             {children}
         </WindowContext.Provider>

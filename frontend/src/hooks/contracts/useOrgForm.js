@@ -82,18 +82,18 @@ const useOrgForm = ({ obj }) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
-            
-            const tx = await writeAsync()
-            
-            onLoading()
             window.onLoading({
                 className: "transaction",
                 message: {
                     title: "Mining transaction. This may take a few seconds.",
                     body: "Badger hasn't detected your Organization changes yet. Please give us a few minutes to check the chain.",
-                    details: tx.hash
+                    txHash: "0x"
                 }
             })
+            
+            const tx = await writeAsync()
+            
+            onLoading();
 
             const receipt = await tx.wait()
 
