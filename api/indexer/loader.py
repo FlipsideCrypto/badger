@@ -122,6 +122,8 @@ class Loader(ListenerReference):
 
                 badge.save()
 
+            organization.save()
+
     def handle_organization_created(self, event):
         organization, created = Organization.objects.get_or_create(
             ethereum_address=self.summedAddress(event["args"]["organization"]),
@@ -228,6 +230,7 @@ class Loader(ListenerReference):
         badge.token_uri = uri
 
         badge.save()
+        organization.save()
 
         return ("Badge uri updated", event["args"])
 
@@ -246,6 +249,7 @@ class Loader(ListenerReference):
         module.is_active = is_manager
 
         module.save()
+        organization.save()
 
         return ("Organization manager updated", event["args"])
 
@@ -265,8 +269,9 @@ class Loader(ListenerReference):
         module = modules.first()
 
         module.module_config = config_data
-        #
+
         module.save()
+        organization.save()
 
         return ("Organization manager updated", event["args"])
 
@@ -285,6 +290,7 @@ class Loader(ListenerReference):
         module.is_active = is_manager
 
         module.save()
+        organization.save()
 
         return ("Organization manager updated", event["args"])
 
@@ -302,7 +308,6 @@ class Loader(ListenerReference):
         module = modules.first()
 
         module.module_config = config_data
-
         module.save()
 
         return ("Organization hook updated", event["args"])

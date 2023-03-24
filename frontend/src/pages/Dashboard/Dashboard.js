@@ -2,11 +2,11 @@ import { Route, Routes } from "react-router-dom";
 
 import { DashboardContent, SEO } from "@components";
 
-import { Badge, BadgeForm, Home, Org, OrgForm } from "@pages";
+import { Badge, BadgeForm, Discover, Home, Org, OrgForm } from "@pages";
 
 import "@style/Dashboard/Dashboard.css";
 
-const title = "Dashboard | Badger";
+const title = "Dashboard // Badger";
 const description = "Badger is a decentralized, open-source, and community-driven platform for creating, managing, and sharing onchain organizations and badges.";
 
 const Dashboard = () => {
@@ -20,6 +20,7 @@ const Dashboard = () => {
                         <div className="dashboardContent">
                             <Routes>
                                 <Route path="/" element={<Home />} />
+                                <Route path="/discover/" element={<Discover />} />
                                 <Route path="/organization/new/" element={<OrgForm />} />
                                 <Route path="/organization/:chainId/:orgAddress/" element={<Org />} />
                                 <Route path="/organization/:chainId/:orgAddress/edit/" element={<OrgForm isEdit={true} />} />

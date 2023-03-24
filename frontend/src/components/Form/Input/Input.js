@@ -31,16 +31,15 @@ const Input = (props) => {
                     htmlFor={label}
                     className="form__label">{titleCase(titledLabel)}</label>}
 
-            {/* if label is component */}
             {typeof label === "object" && label}
 
-            <input {...props} ref={reference?.current} placeholder={placeholder} />
+            <input
+                {...props}
+                ref={reference?.current}
+                placeholder={placeholder}
+            />
 
-            {append &&
-                <div className="form__append">
-                    {append}
-                </div>
-            }
+            {append && <div className="form__append">{append}</div>}
         </div>
     )
 }

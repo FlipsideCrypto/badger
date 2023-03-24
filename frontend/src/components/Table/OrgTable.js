@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+
 import {
     Table, TableHead, TableRow,
     TableContainer, TableCell, TableBody
@@ -9,34 +9,34 @@ import { ImageLoader, TableSortHead } from "@components";
 
 import { useNavigateAddress } from "@hooks";
 
-import { compareByProperty, getTimeSince } from "@utils";
+import { compareByProperty } from "@utils";
 
 import "@style/Table/HolderTable.css";
 
-const BadgeTable = ({ badges }) => {
+const OrgTable = ({ organizations }) => {
     const navigate = useNavigateAddress();
-
-    const { orgAddress, chainId } = useParams();
 
     const [headRows, setHeadRows] = useState({
         name: {
-            label: 'Badge',
+            label: 'Organization',
             sortable: true,
             method: "",
         },
         holders: {
-            label: 'Holders',
-            sortable: true,
-            method: ""
-        },
-        updated: {
-            label: 'Last Updated',
+            label: 'Badges',
             sortable: true,
             method: "",
+            align: "right",
+        },
+        updated: {
+            label: 'Members',
+            sortable: true,
+            method: "",
+            align: "right",
         }
     });
 
-    const [sortedList, setSortedList] = useState(badges);
+    const [sortedList, setSortedList] = useState(organizations);
 
     const onSortChange = (key) => {
         // Get the current sort method and inverse it for chevron display.
@@ -57,11 +57,11 @@ const BadgeTable = ({ badges }) => {
 
     // If users changes, update and combine holders and delegates in the sorted list.
     useEffect(() => {
-        setSortedList(badges);
-    }, [badges])
+        setSortedList(organizations);
+    }, [organizations])
 
     return (
-        <div className="table" id="holder__table">
+        <div id="holder__table">
             {sortedList && <TableContainer>
                 <Table>
                     <TableHead>
@@ -81,13 +81,11 @@ const BadgeTable = ({ badges }) => {
                     </TableHead>
 
                     <TableBody>
-                        {sortedList.map((badge, index) => (
+                        {sortedList.map((org, index) => (
                             <TableRow
                                 key={index}
-                                onClick={() => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badge.token_id}/`)}
-                                style={{
-                                    cursor: "pointer"
-                                }}
+                                onClick={() => navigate(`/dashboard/organization/${org.chain_id}/${org.ethereum_address}`)}
+                                style={{ cursor: "pointer" }}
                             >
                                 <TableCell component="th" scope="row">
                                     <div style={{
@@ -101,26 +99,28 @@ const BadgeTable = ({ badges }) => {
                                         <div className="badge__image">
                                             <ImageLoader
                                                 prependGateway={true}
-                                                src={badge.image_hash}
+                                                src={org.image_hash}
                                             />
                                         </div>
 
-                                        {badge.name}
+                                        {org.name}
                                     </div>
                                 </TableCell>
-                                <TableCell component="th" scope="row">
-                                    {badge.users.length}
+                                <TableCell component="th" scope="row" style={{
+                                    textAlign: "right"
+                                }}>
+                                    {org.badges.length}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                    {`${getTimeSince(new Date(badge.updated))} ago`}
+                                    0
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>}
-        </div>
+        </div >
     )
 }
 
-export { BadgeTable };
+export { OrgTable };

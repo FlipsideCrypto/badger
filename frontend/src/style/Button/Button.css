@@ -2,7 +2,7 @@
     background: #ffffff;
     color: #1B1B1B;
     font-weight: 400;
-    border-radius: 5px;
+    border-radius: 4px;
     text-decoration: none;
     text-transform: none;
     cursor: pointer;
@@ -19,10 +19,10 @@
     background-color: #ffffff;
 }
 
-.button__secondary span, 
+.button__secondary span,
 .button__primary span {
     font-size: 18px;
-    font-weight: 400; 
+    font-weight: 400;
     display: inline-block;
     padding: 0px 10px;
 }
@@ -33,7 +33,7 @@
     background-color: unset;
     color: #1B1B1B;
     font-weight: 400;
-    border-radius: 5px;
+    border-radius: 4px;
     text-decoration: none;
     text-transform: none;
     cursor: pointer;
@@ -51,7 +51,7 @@
 
 .button__primary span {
     font-size: 24px;
-    font-weight: 700; 
+    font-weight: 700;
     display: inline-block;
     padding: 3px 20px;
 }

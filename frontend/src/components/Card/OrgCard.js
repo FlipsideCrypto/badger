@@ -4,12 +4,14 @@ import { handleImageLoad } from "@hooks";
 
 import { Card, ChainIcon, ImageLoader } from "@components";
 
+import { useNavigateAddress } from "@hooks";
+
 import { sliceAddress } from "@utils";
 
 import "@style/Card/OrgCard.css"
 
 const OrgCard = ({ org }) => {
-    const navigate = useNavigate();
+    const navigate = useNavigateAddress();
 
     return (
         <Card onClick={() => navigate(`/dashboard/organization/${org.chain_id}/${org.ethereum_address}`)}>

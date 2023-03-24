@@ -19,11 +19,11 @@ const getTransferOwnershipArgs = ({ address }) => {
     const { cleanedAddresses } = addressValidator([address]);
     const newAddress = cleanedAddresses[0];
 
-    if (!newAddress) 
+    if (!newAddress)
         return { functionName: "", args: [] };
 
     const isAddressZero = newAddress === ethers.constants.AddressZero;
-    const functionName = isAddressZero ?  "renounceOwnership" : "transferOwnership";
+    const functionName = isAddressZero ? "renounceOwnership" : "transferOwnership";
     const args = isAddressZero ? [] : [newAddress];
 
     return { functionName, args };

@@ -9,7 +9,12 @@ class Organization(models.Model):
     is_active = models.BooleanField(default=True)
 
     chain_id = models.IntegerField(default=1337)
-    ethereum_address = models.CharField(max_length=50, blank=False, default=None, validators=[validate_ethereum_address])
+    ethereum_address = models.CharField(
+        max_length=50, 
+        blank=False, 
+        default=None, 
+        validators=[validate_ethereum_address]
+    )
 
     name = models.CharField(max_length=128, blank=True, null=True)
     symbol = models.CharField(max_length=52, blank=True, null=True)

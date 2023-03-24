@@ -12,7 +12,7 @@ import { useManageHolders } from "@hooks";
 
 import "@style/Table/HolderTable.css";
 
-const HolderTable = ({ badge, isManager }) => {
+const HolderTable = ({ badge, canManage }) => {
     const [headRows, setHeadRows] = useState({
         ethereum_address: {
             label: "Holder",
@@ -29,7 +29,7 @@ const HolderTable = ({ badge, isManager }) => {
             width: "20%"
         }
     });
-    
+
     // The new holder objects being created by the user.
     const [newHolders, setNewHolders] = useState([]);
     // used as a clone of badge.users with changed amounts.
@@ -43,42 +43,42 @@ const HolderTable = ({ badge, isManager }) => {
 
     // TODO: Come back to this.
     const onSortChange = (key) => {
-    //     // Get the current sort method and inverse it for chevron display.
-    //     let newHeadRows = { ...headRows };
-    //     let method = newHeadRows[key].method;
-    //     method = !method || method === "desc" ? "asc" : "desc";
-    //     newHeadRows[key].method = method;
-    //     setHeadRows(newHeadRows);
+        //     // Get the current sort method and inverse it for chevron display.
+        //     let newHeadRows = { ...headRows };
+        //     let method = newHeadRows[key].method;
+        //     method = !method || method === "desc" ? "asc" : "desc";
+        //     newHeadRows[key].method = method;
+        //     setHeadRows(newHeadRows);
 
-    //     // Sort the list by the key and the method.
-    //     let newHolders = [...sortedList];
-    //     newHolders = newHolders.sort((a, b) =>
-    //         compareByProperty(key, method, a, b)
-    //     );
-    //     setSortedList(newHolders);
+        //     // Sort the list by the key and the method.
+        //     let newHolders = [...sortedList];
+        //     newHolders = newHolders.sort((a, b) =>
+        //         compareByProperty(key, method, a, b)
+        //     );
+        //     setSortedList(newHolders);
     }
 
     const onAddNew = () => {
-        setNewHolders(newHolders => ([{ethereum_address: "", pendingAmount: ""}, ...newHolders]))
+        setNewHolders(newHolders => ([{ ethereum_address: "", pendingAmount: "" }, ...newHolders]))
     }
 
     // If they're a new holder, update the newHolders object,
     // If they're a current holder, we need to update the balanceChanges object to give them a new balance.
     const onAmountChange = (e, index, isActive) => {
         isActive ?
-            setBalanceChanges(balanceChanges => ({...balanceChanges, [index]: {...badge.users[index], pendingAmount: e.target.value }})) :
-            setNewHolders(newHolders => newHolders.map((holder, i) => i === index ? {...holder, pendingAmount: e.target.value} : holder))
+            setBalanceChanges(balanceChanges => ({ ...balanceChanges, [index]: { ...badge.users[index], pendingAmount: e.target.value } })) :
+            setNewHolders(newHolders => newHolders.map((holder, i) => i === index ? { ...holder, pendingAmount: e.target.value } : holder))
     }
-    
+
     const onAddressChange = (e, index) => {
-        setNewHolders(newHolders => newHolders.map((holder, i) => i === index ? {...holder, ethereum_address: e.target.value} : holder))
+        setNewHolders(newHolders => newHolders.map((holder, i) => i === index ? { ...holder, ethereum_address: e.target.value } : holder))
     }
-    
+
     // If they're a new holder, delete the input,
     // If they're a current holder, we need to update the balanceChanges object to give them a new balance of 0.
     const onDelete = (index, isActive) => {
         isActive ?
-            setBalanceChanges(balanceChanges => ({...balanceChanges, [index]: {...badge.users[index], pendingAmount: "0" }})) :
+            setBalanceChanges(balanceChanges => ({ ...balanceChanges, [index]: { ...badge.users[index], pendingAmount: "0" } })) :
             setNewHolders(newHolders => newHolders.filter((holder, i) => i !== index))
     }
 
@@ -106,12 +106,12 @@ const HolderTable = ({ badge, isManager }) => {
         text: "Add New",
         onClick: () => onAddNew()
     }
-    
+
     const actions = newHolders.length + Object.entries(balanceChanges).length > 0 ? [saveAction, addAction] : [addAction];
 
     return (
         <>
-            <ActionTitle title="Holders" actions={isManager && actions} />
+            <ActionTitle title="Holders" actions={canManage && actions} />
 
             {badge && badge.users.length === 0 && newHolders.length === 0 && <Empty
                 title={`${badge.name} does not have any Holders yet!`}
@@ -122,17 +122,17 @@ const HolderTable = ({ badge, isManager }) => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                        {Object.keys(headRows).map((key) => (
-                            <TableSortHead
-                                key={key}
-                                id={key}
-                                label={headRows[key].label}
-                                sortMethod={headRows[key].method}
-                                onSortChange={onSortChange}
-                                align={headRows[key].align}
-                                width={headRows[key].width}
-                            />
-                        ))}
+                            {Object.keys(headRows).map((key) => (
+                                <TableSortHead
+                                    key={key}
+                                    id={key}
+                                    label={headRows[key].label}
+                                    sortMethod={headRows[key].method}
+                                    onSortChange={onSortChange}
+                                    align={headRows[key].align}
+                                    width={headRows[key].width}
+                                />
+                            ))}
                         </TableRow>
                     </TableHead>
 
@@ -143,16 +143,16 @@ const HolderTable = ({ badge, isManager }) => {
                                     <input
                                         key={`input-${index}`}
                                         className="table__input mono"
-                                        value={holder.ethereum_address} 
+                                        value={holder.ethereum_address}
                                         placeholder="Ethereum address or ENS..."
                                         onChange={(e) => onAddressChange(e, index)}
                                     />
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                    <InputAmountDelete 
-                                        value={holder.pendingAmount} 
-                                        onChange={(e) => onAmountChange(e, index, false)} 
-                                        onDelete={() => onDelete(index, false)} 
+                                    <InputAmountDelete
+                                        value={holder.pendingAmount}
+                                        onChange={(e) => onAmountChange(e, index, false)}
+                                        onDelete={() => onDelete(index, false)}
                                     />
                                 </TableCell>
                             </TableRow>
@@ -168,6 +168,7 @@ const HolderTable = ({ badge, isManager }) => {
                                         onChange={(e) => onAmountChange(e, index, true)}
                                         onDelete={() => onDelete(index, true)}
                                         isDeleting={balanceChanges[index] && balanceChanges[index].pendingAmount === "0"}
+                                        canManage={canManage}
                                     />
                                 </TableCell>
                             </TableRow>

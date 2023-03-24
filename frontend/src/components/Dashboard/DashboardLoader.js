@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 
 import { getProvider } from "@wagmi/core";
+import { useAccount } from "wagmi";
 
 import { ActionButton, Empty } from "@components";
 
@@ -36,15 +37,24 @@ const NotIndexedEmpty = () => <Empty
     />}
 />
 
-const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
+const DashboardLoader = ({
+    chainId,
+    orgAddress,
+    badgeId,
+    obj,
+    retrieve,
+    children
+}) => {
+    const { address } = useAccount();
+
     const [logs, setLogs] = useState([]);
 
-    const isLoading = !obj;
+    const isLoading = !obj || !obj?.name;
 
     useEffect(() => {
-        const getFilter = ({ ethereum_address }) => {
+        const getFilter = () => {
             if (!badgeId) return {
-                address: ethereum_address,
+                address: getBadgerAbi(chainId).address,
                 topics: [
                     ethers.utils.id("OrganizationCreated(address,address,uint256)"),
                     ethers.utils.hexZeroPad(orgAddress, 32)
@@ -54,7 +64,7 @@ const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
             }
 
             return {
-                address: ethereum_address,
+                address: orgAddress,
                 topics: [
                     ethers.utils.id("URI(string,uint256)"),
                     null,
@@ -66,9 +76,7 @@ const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
         }
 
         const getLogs = () => {
-            const address = orgAddress || getBadgerAbi(chainId).address;
-
-            const filter = getFilter({ ethereum_address: address });
+            const filter = getFilter();
 
             const provider = getProvider(chainId);
 
@@ -78,8 +86,18 @@ const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
                 });
         }
 
+        if (!isLoading) return
+
         getLogs();
-    }, [])
+    }, [chainId, orgAddress, badgeId, isLoading])
+
+    useEffect(() => {
+        if (!(isLoading && logs.length == 0)) return
+
+        if (!retrieve) return
+
+        retrieve();
+    }, [isLoading, logs])
 
     const isDeployed = logs.length > 0;
 
@@ -88,7 +106,7 @@ const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
             {!isLoading && children}
 
             {isLoading && <>
-                <div className="loading short" />
+                {!address && <div className="loading short" />}
 
                 {isDeployed && <NotIndexedEmpty />}
 

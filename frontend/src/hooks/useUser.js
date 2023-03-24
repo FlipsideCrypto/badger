@@ -21,11 +21,13 @@ const useUser = (props) => {
         chain,
         primaryChain,
         address,
+        viewing,
         organizations,
-        badges: _badges,
+        userOrganizations,
         isConnected,
         isWrongNetwork,
-        isLoaded
+        isLoaded,
+        send
     } = useContext(UserContext);
 
     const {
@@ -34,30 +36,33 @@ const useUser = (props) => {
         badgeId = null
     } = props || {};
 
-    const states = useMemo(() => {
-        if (!isLoaded || organizations.length == 0 || !orgAddress) return {
-            organization: null,
-            badges: null,
-            badge: null,
-            managers: null
-        }
+    const organization = useMemo(() => {
+        if (!isLoaded || organizations.length == 0 || !orgAddress) return null;
 
-        const organization = organizations.find((org) => {
+        return organizations.find((org) => {
             return org.chain_id === parseInt(chainId) && org.ethereum_address === orgAddress;
         })
+    }, [isLoaded, chainId, orgAddress, organizations])
 
-        const organizationManagers = organization && organization.modules.filter((module) => {
-            return module.module_type === "manager";
-        })
+    const badges = useMemo(() => {
+        if (!organization) return null;
 
-        const badges = organization && _badges.filter((badge) => {
-            return badge.chain_id === parseInt(chainId) && badge.ethereum_address === orgAddress;
-        })
+        return organization.badges;
+    }, [organization])
 
-        if (!badges) return { organization, badges: null, badge: null }
+    const badge = useMemo(() => {
+        if (!organization || !badgeId) return null;
 
-        const badge = badgeId && badges.find((badge) => {
+        return organization.badges.find((badge) => {
             return badge.token_id === parseInt(badgeId);
+        })
+    }, [organization, badgeId])
+
+    const managers = useMemo(() => {
+        if (!organization) return null;
+
+        const organizationManagers = organization.modules.filter((module) => {
+            return module.module_type === "manager";
         })
 
         const filter = (module) => {
@@ -70,47 +75,57 @@ const useUser = (props) => {
             return module.module_key === getOrganizationKey(module.ethereum_address)
         }
 
-        const managers = organizationManagers && organizationManagers.filter(filter)
+        return organizationManagers.filter(filter)
+    }, [organization, badge])
 
-        return { organization, badges, badge, managers }
-    }, [isLoaded, chainId, orgAddress, badgeId, organizations, _badges])
+    const isOwner = useMemo(() => {
+        if (!address || !organization) return false;
 
-    const roles = useMemo(() => {
-        if (!address || !states.organization) return {
-            isOwner: false,
-            isManager: false,
-            isMember: false,
-            canManage: false
-        }
+        if (!organization.owner) return false;
 
-        const isOwner = states.organization.owner && states.organization.owner.ethereum_address === address;
+        return organization.owner.ethereum_address === address;
+    }, [address, organization])
 
-        const isManager = states.managers && states.managers.some((manager) => {
+    const isManager = useMemo(() => {
+        if (!address || !managers) return false;
+
+        return managers.some((manager) => {
             return manager.ethereum_address === address;
         })
+    }, [address, managers])
 
-        const isMember = states.badge && states.badge.users.some((member) => {
+    const isMember = useMemo(() => {
+        if (!address || !badge) return false;
+
+        return badge.users.some((member) => {
             return member.ethereum_address === address;
         })
+    }, [address, badge])
 
-        return {
-            isOwner,
-            isManager,
-            isMember,
-            canManage: isOwner || isManager
-        }
-    }, [address, states])
+    const canManage = useMemo(() => {
+        if (viewing) return false;
+
+        return isOwner || isManager;
+    }, [viewing, isOwner, isManager])
 
     return {
         chain,
         primaryChain,
         address,
         organizations,
-        ...states,
+        userOrganizations,
+        organization,
+        badges,
+        badge,
+        managers,
         isConnected,
         isWrongNetwork,
         isLoaded,
-        ...roles
+        isOwner,
+        isManager,
+        isMember,
+        canManage,
+        send
     }
 }
 
