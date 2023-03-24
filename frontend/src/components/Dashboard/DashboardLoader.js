@@ -95,8 +95,6 @@ const DashboardLoader = ({
         }
 
         const getLogs = () => {
-            console.log('get logs')
-
             const filter = getFilter();
 
             const provider = getProvider(chainId);
@@ -112,17 +110,15 @@ const DashboardLoader = ({
         getLogs();
     }, [chainId, orgAddress, badgeId, managed, isLoading])
 
-    useEffect(() => {
-        if (!isLoading && (logs.length > 0 || !managed)) return
+    const isLogged = logs.length > 0;
 
+    useEffect(() => {
         if (!retrieve) return
 
-        console.log('retrieving', logs)
-
         retrieve();
-    }, [isLoading, logs])
+    }, [address, isLoading, isLogged, retrieve])
 
-    const isDeployed = !isLoading || logs.length > 0;
+    const isDeployed = !isLoading || isLogged;
 
     const isAccessible = !managed || managed && canManage;
 
