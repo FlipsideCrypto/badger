@@ -27,7 +27,7 @@ const getOrgFormTxArgs = ({ functionName, address, name, symbol, imageHash, cont
     }
 }
 
-const useOrgForm = ({ obj }) => {
+const useOrgForm = (obj) => {
     const fees = useFees();
 
     const { chain, address } = useUser();

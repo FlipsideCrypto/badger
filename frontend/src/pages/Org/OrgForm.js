@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
+    useDebounce,
     useOrgForm,
     usePFP,
     useUser,
@@ -35,10 +36,11 @@ const OrgForm = ({ isEdit = false }) => {
 
     const [obj, setObj] = useState(organization || initialOrgForm);
 
-    const { characterPFP: pfp } = usePFP({
-        name: obj.name,
-        address
-    });
+    const name = useDebounce(obj.name, 300);
+
+    const description = useDebounce(obj.description, 300);
+
+    const { pfp } = usePFP({ name, address });
 
     const customImage = image || obj.image_hash;
 
@@ -46,23 +48,24 @@ const OrgForm = ({ isEdit = false }) => {
 
     const imageURL = customImage && (image ? image.name : IPFS_GATEWAY_URL + obj.image_hash);
 
-    const isDisabled = !(obj.name && obj.symbol && obj.description && activeImage);
+    const isDebouncing = name !== obj.name || description !== obj.description;
+
+    const isDisabled = isDebouncing || !(name && description && activeImage && obj.symbol);
 
     const { imageHash, ipfsImage } = useIPFSImageHash(activeImage)
 
     const { metadataHash, ipfsMetadata } = useIPFSMetadataHash({
-        name: obj.name,
-        description: obj.description,
+        name: name,
+        description: description,
         image: imageHash,
         attributes: obj.attributes
     })
 
     const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({
-        obj: {
-            ...obj,
-            imageHash: imageHash,
-            contractHash: metadataHash
-        }
+        ...obj,
+        name: name,
+        imageHash: imageHash,
+        contractHash: metadataHash
     })
 
     const { pinImage, pinMetadata } = useIPFS({
@@ -80,13 +83,14 @@ const OrgForm = ({ isEdit = false }) => {
                 pinMetadata();
             },
             onSuccess: ({ chain, receipt }) => {
+                if (orgAddress)
+                    return navigate(`/dashboard/organization/${chain.id}/${orgAddress}/`)
+
                 const event = receipt.events.find((event) => event.name === "OrganizationCreated");
 
                 if (!event) throw new Error("Error submitting transaction.");
 
-                const orgAddress = event.args.organization;
-
-                navigate(`/dashboard/organization/${chain.id}/${orgAddress}/`);
+                navigate(`/dashboard/organization/${chain.id}/${event.args.organization}/`);
             }
         })
     }]
