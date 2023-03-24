@@ -7,8 +7,6 @@ import { getBadgeImage } from '@utils';
 const useBadgeArt = ({ orgName, orgAddress, badgeName, tokenId }) => {
     const [badgeArt, setBadgeArt] = useState(null);
 
-    const debouncedBadgeName = useDebounce(badgeName, 300);
-
     useEffect(() => {
         if (!orgName) return;
 
@@ -22,13 +20,13 @@ const useBadgeArt = ({ orgName, orgAddress, badgeName, tokenId }) => {
             orgName,
             orgAddress,
             tokenId,
-            debouncedBadgeName
+            badgeName
         ];
 
         if (!args.every(arg => arg || arg === 0)) return
 
         getImage(args);
-    }, [orgName, orgAddress, debouncedBadgeName, tokenId]);
+    }, [orgName, orgAddress, badgeName, tokenId]);
 
     return { badgeArt };
 }

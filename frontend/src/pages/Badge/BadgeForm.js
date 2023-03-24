@@ -7,7 +7,8 @@ import {
     useIPFS,
     useIPFSImageHash,
     useIPFSMetadataHash,
-    useBadgeArt
+    useBadgeArt,
+    useDebounce
 } from "@hooks";
 
 import {
@@ -40,12 +41,16 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
     //       cleaning it up or everything else comes out.
     const [isAccountBound, setIsAccountBound] = useState(true);
 
+    const name = useDebounce(obj.name, 300);
+
+    const description = useDebounce(obj.description, 300);
+
     const tokenId = obj.token_id || (badges && badges.length) || 0;
 
     const { badgeArt } = useBadgeArt({
         orgName: organization && organization.name,
         orgAddress: orgAddress,
-        badgeName: obj.name,
+        badgeName: name,
         tokenId
     })
 
@@ -56,13 +61,15 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         obj.image_hash ? IPFS_GATEWAY_URL + obj.image_hash :
             badgeArt ? URL.createObjectURL(badgeArt) : null;
 
-    const isDisabled = !(obj.name && obj.description && activeImage);
+    const isDebouncing = name !== obj.name || description !== obj.description;
+
+    const isDisabled = isDebouncing || !(name && description && activeImage);
 
     const { imageHash, ipfsImage } = useIPFSImageHash(activeImage);
 
     const { metadataHash, ipfsMetadata } = useIPFSMetadataHash({
-        name: obj.name,
-        description: obj.description,
+        name,
+        description,
         image: imageHash,
         attributes: obj.attributes
     })
@@ -72,13 +79,11 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         isPrepared,
         isLoading
     } = useBadgeForm({
-        obj: {
-            ...obj,
-            imageHash: imageHash,
-            uriHash: metadataHash,
-            accountBound: isAccountBound,
-            tokenId
-        }
+        ...obj,
+        imageHash: imageHash,
+        uriHash: metadataHash,
+        accountBound: isAccountBound,
+        tokenId
     });
 
     const { pinImage, pinMetadata } = useIPFS({
@@ -108,11 +113,11 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
     }]
 
     const onNameChange = async (event) => {
-        setObj({ ...obj, name: event.target.value });
+        setObj(obj => ({ ...obj, name: event.target.value }));
     }
 
     const onDescriptionChange = (event) => {
-        setObj({ ...obj, description: event.target.value });
+        setObj(obj => ({ ...obj, description: event.target.value }));
     }
 
     const onCustomImageChange = (file, uploaded) => {
@@ -132,7 +137,7 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         <SEO title={`
             ${isEdit ? "Update" : "Create"} 
             ${`${organization?.name} //` || ""}
-            ${obj?.name || "Badge"} // Badger`}
+            ${name || "Badge"} // Badger`}
         />
 
         <h2>{isEdit ? "Update" : "Create"} Badge</h2>
@@ -158,6 +163,7 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
                         onChange={onDescriptionChange}
                     />
                 </div>
+
                 <div className="form__group mobile__hidden" style={{ gridTemplateRows: "min-content" }}>
                     <label className="form__label">Live Badge Preview</label>
                     <div className="preview__container">
