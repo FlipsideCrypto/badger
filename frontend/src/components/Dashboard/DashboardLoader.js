@@ -42,7 +42,7 @@ const NotManagerDeploy = ({ badgeId }) => {
     const body = `The connected wallet is not the manager of this ${badgeId ? "Badge" : "Organization"}. Please connect a wallet that is the manager of this ${badgeId ? "Badge" : "Organization"}.`
 
     return (
-        < Empty
+        <Empty
             title={title}
             body={body}
             button={< ActionButton

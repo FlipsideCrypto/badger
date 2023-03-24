@@ -109,12 +109,12 @@ const useUser = (props) => {
     }, [viewing, isOwner, isManager])
 
     const retrieve = () => {
-        if (!orgAddress || !send) return;
+        if (!chainId || !orgAddress || !send) return;
 
         send(JSON.stringify({
             action: "retrieve",
             request_id: new Date().getTime(),
-            pk: orgAddress,
+            pk: `${chainId}:${orgAddress}`
         }))
     }
 
