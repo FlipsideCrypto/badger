@@ -34,6 +34,9 @@ class OrganizationConsumer(ManagedModelMixin):
             Q(badges__users__ethereum_address__in=[address])
         ).distinct()
 
+    def get_object(self, **kwargs):
+        return Organization.objects.get(ethereum_address=kwargs['pk'])
+ 
     @model_observer(Organization)
     async def model_change(self, message, observer=None, **kwargs):
         await self.send_json(message)

@@ -31,6 +31,16 @@ const Org = () => {
         onClick: () => navigate(`/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/badge/new/`)
     }];
 
+    const onRetrieve = () => {
+        if (!orgAddress || !send) return;
+
+        send(JSON.stringify({
+            action: "retrieve",
+            request_id: new Date().getTime(),
+            pk: orgAddress,
+        }))
+    }
+
     return (
         <>
             <SEO
@@ -44,15 +54,8 @@ const Org = () => {
                 chainId={chainId}
                 orgAddress={orgAddress}
                 obj={organization}
-                retrieve={() => {
-                    if (!send) return;
-
-                    send(JSON.stringify({
-                        action: "retrieve",
-                        request_id: new Date().getTime(),
-                        pk: 1,
-                    }))
-                }}>
+                retrieve={onRetrieve}
+            >
                 <div className="dashboard__content">
                     <ActionTitle title="Badges" actions={titleActions} />
 
