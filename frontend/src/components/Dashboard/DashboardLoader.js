@@ -49,7 +49,7 @@ const DashboardLoader = ({
 
     const [logs, setLogs] = useState([]);
 
-    const isLoading = !obj || !obj?.name;
+    const isLoading = !obj || obj?.name === null;
 
     useEffect(() => {
         const getFilter = () => {

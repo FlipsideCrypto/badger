@@ -11,7 +11,16 @@ import {
     useIPFSMetadataHash,
 } from "@hooks";
 
-import { initialOrgForm, FormActionBar, FormDrawer, Header, Input, OrgDangerZone, SEO } from "@components"
+import {
+    initialOrgForm,
+    DashboardLoader,
+    FormActionBar,
+    FormDrawer,
+    Header,
+    Input,
+    OrgDangerZone,
+    SEO
+} from "@components"
 
 import { IPFS_GATEWAY_URL } from "@static";
 
@@ -23,18 +32,14 @@ const getSymbol = (name) => {
     return name.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().substring(0, 5);
 }
 
-const OrgForm = ({ isEdit = false }) => {
+const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) => {
     const imageInput = useRef();
 
     const navigate = useNavigate();
 
-    const { chainId, orgAddress } = useParams();
-
-    const { address, organization } = useUser({ chainId, orgAddress });
+    const [obj, setObj] = useState((isEdit && organization) || initialOrgForm);
 
     const [image, setImage] = useState(null);
-
-    const [obj, setObj] = useState(organization || initialOrgForm);
 
     const name = useDebounce(obj.name, 300);
 
@@ -47,10 +52,6 @@ const OrgForm = ({ isEdit = false }) => {
     const activeImage = customImage || pfp;
 
     const imageURL = customImage && (image ? image.name : IPFS_GATEWAY_URL + obj.image_hash);
-
-    const isDebouncing = name !== obj.name || description !== obj.description;
-
-    const isDisabled = isDebouncing || !(name && description && activeImage && obj.symbol);
 
     const { imageHash, ipfsImage } = useIPFSImageHash(activeImage)
 
@@ -72,6 +73,10 @@ const OrgForm = ({ isEdit = false }) => {
         image: ipfsImage,
         data: ipfsMetadata
     })
+
+    const isDebouncing = name !== obj.name || description !== obj.description;
+
+    const isDisabled = isDebouncing || !(name && description && activeImage && obj.symbol);
 
     const actions = [{
         text: "Create organization",
@@ -119,41 +124,64 @@ const OrgForm = ({ isEdit = false }) => {
         reader.onload = () => { setImage(reader.result) };
     }
 
+    return (<>
+        <div className="dashboard__content">
+            <h2>{`${isEdit ? "Update" : "Create"} Organization`}</h2>
+        </div>
+
+        <FormDrawer label="Information">
+            <Input label="Name" value={obj.name || ""} onChange={onNameChange} />
+            <Input label="Description" value={obj.description || ""} onChange={onDescriptionChange} />
+        </FormDrawer>
+
+        <FormDrawer label="Advanced" open={!!obj.image_hash}>
+            <Input label="Custom Image" accept="image/*" disabled={true} append={
+                <button className="secondary" onClick={onImageUpload}>
+                    <span>{customImage ? "Update" : "Upload"}</span>
+                </button>}
+                value={imageURL || "Choose file..."} />
+
+            <input ref={imageInput} type="file" accept="image/*" onChange={onImageChange} />
+        </FormDrawer>
+
+        <FormActionBar
+            className={!isEdit && "actionFixed" || "full"}
+            actions={actions}
+        />
+
+        {isEdit && <OrgDangerZone />}
+    </>)
+}
+
+const OrgForm = ({ isEdit = false }) => {
+    const navigate = useNavigate();
+
+    const { chainId, orgAddress } = useParams();
+
+    const { address, organization, retrieve } = useUser({ chainId, orgAddress });
+
     return (
         <>
             <SEO
-                title={`${isEdit ? "Update" : "Create"} ${obj?.name || "Organization"} // Badger`} />
+                title={`${isEdit ? "Update" : "Create"} Organization // Badger`} />
 
             <Header
                 back={() => navigate((isEdit
                     ? `/dashboard/organization/${chainId}/${organization.ethereum_address}/`
                     : '/dashboard/'))} />
 
-            
-
-            {/* <h2 className="dashboard__content">{`${isEdit ? "Update" : "Create"} Organization`}</h2>
-
-            <FormDrawer label="Information">
-                <Input label="Name" value={obj.name || ""} onChange={onNameChange} />
-                <Input label="Description" value={obj.description || ""} onChange={onDescriptionChange} />
-            </FormDrawer>
-
-            <FormDrawer label="Advanced" open={!!obj.image_hash}>
-                <Input label="Custom Image" accept="image/*" disabled={true} append={
-                    <button className="secondary" onClick={onImageUpload}>
-                        <span>{customImage ? "Update" : "Upload"}</span>
-                    </button>}
-                    value={imageURL || "Choose file..."} />
-
-                <input ref={imageInput} type="file" accept="image/*" onChange={onImageChange} />
-            </FormDrawer>
-
-            <FormActionBar
-                className={!isEdit && "actionFixed" || "full"}
-                actions={actions}
-            />
-
-            {isEdit && <OrgDangerZone />} */}
+            <DashboardLoader
+                chainId={chainId}
+                orgAddress={orgAddress}
+                obj={!isEdit ? { name: "" } : organization}
+                retrieve={retrieve}>
+                <OrgFormContent
+                    chainId={chainId}
+                    address={address}
+                    orgAddress={orgAddress}
+                    organization={organization}
+                    isEdit={isEdit} />
+            </DashboardLoader>
         </>
     )
 }

@@ -11,6 +11,31 @@ const OrgEmpty = ({ organization }) => <Empty
     url={`/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/badge/new/`}
 />
 
+const OrgContent = ({ organization, badges, canManage }) => {
+    const navigate = useNavigateAddress();
+
+    const titleActions = canManage && [{
+        className: "secondary",
+        text: "Create",
+        icon: ['fal', 'plus'],
+        onClick: () => navigate(`/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/badge/new/`)
+    }];
+
+    return (
+        <div className="dashboard__content">
+            <ActionTitle
+                title="Badges"
+                actions={titleActions} />
+
+            {badges && badges.length === 0 && <OrgEmpty
+                organization={organization} />}
+
+            {badges && badges.length > 0 && <BadgeTable
+                badges={badges} />}
+        </div>
+    )
+}
+
 const Org = () => {
     const navigate = useNavigateAddress();
 
@@ -25,13 +50,6 @@ const Org = () => {
         text: "Settings",
         icon: ['fal', 'fa-gear'],
         onClick: () => navigate(`/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/edit/`)
-    }];
-
-    const titleActions = canManage && [{
-        className: "secondary",
-        text: "Create",
-        icon: ['fal', 'plus'],
-        onClick: () => navigate(`/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/badge/new/`)
     }];
 
     return (
@@ -49,17 +67,11 @@ const Org = () => {
                 orgAddress={orgAddress}
                 obj={organization}
                 retrieve={retrieve}>
-                <div className="dashboard__content">
-                    <ActionTitle
-                        title="Badges"
-                        actions={titleActions} />
-
-                    {badges && badges.length === 0 && <OrgEmpty
-                        organization={organization} />}
-
-                    {badges && badges.length > 0 && <BadgeTable
-                        badges={badges} />}
-                </div>
+                <OrgContent
+                    chainId={chainId}
+                    organization={organization}
+                    badges={badges}
+                    canManage={canManage} />
             </ DashboardLoader>
         </>
     )
