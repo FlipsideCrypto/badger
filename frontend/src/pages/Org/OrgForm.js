@@ -84,7 +84,7 @@ const OrgForm = ({ isEdit = false }) => {
             },
             onSuccess: ({ chain, receipt }) => {
                 if (orgAddress)
-                    return navigate(`/dashboard/organization/${chain.id}/${orgAddress}/`)
+                    return navigate(`/dashboard/organization/${chainId}/${orgAddress}/`)
 
                 const event = receipt.events.find((event) => event.name === "OrganizationCreated");
 
@@ -115,16 +115,23 @@ const OrgForm = ({ isEdit = false }) => {
         const reader = new FileReader();
 
         reader.readAsDataURL(files);
+
         reader.onload = () => { setImage(reader.result) };
     }
 
     return (
         <>
-            <SEO title={`${isEdit ? "Update" : "Create"} ${obj?.name || "Organization"} // Badger`} />
+            <SEO
+                title={`${isEdit ? "Update" : "Create"} ${obj?.name || "Organization"} // Badger`} />
 
-            <Header back={() => navigate((isEdit ? `/dashboard/organization/${chainId}/${organization.ethereum_address}/` : '/dashboard/'))} />
+            <Header
+                back={() => navigate((isEdit
+                    ? `/dashboard/organization/${chainId}/${organization.ethereum_address}/`
+                    : '/dashboard/'))} />
 
-            <h2 className="dashboard__content">{`${isEdit ? "Update" : "Create"} Organization`}</h2>
+            
+
+            {/* <h2 className="dashboard__content">{`${isEdit ? "Update" : "Create"} Organization`}</h2>
 
             <FormDrawer label="Information">
                 <Input label="Name" value={obj.name || ""} onChange={onNameChange} />
@@ -146,10 +153,7 @@ const OrgForm = ({ isEdit = false }) => {
                 actions={actions}
             />
 
-            {isEdit && <>
-                <hr />
-                <OrgDangerZone />
-            </>}
+            {isEdit && <OrgDangerZone />} */}
         </>
     )
 }
