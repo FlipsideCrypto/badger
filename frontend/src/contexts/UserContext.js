@@ -2,7 +2,6 @@ import { createContext, useContext } from "react";
 
 import {
     AuthenticationContext,
-    BadgeContext,
     OrgContext
 } from "@contexts";
 
@@ -12,27 +11,28 @@ const UserContextProvider = ({ children }) => {
     const {
         chain,
         primaryChain,
-        address,
         isConnected,
         isWrongAddress
     } = useContext(AuthenticationContext);
 
-    const { organizations } = useContext(OrgContext);
+    const { address, viewing, organizations, send } = useContext(OrgContext);
 
-    const { badges } = useContext(BadgeContext);
+    const isLoaded = organizations !== null;
 
-    const isLoaded = organizations !== null && badges !== null;
+    const userOrganizations = isLoaded && organizations.filter((org) => org?.retrieved !== true);
 
     return (
         <UserContext.Provider value={{
             chain,
             primaryChain,
             address,
+            viewing,
             organizations,
-            badges,
+            userOrganizations,
             isConnected,
             isWrongAddress,
-            isLoaded
+            isLoaded,
+            send
         }}>
             {children}
         </UserContext.Provider>

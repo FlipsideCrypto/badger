@@ -9,19 +9,16 @@ const connectButton = <ConnectButton className="primary" />;
 const ConnectWalletEmpty = () => <Empty
     title="Connect your wallet to view your Organizations!"
     body="Connecting your wallet is simple and secure. Using Sign in with Ethereum, you can sign and create, manage, and share your Organizations and Badges in seconds just by signing a message."
-    button={connectButton}
-/>
+    button={connectButton} />
 
 const WrongNetworkEmpty = ({ primaryChain }) => <Empty
     title="Wrong Network!"
     body={`Please connect to ${primaryChain.name} network.`}
-    button={connectButton}
-/>
+    button={connectButton} />
 
 const LoadingEmpty = () => <Empty
     title="Loading Organizations and Badges..."
-    body="This may take a few seconds. If this takes longer than 10 seconds, please refresh the page."
-/>
+    body="This may take a few seconds. If this takes longer than 10 seconds, please refresh the page." />
 
 const Dashboard = ({ children }) => {
     const {

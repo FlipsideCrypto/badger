@@ -18,11 +18,13 @@ const useSocket = ({ enabled, url }) => {
 
     const callbacks = useMemo(() => ({}), []);
 
-    const send = async (message, callback) => {
+    const send = async (message, callback = null) => {
         if (client.readyState === client.OPEN) {
-            const requestId = JSON.parse(message).request_id;
+            if (callback) {
+                const requestId = JSON.parse(message).request_id;
 
-            callbacks[requestId] = callback;
+                callbacks[requestId] = callback;
+            }
 
             client.send(message);
         }
@@ -45,8 +47,6 @@ const useSocket = ({ enabled, url }) => {
         if (data.data === null) return;
 
         if (data.action === 'disconnected') {
-            console.error('Disconnected from server', data)
-
             setConnected(false);
 
             if (data.message === 'You must be logged in to connect.') logout();
@@ -61,12 +61,28 @@ const useSocket = ({ enabled, url }) => {
         } else if (data.action === 'delete') {
             setObjects(objects => {
                 const index = objects.findIndex(object => object.id === data.data.id);
+
                 objects.splice(index, 1);
 
                 return objects;
             });
         } else if (data.action === 'retrieve') {
-            setObjects([data.data]);
+            setObjects(objects => {
+                const index = objects.findIndex(object => object.id === data.data.id);
+
+                const object = {
+                    ...data.data,
+                    retrieved: true
+                }
+
+                if (index === -1) {
+                    return [...objects, object];
+                }
+
+                objects[index] = object;
+
+                return objects;
+            });
         } else {
             console.log('Unknown action', data);
         }

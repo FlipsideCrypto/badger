@@ -1,6 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
-
-import { useUser } from "@hooks"
+import { Link } from 'react-router-dom';
 
 import { ActionButton, ImageLoader } from "@components"
 
@@ -12,9 +10,7 @@ import "@style/View/OrgView.css"
 
 const copy = (text) => navigator.clipboard.writeText(text);
 
-const OrgView = ({ chainId, orgAddress }) => {
-    const { organization } = useUser({ chainId, orgAddress });
-
+const OrgView = ({ organization }) => {
     return (
         <div className="view">
             {organization && <>

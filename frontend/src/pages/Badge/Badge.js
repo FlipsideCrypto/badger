@@ -1,13 +1,13 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { BadgePreview, Header, HolderTable, ManagerTable, SEO, DashboardLoader } from "@components";
 
-import { useUser } from "@hooks";
+import { useNavigateAddress, useUser } from "@hooks";
 
 import "@style/pages/Badge.css";
 
 const Badge = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigateAddress();
 
     const { chainId, orgAddress, badgeId } = useParams();
 
@@ -26,7 +26,7 @@ const Badge = () => {
 
     return (
         <>
-            <SEO title={`${badge ? `${organization.name} | ${badge.name}` : 'Not Found'} | Badger`}
+            <SEO title={`${badge ? `${organization.name} // ${badge.name}` : 'Not Found'} // Badger`}
                 description={badge?.description} />
 
             <Header back={() =>
@@ -39,10 +39,10 @@ const Badge = () => {
                 <ManagerTable
                     badge={badge}
                     managers={managers}
-                    isManager={canManage}
+                    canManage={canManage}
                 />
 
-                <HolderTable badge={badge} isManager={canManage} />
+                <HolderTable badge={badge} canManage={canManage} />
             </DashboardLoader>
         </>
     )

@@ -1,26 +1,41 @@
-import { useState } from "react";
-
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { ActionButton, ActionTitle, Header, Input, OrgTable } from "@components";
+import { ActionButton, Header, Input, OrgTable, SEO } from "@components";
 
-const { useUser } = require("@hooks");
+import { useDebounce, useNavigateAddress } from "@hooks";
 
 const Discover = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigateAddress();
 
-    const { organizations } = useUser();
-
+    const [organizations, setOrganizations] = useState(null);
     const [search, setSearch] = useState("");
+
+    const debouncedSearch = useDebounce(search, 300);
 
     const onSearchChange = (e) => {
         setSearch(e.target.value);
     }
 
+    useEffect(() => {
+        const getOrganizations = () => {
+            const url = `http://localhost:8000/organizations/?search=${debouncedSearch}`
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    setOrganizations(data)
+                })
+        }
+
+        getOrganizations()
+    }, [debouncedSearch])
+
     return (
         <>
+            <SEO title="Discover // Badger" />
+
             <div className="dashboard">
                 <div className="dashboard__content">
                     <div className="dashboardContent">
@@ -33,7 +48,7 @@ const Discover = () => {
                         }}>
                             <h2>Discover Organizations</h2>
 
-                            <p style={{ textAlign: "right" }}>{organizations && organizations.length} results</p>
+                            <p style={{ textAlign: "right" }}>{organizations && organizations.length || 0} results</p>
                         </div>
 
                         <div style={{
