@@ -6,6 +6,21 @@ import { useNavigateAddress, useUser } from "@hooks";
 
 import "@style/pages/Badge.css";
 
+const BadgeContent = ({ badge, managers, canManage }) => {
+    return (<>
+        <BadgePreview badge={badge} />
+
+        <ManagerTable
+            badge={badge}
+            managers={managers}
+            canManage={canManage} />
+
+        <HolderTable
+            badge={badge}
+            canManage={canManage} />
+    </>)
+}
+
 const Badge = () => {
     const navigate = useNavigateAddress();
 
@@ -40,15 +55,9 @@ const Badge = () => {
                 orgAddress={orgAddress}
                 obj={badge}
                 retrieve={retrieve}>
-                <BadgePreview badge={badge} />
-
-                <ManagerTable
+                <BadgeContent
                     badge={badge}
                     managers={managers}
-                    canManage={canManage} />
-
-                <HolderTable
-                    badge={badge}
                     canManage={canManage} />
             </DashboardLoader>
         </>
