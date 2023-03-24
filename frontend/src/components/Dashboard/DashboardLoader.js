@@ -37,7 +37,14 @@ const NotIndexedEmpty = () => <Empty
     />}
 />
 
-const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
+const DashboardLoader = ({
+    chainId,
+    orgAddress,
+    badgeId,
+    obj,
+    retrieve,
+    children
+}) => {
     const { address } = useAccount();
 
     const [logs, setLogs] = useState([]);
@@ -81,8 +88,18 @@ const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
                 });
         }
 
+        if (!isLoading) return
+
         getLogs();
     }, [])
+
+    useEffect(() => {
+        if (!(isLoading && logs.length == 0)) return
+
+        if (!retrieve) return
+
+        retrieve();
+    }, [isLoading, logs])
 
     const isDeployed = logs.length > 0;
 

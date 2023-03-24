@@ -1,4 +1,7 @@
+from djangochannelsrestframework.decorators import action
 from djangochannelsrestframework.observer import model_observer
+
+from channels.db import database_sync_to_async
 
 from django.db.models import Q
 
@@ -8,9 +11,13 @@ from .models import Organization
 from .serializers import OrganizationSerializer
 
 class OrganizationConsumer(ManagedModelMixin):
+    queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
 
     def get_queryset(self, **kwargs):
+        if kwargs.get('action') == 'retrieve':
+            return Organization.objects.all()
+
         if not 'query_string' in self.scope:
             return Organization.objects.all()
 
@@ -23,8 +30,8 @@ class OrganizationConsumer(ManagedModelMixin):
 
         return Organization.objects.filter(
             Q(owner__ethereum_address=address) |
-            Q(modules__ethereum_address__in=[address]) | # TODO: Check this
-            Q(badges__users__ethereum_address__in=[address]) # TODO: No way this works.
+            Q(modules__ethereum_address__in=[address]) |
+            Q(badges__users__ethereum_address__in=[address])
         ).distinct()
 
     @model_observer(Organization)

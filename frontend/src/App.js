@@ -24,10 +24,7 @@ function App() {
 
                 <Routes>
                     <Route exact path="/discover/" element={
-                        <DashboardWrapper
-                            children={<Discover />}
-                            paramAddress='all'
-                        />
+                        <DashboardWrapper children={<Discover />} />
                     } />
 
                     <Route exact path="/dashboard/*" element={

@@ -61,7 +61,7 @@ const BadgeTable = ({ badges }) => {
     }, [badges])
 
     return (
-        <div id="holder__table">
+        <div className="table" id="holder__table">
             {sortedList && <TableContainer>
                 <Table>
                     <TableHead>

@@ -44,8 +44,15 @@ const Org = () => {
                 chainId={chainId}
                 orgAddress={orgAddress}
                 obj={organization}
-                retrieve={() => send("getOrganization", { chainId, orgAddress })}
-            >
+                retrieve={() => {
+                    if (!send) return;
+
+                    send(JSON.stringify({
+                        action: "retrieve",
+                        request_id: new Date().getTime(),
+                        pk: 1,
+                    }))
+                }}>
                 <div className="dashboard__content">
                     <ActionTitle title="Badges" actions={titleActions} />
 

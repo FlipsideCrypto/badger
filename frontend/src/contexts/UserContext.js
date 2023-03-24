@@ -15,9 +15,11 @@ const UserContextProvider = ({ children }) => {
         isWrongAddress
     } = useContext(AuthenticationContext);
 
-    const { address, viewing, organizations } = useContext(OrgContext);
+    const { address, viewing, organizations, send } = useContext(OrgContext);
 
     const isLoaded = organizations !== null;
+
+    const userOrganizations = isLoaded && organizations.filter((org) => org?.retrieved !== true);
 
     return (
         <UserContext.Provider value={{
@@ -26,9 +28,11 @@ const UserContextProvider = ({ children }) => {
             address,
             viewing,
             organizations,
+            userOrganizations,
             isConnected,
             isWrongAddress,
-            isLoaded
+            isLoaded,
+            send
         }}>
             {children}
         </UserContext.Provider>
