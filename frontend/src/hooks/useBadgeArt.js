@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { useDebounce } from '@hooks';
-
 import { getBadgeImage } from '@utils';
 
 const useBadgeArt = ({ orgName, orgAddress, badgeName, tokenId }) => {
