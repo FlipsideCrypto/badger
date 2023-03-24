@@ -158,7 +158,12 @@ const OrgForm = ({ isEdit = false }) => {
 
     const { chainId, orgAddress } = useParams();
 
-    const { address, organization, retrieve } = useUser({ chainId, orgAddress });
+    const {
+        address,
+        organization,
+        canManage,
+        retrieve
+    } = useUser({ chainId, orgAddress });
 
     return (
         <>
@@ -166,15 +171,17 @@ const OrgForm = ({ isEdit = false }) => {
                 title={`${isEdit ? "Update" : "Create"} Organization // Badger`} />
 
             <Header
-                back={() => navigate((isEdit
+                back={() => navigate(isEdit
                     ? `/dashboard/organization/${chainId}/${organization.ethereum_address}/`
-                    : '/dashboard/'))} />
+                    : '/dashboard/')} />
 
             <DashboardLoader
                 chainId={chainId}
                 orgAddress={orgAddress}
                 obj={!isEdit ? { name: "" } : organization}
-                retrieve={retrieve}>
+                retrieve={retrieve}
+                managed={isEdit}
+                canManage={canManage}>
                 <OrgFormContent
                     chainId={chainId}
                     address={address}

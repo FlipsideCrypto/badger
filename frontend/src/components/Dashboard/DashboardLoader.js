@@ -37,19 +37,38 @@ const NotIndexedEmpty = () => <Empty
     />}
 />
 
+const NotManagerDeploy = ({ badgeId }) => {
+    const title = `You are not the manager of this ${badgeId ? "Badge" : "Organization"}.`
+    const body = `The connected wallet is not the manager of this ${badgeId ? "Badge" : "Organization"}. Please connect a wallet that is the manager of this ${badgeId ? "Badge" : "Organization"}.`
+
+    return (
+        < Empty
+            title={title}
+            body={body}
+            button={< ActionButton
+                className="secondary"
+                afterText="Check the chain"
+                icon={['fal', 'eye']}
+            />}
+        />
+    )
+}
+
 const DashboardLoader = ({
     chainId,
     orgAddress,
     badgeId,
     obj,
     retrieve,
+    managed,
+    canManage,
     children
 }) => {
     const { address } = useAccount();
 
     const [logs, setLogs] = useState([]);
 
-    const isLoading = !obj || obj?.name === null;
+    const isLoading = (managed && !canManage) || !obj || obj?.name === null;
 
     useEffect(() => {
         const getFilter = () => {
@@ -76,6 +95,8 @@ const DashboardLoader = ({
         }
 
         const getLogs = () => {
+            console.log('get logs')
+
             const filter = getFilter();
 
             const provider = getProvider(chainId);
@@ -86,20 +107,24 @@ const DashboardLoader = ({
                 });
         }
 
-        if (!isLoading) return
+        if (!chainId || !orgAddress || !managed || !isLoading) return
 
         getLogs();
-    }, [chainId, orgAddress, badgeId, isLoading])
+    }, [chainId, orgAddress, badgeId, managed, isLoading])
 
     useEffect(() => {
-        if (!(isLoading && logs.length == 0)) return
+        if (!isLoading && (logs.length > 0 || !managed)) return
 
         if (!retrieve) return
+
+        console.log('retrieving', logs)
 
         retrieve();
     }, [isLoading, logs])
 
-    const isDeployed = logs.length > 0;
+    const isDeployed = !isLoading || logs.length > 0;
+
+    const isAccessible = !managed || managed && canManage;
 
     return (
         <>
@@ -108,9 +133,11 @@ const DashboardLoader = ({
             {isLoading && <>
                 {!address && <div className="loading short" />}
 
-                {isDeployed && <NotIndexedEmpty />}
+                {!isDeployed && !managed && !isAccessible && <NotDeployedEmpty />}
 
-                {!isDeployed && <NotDeployedEmpty />}
+                {!managed && isDeployed && <NotIndexedEmpty />}
+
+                {isDeployed && !isAccessible && <NotManagerDeploy badgeId={badgeId} />}
             </>}
         </>
     )

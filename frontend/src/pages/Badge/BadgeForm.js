@@ -232,21 +232,28 @@ const BadgeForm = ({ isEdit = false }) => {
         organization,
         badges,
         badge,
+        canManage,
         retrieve
     } = useUser({ chainId, orgAddress, badgeId });
 
-
     return (
         <>
+            <SEO
+                title={`${isEdit ? "Update" : "Create"} Badge // Badger`} />
+
             <Header back={() => {
-                navigate(`/dashboard/organization/${chainId}/${orgAddress}/${isEdit ? `badge/${badgeId}/` : ''}`)
+                navigate(isEdit
+                    ? `/dashboard/organization/${chainId}/${orgAddress}/badge/${badgeId}/`
+                    : `/dashboard/organization/${chainId}/${orgAddress}/`);
             }} />
 
             <DashboardLoader
                 chainId={chainId}
                 orgAddress={orgAddress}
                 obj={!isEdit ? { name: "" } : badge}
-                retrieve={retrieve}>
+                retrieve={retrieve}
+                managed={isEdit}
+                canManage={canManage}>
                 <BadgeFormContent
                     chainId={chainId}
                     address={address}
