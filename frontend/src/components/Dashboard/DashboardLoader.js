@@ -49,12 +49,12 @@ const DashboardLoader = ({
 
     const [logs, setLogs] = useState([]);
 
-    const isLoading = !obj;
+    const isLoading = !obj || !obj?.name;
 
     useEffect(() => {
-        const getFilter = ({ ethereum_address }) => {
+        const getFilter = () => {
             if (!badgeId) return {
-                address: ethereum_address,
+                address: getBadgerAbi(chainId).address,
                 topics: [
                     ethers.utils.id("OrganizationCreated(address,address,uint256)"),
                     ethers.utils.hexZeroPad(orgAddress, 32)
@@ -64,7 +64,7 @@ const DashboardLoader = ({
             }
 
             return {
-                address: ethereum_address,
+                address: orgAddress,
                 topics: [
                     ethers.utils.id("URI(string,uint256)"),
                     null,
@@ -76,9 +76,7 @@ const DashboardLoader = ({
         }
 
         const getLogs = () => {
-            const address = orgAddress || getBadgerAbi(chainId).address;
-
-            const filter = getFilter({ ethereum_address: address });
+            const filter = getFilter();
 
             const provider = getProvider(chainId);
 
@@ -91,7 +89,7 @@ const DashboardLoader = ({
         if (!isLoading) return
 
         getLogs();
-    }, [])
+    }, [chainId, orgAddress, badgeId, isLoading])
 
     useEffect(() => {
         if (!(isLoading && logs.length == 0)) return
