@@ -15,7 +15,8 @@ const Badge = () => {
         organization,
         badge,
         managers,
-        canManage
+        canManage,
+        retrieve
     } = useUser({ chainId, orgAddress, badgeId });
 
     const headerActions = canManage && [{
@@ -26,23 +27,29 @@ const Badge = () => {
 
     return (
         <>
-            <SEO title={`${badge ? `${organization.name} // ${badge.name}` : 'Not Found'} // Badger`}
+            <SEO
+                title={`${badge ? `${organization.name} // ${badge.name}` : 'Not Found'} // Badger`}
                 description={badge?.description} />
 
             <Header back={() =>
                 navigate(`/dashboard/organization/${chainId}/${orgAddress}/`)}
                 actions={headerActions} />
 
-            <DashboardLoader chainId={chainId} orgAddress={orgAddress} obj={badge}>
+            <DashboardLoader
+                chainId={chainId}
+                orgAddress={orgAddress}
+                obj={badge}
+                retrieve={retrieve}>
                 <BadgePreview badge={badge} />
 
                 <ManagerTable
                     badge={badge}
                     managers={managers}
-                    canManage={canManage}
-                />
+                    canManage={canManage} />
 
-                <HolderTable badge={badge} canManage={canManage} />
+                <HolderTable
+                    badge={badge}
+                    canManage={canManage} />
             </DashboardLoader>
         </>
     )

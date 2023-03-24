@@ -16,7 +16,10 @@ const Org = () => {
 
     const { chainId, orgAddress } = useParams();
 
-    const { organization, badges, canManage, send } = useUser({ chainId, orgAddress });
+    const { organization, badges, canManage, retrieve } = useUser({
+        chainId,
+        orgAddress
+    });
 
     const headerActions = canManage && [{
         text: "Settings",
@@ -31,31 +34,21 @@ const Org = () => {
         onClick: () => navigate(`/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/badge/new/`)
     }];
 
-    const onRetrieve = () => {
-        if (!orgAddress || !send) return;
-
-        send(JSON.stringify({
-            action: "retrieve",
-            request_id: new Date().getTime(),
-            pk: orgAddress,
-        }))
-    }
-
     return (
         <>
             <SEO
                 title={`${organization ? organization.name : 'Not Found'} // Badger`}
-                description={`Browse ${organization?.name} and all its Badges and associated members.`}
-            />
+                description={`Browse ${organization?.name} and all its Badges and associated members.`} />
 
-            <Header back={() => navigate("/dashboard/")} actions={headerActions} />
+            <Header
+                back={() => navigate("/dashboard/")}
+                actions={headerActions} />
 
             <DashboardLoader
                 chainId={chainId}
                 orgAddress={orgAddress}
                 obj={organization}
-                retrieve={onRetrieve}
-            >
+                retrieve={retrieve}>
                 <div className="dashboard__content">
                     <ActionTitle title="Badges" actions={titleActions} />
 
@@ -63,7 +56,7 @@ const Org = () => {
 
                     {badges && badges.length > 0 && <BadgeTable badges={badges} />}
                 </div>
-            </ DashboardLoader >
+            </ DashboardLoader>
         </>
     )
 }
