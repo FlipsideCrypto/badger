@@ -1,6 +1,6 @@
-// badger: 0x2f070d13
+// badger: 0x8e7b0b1d
 // org: 0x7a3851dc
-// org logic: 0xd97424c8
+// org logic: 0x47c40485
 // badger configured: 0x56dbdf14
 // hook: 0x6847c1d5
 // manager: 0x56dbdf14
@@ -104,7 +104,7 @@ describe("Badger", function () {
             const { badgerFactory } = await loadFixture(deployBadgerFactory);
 
             expect(await badgerFactory.supportsInterface("0x01ffc9a7")).to.equal(true);
-            expect(await badgerFactory.supportsInterface("0x2f070d13")).to.equal(true);
+            expect(await badgerFactory.supportsInterface("0x8e7b0b1d")).to.equal(true);
         });
 
         it("revert: constructor(0x00) cannot be zero address", async function () {

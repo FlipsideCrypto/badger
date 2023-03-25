@@ -25,7 +25,7 @@
   "function configManager(address,bytes)",
   "function configManager(uint256,address,bytes)",
   "function getHooks(bytes32) view returns (address[])",
-  "function initialize(tuple(address,string,string,string,string))",
+  "function initialize(tuple(address,string,string))",
   "function isApprovedForAll(address,address) view returns (bool)",
   "function isBadgeManager(uint256,address) view returns (bool)",
   "function isOrganizationManager(address) view returns (bool)",
