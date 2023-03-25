@@ -33,25 +33,6 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "id",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "bool",
-                "name": "isArchived",
-                "type": "bool"
-            }
-        ],
-        "name": "BadgeArchived",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
                 "indexed": true,
                 "internalType": "bytes32",
                 "name": "hookKey",
@@ -147,19 +128,6 @@
             }
         ],
         "name": "ManagerUpdated",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "bool",
-                "name": "isArchived",
-                "type": "bool"
-            }
-        ],
-        "name": "OrganizationArchived",
         "type": "event"
     },
     {
@@ -347,25 +315,6 @@
                 "internalType": "bytes32",
                 "name": "",
                 "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "name": "archived",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
             }
         ],
         "stateMutability": "view",
@@ -731,37 +680,6 @@
             }
         ],
         "name": "setApprovalForAll",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bool",
-                "name": "_isArchived",
-                "type": "bool"
-            }
-        ],
-        "name": "setArchived",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_id",
-                "type": "uint256"
-            },
-            {
-                "internalType": "bool",
-                "name": "_isArchived",
-                "type": "bool"
-            }
-        ],
-        "name": "setArchived",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

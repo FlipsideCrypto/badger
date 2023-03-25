@@ -13,12 +13,6 @@ interface IBadgerOrganizationLogic is IBadgerOrganizationStruct {
     /// @dev Event that announces when the Organization is updated.
     event OrganizationUpdated(string organizationURI);
 
-    /// @dev Event that announces when the Organization is archived.
-    event OrganizationArchived(bool isArchived);
-
-    /// @dev Event that announces when a Badge is archived.
-    event BadgeArchived(uint256 id, bool isArchived);
-
     ////////////////////////////////////////////////////////
     ///                     SETTERS                      ///
     ////////////////////////////////////////////////////////
@@ -38,27 +32,6 @@ interface IBadgerOrganizationLogic is IBadgerOrganizationStruct {
      * - `_uri` cannot be empty.
      */
     function setBadgeURI(uint256 _id, string memory _uri) external;
-
-    /**
-     * @notice Allow the Owner of the Organization to archive the entire
-     *         Organization so that all interfaces know it's no longer active.
-     * @param _isArchived The status of the Organization.
-     *
-     * Requirements:
-     * - `_msgSender` must be the Organization Owner.
-     */
-    function setArchived(bool _isArchived) external;
-
-    /**
-     * @notice Allow the Owner of the Organization to archive a Badge so that
-     *         all interfaces know it's no longer active.
-     * @param _id The id of the Badge.
-     * @param _isArchived The status of the Badge.
-     *
-     * Requirements:
-     * - `_msgSender` must be a Badge Manager.
-     */
-    function setArchived(uint256 _id, bool _isArchived) external;
 
     /**
      * @notice Allow the Owner of the Organization to control Organization Managers.

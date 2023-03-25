@@ -34,9 +34,6 @@ contract BadgerOrganizationLogic is
     /// @dev Mapping from token ID to Badge
     mapping(uint256 => string) public uris;
 
-    /// @dev Whether or not the Organization is archived.
-    mapping(bytes32 => bool) public archived;
-
     ////////////////////////////////////////////////////////
     ///               BLOCKING CONSTRUCTOR               ///
     ////////////////////////////////////////////////////////
@@ -128,33 +125,6 @@ contract BadgerOrganizationLogic is
 
         /// @dev Set the URI of the Badge.
         _setBadgeURI(_id, _uri);
-    }
-
-    /**
-     * See {IBadgerOrganizationLogic.setArchived}
-     */
-    function setArchived(
-        bool _isArchived
-    ) public virtual override onlyOrganizationManager {
-        /// @dev Set the archived state of the Organization.
-        archived[_managerHash(address(this))] = _isArchived;
-
-        /// @dev Emit the archived event.
-        emit OrganizationArchived(_isArchived);
-    }
-
-    /**
-     * See {IBadgerOrganizationLogic.setArchived}
-     */
-    function setArchived(
-        uint256 _id,
-        bool _isArchived
-    ) public virtual override onlyBadgeManager(_id) {
-        /// @dev Set the archived state of the Badge.
-        archived[_badgeManagerHash(_id, address(this))] = _isArchived;
-
-        /// @dev Emit the archived event.
-        emit BadgeArchived(_id, _isArchived);
     }
 
     /**
