@@ -153,9 +153,6 @@ class Loader(ListenerReference):
             organization.ethereum_address
         )
 
-        if not organization.symbol:
-            organization.symbol = organization_contract.functions.symbol().call()
-
         uri = organization_contract.functions.contractURI().call()
         uri_hash = uri.split("/ipfs/")[1] if "ipfs" in uri else uri
 
