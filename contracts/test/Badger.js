@@ -95,8 +95,6 @@ describe("Badger", function () {
 
             expect(await badgerFactory.getOrganization(organizations - 1)).to.equal(organization.address);
 
-            expect(await organization.name()).to.equal("Badger");
-            expect(await organization.symbol()).to.equal("BADGER");
             expect(await organization.uri(1)).to.equal("ipfs/uri/{id}/");
             expect(await organization.organizationURI()).to.equal("ipfs/org");
             expect(await organization.contractURI()).to.equal("ipfs/org");
@@ -283,24 +281,37 @@ describe("Badger", function () {
         it("call: setArchived(true)", async function () {
             const { organization } = await loadFixture(deployNewOrganization);
 
-            await expect(organization.setArchived(true))
+
+            await expect(organization['setArchived(bool)'](true))
                 .to.emit(organization, "OrganizationArchived").withArgs(true)
 
-            expect(await organization.isArchived()).to.equal(true);
-
-            await expect(organization.setArchived(false))
+            await expect(organization['setArchived(bool)'](false))
                 .to.emit(organization, "OrganizationArchived").withArgs(false)
-
-            expect(await organization.isArchived()).to.equal(false);
         });
 
         it("revert: setArchived(true) missing permission", async function () {
             const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
-            await expect(organization.connect(otherAccount).setArchived(true))
-                .to.be.revertedWith("Ownable: caller is not the owner")
+            await expect(organization.connect(otherAccount)['setArchived(bool)'](true))
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
+        });
 
-            expect(await organization.isArchived()).to.equal(false);
+        it("call: setArchived(0, true)", async function () {
+            const { organization } = await loadFixture(deployNewOrganization);
+
+
+            await expect(organization['setArchived(uint256,bool)'](0, true))
+                .to.emit(organization, "BadgeArchived").withArgs(0, true)
+
+            await expect(organization['setArchived(uint256,bool)'](0, false))
+                .to.emit(organization, "BadgeArchived").withArgs(0, false)
+        });
+
+        it("revert: setArchived(0, true) missing permission", async function () {
+            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
+
+            await expect(organization.connect(otherAccount)['setArchived(uint256,bool)'](0, true))
+                .to.be.revertedWith("BadgerOrganizationLogic::onlyBadgeManager: Only Managers can call this.")
         });
 
         it("revert: setManagers(0, [other], [true]) missing permission", async function () {
@@ -576,11 +587,11 @@ describe("Badger", function () {
         });
 
         // supportsInterface
-        it("call: supportsInterface(0xd97424c8)", async function () {
+        it("call: supportsInterface(0x47c40485)", async function () {
             const { organization } = await loadFixture(deployNewOrganization);
 
             expect(await organization.supportsInterface("0x01ffc9a7")).to.equal(true);
-            expect(await organization.supportsInterface("0xd97424c8")).to.equal(true);
+            expect(await organization.supportsInterface("0x47c40485")).to.equal(true);
             expect(await organization.supportsInterface("0x7a3851dc")).to.equal(true);
         });
 
@@ -596,16 +607,6 @@ describe("Badger", function () {
             }
 
             await expect(organization.initialize(org)).to.be.revertedWith("Initializable: contract is already initialized");
-        });
-
-        it("revert: mint() organization archived", async function () {
-            const { organization, otherAccount } = await loadFixture(deployNewHook);
-
-            await expect(organization.setArchived(true))
-                .to.emit(organization, "OrganizationArchived").withArgs(true)
-
-            await expect(organization.mint(otherAccount.address, 0, 1, "0x"))
-                .to.be.revertedWith("BadgerOrganizationLogic::_mint: Cannot mint new tokens when Organization is archived.")
         });
     });
 

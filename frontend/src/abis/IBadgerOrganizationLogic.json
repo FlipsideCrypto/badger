@@ -4,6 +4,25 @@
         "inputs": [
             {
                 "indexed": false,
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "bool",
+                "name": "isArchived",
+                "type": "bool"
+            }
+        ],
+        "name": "BadgeArchived",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
                 "internalType": "bool",
                 "name": "isArchived",
                 "type": "bool"
@@ -134,6 +153,24 @@
     },
     {
         "inputs": [
+            {
+                "internalType": "bool",
+                "name": "_isArchived",
+                "type": "bool"
+            }
+        ],
+        "name": "setArchived",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_id",
+                "type": "uint256"
+            },
             {
                 "internalType": "bool",
                 "name": "_isArchived",

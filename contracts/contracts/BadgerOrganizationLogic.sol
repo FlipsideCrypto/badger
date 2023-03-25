@@ -28,20 +28,14 @@ contract BadgerOrganizationLogic is
     ///                      STATE                       ///
     ////////////////////////////////////////////////////////
 
-    /// @dev Whether or not the Organization is archived.
-    bool public isArchived;
-
-    /// @dev The name of the contract.
-    string public name;
-
-    /// @dev The symbol of the contract.
-    string public symbol;
-
     /// @dev The URI for the Organization/contract.
     string public organizationURI;
 
     /// @dev Mapping from token ID to Badge
     mapping(uint256 => string) public uris;
+
+    /// @dev Whether or not the Organization is archived.
+    mapping(bytes32 => bool) public archived;
 
     ////////////////////////////////////////////////////////
     ///               BLOCKING CONSTRUCTOR               ///
@@ -65,18 +59,11 @@ contract BadgerOrganizationLogic is
         /// @dev Initialize ERC1155.
         __ERC1155_init(_organization.uri);
 
-        /// @dev Initialize Ownable.
-        __Ownable_init();
-
         /// @dev Transfer ownership to the deployer.
-        transferOwnership(_organization.deployer);
+        _transferOwnership(_organization.deployer);
 
         /// @dev Set the contract URI.
         _setOrganizationURI(_organization.organizationURI);
-
-        /// @dev Set the immutable name and symbol of the contract.
-        name = _organization.name;
-        symbol = _organization.symbol;
     }
 
     ////////////////////////////////////////////////////////
@@ -146,12 +133,28 @@ contract BadgerOrganizationLogic is
     /**
      * See {IBadgerOrganizationLogic.setArchived}
      */
-    function setArchived(bool _isArchived) public virtual override onlyOwner {
+    function setArchived(
+        bool _isArchived
+    ) public virtual override onlyOrganizationManager {
         /// @dev Set the archived state of the Organization.
-        isArchived = _isArchived;
+        archived[_managerHash(address(this))] = _isArchived;
 
         /// @dev Emit the archived event.
         emit OrganizationArchived(_isArchived);
+    }
+
+    /**
+     * See {IBadgerOrganizationLogic.setArchived}
+     */
+    function setArchived(
+        uint256 _id,
+        bool _isArchived
+    ) public virtual override onlyBadgeManager(_id) {
+        /// @dev Set the archived state of the Badge.
+        archived[_badgeManagerHash(_id, address(this))] = _isArchived;
+
+        /// @dev Emit the archived event.
+        emit BadgeArchived(_id, _isArchived);
     }
 
     /**
@@ -371,12 +374,6 @@ contract BadgerOrganizationLogic is
         uint256 _amount,
         bytes memory _data
     ) internal virtual {
-        /// @dev Prevent new tokens from being minted when Organization is archived.
-        require(
-            !isArchived,
-            "BadgerOrganizationLogic::_mint: Cannot mint new tokens when Organization is archived."
-        );
-
         /// @dev Before minting, process any Organization hooks.
         _hook(BEFORE_MINT, abi.encode(_operator, _to, _id, _amount, _data));
 
