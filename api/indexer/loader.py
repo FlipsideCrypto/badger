@@ -166,6 +166,12 @@ class Loader(ListenerReference):
                 organization.description = data["description"]
                 organization.image_hash = data["image"].split("/ipfs/")[1]
 
+                if "archived" in data:
+                    try:
+                        organization.is_active = not bool(data["archived"])
+                    except ValueError:
+                        pass
+
         organization.save()
 
         return ("Organization details updated", event["args"])
@@ -219,6 +225,12 @@ class Loader(ListenerReference):
                 badge.name = data["name"]
                 badge.description = data["description"]
                 badge.image_hash = data["image"].split("/ipfs/")[1]
+
+                if "archived" in data:
+                    try:
+                        badge.is_active = not bool(data["archived"])
+                    except ValueError:
+                        pass
 
                 response = "Badge details updated"
 
