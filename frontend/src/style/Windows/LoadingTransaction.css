@@ -5,52 +5,41 @@
     bottom: 0;
     width: 100%;
     margin: 0;
-    z-index: 3;
+    z-index: 1000;
     overflow: hidden;
+    pointer-events: none;
 }
 
-.grow {
-    animation: grow .6s ease-in-out;
+.window .bubble {
     z-index: 2;
     position: relative;
-    width: 4000px;
-    height: 4000px;
     margin: 0;
     background: var(--blue);
     border-radius: 50%;
-    margin-left: -50%;
+    width: 5000px;
+    height: 5000px;
+    transform: scale(0);
+    transition: transform .6s ease-in-out;
 }
 
-.transaction.empty {
+.window.active .bubble {
+    transform: scale(1);
+}
+
+.window .transaction.empty {
     position: absolute;
     top: 0;
     left: 0; 
     width: 100%;
     height: 100%; 
     margin: 0;
-    z-index: 3;
+    z-index: 1001;
+    opacity: 0;
     background: transparent;
     box-sizing: border-box;
-    animation: fade .3s ease-in-out;
+    transition: opacity .3s ease-in-out;
 }
 
-@keyframes grow {
-    0% {
-        transform: scale(0);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-@keyframes fade {
-    0% {
-        opacity: 0;
-    }
-    50% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
+.window.active .transaction.empty {
+    opacity: 1;
 }

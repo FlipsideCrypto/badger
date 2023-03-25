@@ -15,7 +15,7 @@ const useTransactionWindow = () => {
 
     const { lastClick } = useMouse();
 
-    const isActive = transactionTip.status !== "";
+    const isTransaction = transactionTip.status !== "";
 
     const onStart = ({ title, body }) => {
         setTransactionTip({
@@ -50,7 +50,7 @@ const useTransactionWindow = () => {
 
     return {
         transactionTip,
-        isActive,
+        isTransaction,
         onStart,
         onSign,
         onSuccess,
