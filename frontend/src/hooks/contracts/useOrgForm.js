@@ -7,7 +7,7 @@ import {
     getBadgerAbi,
     useFees,
     useUser,
-    useTransactionWindow
+    useWindowMessage
 } from "@hooks";
 
 import { IPFS_GATEWAY_URL } from "@static";
@@ -74,7 +74,7 @@ const useOrgForm = (obj) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const transactionWindow = useTransactionWindow();
+    const { transactionWindow } = useWindowMessage();
 
     const openOrgFormTx = async ({
         onError = (e) => { console.error(e) },

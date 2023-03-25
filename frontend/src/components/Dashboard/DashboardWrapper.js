@@ -1,7 +1,7 @@
 import {
     OrgContextProvider,
     UserContextProvider,
-    ErrorContextProvider
+    WindowContextProvider
 } from '@contexts';
 
 import { Wallet, ActionBar } from '@components';
@@ -13,7 +13,7 @@ const DashboardWrapper = ({ children, paramAddress }) => {
     const focusedAddress = paramAddress !== undefined ? paramAddress : address;
 
     return (
-        <ErrorContextProvider>
+        <WindowContextProvider>
             <Wallet>
                 <OrgContextProvider paramAddress={focusedAddress}>
                     <UserContextProvider>
@@ -23,7 +23,7 @@ const DashboardWrapper = ({ children, paramAddress }) => {
                     </UserContextProvider>
                 </OrgContextProvider >
             </Wallet>
-        </ErrorContextProvider >
+        </WindowContextProvider >
     )
 }
 

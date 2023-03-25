@@ -1,6 +1,4 @@
-
-
-const Error = ({ error }) => {
+const ErrorWindow = () => {
     return (
         <div className="window">
             <div className="error">
@@ -12,4 +10,4 @@ const Error = ({ error }) => {
     )
 }
 
-export { Error }
+export { ErrorWindow }

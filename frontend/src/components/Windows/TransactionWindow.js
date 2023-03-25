@@ -2,7 +2,7 @@ import { useAuthentication, useUser } from "@hooks";
 
 import { ConnectButton, Empty, LoadingTransaction } from "@components";
 
-import { useTransactionWindow } from "@hooks";
+import { useWindowMessage } from "@hooks";
 
 const connectButton = <ConnectButton className="primary" />;
 
@@ -23,7 +23,7 @@ const LoadingEmpty = () => <Empty
     body="This may take a few seconds. If this takes longer than 10 seconds, please refresh the page."
 />
 
-const DashboardContent = ({ children }) => {
+const TransactionWindow = ({ children }) => {
     const {
         primaryChain,
         isConnected,
@@ -32,31 +32,20 @@ const DashboardContent = ({ children }) => {
 
     const { isLoaded } = useUser();
 
-    const { transactionTip, isActive: isTransaction } = useTransactionWindow();
+    const { transactionTip, isActive: isTransaction } = useWindowMessage().transactionWindow;
 
     return (
-        <div className="dashboard__contents">
-            <div className="dashboard__content">
-                { !isConnected && <ConnectWalletEmpty /> }
+        <>
+            { isTransaction && <LoadingTransaction
+                        title={transactionTip.title}
+                        body={transactionTip.body}
+                        txHash={transactionTip.hash}
+                        lastClick={transactionTip.lastClick}
+                    /> }
 
-                { isTransaction && <LoadingTransaction
-                    title={transactionTip.title}
-                    body={transactionTip.body}
-                    txHash={transactionTip.hash}
-                    lastClick={transactionTip.lastClick}
-                /> }
-
-                { isConnected && isWrongNetwork && <WrongNetworkEmpty primaryChain={primaryChain} /> }
-
-                { isConnected && !isWrongNetwork && !isLoaded && <LoadingEmpty /> }
-
-
-                { isLoaded && !isWrongNetwork && 
-                    children
-                }
-            </div>
-        </div>
+            { isLoaded && children}
+        </>
     )
 }
 
-export { DashboardContent }
+export { TransactionWindow }

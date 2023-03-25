@@ -8,7 +8,7 @@ import {
     getBadgerOrganizationAbi,
     useFees,
     useUser,
-    useTransactionWindow
+    useWindowMessage
 } from "@hooks";
 
 import { addressValidator } from "@utils";
@@ -63,7 +63,7 @@ const useTransferOwnership = ({ address }) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const transactionWindow = useTransactionWindow();
+    const { transactionWindow } = useWindowMessage();
 
     const openTransferOwnershipTransaction = async ({
         onError = (e) => { console.error(e) },

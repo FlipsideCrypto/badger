@@ -1,1 +1,2 @@
-export { LoadingTransaction } from './LoadingTransaction';
+export { TransactionWindow } from './TransactionWindow';
+export { ErrorWindow } from './ErrorWindow';

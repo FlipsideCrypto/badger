@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
-import { getBadgerOrganizationAbi, useFees, useUser, useTransactionWindow } from "@hooks";
+import { getBadgerOrganizationAbi, useFees, useUser, useWindowMessage } from "@hooks";
 
 import { addressValidator } from "@utils";
 
@@ -114,7 +114,7 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
         }
     });
 
-    const transactionWindow = useTransactionWindow();
+    const { transactionWindow } = useWindowMessage();
 
     const { writeAsync } = useContractWrite(config);
 

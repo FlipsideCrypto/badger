@@ -9,7 +9,7 @@ import {
     getTransferBoundAddress, 
     useFees, 
     useUser, 
-    useTransactionWindow 
+    useWindowMessage 
 } from "@hooks";
 
 const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, accountBound, address, slot }) => {
@@ -87,7 +87,7 @@ const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const transactionWindow = useTransactionWindow();
+    const { transactionWindow } = useWindowMessage();
 
     const openBadgeFormTransaction = async ({
         onError = (e) => { console.error(e) },

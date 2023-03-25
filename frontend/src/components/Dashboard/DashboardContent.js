@@ -1,6 +1,6 @@
 import { useAuthentication, useUser } from "@hooks";
 
-import { ConnectButton, Empty, LoadingTransaction } from "@components";
+import { ConnectButton, Empty, TransactionWindow } from "@components";
 
 import { useTransactionWindow } from "@hooks";
 
@@ -32,21 +32,12 @@ const DashboardContent = ({ children }) => {
 
     const { isLoaded } = useUser();
 
-    const { transactionTip, isActive: isTransaction } = useTransactionWindow();
-
-    console.log("isConnected", transactionTip, isTransaction)
-
     return (
         <div className="dashboard__contents">
             <div className="dashboard__content">
-                { !isConnected && <ConnectWalletEmpty /> }
+                <TransactionWindow />
 
-                { isTransaction && <LoadingTransaction
-                    title={transactionTip.title}
-                    body={transactionTip.body}
-                    txHash={transactionTip.hash}
-                    lastClick={transactionTip.lastClick}
-                /> }
+                { !isConnected && <ConnectWalletEmpty /> }
 
                 { isConnected && isWrongNetwork && <WrongNetworkEmpty primaryChain={primaryChain} /> }
 
