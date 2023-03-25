@@ -7,7 +7,8 @@ export {
     useBadgeForm,
     useManageHolders,
     useSetManagers,
-    useTransferOwnership
+    useTransferOwnership,
+    useTransactionTip,
 } from './contracts';
 
 export { useAuthentication } from './useAuthentication';

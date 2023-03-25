@@ -63,7 +63,7 @@ const useTransferOwnership = ({ address }) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const { window } = useWindowMessage();
+    const { transactionTip } = useWindowMessage();
 
     const openTransferOwnershipTransaction = async ({
         onError = (e) => { console.error(e) },
@@ -73,17 +73,19 @@ const useTransferOwnership = ({ address }) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
+
+            transactionTip.onStart({
+                title: "Waiting for confirmation...",
+                body: "Please confirm the transaction in your wallet to transfer your Organization. WARNING: Please make sure the address is correct as this is irreversible."
+            })
             
             const tx = await writeAsync();
             
             onLoading();
-            window.onLoading({
-                className: "transaction",
-                message: {
-                    title: "Mining transaction. This may take a few seconds.",
-                    body: "Badger hasn't detected your Organization transfer yet. Please give us a few minutes to check the chain.",
-                    txHash: tx.hash
-                }
+            transactionTip.onSign({
+                title: "Mining transaction. This may take a few seconds.",
+                body: "Badger hasn't detected your Organization transfer yet. Please give us a few minutes to check the chain.",
+                txHash: tx.hash
             })
 
             const receipt = await tx.wait();
@@ -96,10 +98,10 @@ const useTransferOwnership = ({ address }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
-            window.onSuccess();
+            transactionTip.onSuccess();
         } catch (e) {
             onError(e);
-            window.onError(e);
+            transactionTip.onError(e);
         }
     }
 

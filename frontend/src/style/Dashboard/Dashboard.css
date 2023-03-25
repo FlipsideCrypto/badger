@@ -4,7 +4,7 @@
     position: relative;
 }
 
-.dashboardContent {
+.dashboard__content {
     grid-column: 1 / span 4;
     margin-inline: 20px;
 }

@@ -3,7 +3,7 @@ export { ActionBar, FormActionBar } from './Bar';
 export { Button, ActionButton, ConnectButton, LogoutButton } from './Button';
 export { Card, ErrorCard, OrgCard, StoryCard } from './Card';
 export { OrgDangerZone, BadgeDangerZone } from './DangerZone';
-export { Dashboard, DashboardLoader, DashboardWrapper, DashboardWindow } from './Dashboard';
+export { DashboardLoader, DashboardWrapper, DashboardContent } from './Dashboard';
 export { BadgeManagementDrawer } from './Drawer';
 export { Empty } from './Empty/Empty';
 export { Checkbox, Input, InputAddress, InputListCSV, InputListKeyValue, InputListAddressAmountCSV, InputAmountDelete, Select, Switch, FormDrawer, FormReducer, initialBadgeForm, initialOrgForm } from './Form';

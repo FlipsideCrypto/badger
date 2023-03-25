@@ -78,13 +78,10 @@ const BadgeForm = ({ isEdit = false }) => {
         isPrepared,
         isLoading
     } = useBadgeForm({
-        obj: {
-            ...obj,
-            imageHash: imageHash,
-            uriHash: metadataHash,
-            accountBound: isAccountBound,
-            tokenId
-        }
+        uriHash: metadataHash,
+        accountBound: isAccountBound,
+        isNew: !isEdit,
+        tokenId
     });
 
     const { pinImage, pinMetadata } = useIPFS({

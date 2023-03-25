@@ -45,6 +45,8 @@ const useOrgForm = (obj) => {
 
     const isReady = Badger && fees && !!address;
 
+    const isCreate = functionName === "createOrganization";
+
     const args = getOrgFormTxArgs({
         functionName,
         address,
@@ -72,7 +74,7 @@ const useOrgForm = (obj) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const { window } = useWindowMessage();
+    const { transactionTip } = useWindowMessage();
 
     const openOrgFormTx = async ({
         onError = (e) => { console.error(e) },
@@ -82,18 +84,20 @@ const useOrgForm = (obj) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
-            window.onLoading({
-                className: "transaction",
-                message: {
-                    title: "Mining transaction. This may take a few seconds.",
-                    body: "Badger hasn't detected your Organization changes yet. Please give us a few minutes to check the chain.",
-                    txHash: "0x"
-                }
+
+            transactionTip.onStart({
+                title: "Waiting for confirmation...",
+                body: `Please confirm the transaction in your wallet to ${isCreate ? "create your Organization!" : "edit your Organization."}.`
             })
             
             const tx = await writeAsync()
             
             onLoading();
+            transactionTip.onSign({
+                title: "Mining transaction. This may take a few seconds.",
+                body: `Badger hasn't detected your ${isCreate ? "new Organization" : "Organization changes"} yet. Please give us a few minutes to check the chain.`,
+                hash: tx.hash
+            })
 
             const receipt = await tx.wait()
 
@@ -103,10 +107,11 @@ const useOrgForm = (obj) => {
             setIsSuccess(true);
 
             onSuccess({ config, chain, tx, receipt })
-            window.onSuccess();
+            transactionTip.onSuccess();
         } catch (e) {
             onError(e);
-            window.onError();
+            console.error(e);
+            transactionTip.onError();
         }
     }
 

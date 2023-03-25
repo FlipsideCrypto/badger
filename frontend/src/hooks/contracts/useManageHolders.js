@@ -114,7 +114,7 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
         }
     });
 
-    const { window } = useWindowMessage();
+    const { transactionTip } = useWindowMessage();
 
     const { writeAsync } = useContractWrite(config);
 
@@ -126,18 +126,26 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
+
+            const isMint = functionName === "mint" || functionName === "mintBatch";
             
+            const action = functionName === "multicall" ? "make the Badge balance changes" :
+                isMint ? "mint the Badges to the Holders" : "revoke the Badges from the Holders"
+
+            transactionTip.onStart({ 
+                title: "Waiting for confirmation...",
+                body: `Please confirm the transaction in your wallet to ${action}.`
+            })
+
             const tx = await writeAsync();
 
+            transactionTip.onSign({
+                title: "Mining transaction. This may take a few seconds.",
+                body: "Badger hasn't detected your Badge balance changes yet. Please give us a few minutes to check the chain.",
+                hash: tx.hash
+            });
+
             onLoading();
-            window.onLoading({ 
-                className: "transaction",
-                message: {
-                    title: "Mining transaction. This may take a few seconds.",
-                    body: "Badger hasn't detected your Holder changes yet. Please give us a few minutes to check the chain.",
-                    txHash: tx.hash
-                }
-            })
 
             const receipt = await tx.wait();
 
@@ -149,11 +157,11 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
-            window.onSuccess();
+            transactionTip.onSuccess();
 
         } catch (e) {
             onError(e);
-            window.onError();
+            transactionTip.onError();
         }
     }
 

@@ -102,7 +102,7 @@ const useSetManagers = ({ obj }) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const { window } = useWindowMessage();
+    const { transactionTip } = useWindowMessage();
 
     const openManagerTransaction = async ({
         onError = (e) => { console.error(e) },
@@ -112,17 +112,19 @@ const useSetManagers = ({ obj }) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
+
+            transactionTip.onStart({
+                title: "Waiting for confirmation...",
+                body: `Please confirm the transaction in your wallet to change your ${obj.tokenId ? "Badge" : "Organization"} Managers.`
+            })
             
             const tx = await writeAsync();
             
             onLoading();
-            window.onLoading({
-                className: "transaction",
-                message: {
-                    title: "Mining transaction. This may take a few seconds.",
-                    body: "Badger hasn't detected your Manager changes yet. Please give us a few minutes to check the chain.",
-                    txHash: tx.hash
-                }
+            transactionTip.onSign({
+                title: "Mining transaction. This may take a few seconds.",
+                body: "Badger hasn't detected your Manager changes yet. Please give us a few minutes to check the chain.",
+                hash: tx.hash
             })
 
             const receipt = await tx.wait();
@@ -135,10 +137,10 @@ const useSetManagers = ({ obj }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
-            window.onSuccess();
+            transactionTip.onSuccess();
         } catch (e) {
             onError(e);
-            window.onError();
+            transactionTip.onError();
         }
     }
 

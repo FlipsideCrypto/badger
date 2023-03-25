@@ -38,7 +38,7 @@ const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, accountBound, addr
     return { functionName, args };
 }
 
-const useBadgeForm = ({ obj }) => {
+const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
     const fees = useFees();
 
     const { orgAddress } = useParams();
@@ -54,9 +54,9 @@ const useBadgeForm = ({ obj }) => {
 
     const { functionName, args } = getBadgeFormTxArgs({ 
         organization: BadgerOrg,
-        uriHash: obj.uriHash,
-        tokenId: obj.tokenId,
-        accountBound: obj.accountBound,
+        uriHash: uriHash,
+        tokenId: tokenId,
+        accountBound: accountBound,
         address: transferBoundAddress,
         slot: "0x844bb459abe62f824043e42caa262ad6859731fc48abd8966db11d779c0fe669" // TODO: Don't hardcode this (BEFORE_TRANSFER bytes32 slot)
     });
@@ -81,7 +81,7 @@ const useBadgeForm = ({ obj }) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const { window } = useWindowMessage();
+    const { transactionTip } = useWindowMessage();
 
     const openBadgeFormTransaction = async ({
         onError = (e) => { console.error(e) },
@@ -92,16 +92,18 @@ const useBadgeForm = ({ obj }) => {
             setIsLoading(true);
             setIsSuccess(false);
             
+            transactionTip.onStart({
+                title: "Waiting for confirmation...",
+                body: `Please confirm the transaction in your wallet to ${isNew ? "create" : "edit"} your Badge.`
+            })
+            
             const tx = await writeAsync();
             
             onLoading();
-            window.onLoading({ 
-                className: "transaction",
-                message: {
-                    title: "Mining transaction. This may take a few seconds.",
-                    body: "Badger hasn't detected your Badge changes yet. Please give us a few minutes to check the chain.",
-                    txHash: tx.hash
-                }
+            transactionTip.onSign({ 
+                title: "Mining transaction. This may take a few seconds.",
+                body: "Badger hasn't detected your Badge changes yet. Please give us a few minutes to check the chain.",
+                txHash: tx.hash
             })
             
             const receipt = await tx.wait();
@@ -114,10 +116,10 @@ const useBadgeForm = ({ obj }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
-            window.onSuccess({ status: '' });
+            transactionTip.onSuccess({ status: '' });
         } catch (e) {
             onError(e);
-            window.onError();
+            transactionTip.onError();
         }
     }
 

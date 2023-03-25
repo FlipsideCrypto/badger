@@ -7,7 +7,7 @@ import "@style/Empty/Empty.css";
 const Empty = ({ title, body, button, url, className }) => {
     return (
         <div className={"empty " + className}>
-            <div className="dashboardContent">
+            <div className="dashboard__content">
                 <h1>{title}</h1>
                 <p>{body}</p>
 
