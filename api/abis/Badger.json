@@ -1,7 +1,7 @@
 [
   "constructor(address)",
   "event OrganizationCreated(address indexed,address indexed,uint256 indexed)",
-  "function createOrganization(tuple(address,string,string,string,string)) returns (address, uint256)",
+  "function createOrganization(tuple(address,string,string)) returns (address, uint256)",
   "function getOrganization(uint256) view returns (address)",
   "function implementation() view returns (address)",
   "function organizations() view returns (uint256)",

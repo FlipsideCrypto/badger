@@ -11,7 +11,7 @@ import {
 
 import { IPFS_GATEWAY_URL } from "@static";
 
-const getOrgFormTxArgs = ({ functionName, address, name, symbol, imageHash, contractHash }) => {
+const getOrgFormTxArgs = ({ functionName, address, imageHash, contractHash }) => {
     if (functionName === "setOrganizationURI") {
         return [IPFS_GATEWAY_URL + contractHash]
     } else if (functionName === "createOrganization") {
@@ -19,8 +19,6 @@ const getOrgFormTxArgs = ({ functionName, address, name, symbol, imageHash, cont
             deployer: address,
             uri: IPFS_GATEWAY_URL + imageHash,
             organizationURI: IPFS_GATEWAY_URL + contractHash,
-            name,
-            symbol
         }
 
         return [organizationStruct]
@@ -47,8 +45,6 @@ const useOrgForm = (obj) => {
     const args = getOrgFormTxArgs({
         functionName,
         address,
-        name: obj.name,
-        symbol: obj.symbol,
         imageHash: obj.imageHash,
         contractHash: obj.contractHash
     });
