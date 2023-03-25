@@ -27,10 +27,11 @@ class Loader(ListenerReference):
             "TransferSingle": self.handle_transfer_single,
             "TransferBatch": self.handle_transfer_batch,
             "URI": self.handle_uri,
-            # Manager and hook events
+            # Manager events
             "ManagerUpdated": self.handle_manager_updated,
-            "HookUpdated": self.handle_hook_updated,
             "ManagerConfigured": self.handle_manager_configured,
+            # Hook events
+            "HookUpdated": self.handle_hook_updated,
             "HookConfigured": self.handle_hook_configured,
         }
 
