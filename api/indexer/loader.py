@@ -166,9 +166,6 @@ class Loader(ListenerReference):
                 organization.description = data["description"]
                 organization.image_hash = data["image"].split("/ipfs/")[1]
 
-        if not organization.name:
-            organization.name = organization_contract.functions.name().call()
-
         organization.save()
 
         return ("Organization details updated", event["args"])
