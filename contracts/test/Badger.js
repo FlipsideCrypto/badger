@@ -1,6 +1,6 @@
 // badger: 0x8e7b0b1d
 // org: 0x7a3851dc
-// org logic: 0x47c40485
+// org logic: 0xd2779f52
 // badger configured: 0x56dbdf14
 // hook: 0x6847c1d5
 // manager: 0x56dbdf14
@@ -278,42 +278,6 @@ describe("Badger", function () {
                 .to.be.revertedWith("BadgerOrganizationLogic::onlyBadgeManager: Only Managers can call this.")
         });
 
-        it("call: setArchived(true)", async function () {
-            const { organization } = await loadFixture(deployNewOrganization);
-
-
-            await expect(organization['setArchived(bool)'](true))
-                .to.emit(organization, "OrganizationArchived").withArgs(true)
-
-            await expect(organization['setArchived(bool)'](false))
-                .to.emit(organization, "OrganizationArchived").withArgs(false)
-        });
-
-        it("revert: setArchived(true) missing permission", async function () {
-            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
-
-            await expect(organization.connect(otherAccount)['setArchived(bool)'](true))
-                .to.be.revertedWith("BadgerOrganizationLogic::onlyOrganizationManager: Only the Owner or Organization Manager can call this.")
-        });
-
-        it("call: setArchived(0, true)", async function () {
-            const { organization } = await loadFixture(deployNewOrganization);
-
-
-            await expect(organization['setArchived(uint256,bool)'](0, true))
-                .to.emit(organization, "BadgeArchived").withArgs(0, true)
-
-            await expect(organization['setArchived(uint256,bool)'](0, false))
-                .to.emit(organization, "BadgeArchived").withArgs(0, false)
-        });
-
-        it("revert: setArchived(0, true) missing permission", async function () {
-            const { organization, otherAccount } = await loadFixture(deployNewOrganization);
-
-            await expect(organization.connect(otherAccount)['setArchived(uint256,bool)'](0, true))
-                .to.be.revertedWith("BadgerOrganizationLogic::onlyBadgeManager: Only Managers can call this.")
-        });
-
         it("revert: setManagers(0, [other], [true]) missing permission", async function () {
             const { organization, otherAccount } = await loadFixture(deployNewOrganization);
 
@@ -587,11 +551,11 @@ describe("Badger", function () {
         });
 
         // supportsInterface
-        it("call: supportsInterface(0x47c40485)", async function () {
+        it("call: supportsInterface(0xd2779f52)", async function () {
             const { organization } = await loadFixture(deployNewOrganization);
 
             expect(await organization.supportsInterface("0x01ffc9a7")).to.equal(true);
-            expect(await organization.supportsInterface("0x47c40485")).to.equal(true);
+            expect(await organization.supportsInterface("0xd2779f52")).to.equal(true);
             expect(await organization.supportsInterface("0x7a3851dc")).to.equal(true);
         });
 
