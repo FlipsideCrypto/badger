@@ -34,8 +34,6 @@ const DashboardContent = ({ children }) => {
 
     const { transactionTip, isActive: isTransaction } = useTransactionWindow();
 
-    console.log("isConnected", transactionTip, isTransaction)
-
     return (
         <div className="dashboard__contents">
             <div className="dashboard__content">
@@ -52,7 +50,10 @@ const DashboardContent = ({ children }) => {
 
                 { isConnected && !isWrongNetwork && !isLoaded && <LoadingEmpty /> }
 
-                { isLoaded && !isWrongNetwork && children }
+
+                { isLoaded && !isWrongNetwork && 
+                    children
+                }
             </div>
         </div>
     )

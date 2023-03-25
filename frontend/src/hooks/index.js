@@ -8,7 +8,7 @@ export {
     useManageHolders,
     useSetManagers,
     useTransferOwnership,
-    useTransactionTip,
+    useTransactionWindow,
 } from './contracts';
 
 export { useAuthentication } from './useAuthentication';
@@ -25,5 +25,5 @@ export { useStories, useStory } from './useStories';
 export { useTabActive } from './useTabActive';
 export { useUser } from './useUser';
 export { useBadgeArt } from './useBadgeArt';
-export { useWindowMessage } from './useWindowMessage';
+export { useErrorMessage } from './useErrorMessage';
 export { useMouse } from './useMouse';

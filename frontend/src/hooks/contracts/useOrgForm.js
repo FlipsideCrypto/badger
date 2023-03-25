@@ -7,7 +7,7 @@ import {
     getBadgerAbi,
     useFees,
     useUser,
-    useWindowMessage
+    useTransactionWindow
 } from "@hooks";
 
 import { IPFS_GATEWAY_URL } from "@static";
@@ -74,7 +74,7 @@ const useOrgForm = (obj) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const { transactionTip } = useWindowMessage();
+    const transactionWindow = useTransactionWindow();
 
     const openOrgFormTx = async ({
         onError = (e) => { console.error(e) },
@@ -85,7 +85,7 @@ const useOrgForm = (obj) => {
             setIsLoading(true);
             setIsSuccess(false);
 
-            transactionTip.onStart({
+            transactionWindow.onStart({
                 title: "Waiting for confirmation...",
                 body: `Please confirm the transaction in your wallet to ${isCreate ? "create your Organization!" : "edit your Organization."}.`
             })
@@ -93,7 +93,7 @@ const useOrgForm = (obj) => {
             const tx = await writeAsync()
             
             onLoading();
-            transactionTip.onSign({
+            transactionWindow.onSign({
                 title: "Mining transaction. This may take a few seconds.",
                 body: `Badger hasn't detected your ${isCreate ? "new Organization" : "Organization changes"} yet. Please give us a few minutes to check the chain.`,
                 hash: tx.hash
@@ -107,11 +107,11 @@ const useOrgForm = (obj) => {
             setIsSuccess(true);
 
             onSuccess({ config, chain, tx, receipt })
-            transactionTip.onSuccess();
+            transactionWindow.onSuccess();
         } catch (e) {
             onError(e);
             console.error(e);
-            transactionTip.onError();
+            transactionWindow.onError();
         }
     }
 

@@ -9,4 +9,4 @@ export { useBadgeForm } from './useBadgeForm';
 export { useManageHolders } from './useManageHolders';
 export { useSetManagers } from './useSetManagers';
 export { useTransferOwnership } from './useTransferOwnership';
-export { useTransactionTip } from './useTransactionTip';
+export { useTransactionWindow } from './useTransactionWindow';

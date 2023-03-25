@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
-import { getBadgerOrganizationAbi, useFees, useUser, useWindowMessage } from "@hooks";
+import { getBadgerOrganizationAbi, useFees, useUser, useTransactionWindow } from "@hooks";
 
 import { addressValidator } from "@utils";
 
@@ -114,7 +114,7 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
         }
     });
 
-    const { transactionTip } = useWindowMessage();
+    const transactionWindow = useTransactionWindow();
 
     const { writeAsync } = useContractWrite(config);
 
@@ -132,14 +132,14 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
             const action = functionName === "multicall" ? "make the Badge balance changes" :
                 isMint ? "mint the Badges to the Holders" : "revoke the Badges from the Holders"
 
-            transactionTip.onStart({ 
+            transactionWindow.onStart({ 
                 title: "Waiting for confirmation...",
                 body: `Please confirm the transaction in your wallet to ${action}.`
             })
 
             const tx = await writeAsync();
 
-            transactionTip.onSign({
+            transactionWindow.onSign({
                 title: "Mining transaction. This may take a few seconds.",
                 body: "Badger hasn't detected your Badge balance changes yet. Please give us a few minutes to check the chain.",
                 hash: tx.hash
@@ -157,11 +157,11 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
-            transactionTip.onSuccess();
+            transactionWindow.onSuccess();
 
         } catch (e) {
             onError(e);
-            transactionTip.onError();
+            transactionWindow.onError();
         }
     }
 

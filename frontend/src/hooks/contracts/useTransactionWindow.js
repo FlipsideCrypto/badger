@@ -2,23 +2,23 @@ import { useState } from 'react';
 
 import { useMouse } from "@hooks";
 
-const initialState = {
-    status: "",
-    title: "",
-    body: "",
-    hash: "",
-    lastClick: {}
-}
+const useTransactionWindow = () => {
+    const initialState = {
+        status: "",
+        title: "",
+        body: "",
+        hash: "",
+        lastClick: {}
+    }
 
-const useTransactionTip = () => {
-    const [state, setState] = useState(initialState);
+    const [transactionTip, setTransactionTip] = useState(initialState);
 
     const { lastClick } = useMouse();
 
-    const isActive = state.status !== '';
+    const isActive = transactionTip.status !== "";
 
     const onStart = ({ title, body }) => {
-        setState({
+        setTransactionTip({
             status: 'loading',
             title,
             body,
@@ -27,7 +27,7 @@ const useTransactionTip = () => {
     }
 
     const onSign = ({ title, body, hash }) => {
-        setState(state => ({
+        setTransactionTip(state => ({
             ...state,
             status: 'signed',
             title,
@@ -37,19 +37,19 @@ const useTransactionTip = () => {
     }
 
     const onSuccess = () => {
-        setState(initialState); // Empty for now. Success message when we have it.
+        setTransactionTip(initialState); // Empty for now. Success message when we have it.
     }
 
     const onError = () => {
-        setState(initialState);
+        setTransactionTip(initialState);
     }
 
     const onClose = () => {
-        setState(initialState);
+        setTransactionTip(initialState);
     }
 
     return {
-        state,
+        transactionTip,
         isActive,
         onStart,
         onSign,
@@ -59,4 +59,4 @@ const useTransactionTip = () => {
     }
 }
 
-export { useTransactionTip }
+export { useTransactionWindow }

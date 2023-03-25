@@ -8,7 +8,7 @@ import {
     getBadgerOrganizationAbi,
     useFees,
     useUser,
-    useWindowMessage
+    useTransactionWindow
 } from "@hooks";
 
 import { addressValidator } from "@utils";
@@ -63,7 +63,7 @@ const useTransferOwnership = ({ address }) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const { transactionTip } = useWindowMessage();
+    const transactionWindow = useTransactionWindow();
 
     const openTransferOwnershipTransaction = async ({
         onError = (e) => { console.error(e) },
@@ -74,7 +74,7 @@ const useTransferOwnership = ({ address }) => {
             setIsLoading(true);
             setIsSuccess(false);
 
-            transactionTip.onStart({
+            transactionWindow.onStart({
                 title: "Waiting for confirmation...",
                 body: "Please confirm the transaction in your wallet to transfer your Organization. WARNING: Please make sure the address is correct as this is irreversible."
             })
@@ -82,7 +82,7 @@ const useTransferOwnership = ({ address }) => {
             const tx = await writeAsync();
             
             onLoading();
-            transactionTip.onSign({
+            transactionWindow.onSign({
                 title: "Mining transaction. This may take a few seconds.",
                 body: "Badger hasn't detected your Organization transfer yet. Please give us a few minutes to check the chain.",
                 txHash: tx.hash
@@ -98,10 +98,10 @@ const useTransferOwnership = ({ address }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
-            transactionTip.onSuccess();
+            transactionWindow.onSuccess();
         } catch (e) {
             onError(e);
-            transactionTip.onError(e);
+            transactionWindow.onError(e);
         }
     }
 

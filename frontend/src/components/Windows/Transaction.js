@@ -12,8 +12,8 @@ const LoadingTransaction = ({ title, body, txHash, lastClick }) => {
     return (
         <div className="window">
             {lastClick && <div className="grow" style={{ 
-                top: lastClick.pageY, // Circle is 4k
-                left: lastClick.pageX 
+                top: lastClick.pageY - 2000, // Circle is 4k
+                left: lastClick.pageX - 2000 
             }}/>}
             <Empty
                 className="transaction"

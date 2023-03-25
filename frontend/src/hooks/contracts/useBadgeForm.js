@@ -4,7 +4,13 @@ import { useParams } from "react-router-dom";
 import { usePrepareContractWrite, useContractWrite } from "wagmi";
 import { ethers } from "ethers";
 
-import { getBadgerOrganizationAbi, getTransferBoundAddress, useFees, useUser, useWindowMessage } from "@hooks";
+import { 
+    getBadgerOrganizationAbi, 
+    getTransferBoundAddress, 
+    useFees, 
+    useUser, 
+    useTransactionWindow 
+} from "@hooks";
 
 const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, accountBound, address, slot }) => {
     if (!uriHash || !address || !slot || tokenId === null) 
@@ -81,7 +87,7 @@ const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const { transactionTip } = useWindowMessage();
+    const transactionWindow = useTransactionWindow();
 
     const openBadgeFormTransaction = async ({
         onError = (e) => { console.error(e) },
@@ -92,7 +98,7 @@ const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
             setIsLoading(true);
             setIsSuccess(false);
             
-            transactionTip.onStart({
+            transactionWindow.onStart({
                 title: "Waiting for confirmation...",
                 body: `Please confirm the transaction in your wallet to ${isNew ? "create" : "edit"} your Badge.`
             })
@@ -100,7 +106,7 @@ const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
             const tx = await writeAsync();
             
             onLoading();
-            transactionTip.onSign({ 
+            transactionWindow.onSign({ 
                 title: "Mining transaction. This may take a few seconds.",
                 body: "Badger hasn't detected your Badge changes yet. Please give us a few minutes to check the chain.",
                 txHash: tx.hash
@@ -116,10 +122,10 @@ const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
-            transactionTip.onSuccess({ status: '' });
+            transactionWindow.onSuccess({ status: '' });
         } catch (e) {
             onError(e);
-            transactionTip.onError();
+            transactionWindow.onError();
         }
     }
 

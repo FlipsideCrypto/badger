@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { usePrepareContractWrite, useContractWrite } from "wagmi";
 import { ethers } from "ethers";
 
-import { getBadgerOrganizationAbi, useFees, useUser, useWindowMessage } from "@hooks";
+import { getBadgerOrganizationAbi, useFees, useUser, useTransactionWindow } from "@hooks";
 
 import { addressValidator } from "@utils";
 
@@ -102,7 +102,7 @@ const useSetManagers = ({ obj }) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const { transactionTip } = useWindowMessage();
+    const transactionWindow = useTransactionWindow();
 
     const openManagerTransaction = async ({
         onError = (e) => { console.error(e) },
@@ -113,7 +113,7 @@ const useSetManagers = ({ obj }) => {
             setIsLoading(true);
             setIsSuccess(false);
 
-            transactionTip.onStart({
+            transactionWindow.onStart({
                 title: "Waiting for confirmation...",
                 body: `Please confirm the transaction in your wallet to change your ${obj.tokenId ? "Badge" : "Organization"} Managers.`
             })
@@ -121,7 +121,7 @@ const useSetManagers = ({ obj }) => {
             const tx = await writeAsync();
             
             onLoading();
-            transactionTip.onSign({
+            transactionWindow.onSign({
                 title: "Mining transaction. This may take a few seconds.",
                 body: "Badger hasn't detected your Manager changes yet. Please give us a few minutes to check the chain.",
                 hash: tx.hash
@@ -137,10 +137,10 @@ const useSetManagers = ({ obj }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
-            transactionTip.onSuccess();
+            transactionWindow.onSuccess();
         } catch (e) {
             onError(e);
-            transactionTip.onError();
+            transactionWindow.onError();
         }
     }
 
