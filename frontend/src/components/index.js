@@ -25,5 +25,4 @@ export { Wallet } from './Wallet';
 export { Metrics } from './Metrics/Metrics';
 export { LandingHero } from './Hero/LandingHero';
 export { Accordion } from './Accordion/Accordion';
-export { LoadingTransaction } from './Transaction/LoadingTransaction';
 export * from "./Windows";

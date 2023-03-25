@@ -1,6 +1,6 @@
-import { useAuthentication, useUser } from "@hooks";
+import { useUser } from "@hooks";
 
-import { ConnectButton, ActionButton, Empty, LoadingTransaction } from "@components";
+import { ActionButton, Empty } from "@components";
 
 import { useWindowMessage, useDebounce } from "@hooks";
 
@@ -23,7 +23,7 @@ import { useWindowMessage, useDebounce } from "@hooks";
 //     body="This may take a few seconds. If this takes longer than 10 seconds, please refresh the page."
 // />
 
-import "@style/Windows/LoadingTransaction.css";
+import "@style/Windows/TransactionWindow.css";
 
 const TransactionWindow = ({ children }) => {
     const { chain, isLoaded } = useUser();
@@ -41,6 +41,7 @@ const TransactionWindow = ({ children }) => {
                     top: transactionTip.lastClick.pageY - 2500, // Circle is 5k
                     left: transactionTip.lastClick.pageX - 2500
                 }}/>
+
                 <Empty
                     className="transaction"
                     title={title}
