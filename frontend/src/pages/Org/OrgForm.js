@@ -28,10 +28,6 @@ import "@style/pages/OrgForm.css";
 
 // TODO: OrgDangerZone is a landmine that I am not yet ready to mount.
 
-const getSymbol = (name) => {
-    return name.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().substring(0, 5);
-}
-
 const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) => {
     const imageInput = useRef();
 
@@ -76,7 +72,7 @@ const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) 
 
     const isDebouncing = name !== obj.name || description !== obj.description;
 
-    const isDisabled = isDebouncing || !(name && description && activeImage && obj.symbol);
+    const isDisabled = isDebouncing || !(name && description && activeImage);
 
     const actions = [{
         text: "Create organization",
@@ -101,7 +97,7 @@ const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) 
     }]
 
     const onNameChange = (e) => {
-        setObj({ ...obj, name: e.target.value, symbol: getSymbol(e.target.value) })
+        setObj({ ...obj, name: e.target.value })
     }
 
     const onDescriptionChange = (e) => {

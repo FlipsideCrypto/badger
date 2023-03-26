@@ -53,16 +53,6 @@
                         "internalType": "string",
                         "name": "organizationURI",
                         "type": "string"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "name",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "symbol",
-                        "type": "string"
                     }
                 ],
                 "internalType": "struct IBadgerOrganizationStruct.Organization",
