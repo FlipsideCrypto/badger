@@ -92,8 +92,12 @@ async function postIPFSMetadata(props) {
 }
 
 async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
-    const url = `${API_URL}/art/pfp/${orgName}/${orgAddress}/${badgeName}/`
-    const filename = `generated_${badgeName.replace(" ", "_")}_${badgeId}.svg`;
+    const encodedOrgName = encodeURIComponent(orgName);
+    const encodedOrgAddress = encodeURIComponent(orgAddress);
+    const encodedBadgeName = encodeURIComponent(badgeName);
+
+    const url = `${API_URL}/art/pfp/${encodedOrgName}/${encodedOrgAddress}/${encodedBadgeName}/`
+    const filename = `generated_${encodedBadgeName}_${badgeId}.svg`;
 
     let response;
     try {
@@ -125,8 +129,12 @@ async function getBadgeImage(orgName, orgAddress, badgeId, badgeName) {
 
 async function getPFPImage(char, address) {
     let response;
+
+    const encodedChar = encodeURIComponent(char);
+    const encodedAddress = encodeURIComponent(address);
+
     try {
-        await fetch(`${API_URL}/art/pfp/${char}/${address}/`, {
+        await fetch(`${API_URL}/art/pfp/${encodedChar}/${encodedAddress}/`, {
             method: "GET",
             mode: "cors",
             headers: {
@@ -139,7 +147,7 @@ async function getPFPImage(char, address) {
                 if (!data) throw new Error(
                     "PFP image could not be created."
                 );
-                response = getFileFromBase64(data.image, `generated_${char}_${address}.svg`);
+                response = getFileFromBase64(data.image, `generated_${encodedChar}_${encodedAddress}.svg`);
             })
             .catch(err => {
                 throw new Error(err);
