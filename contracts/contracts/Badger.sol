@@ -60,7 +60,9 @@ contract Badger is IBadger, ERC165, Context {
     /**
      * See {IBadger-createOrganization}.
      */
-    function createOrganization(Organization calldata _organizationStruct)
+    function createOrganization(
+        Organization calldata _organizationStruct
+    )
         public
         virtual
         returns (BadgerOrganization badgerOrganization, uint256 organizationId)
@@ -96,13 +98,9 @@ contract Badger is IBadger, ERC165, Context {
     /**
      * See {IBadger-getOrganization}.
      */
-    function getOrganization(uint256 _organizationId)
-        public
-        view
-        virtual
-        override
-        returns (BadgerOrganization)
-    {
+    function getOrganization(
+        uint256 _organizationId
+    ) public view virtual override returns (BadgerOrganization) {
         return
             BadgerOrganization(
                 implementation.predictDeterministicAddress(
@@ -115,13 +113,9 @@ contract Badger is IBadger, ERC165, Context {
     /**
      * See {ERC1155-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override returns (bool) {
         return
             interfaceId == type(IBadger).interfaceId ||
             super.supportsInterface(interfaceId);
@@ -131,11 +125,9 @@ contract Badger is IBadger, ERC165, Context {
     ///                INTERNAL GETTERS                  ///
     ////////////////////////////////////////////////////////
 
-    function _organizationHash(uint256 _organizationId)
-        internal
-        pure
-        returns (bytes32)
-    {
+    function _organizationHash(
+        uint256 _organizationId
+    ) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(_organizationId));
     }
 }

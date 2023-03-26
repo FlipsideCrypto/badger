@@ -17,7 +17,6 @@ class Organization(models.Model):
     )
 
     name = models.CharField(max_length=128, blank=True, null=True)
-    symbol = models.CharField(max_length=52, blank=True, null=True)
     description = models.TextField(max_length=4000, blank=True, null=True)
 
     owner = models.ForeignKey('siwe_auth.Wallet', on_delete=models.CASCADE, null=True)
