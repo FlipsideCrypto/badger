@@ -46,25 +46,22 @@ const MessageWindow = ({ children }) => {
     } = useUser();
 
     const { 
-        transactionWindow, 
-        errorWindow, 
+        transaction, 
+        isTransaction
     } = useWindow();
-
-    const { transactionTip, isTransaction } = transactionWindow;
     
-    const explorer = chain && chain.blockExplorers && `${chain.blockExplorers.default}/tx/${transactionTip.hash}`;
+    const explorer = chain && chain.blockExplorers && `${chain.blockExplorers.default}/tx/${transaction.hash}`;
 
-    const centerPoints = [
-        transactionTip.lastClick.pageX || window.innerWidth / 2, 
-        transactionTip.lastClick.pageY || window.innerHeight / 2
-    ];
+    const centerPoints = transaction.lastClick ? 
+        [transaction.lastClick.pageX, transaction.lastClick.pageY] :
+        [window.innerWidth / 2, window.innerHeight / 2];
 
     const isEmpty = isConnected && !isWrongNetwork && !isLoaded;
 
     const isSwitchNetwork = isLoaded && isConnected && isWrongNetwork; // TODO: Do we want to always show this or just when transaction input starts?
 
     const pending = useDebounce({
-        transactionTip,
+        transaction,
         showTransaction: isTransaction,
         showConnect: !isConnected,
         showEmpty: isEmpty,
@@ -82,7 +79,7 @@ const MessageWindow = ({ children }) => {
                 }}/>
 
                 <div className="window message__content">
-                    { pending.showTransaction && <LoadingTransaction tip={pending.transactionTip} explorer={explorer} /> }
+                    { pending.showTransaction && <LoadingTransaction tip={pending.transaction} explorer={explorer} /> }
 
                     { pending.showConnect && <ConnectWalletEmpty /> }
 

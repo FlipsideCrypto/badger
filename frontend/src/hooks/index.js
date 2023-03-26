@@ -25,5 +25,5 @@ export { useStories, useStory } from './useStories';
 export { useTabActive } from './useTabActive';
 export { useUser } from './useUser';
 export { useBadgeArt } from './useBadgeArt';
-export { useMouse } from './useMouse';
+export { useClickEvent } from './useClickEvent';
 export { useWindow } from './useWindow';

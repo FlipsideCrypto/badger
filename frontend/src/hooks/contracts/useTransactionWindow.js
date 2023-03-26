@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { useMouse } from "@hooks";
+import { useClickEvent } from "@hooks";
 
 const useTransactionWindow = () => {
     const initialState = {
@@ -13,7 +13,7 @@ const useTransactionWindow = () => {
 
     const [transactionTip, setTransactionTip] = useState(initialState);
 
-    const { lastClick } = useMouse();
+    const { lastClick } = useClickEvent();
 
     const isTransaction = transactionTip.status !== "";
 

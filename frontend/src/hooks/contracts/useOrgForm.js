@@ -7,7 +7,8 @@ import {
     getBadgerAbi,
     useFees,
     useUser,
-    useWindow
+    useWindow,
+    useClickEvent
 } from "@hooks";
 
 import { IPFS_GATEWAY_URL } from "@static";
@@ -72,6 +73,8 @@ const useOrgForm = (obj) => {
 
     const { transactionWindow } = useWindow();
 
+    const { lastClick } = useClickEvent();
+
     const openOrgFormTx = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
@@ -81,9 +84,12 @@ const useOrgForm = (obj) => {
             setIsLoading(true);
             setIsSuccess(false);
 
+            console.log('lastClick', lastClick)
+
             transactionWindow.onStart({
                 title: "Waiting for confirmation...",
-                body: `Please confirm the transaction in your wallet to ${isCreate ? "create your Organization!" : "edit your Organization."}.`
+                body: `Please confirm the transaction in your wallet to ${isCreate ? "create your Organization!" : "edit your Organization."}.`,
+                click: lastClick
             })
             
             const tx = await writeAsync()
