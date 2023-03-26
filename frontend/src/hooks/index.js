@@ -26,4 +26,4 @@ export { useTabActive } from './useTabActive';
 export { useUser } from './useUser';
 export { useBadgeArt } from './useBadgeArt';
 export { useMouse } from './useMouse';
-export { useWindowMessage } from './useWindowMessage';
+export { useWindow } from './useWindow';

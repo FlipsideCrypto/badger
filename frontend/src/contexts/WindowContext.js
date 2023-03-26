@@ -13,8 +13,6 @@ const WindowContextProvider = ({ children }) => {
 
     const transactionWindow = useTransactionWindow();
 
-    console.log("transactionWindow", transactionWindow)
-
     return (
         <WindowContext.Provider value={{
             errorModal,

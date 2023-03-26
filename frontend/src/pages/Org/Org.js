@@ -56,14 +56,12 @@ const Org = () => {
                 obj={organization}
                 retrieve={onRetrieve}
             >
-                <div className="dashboard__content">
-                    <ActionTitle title="Badges" actions={titleActions} />
+                <ActionTitle title="Badges" actions={titleActions} />
 
-                    {badges && badges.length === 0 && <OrgEmpty organization={organization} />}
+                {badges && badges.length === 0 && <OrgEmpty organization={organization} />}
 
-                    {badges && badges.length > 0 && <BadgeTable badges={badges} />}
-                </div>
-            </ DashboardLoader >
+                {badges && badges.length > 0 && <BadgeTable badges={badges} />}
+            </ DashboardLoader>
         </>
     )
 }

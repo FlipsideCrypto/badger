@@ -1,8 +1,8 @@
 import { WindowContext } from "@contexts";
 import { useContext } from "react";
 
-const useWindowMessage = () => {
+const useWindow = () => {
     return { ...useContext(WindowContext) }
 }
 
-export { useWindowMessage }
+export { useWindow }

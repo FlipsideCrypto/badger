@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { usePrepareContractWrite, useContractWrite } from "wagmi";
 import { ethers } from "ethers";
 
-import { getBadgerOrganizationAbi, useFees, useUser, useWindowMessage } from "@hooks";
+import { getBadgerOrganizationAbi, useFees, useUser, useWindow } from "@hooks";
 
 import { addressValidator } from "@utils";
 
@@ -102,7 +102,7 @@ const useSetManagers = ({ obj }) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const { transactionWindow } = useWindowMessage();
+    const { transactionWindow } = useWindow();
 
     const openManagerTransaction = async ({
         onError = (e) => { console.error(e) },

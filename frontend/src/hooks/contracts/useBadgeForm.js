@@ -9,7 +9,7 @@ import {
     getTransferBoundAddress, 
     useFees, 
     useUser, 
-    useWindowMessage 
+    useWindow
 } from "@hooks";
 
 const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, accountBound, address, slot }) => {
@@ -87,7 +87,7 @@ const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
 
     const { writeAsync } = useContractWrite(config);
 
-    const { transactionWindow } = useWindowMessage();
+    const { transactionWindow } = useWindow();
 
     const openBadgeFormTransaction = async ({
         onError = (e) => { console.error(e) },
@@ -109,7 +109,7 @@ const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
             transactionWindow.onSign({ 
                 title: "Mining transaction. This may take a few seconds.",
                 body: "Badger hasn't detected your Badge changes yet. Please give us a few minutes to check the chain.",
-                txHash: tx.hash
+                hash: tx.hash
             })
             
             const receipt = await tx.wait();
