@@ -1,15 +1,23 @@
+import { useMemo } from "react";
+
 import { useParams } from "react-router-dom";
 
 import { useNavigateAddress, useUser } from "@hooks";
 
 import { ActionTitle, BadgeTable, DashboardLoader, Empty, Header, SEO } from "@components";
 
-const OrgEmpty = ({ organization }) => <Empty
-    title={`${organization.name} does not have any Badges yet.`}
-    body="You're almost done setting up your Badger Organization. Now all you have to do is create your first Badge."
-    button="Create a badge"
-    url={`/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/badge/new/`}
-/>
+import { formatName } from "@utils";
+
+const OrgEmpty = ({ organization }) => {
+    const formattedName = useMemo(() => formatName(organization?.name), [organization?.name]);
+
+    return <Empty
+        title={`${formattedName} does not have any Badges yet.`}
+        body="You're almost done setting up your Badger Organization. Now all you have to do is create your first Badge."
+        button="Create a badge"
+        url={`/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/badge/new/`}
+    />
+}
 
 const OrgContent = ({ organization, badges, canManage }) => {
     const navigate = useNavigateAddress();

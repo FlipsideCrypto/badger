@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useMemo } from "react";
 
 import { handleImageLoad } from "@hooks";
 
@@ -6,7 +6,7 @@ import { Card, ChainIcon, ImageLoader } from "@components";
 
 import { useNavigateAddress } from "@hooks";
 
-import { sliceAddress } from "@utils";
+import { formatName, sliceAddress } from "@utils";
 
 import "@style/Card/OrgCard.css"
 
@@ -30,7 +30,7 @@ const OrgCard = ({ org }) => {
                             onLoad={handleImageLoad} />
                     </div>
 
-                    {org.name}
+                    <span>{org.name}</span>
                 </h2>
             </div>
         </Card>

@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
+
 import { Link } from 'react-router-dom';
 
 import { ActionButton, ImageLoader } from "@components"
 
-import { sliceAddress } from "@utils";
+import { formatName, sliceAddress } from "@utils";
 
 import { IPFS_GATEWAY_URL } from "@static";
 
@@ -11,6 +13,8 @@ import "@style/View/OrgView.css"
 const copy = (text) => navigator.clipboard.writeText(text);
 
 const OrgView = ({ organization }) => {
+    const formattedName = useMemo(() => formatName(organization?.name), [organization?.name]);
+
     return (
         <div className="view">
             {organization && <>
@@ -21,7 +25,7 @@ const OrgView = ({ organization }) => {
                             src={IPFS_GATEWAY_URL + organization.image_hash}
                         />
                     </div>
-                    <span>{organization.name}</span>
+                    <span>{formattedName}</span>
                 </Link>
 
                 <small className="action_bar__header__subtext">
