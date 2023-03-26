@@ -13,7 +13,7 @@ import {
 } from "@hooks";
 
 const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, accountBound, address, slot }) => {
-    if (!uriHash || !address || !slot || tokenId === null) 
+    if (!uriHash || !address || !slot || tokenId === null)
         return { args: [], functionName: "" };
 
     // For now, we're hard coding the setHook and configHook if the badge is account bound. A more modular piece is being built out for hooks and managers.
@@ -21,11 +21,11 @@ const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, accountBound, addr
     let args = [];
 
     if (functionName === "setBadgeURI" && uriHash)
-         args = [tokenId, uriHash];
+        args = [tokenId, uriHash];
 
     // If we are initializing as account bound, we need to set the badge URI, set the manager, and config it
     if (functionName === "multicall") {
-        const config = ethers.utils.defaultAbiCoder.encode(["uint256","bool"], [tokenId, true])
+        const config = ethers.utils.defaultAbiCoder.encode(["uint256", "bool"], [tokenId, true])
 
         const setBadgeURI = organization.abi.encodeFunctionData(
             "setBadgeURI", [tokenId, uriHash]
@@ -58,7 +58,7 @@ const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
 
     const transferBoundAddress = getTransferBoundAddress(chain.id)
 
-    const { functionName, args } = getBadgeFormTxArgs({ 
+    const { functionName, args } = getBadgeFormTxArgs({
         organization: BadgerOrg,
         uriHash: uriHash,
         tokenId: tokenId,

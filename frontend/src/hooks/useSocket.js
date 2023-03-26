@@ -2,9 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 
 import ReconnectingWebSocket from 'reconnecting-websocket';
 
+import { useAccount } from "wagmi";
+
 import { useLogout } from "@hooks";
 
 const useSocket = ({ enabled, url }) => {
+    const { address } = useAccount();
+
     const { logout } = useLogout();
 
     const [connected, setConnected] = useState(false);
@@ -104,7 +108,7 @@ const useSocket = ({ enabled, url }) => {
 
             handleAction(message);
         }
-    }, [enabled]);
+    }, [enabled, address]);
 
     return {
         connected,

@@ -8,12 +8,12 @@ import { useTransferOwnership } from "@hooks";
 
 const OrgDangerZone = () => {
     const navigate = useNavigate();
-    
-    const [ newOwner, setNewOwner ] = useState("");
+
+    const [newOwner, setNewOwner] = useState("");
 
     const { chainId, orgAddress } = useParams();
 
-    const { 
+    const {
         openTransferOwnershipTransaction,
         isSuccess
     } = useTransferOwnership({ address: newOwner });
@@ -30,8 +30,8 @@ const OrgDangerZone = () => {
             openTransferOwnershipTransaction({
                 onLoading: () => { },
                 onSuccess: ({ chain, receipt }) => {
-                    console.log('receipt', receipt);
                     setNewOwner("");
+
                     navigate(`/dashboard/organization/${chainId}/${orgAddress}`)
                 }
 
@@ -41,6 +41,8 @@ const OrgDangerZone = () => {
 
     return (
         <>
+            <hr />
+
             <h2>Danger zone</h2>
 
             <FormDrawer label="Ownership" open={true}>
