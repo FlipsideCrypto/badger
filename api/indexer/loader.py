@@ -166,6 +166,9 @@ class Loader(ListenerReference):
                 organization.description = data["description"]
                 organization.image_hash = data["image"].split("/ipfs/")[1]
 
+                if "symbol" in data:
+                    organization.symbol = data["symbol"]
+
                 if "archived" in data:
                     try:
                         organization.is_active = not bool(data["archived"])
@@ -225,6 +228,9 @@ class Loader(ListenerReference):
                 badge.name = data["name"]
                 badge.description = data["description"]
                 badge.image_hash = data["image"].split("/ipfs/")[1]
+
+                if "symbol" in data:
+                    badge.symbol = data["symbol"]
 
                 if "archived" in data:
                     try:
