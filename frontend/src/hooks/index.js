@@ -8,7 +8,6 @@ export {
     useManageHolders,
     useSetManagers,
     useTransferOwnership,
-    useTransactionWindow,
 } from './contracts';
 
 export { useAuthentication } from './useAuthentication';

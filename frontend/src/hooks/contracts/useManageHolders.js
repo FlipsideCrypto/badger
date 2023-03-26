@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
-import { getBadgerOrganizationAbi, useFees, useUser, useWindow } from "@hooks";
+import { getBadgerOrganizationAbi, useFees, useUser, useWindow, useClickEvent } from "@hooks";
 
 import { addressValidator } from "@utils";
 
@@ -118,6 +118,8 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
 
     const { writeAsync } = useContractWrite(config);
 
+    const { lastClick } = useClickEvent();
+
     const openHolderTransaction = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
@@ -134,7 +136,8 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
 
             transactionWindow.onStart({ 
                 title: "Waiting for confirmation...",
-                body: `Please confirm the transaction in your wallet to ${action}.`
+                body: `Please confirm the transaction in your wallet to ${action}.`,
+                click: lastClick
             })
 
             const tx = await writeAsync();

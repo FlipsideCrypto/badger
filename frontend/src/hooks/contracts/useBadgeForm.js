@@ -9,7 +9,8 @@ import {
     getTransferBoundAddress, 
     useFees, 
     useUser, 
-    useWindow
+    useWindow,
+    useClickEvent
 } from "@hooks";
 
 const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, accountBound, address, slot }) => {
@@ -89,6 +90,8 @@ const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
 
     const { transactionWindow } = useWindow();
 
+    const { lastClick } = useClickEvent();
+
     const openBadgeFormTransaction = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
@@ -100,7 +103,8 @@ const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
             
             transactionWindow.onStart({
                 title: "Waiting for confirmation...",
-                body: `Please confirm the transaction in your wallet to ${isNew ? "create" : "edit"} your Badge.`
+                body: `Please confirm the transaction in your wallet to ${isNew ? "create" : "edit"} your Badge.`,
+                click: lastClick
             })
             
             const tx = await writeAsync();

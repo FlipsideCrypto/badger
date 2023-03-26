@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { usePrepareContractWrite, useContractWrite } from "wagmi";
 import { ethers } from "ethers";
 
-import { getBadgerOrganizationAbi, useFees, useUser, useWindow } from "@hooks";
+import { getBadgerOrganizationAbi, useFees, useUser, useWindow, useClickEvent } from "@hooks";
 
 import { addressValidator } from "@utils";
 
@@ -104,6 +104,8 @@ const useSetManagers = ({ obj }) => {
 
     const { transactionWindow } = useWindow();
 
+    const { lastClick } = useClickEvent();
+
     const openManagerTransaction = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
@@ -115,7 +117,8 @@ const useSetManagers = ({ obj }) => {
 
             transactionWindow.onStart({
                 title: "Waiting for confirmation...",
-                body: `Please confirm the transaction in your wallet to change your ${obj.tokenId ? "Badge" : "Organization"} Managers.`
+                body: `Please confirm the transaction in your wallet to change your ${obj.tokenId ? "Badge" : "Organization"} Managers.`,
+                click: lastClick
             })
             
             const tx = await writeAsync();
