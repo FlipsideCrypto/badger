@@ -46,11 +46,12 @@
     transition: opacity .4s ease-in-out;
 }
 
-.transaction .message__content .empty {
+.window .message__content .empty {
     position: absolute;
     top: -100px;
     left: 0;
     bottom: 0;
+    right: 0;
     background: transparent;
     box-sizing: border-box;
 }
