@@ -58,9 +58,11 @@ const ActionBar = () => {
             </div>
 
             <div className="action_bar__toggle">
-                <button className="tertiary" onClick={() => setCollapsed(!collapsed)}>
-                    <FontAwesomeIcon icon={['fal', 'bars']} />
-                </button>
+                <ActionButton
+                    className="tertiary"
+                    icon={['fal', 'bars']}
+                    afterText="Menu"
+                    onClick={() => setCollapsed(!collapsed)} />
             </div>
 
             <div className={`action_bar__actions ${collapsed ? 'collapsed' : ''}`}>
