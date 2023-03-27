@@ -9,12 +9,13 @@
     border-radius: 3px;
     margin-bottom: 10px;
     overflow: hidden;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .1);
 }
 
-/* .card:hover .img,
+.card:hover .img,
 .card .img.selected {
-    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-} */
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0);
+}
 
 .card .img img {
     width: 90%;

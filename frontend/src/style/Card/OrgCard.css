@@ -6,6 +6,12 @@
     cursor: pointer;
     transition: all 0.3s ease-in-out;
     background-color: #FAFAFA;
+    overflow: hidden;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .1);
+}
+
+.home__cards .card:hover {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0);
 }
 
 .home__cards .card::before {
@@ -19,8 +25,24 @@
     transition: all 0.3s ease-in-out;
 }
 
-.home__cards .card:hover::before {
-    backdrop-filter: brightness(0.97);
+.home__cards .card::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -20%;
+    right: -20%;
+    bottom: -20%;
+    z-index: 3;
+    background: linear-gradient(to right, transparent 10%, rgba(255, 255, 255, .25) 18%, transparent 33%);
+    background-size: 800px 104px;
+    background-position: -320px 0;
+    transform: skew(-30deg);
+    transition: all 1.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.home__cards .card:hover::after {
+    background-position: 590px 0;
+    opacity: 0.3;
 }
 
 .home__cards .card .text {
@@ -40,7 +62,8 @@
     margin-top: auto;
     display: flex;
     align-items: center;
-    column-gap: 10px;
+    column-gap: 20px;
+    margin-bottom: 0px;
 }
 
 .home__cards .card .text .title .viewImage__container,
@@ -60,7 +83,7 @@
 
 @media only screen and (max-width: 768px) {
     .home__cards .card .text .title span {
-        max-width: 320px;
+        max-width: 280px;
     }
 }
 
