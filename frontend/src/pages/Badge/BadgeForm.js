@@ -129,7 +129,11 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         setObj(obj => ({ ...obj, description: event.target.value }));
     }
 
-    const onCustomImageChange = (file, uploaded) => {
+    const onImageChange = (e) => {
+        const file = e.target.files[0];
+
+        if (!file) return;
+
         const reader = new FileReader();
 
         reader.readAsDataURL(file);
@@ -200,7 +204,7 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
                 label="Custom Image"
                 required={false}
                 disabled={true}
-                value={imageInput.current?.files[0]?.name ?? "Upload Custom Image"}
+                value={activeImageURL || "Upload custom image..."}
                 append={
                     <button className="secondary"
                         onClick={() => imageInput.current.click()}
@@ -210,13 +214,14 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
                     </button>
                 }
             />
+
             <input
                 id="badge-image"
                 style={{ display: "none" }}
                 ref={imageInput}
                 accept="image/*"
                 type="file"
-                onChange={(e) => onCustomImageChange(e.target.files[0], true)}
+                onChange={onImageChange}
             />
         </FormDrawer>
 
