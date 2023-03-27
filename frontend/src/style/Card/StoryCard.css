@@ -73,7 +73,7 @@
     background-image: url(../../static/images/hero-noise.png);
     background-size: 960px 540px;
     z-index: 0;
-    opacity: 0.85;
+    opacity: 0.45;
 }
 
 .card .img::after {

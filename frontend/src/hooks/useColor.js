@@ -39,7 +39,7 @@ const handleImageLoad = (el) => {
 
     if (el.offsetWidth === 0) return;
 
-    const multiplier = 1.05;
+    const multiplier = 1;
 
     const r = average.r * multiplier;
     const g = average.g * multiplier;
