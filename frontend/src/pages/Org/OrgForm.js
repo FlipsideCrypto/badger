@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useMemo, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -43,11 +43,9 @@ const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) 
 
     const { pfp } = usePFP({ name, address });
 
-    const customImage = image || obj.image_hash;
+    const shouldUseHash = obj.image_hash && (!isEdit || (isEdit && name === organization?.name));
 
-    const activeImage = customImage || pfp;
-
-    const imageURL = customImage && (image ? image.name : IPFS_GATEWAY_URL + obj.image_hash);
+    const activeImage = image || (shouldUseHash && obj.image_hash) || pfp;
 
     const { imageHash, ipfsImage } = useIPFSImageHash(activeImage)
 
@@ -70,12 +68,24 @@ const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) 
         data: ipfsMetadata
     })
 
-    const isDebouncing = name !== obj.name || description !== obj.description;
+    const activeImageURL = useMemo(() => {
+        if (image) return image
 
-    const isDisabled = isDebouncing || !(name && description && activeImage);
+        if (shouldUseHash) return IPFS_GATEWAY_URL + obj.image_hash
+
+        if (pfp && pfp !== ' ') return URL.createObjectURL(pfp)
+
+        return null
+    }, [name, image, shouldUseHash, obj.image_hash, pfp])
+
+    const isDisabled = useMemo(() => {
+        const isDebouncing = name !== obj.name || description !== obj.description;
+
+        return isDebouncing || !(name && description && activeImage);
+    }, [name, description, activeImage, obj.name, obj.description])
 
     const actions = [{
-        text: "Create organization",
+        text: `${isEdit ? "Update" : "Create"} Organization`,
         loading: isLoading,
         disabled: isDisabled || !isPrepared,
         event: () => openOrgFormTx({
@@ -104,20 +114,17 @@ const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) 
         setObj({ ...obj, description: e.target.value })
     }
 
-    const onImageUpload = () => {
-        imageInput.current.click();
-    }
-
     const onImageChange = (e) => {
-        const files = e.target.files[0];
+        const file = e.target.files[0];
 
-        if (!files) return
+        if (!file) return
 
         const reader = new FileReader();
 
-        reader.readAsDataURL(files);
-
-        reader.onload = () => { setImage(reader.result) };
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            setImage(reader.result)
+        };
     }
 
     return (<>
@@ -131,13 +138,30 @@ const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) 
         </FormDrawer>
 
         <FormDrawer label="Advanced" open={!!obj.image_hash}>
-            <Input label="Custom Image" accept="image/*" disabled={true} append={
-                <button className="secondary" onClick={onImageUpload}>
-                    <span>{customImage ? "Update" : "Upload"}</span>
-                </button>}
-                value={imageURL || "Choose file..."} />
+            <Input
+                name="Custom Image"
+                label="Custom Image"
+                accept="image/*"
+                required={false}
+                disabled={true}
+                value={activeImageURL || "Upload custom image..."}
+                append={
+                    <button className="secondary"
+                        onClick={() => imageInput.current.click()}
+                        style={{ width: "auto" }}
+                    >
+                        <span>{obj.image_hash ? "Change" : "Upload"}</span>
+                    </button>}
+            />
 
-            <input ref={imageInput} type="file" accept="image/*" onChange={onImageChange} />
+            <input
+                id="org-image"
+                style={{ display: "none" }}
+                ref={imageInput}
+                accept="image/*"
+                type="file"
+                onChange={onImageChange}
+            />
         </FormDrawer>
 
         <FormActionBar

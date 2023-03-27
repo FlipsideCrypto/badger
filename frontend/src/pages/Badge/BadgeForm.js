@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useMemo, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -54,16 +54,9 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         tokenId
     })
 
-    const activeImage = image || obj.image_hash || badgeArt;
+    const shouldUseHash = obj.image_hash && (!isEdit || (isEdit && name === badge?.name));
 
-    // Prioritizes an uploaded image, then the ipfs gateway image, then the generated image
-    const activeImageURL = image ? URL.createObjectURL(image) :
-        obj.image_hash ? IPFS_GATEWAY_URL + obj.image_hash :
-            badgeArt ? URL.createObjectURL(badgeArt) : null;
-
-    const isDebouncing = name !== obj.name || description !== obj.description;
-
-    const isDisabled = isDebouncing || !(name && description && activeImage);
+    const activeImage = image || (shouldUseHash && obj.image_hash) || badgeArt;
 
     const { imageHash, ipfsImage } = useIPFSImageHash(activeImage);
 
@@ -90,6 +83,22 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         image: ipfsImage,
         data: ipfsMetadata
     })
+
+    const activeImageURL = useMemo(() => {
+        if (image) return image;
+
+        if (shouldUseHash) return IPFS_GATEWAY_URL + obj.image_hash;
+
+        if (badgeArt) return URL.createObjectURL(badgeArt);
+
+        return null;
+    }, [image, shouldUseHash, obj.image_hash, badgeArt]);
+
+    const isDisabled = useMemo(() => {
+        const isDebouncing = name !== obj.name || description !== obj.description;
+
+        return isDebouncing || !(name && description && activeImage);
+    }, [name, description, activeImage, obj.name, obj.description]);
 
     const actions = [{
         text: isEdit ? "Update badge" : "Create badge",
@@ -120,7 +129,11 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         setObj(obj => ({ ...obj, description: event.target.value }));
     }
 
-    const onCustomImageChange = (file, uploaded) => {
+    const onImageChange = (e) => {
+        const file = e.target.files[0];
+
+        if (!file) return;
+
         const reader = new FileReader();
 
         reader.readAsDataURL(file);
@@ -191,7 +204,7 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
                 label="Custom Image"
                 required={false}
                 disabled={true}
-                value={imageInput.current?.files[0]?.name ?? "Upload Custom Image"}
+                value={activeImageURL || "Upload custom image..."}
                 append={
                     <button className="secondary"
                         onClick={() => imageInput.current.click()}
@@ -201,13 +214,14 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
                     </button>
                 }
             />
+
             <input
                 id="badge-image"
                 style={{ display: "none" }}
                 ref={imageInput}
                 accept="image/*"
                 type="file"
-                onChange={(e) => onCustomImageChange(e.target.files[0], true)}
+                onChange={onImageChange}
             />
         </FormDrawer>
 
@@ -222,7 +236,6 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
 }
 
 const BadgeForm = ({ isEdit = false }) => {
-
     const navigate = useNavigate();
 
     const { chainId, orgAddress, badgeId } = useParams();
