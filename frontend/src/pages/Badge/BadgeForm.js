@@ -84,8 +84,6 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         data: ipfsMetadata
     })
 
-    console.log('rerendered')
-
     const activeImageURL = useMemo(() => {
         if (image) return URL.createObjectURL(image);
 
