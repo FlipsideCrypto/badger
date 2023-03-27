@@ -74,16 +74,17 @@ const useSocket = ({ enabled, url }) => {
             setObjects(objects => {
                 const index = objects.findIndex(object => object.id === data.data.id);
 
-                const object = {
-                    ...data.data,
-                    retrieved: true
-                }
-
                 if (index === -1) {
-                    return [...objects, object];
+                    return [...objects, {
+                        ...data.data,
+                        retrieved: true
+                    }]
                 }
 
-                objects[index] = object;
+                objects[index] = {
+                    ...data.data,
+                    retrieved: objects[index]?.retrieved || false
+                }
 
                 return objects;
             });
