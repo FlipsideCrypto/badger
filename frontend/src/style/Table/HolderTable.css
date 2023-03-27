@@ -39,6 +39,10 @@ th:not(:last-child) {
     margin-inline: 0px;
 }
 
+#holder__table.dashboard__table {
+    margin-inline: -20px;
+}
+
 #holder__table .badge__image,
 #holder__table .badge__image img {
     width: 25px;
