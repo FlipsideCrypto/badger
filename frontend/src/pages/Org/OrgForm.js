@@ -73,10 +73,10 @@ const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) 
 
         if (shouldUseHash) return IPFS_GATEWAY_URL + obj.image_hash
 
-        if (pfp) return pfp
+        if (pfp && pfp !== ' ') return URL.createObjectURL(pfp)
 
         return null
-    }, [image, shouldUseHash, obj.image_hash, pfp])
+    }, [name, image, shouldUseHash, obj.image_hash, pfp])
 
     const isDisabled = useMemo(() => {
         const isDebouncing = name !== obj.name || description !== obj.description;
@@ -85,7 +85,7 @@ const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) 
     }, [name, description, activeImage, obj.name, obj.description])
 
     const actions = [{
-        text: "Create organization",
+        text: `${isEdit ? "Update" : "Create"} Organization`,
         loading: isLoading,
         disabled: isDisabled || !isPrepared,
         event: () => openOrgFormTx({
@@ -150,7 +150,7 @@ const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) 
                         onClick={() => imageInput.current.click()}
                         style={{ width: "auto" }}
                     >
-                        <span>{image ? "Change" : "Upload"}</span>
+                        <span>{obj.image_hash ? "Change" : "Upload"}</span>
                     </button>}
             />
 

@@ -85,7 +85,7 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
     })
 
     const activeImageURL = useMemo(() => {
-        if (image) return URL.createObjectURL(image);
+        if (image) return image;
 
         if (shouldUseHash) return IPFS_GATEWAY_URL + obj.image_hash;
 
