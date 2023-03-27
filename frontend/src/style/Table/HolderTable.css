@@ -35,6 +35,10 @@ th:not(:last-child) {
     padding: 1px 2px;
 }
 
+#holder__table {
+    margin-inline: 0px;
+}
+
 #holder__table .badge__image,
 #holder__table .badge__image img {
     width: 25px;
