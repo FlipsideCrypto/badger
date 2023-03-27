@@ -72,7 +72,7 @@ const MessageWindow = ({ children }) => {
 
     return (
         <>
-            <div className={`window ${isActive ? "active" : ""} ${isTransaction ? "transaction" : "message"}`}>
+            <div className={`window ${isActive ? "active" : ""} ${isTransaction || pending.showTransaction ? "transaction" : "message"}`}>
                 <div className="bubble" style={{ 
                     left: centerPoints[0] - 2500, // Circle is 5k
                     top: centerPoints[1] - 2500

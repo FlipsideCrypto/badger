@@ -126,7 +126,7 @@ const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
-            transactionWindow.onSuccess({ status: '' });
+            transactionWindow.onSuccess();
         } catch (e) {
             onError(e);
             transactionWindow.onError();

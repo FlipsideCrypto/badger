@@ -84,8 +84,6 @@ const useOrgForm = (obj) => {
             setIsLoading(true);
             setIsSuccess(false);
 
-            console.log('lastClick', lastClick)
-
             transactionWindow.onStart({
                 title: "Waiting for confirmation...",
                 body: `Please confirm the transaction in your wallet to ${isCreate ? "create your Organization!" : "edit your Organization."}.`,

@@ -122,7 +122,7 @@ const DashboardLoader = ({
 
     const isDeployed = !isLoading || isLogged;
 
-    const isAccessible = !managed || managed && canManage;
+    const isAccessible = !managed || (managed && canManage);
 
     return (
         <>
@@ -131,7 +131,7 @@ const DashboardLoader = ({
             {isLoading && <>
                 {!address && <div className="loading short" />}
 
-                {!isDeployed && !managed && !isAccessible && <NotDeployedEmpty />}
+                {!isDeployed && isAccessible && <NotDeployedEmpty badgeId={badgeId} />}
 
                 {!managed && isDeployed && <NotIndexedEmpty />}
 
