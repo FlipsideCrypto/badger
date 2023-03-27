@@ -6,7 +6,7 @@
 .card .img {
     position: relative;
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
-    border-radius: 3px;
+    border-radius: 4px;
     margin-bottom: 10px;
     overflow: hidden;
     box-shadow: 0 0 8px rgba(0, 0, 0, .1);
@@ -22,7 +22,7 @@
     margin: 5%;
     position: relative;
     z-index: 2;
-    border-radius: 2px;
+    border-radius: 4px;
 }
 
 .card .img .blobs {

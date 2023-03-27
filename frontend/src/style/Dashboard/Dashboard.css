@@ -74,7 +74,7 @@
 .preview__container {
     position: relative;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: 4px;
     aspect-ratio: 1/1;
     width: max-content;
     height: max-content;
