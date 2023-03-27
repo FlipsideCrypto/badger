@@ -89,7 +89,7 @@ const MessageWindow = ({ children }) => {
                 </div>
             </div>
 
-            { isLoaded && children }
+            { children }
         </>
     )
 }
