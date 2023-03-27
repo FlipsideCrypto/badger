@@ -38,7 +38,7 @@ button {
     cursor: pointer;
     padding: 6px 12px;
     border-radius: 4px;
-    font-weight: 700;
+    font-weight: 700 !important;
     font-size: inherit;
     transition: all .3s cubic-bezier(0.075, 0.82, 0.165, 1);
     box-shadow: 0 0 80px transparent;

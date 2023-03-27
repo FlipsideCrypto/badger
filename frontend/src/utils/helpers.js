@@ -35,7 +35,7 @@ const compareByProperty = (property, direction, a, b) => {
 const formatName = (name) => {
     if (name.length === 0) return "Untitled";
 
-    if (name.length > 20) return name.slice(0, 20) + "...";
+    if (name.length > 18) return name.slice(0, 18) + "...";
 
     return name;
 }

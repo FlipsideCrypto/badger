@@ -37,8 +37,9 @@ const OrgView = ({ organization }) => {
                     </a>
                 </small>
 
-                <ActionButton className="tertiary" icon={['fal', 'clipboard']} onClick={() => copy(organization.ethereum_address)} />
-                <ActionButton className="link tertiary" icon={['fal', 'link']} onClick={() => copy(window.location.href)} />
+                <div className="action_bar__header__buttons">
+                    <ActionButton className="tertiary" icon={['fal', 'clipboard']} onClick={() => copy(organization.ethereum_address)} />
+                </div>
             </>}
 
             {!organization && <>

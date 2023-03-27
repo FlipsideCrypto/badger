@@ -31,11 +31,6 @@
     font-size: 14px;
 }
 
-.dashboard button,
-.dashboard .button {
-    font-weight: 700;
-}
-
 .dashboard .loading {
     background: linear-gradient(-46deg, #FAFAFA 0%, #f3f3f3 50%, #FAFAFA 100%);
     background-size: 200% 100%;
