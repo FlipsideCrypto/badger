@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useMemo, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -54,16 +54,9 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         tokenId
     })
 
-    const activeImage = image || obj.image_hash || badgeArt;
+    const shouldUseHash = obj.image_hash && (!isEdit || (isEdit && name === badge?.name));
 
-    // Prioritizes an uploaded image, then the ipfs gateway image, then the generated image
-    const activeImageURL = image ? URL.createObjectURL(image) :
-        obj.image_hash ? IPFS_GATEWAY_URL + obj.image_hash :
-            badgeArt ? URL.createObjectURL(badgeArt) : null;
-
-    const isDebouncing = name !== obj.name || description !== obj.description;
-
-    const isDisabled = isDebouncing || !(name && description && activeImage);
+    const activeImage = image || (shouldUseHash && obj.image_hash) || badgeArt;
 
     const { imageHash, ipfsImage } = useIPFSImageHash(activeImage);
 
@@ -90,6 +83,24 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         image: ipfsImage,
         data: ipfsMetadata
     })
+
+    console.log('rerendered')
+
+    const activeImageURL = useMemo(() => {
+        if (image) return URL.createObjectURL(image);
+
+        if (shouldUseHash) return IPFS_GATEWAY_URL + obj.image_hash;
+
+        if (badgeArt) return URL.createObjectURL(badgeArt);
+
+        return null;
+    }, [image, shouldUseHash, obj.image_hash, badgeArt]);
+
+    const isDisabled = useMemo(() => {
+        const isDebouncing = name !== obj.name || description !== obj.description;
+
+        return isDebouncing || !(name && description && activeImage);
+    }, [name, description, activeImage, obj.name, obj.description]);
 
     const actions = [{
         text: isEdit ? "Update badge" : "Create badge",
@@ -222,7 +233,6 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
 }
 
 const BadgeForm = ({ isEdit = false }) => {
-
     const navigate = useNavigate();
 
     const { chainId, orgAddress, badgeId } = useParams();
@@ -235,6 +245,8 @@ const BadgeForm = ({ isEdit = false }) => {
         canManage,
         retrieve
     } = useUser({ chainId, orgAddress, badgeId });
+
+    console.log('rendered badge form')
 
     return (
         <>
