@@ -249,8 +249,6 @@ const BadgeForm = ({ isEdit = false }) => {
         retrieve
     } = useUser({ chainId, orgAddress, badgeId });
 
-    console.log('rendered badge form')
-
     return (
         <>
             <SEO
