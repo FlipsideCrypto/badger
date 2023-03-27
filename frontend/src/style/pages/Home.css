@@ -11,18 +11,7 @@
 
 .home__cards {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    /* make it to where the cards auto fit */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     grid-gap: 20px;
-}
-
-@media screen and (max-width: 990px) {
-    .home__cards {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-@media screen and (max-width: 600px) {
-    .home__cards {
-        grid-template-columns: 1fr;
-    }
 }
