@@ -7,7 +7,7 @@ export {
     useBadgeForm,
     useManageHolders,
     useSetManagers,
-    useTransferOwnership
+    useTransferOwnership,
 } from './contracts';
 
 export { useAuthentication } from './useAuthentication';
@@ -24,3 +24,5 @@ export { useStories, useStory } from './useStories';
 export { useTabActive } from './useTabActive';
 export { useUser } from './useUser';
 export { useBadgeArt } from './useBadgeArt';
+export { useClickEvent } from './useClickEvent';
+export { useWindow } from './useWindow';

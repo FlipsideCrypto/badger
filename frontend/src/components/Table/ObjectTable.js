@@ -31,7 +31,7 @@ const ObjectTable = ({ data, heads }) => {
     }
 
     return (
-        <div id="holder__table">
+        <div id="holder__table" className="dashboard__content">
             <TableContainer>
                 <Table>
                     <TableHead>

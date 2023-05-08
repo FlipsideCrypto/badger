@@ -4,7 +4,14 @@ import { useParams } from "react-router-dom";
 import { usePrepareContractWrite, useContractWrite } from "wagmi";
 import { ethers } from "ethers";
 
-import { getBadgerOrganizationAbi, getTransferBoundAddress, useFees, useUser } from "@hooks";
+import { 
+    getBadgerOrganizationAbi, 
+    getTransferBoundAddress, 
+    useFees, 
+    useUser, 
+    useWindow,
+    useClickEvent
+} from "@hooks";
 
 const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, accountBound, address, slot }) => {
     if (!uriHash || !address || !slot || tokenId === null)
@@ -38,7 +45,7 @@ const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, accountBound, addr
     return { functionName, args };
 }
 
-const useBadgeForm = (obj) => {
+const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
     const fees = useFees();
 
     const { orgAddress } = useParams();
@@ -54,9 +61,9 @@ const useBadgeForm = (obj) => {
 
     const { functionName, args } = getBadgeFormTxArgs({
         organization: BadgerOrg,
-        uriHash: obj.uriHash,
-        tokenId: obj.tokenId,
-        accountBound: obj.accountBound,
+        uriHash: uriHash,
+        tokenId: tokenId,
+        accountBound: accountBound,
         address: transferBoundAddress,
         slot: "0x844bb459abe62f824043e42caa262ad6859731fc48abd8966db11d779c0fe669" // TODO: Don't hardcode this (BEFORE_TRANSFER bytes32 slot)
     });
@@ -81,6 +88,10 @@ const useBadgeForm = (obj) => {
 
     const { writeAsync } = useContractWrite(config);
 
+    const { transactionWindow } = useWindow();
+
+    const { lastClick } = useClickEvent();
+
     const openBadgeFormTransaction = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
@@ -89,10 +100,22 @@ const useBadgeForm = (obj) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
-            onLoading();
-
+            
+            transactionWindow.onStart({
+                title: "Waiting for confirmation...",
+                body: `Please confirm the transaction in your wallet to ${isNew ? "create" : "edit"} your Badge.`,
+                click: lastClick
+            })
+            
             const tx = await writeAsync();
-
+            
+            onLoading();
+            transactionWindow.onSign({ 
+                title: "Mining transaction. This may take a few seconds.",
+                body: "Badger hasn't detected your Badge changes yet. Please give us a few minutes to check the chain.",
+                hash: tx.hash
+            })
+            
             const receipt = await tx.wait();
 
             if (receipt.status === 0) throw new Error("Error submitting transaction");
@@ -103,19 +126,16 @@ const useBadgeForm = (obj) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
+            transactionWindow.onSuccess();
         } catch (e) {
             onError(e);
+            transactionWindow.onError();
         }
     }
 
     return { openBadgeFormTransaction, isPrepared, isLoading, isSuccess }
 }
 
-const useBadge = ({ obj, image, functionName }) => {
-
-}
-
 export {
-    useBadgeForm,
-    useBadge
+    useBadgeForm
 }

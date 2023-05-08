@@ -73,9 +73,9 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         isLoading
     } = useBadgeForm({
         ...obj,
-        imageHash: imageHash,
         uriHash: metadataHash,
         accountBound: isAccountBound,
+        isNew: !isEdit,
         tokenId
     });
 

@@ -30,7 +30,7 @@ const OrgContent = ({ organization, badges, canManage }) => {
     }];
 
     return (
-        <div className="dashboard__content">
+        <>
             <ActionTitle
                 title="Badges"
                 actions={titleActions} />
@@ -40,7 +40,7 @@ const OrgContent = ({ organization, badges, canManage }) => {
 
             {badges && badges.length > 0 && <BadgeTable
                 badges={badges} />}
-        </div>
+        </>
     )
 }
 

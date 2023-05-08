@@ -6,7 +6,9 @@ import {
     getBadgerOrganizationAbi,
     getBadgerAbi,
     useFees,
-    useUser
+    useUser,
+    useWindow,
+    useClickEvent
 } from "@hooks";
 
 import { IPFS_GATEWAY_URL } from "@static";
@@ -42,6 +44,8 @@ const useOrgForm = (obj) => {
 
     const isReady = Badger && fees && !!address;
 
+    const isCreate = functionName === "createOrganization";
+
     const args = getOrgFormTxArgs({
         functionName,
         address,
@@ -67,6 +71,10 @@ const useOrgForm = (obj) => {
 
     const { writeAsync } = useContractWrite(config);
 
+    const { transactionWindow } = useWindow();
+
+    const { lastClick } = useClickEvent();
+
     const openOrgFormTx = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
@@ -75,9 +83,21 @@ const useOrgForm = (obj) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
-            onLoading()
 
+            transactionWindow.onStart({
+                title: "Waiting for confirmation...",
+                body: `Please confirm the transaction in your wallet to ${isCreate ? "create your Organization!" : "edit your Organization."}.`,
+                click: lastClick
+            })
+            
             const tx = await writeAsync()
+            
+            onLoading();
+            transactionWindow.onSign({
+                title: "Mining transaction. This may take a few seconds.",
+                body: `Badger hasn't detected your ${isCreate ? "new Organization" : "Organization changes"} yet. Please give us a few minutes to check the chain.`,
+                hash: tx.hash
+            })
 
             const receipt = await tx.wait()
 
@@ -87,10 +107,11 @@ const useOrgForm = (obj) => {
             setIsSuccess(true);
 
             onSuccess({ config, chain, tx, receipt })
+            transactionWindow.onSuccess();
         } catch (e) {
-            console.error(e);
-
             onError(e);
+            console.error(e);
+            transactionWindow.onError();
         }
     }
 

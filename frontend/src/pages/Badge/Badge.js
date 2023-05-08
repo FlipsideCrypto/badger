@@ -53,6 +53,7 @@ const Badge = () => {
             <DashboardLoader
                 chainId={chainId}
                 orgAddress={orgAddress}
+                badgeId={badgeId}
                 obj={badge}
                 retrieve={retrieve}>
                 <BadgeContent

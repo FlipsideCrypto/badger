@@ -12,7 +12,7 @@ const UserContextProvider = ({ children }) => {
         chain,
         primaryChain,
         isConnected,
-        isWrongAddress
+        isWrongNetwork
     } = useContext(AuthenticationContext);
 
     const { address, viewing, organizations, send } = useContext(OrgContext);
@@ -30,7 +30,7 @@ const UserContextProvider = ({ children }) => {
             organizations,
             userOrganizations,
             isConnected,
-            isWrongAddress,
+            isWrongNetwork,
             isLoaded,
             send
         }}>
