@@ -1,4 +1,7 @@
+from djangochannelsrestframework.decorators import action
 from djangochannelsrestframework.observer import model_observer
+
+from channels.db import database_sync_to_async
 
 from django.db.models import Q
 
@@ -11,6 +14,34 @@ class OrganizationConsumer(ManagedModelMixin):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
 
+    def get_queryset(self, **kwargs):
+        if kwargs.get('action') == 'retrieve':
+            return Organization.objects.all()
+
+        if not 'query_string' in self.scope:
+            return Organization.objects.all()
+
+        query_string = self.scope['query_string'].decode('utf-8')
+
+        if not "address=" in query_string:
+            return Organization.objects.all()
+
+        address = query_string.split('=')[1]
+
+        return Organization.objects.filter(
+            Q(owner__ethereum_address=address) |
+            Q(modules__ethereum_address__in=[address]) |
+            Q(badges__users__ethereum_address__in=[address])
+        ).distinct()
+
+    def get_object(self, **kwargs):
+        [chain_id, ethereum_address] = kwargs.get('pk').split(':')
+
+        return Organization.objects.get(
+            chain_id=chain_id,
+            ethereum_address=ethereum_address
+        )
+ 
     @model_observer(Organization)
     async def model_change(self, message, observer=None, **kwargs):
         await self.send_json(message)

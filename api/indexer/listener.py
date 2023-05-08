@@ -70,12 +70,6 @@ class Listener:
                             print("Listener error: ", e)
                             pool.shutdown(wait=False, cancel_futures=True)
 
-                if not isinstance(extracting_obj, list):
-                    qs.update(last_block=to_block)
-
-                    for obj in qs:
-                        obj.save()
-
             except Exception as e:
                 print("Listener error: ", e)
 

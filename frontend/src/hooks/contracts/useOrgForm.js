@@ -6,12 +6,14 @@ import {
     getBadgerOrganizationAbi,
     getBadgerAbi,
     useFees,
-    useUser
+    useUser,
+    useWindow,
+    useClickEvent
 } from "@hooks";
 
 import { IPFS_GATEWAY_URL } from "@static";
 
-const getOrgFormTxArgs = ({ functionName, address, name, symbol, imageHash, contractHash }) => {
+const getOrgFormTxArgs = ({ functionName, address, imageHash, contractHash }) => {
     if (functionName === "setOrganizationURI") {
         return [IPFS_GATEWAY_URL + contractHash]
     } else if (functionName === "createOrganization") {
@@ -19,15 +21,13 @@ const getOrgFormTxArgs = ({ functionName, address, name, symbol, imageHash, cont
             deployer: address,
             uri: IPFS_GATEWAY_URL + imageHash,
             organizationURI: IPFS_GATEWAY_URL + contractHash,
-            name,
-            symbol
         }
 
         return [organizationStruct]
     }
 }
 
-const useOrgForm = ({ obj }) => {
+const useOrgForm = (obj) => {
     const fees = useFees();
 
     const { chain, address } = useUser();
@@ -44,11 +44,11 @@ const useOrgForm = ({ obj }) => {
 
     const isReady = Badger && fees && !!address;
 
+    const isCreate = functionName === "createOrganization";
+
     const args = getOrgFormTxArgs({
         functionName,
         address,
-        name: obj.name,
-        symbol: obj.symbol,
         imageHash: obj.imageHash,
         contractHash: obj.contractHash
     });
@@ -71,6 +71,10 @@ const useOrgForm = ({ obj }) => {
 
     const { writeAsync } = useContractWrite(config);
 
+    const { transactionWindow } = useWindow();
+
+    const { lastClick } = useClickEvent();
+
     const openOrgFormTx = async ({
         onError = (e) => { console.error(e) },
         onLoading = () => { },
@@ -79,9 +83,21 @@ const useOrgForm = ({ obj }) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
-            onLoading()
 
+            transactionWindow.onStart({
+                title: "Waiting for confirmation...",
+                body: `Please confirm the transaction in your wallet to ${isCreate ? "create your Organization!" : "edit your Organization."}.`,
+                click: lastClick
+            })
+            
             const tx = await writeAsync()
+            
+            onLoading();
+            transactionWindow.onSign({
+                title: "Mining transaction. This may take a few seconds.",
+                body: `Badger hasn't detected your ${isCreate ? "new Organization" : "Organization changes"} yet. Please give us a few minutes to check the chain.`,
+                hash: tx.hash
+            })
 
             const receipt = await tx.wait()
 
@@ -91,77 +107,17 @@ const useOrgForm = ({ obj }) => {
             setIsSuccess(true);
 
             onSuccess({ config, chain, tx, receipt })
+            transactionWindow.onSuccess();
         } catch (e) {
-            console.error(e);
-
             onError(e);
+            console.error(e);
+            transactionWindow.onError();
         }
     }
 
     return { openOrgFormTx, isPrepared, isLoading, isSuccess };
 }
 
-// Transfer the ownership of an organization to a new address.
-const useTransferOwnership = (isTxReady, orgAddress, newOwner) => {
-    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    const [error, setError] = useState();
-
-    const args = [
-        newOwner,
-    ]
-
-    const fees = useFees();
-    const { config, isSuccess } = usePrepareContractWrite({
-        address: orgAddress,
-        abi: BadgerOrganization.abi,
-        functionName: "transferOwnership",
-        args: args,
-        enabled: Boolean(fees && isTxReady),
-        overrides: {
-            gasPrice: fees?.gasPrice,
-        },
-        onError(e) {
-            const err = e?.error?.message || e?.data?.message || e
-            setError(err);
-            console.error('Error transferring ownership: ', err);
-        }
-    })
-
-    const { writeAsync } = useContractWrite(config);
-
-    return { write: writeAsync, isSuccess, error };
-}
-
-// Transfer the ownership of a badge to a new address.
-// TODO: This should be changed to support the intended functionality of withdrawing all assets from the org.
-const useRenounceOwnership = (isTxReady, orgAddress) => {
-    const BadgerOrganization = useMemo(() => getBadgerOrganizationAbi(), []);
-    const [error, setError] = useState();
-
-    const fees = useFees();
-    const { config, isSuccess } = usePrepareContractWrite({
-        address: orgAddress,
-        abi: BadgerOrganization.abi,
-        functionName: "renounceOwnership",
-        args: [],
-        enabled: Boolean(fees && isTxReady),
-        overrides: {
-            gasPrice: fees?.gasPrice,
-        },
-        onError(e) {
-            const err = e?.error?.message || e?.data?.message || e
-            setError(err);
-            console.error('Error transferring ownership: ', err);
-        }
-    })
-
-    const { writeAsync } = useContractWrite(config);
-
-    return { write: writeAsync, isSuccess, error };
-}
-
 export {
-    useOrgForm,
-    useTransferOwnership,
-    useRenounceOwnership
+    useOrgForm
 }

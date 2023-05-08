@@ -2,7 +2,14 @@ import { Link } from "react-router-dom";
 
 import { useStory } from "@hooks";
 
-import { ArrowLink, Accordion, Metrics, StoryPreview, LandingHero, SEO } from "@components";
+import {
+    ArrowLink,
+    Accordion,
+    Metrics,
+    StoryPreview,
+    LandingHero,
+    SEO
+} from "@components";
 
 import "@style/pages/Landing.css";
 

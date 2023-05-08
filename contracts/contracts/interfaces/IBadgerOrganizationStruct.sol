@@ -11,7 +11,5 @@ interface IBadgerOrganizationStruct {
         address deployer;
         string uri;
         string organizationURI;
-        string name;
-        string symbol;
     }
 }

@@ -6,27 +6,54 @@
     cursor: pointer;
     transition: all 0.3s ease-in-out;
     background-color: #FAFAFA;
+    overflow: hidden;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .1);
+}
+
+.home__cards .card:hover {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0);
 }
 
 .home__cards .card::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 4px;
-    transition: all 0.3s ease-in-out;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background-image: url(../../static/images/hero-noise.png);
+    background-size: 960px 540px;
+    z-index: 0;
+    opacity: 0.45;
 }
 
-.home__cards .card:hover::before {
-    backdrop-filter: brightness(0.97);
+.home__cards .card::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -20%;
+    right: -20%;
+    bottom: -20%;
+    z-index: 3;
+    background: linear-gradient(to right, transparent 10%, rgba(255, 255, 255, .25) 18%, transparent 33%);
+    background-size: 800px 104px;
+    background-position: -320px 0;
+    transform: skew(-30deg);
+    transition: all 1.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.home__cards .card:hover::after {
+    background-position: 590px 0;
+    opacity: 0.3;
 }
 
 .home__cards .card .text {
     display: grid;
     grid-template-rows: auto 4fr;
     height: 100%;
+    position: relative;
+    z-index: 2;
 }
 
 .home__cards .card .subtext {
@@ -40,7 +67,9 @@
     margin-top: auto;
     display: flex;
     align-items: center;
-    column-gap: 10px;
+    column-gap: 20px;
+    margin-bottom: 0px;
+    padding-right: 20px;
 }
 
 .home__cards .card .text .title .viewImage__container,
@@ -48,6 +77,22 @@
     border-radius: 50%;
     height: 24px;
     width: 24px;
+    align-self: self-end;
+    margin-bottom: 3px;
+    align-items: center;
+    justify-content: center;
+}
+
+.home__cards .card .text .title span {
+    display: block;
+    max-width: 240px;
+    word-wrap: break-word;
+}
+
+@media only screen and (max-width: 768px) {
+    .home__cards .card .text .title span {
+        max-width: 320px;
+    }
 }
 
 .home__cards .card:nth-child(2) {

@@ -1,25 +1,14 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 import { useManageHolders } from "@hooks";
 
-import { ErrorContext } from "@contexts";
-
 import { ActionButton, InputListAddressAmountCSV, Select } from "@components";
-
-// TODO: Still need to clean up the below functions
-// setDelegates hook
-// manageOwnership hook
-// onMembersUpdate
-// onDelegatesUpdate
-// runTransaction
-// useEffect
 
 const BadgeManagementDrawer = ({ drawer, badge, org, setDrawer }) => {
     const [addressAmounts, setAddressAmounts] = useState({
         addresses: [],
         amounts: []
     })
-    const { setError } = useContext(ErrorContext);
 
     const { openHolderTransaction, isPrepared, isLoading } = useManageHolders({
         obj: {
@@ -41,7 +30,7 @@ const BadgeManagementDrawer = ({ drawer, badge, org, setDrawer }) => {
                 console.log('receipt', receipt)
             },
             onError: (e) => {
-                setError(e);
+                console.error(e)
             }
         });
     }

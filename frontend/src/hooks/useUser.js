@@ -1,44 +1,142 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 
-import { AuthenticationContext, BadgeContext, OrgContext, UserContext } from "@contexts";
+import { ethers } from "ethers";
+
+import { UserContext } from "@contexts";
+
+function getOrganizationKey(manager) {
+    return ethers.utils.solidityKeccak256(["bytes"], [
+        ethers.utils.defaultAbiCoder.encode(["address"], [manager])
+    ]);
+}
+
+function getBadgeKey(badgeId, manager) {
+    return ethers.utils.solidityKeccak256(["bytes"], [
+        ethers.utils.defaultAbiCoder.encode(["uint256", "address"], [badgeId, manager])
+    ]);
+}
 
 const useUser = (props) => {
-    const { chainId = null, orgAddress = null, badgeId = null } = props || {};
-
     const {
         chain,
         primaryChain,
         address,
+        viewing,
+        organizations,
+        userOrganizations,
         isConnected,
-        isWrongNetwork
-    } = useContext(AuthenticationContext);
+        isWrongNetwork,
+        isLoaded,
+        send
+    } = useContext(UserContext);
 
-    const { organizations } = useContext(OrgContext);
-    const { badges: _badges } = useContext(BadgeContext);
-    const { isLoaded } = useContext(UserContext);
+    const {
+        chainId = chain?.id,
+        orgAddress = null,
+        badgeId = null
+    } = props || {};
 
-    const isOrganizationReady = organizations && chainId && orgAddress && organizations.length > 0;
+    const organization = useMemo(() => {
+        if (!isLoaded || organizations.length == 0 || !orgAddress) return null;
 
-    const organization = isOrganizationReady && organizations.find((org) => org.chain_id === parseInt(chainId) && org.ethereum_address === orgAddress);
+        return organizations.find((org) => {
+            return org.chain_id === parseInt(chainId) && org.ethereum_address === orgAddress;
+        })
+    }, [isLoaded, chainId, orgAddress, organizations])
 
-    const badges = organization && _badges && _badges.filter((badge) => badge.ethereum_address === orgAddress)
+    const badges = useMemo(() => {
+        if (!organization) return null;
 
-    const badge = organization && badgeId && badges.find((badge) => String(badge.id) === badgeId);
+        return organization.badges;
+    }, [organization])
 
-    const isOwner = organization && organization.owner.ethereum_address === address;
+    const badge = useMemo(() => {
+        if (!organization || !badgeId) return null;
+
+        return organization.badges.find((badge) => {
+            return badge.token_id === parseInt(badgeId);
+        })
+    }, [organization, badgeId])
+
+    const managers = useMemo(() => {
+        if (!organization) return null;
+
+        const organizationManagers = organization.modules.filter((module) => {
+            return module.module_type === "manager";
+        })
+
+        const filter = (module) => {
+            if (badge)
+                return module.is_active && (
+                    module.module_key === getBadgeKey(badge.token_id, module.ethereum_address) ||
+                    module.module_key === getOrganizationKey(module.ethereum_address)
+                )
+
+            return module.module_key === getOrganizationKey(module.ethereum_address)
+        }
+
+        return organizationManagers.filter(filter)
+    }, [organization, badge])
+
+    const isOwner = useMemo(() => {
+        if (!address || !organization) return false;
+
+        if (!organization.owner) return false;
+
+        return organization.owner.ethereum_address === address;
+    }, [address, organization])
+
+    const isManager = useMemo(() => {
+        if (!address || !managers) return false;
+
+        return managers.some((manager) => {
+            return manager.ethereum_address === address;
+        })
+    }, [address, managers])
+
+    const isMember = useMemo(() => {
+        if (!address || !badge) return false;
+
+        return badge.users.some((member) => {
+            return member.ethereum_address === address;
+        })
+    }, [address, badge])
+
+    const canManage = useMemo(() => {
+        if (viewing) return false;
+
+        return isOwner || isManager;
+    }, [viewing, isOwner, isManager])
+
+    const retrieve = () => {
+        if (!chainId || !orgAddress || !send) return;
+
+        send(JSON.stringify({
+            action: "retrieve",
+            request_id: new Date().getTime(),
+            pk: `${chainId}:${orgAddress}`
+        }))
+    }
 
     return {
         chain,
         primaryChain,
         address,
         organizations,
+        userOrganizations,
         organization,
-        badges: orgAddress ? badges : _badges,
+        badges,
         badge,
+        managers,
         isConnected,
+        isWrongNetwork,
         isLoaded,
         isOwner,
-        isWrongNetwork
+        isManager,
+        isMember,
+        canManage,
+        send,
+        retrieve
     }
 }
 

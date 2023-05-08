@@ -1,18 +1,16 @@
-import { useNavigate } from "react-router-dom";
-
-import { useUser } from "@hooks";
+import { useNavigateAddress, useUser } from "@hooks";
 
 import { ActionTitle, Empty, OrgCard } from "@components"
 
 import "@style/pages/Home.css";
 
 const Home = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigateAddress();
 
-    const { organizations } = useUser();
+    const { userOrganizations: organizations } = useUser();
 
     const announcementMessage = (
-        <p>As of March 21st, 2023 organizations deployed before that date have been migrated to
+        <p>Organizations deployed before April 1st, 2023 have been migrated to
             <a href="https://legacy.trybadger.com" target="_blank" rel="noreferrer"> legacy.trybadger.com</a>.
         </p>
     )
@@ -34,12 +32,9 @@ const Home = () => {
                 </div>
             }
 
-            <ActionTitle
-                title="Organizations"
-                actions={titleActions}
-            />
+            <ActionTitle title="Organizations" actions={titleActions} />
 
-            {organizations && organizations.length === 0 && <Empty
+            {!organizations || organizations.length == 0 && <Empty
                 title="No Organizations yet!"
                 body="Creating the Badges for your first Organization is easy. Choose and customize your Organization's name, logo, and description and your organization is live!"
                 button="Create organization"
@@ -47,7 +42,9 @@ const Home = () => {
             />}
 
             {organizations && organizations.length > 0 && <div className="home__cards">
-                {organizations?.map((org, index) => <OrgCard key={index} org={org} />)}
+                {organizations?.filter(
+                    org => org?.retrieved !== true
+                ).map((org, index) => <OrgCard key={index} org={org} />)}
             </div>}
         </div >
     )

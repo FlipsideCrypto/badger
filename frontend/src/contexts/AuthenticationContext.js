@@ -1,5 +1,8 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect } from "react";
+
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+
+import { useTabActive } from "@hooks";
 
 const CHAIN_ID = process.env.REACT_APP_CHAIN_ID
 
@@ -11,6 +14,8 @@ const AuthenticationContextProvider = ({ children }) => {
 
     const { address, isConnected } = useAccount();
 
+    const isTabActive = useTabActive();
+
     const primaryChain = chains.find(c => c.id === parseInt(CHAIN_ID));
 
     const isWrongNetwork = isConnected && chain && primaryChain && chains && chain.id !== primaryChain.id;
@@ -18,8 +23,9 @@ const AuthenticationContextProvider = ({ children }) => {
     const isReadyToSwitch = !isError && switchNetwork && isWrongNetwork;
 
     useEffect(() => {
-        if (isReadyToSwitch) switchNetwork(primaryChain.id)
-    }, [isReadyToSwitch, primaryChain]);
+        if (isTabActive && isReadyToSwitch)
+            switchNetwork(primaryChain.id)
+    }, [isTabActive, isReadyToSwitch, primaryChain]);
 
     return (
         <AuthenticationContext.Provider value={{

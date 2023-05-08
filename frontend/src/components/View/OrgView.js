@@ -1,10 +1,10 @@
-import { Link, useParams } from 'react-router-dom';
+import { useMemo } from 'react';
 
-import { useUser } from "@hooks"
+import { Link } from 'react-router-dom';
 
 import { ActionButton, ImageLoader } from "@components"
 
-import { sliceAddress } from "@utils";
+import { formatName, sliceAddress } from "@utils";
 
 import { IPFS_GATEWAY_URL } from "@static";
 
@@ -12,8 +12,8 @@ import "@style/View/OrgView.css"
 
 const copy = (text) => navigator.clipboard.writeText(text);
 
-const OrgView = ({ chainId, orgAddress }) => {
-    const { organization } = useUser({ chainId, orgAddress });
+const OrgView = ({ organization }) => {
+    const formattedName = useMemo(() => formatName(organization?.name), [organization?.name]);
 
     return (
         <div className="view">
@@ -25,7 +25,7 @@ const OrgView = ({ chainId, orgAddress }) => {
                             src={IPFS_GATEWAY_URL + organization.image_hash}
                         />
                     </div>
-                    <span>{organization.name}</span>
+                    <span>{formattedName}</span>
                 </Link>
 
                 <small className="action_bar__header__subtext">
@@ -37,8 +37,9 @@ const OrgView = ({ chainId, orgAddress }) => {
                     </a>
                 </small>
 
-                <ActionButton className="tertiary" icon={['fal', 'clipboard']} onClick={() => copy(organization.ethereum_address)} />
-                <ActionButton className="link tertiary" icon={['fal', 'link']} onClick={() => copy(window.location.href)} />
+                <div className="action_bar__header__buttons">
+                    <ActionButton className="tertiary" icon={['fal', 'clipboard']} onClick={() => copy(organization.ethereum_address)} />
+                </div>
             </>}
 
             {!organization && <>

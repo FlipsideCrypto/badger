@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 
 import { getProvider } from "@wagmi/core";
+import { useAccount } from "wagmi";
 
 import { ActionButton, Empty } from "@components";
 
@@ -36,15 +37,43 @@ const NotIndexedEmpty = () => <Empty
     />}
 />
 
-const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
+const NotManagerDeploy = ({ badgeId }) => {
+    const title = `You are not the manager of this ${badgeId ? "Badge" : "Organization"}.`
+    const body = `The connected wallet is not the manager of this ${badgeId ? "Badge" : "Organization"}. Please connect a wallet that is the manager of this ${badgeId ? "Badge" : "Organization"}.`
+
+    return (
+        <Empty
+            title={title}
+            body={body}
+            button={< ActionButton
+                className="secondary"
+                afterText="Check the chain"
+                icon={['fal', 'eye']}
+            />}
+        />
+    )
+}
+
+const DashboardLoader = ({
+    chainId,
+    orgAddress,
+    badgeId,
+    obj,
+    retrieve,
+    managed,
+    canManage,
+    children
+}) => {
+    const { address } = useAccount();
+
     const [logs, setLogs] = useState([]);
 
-    const isLoading = obj === undefined;
+    const isLoading = (managed && !canManage) || !obj || obj?.name === null;
 
     useEffect(() => {
-        const getFilter = ({ ethereum_address }) => {
+        const getFilter = () => {
             if (!badgeId) return {
-                address: ethereum_address,
+                address: getBadgerAbi(chainId).address,
                 topics: [
                     ethers.utils.id("OrganizationCreated(address,address,uint256)"),
                     ethers.utils.hexZeroPad(orgAddress, 32)
@@ -54,7 +83,7 @@ const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
             }
 
             return {
-                address: ethereum_address,
+                address: orgAddress,
                 topics: [
                     ethers.utils.id("URI(string,uint256)"),
                     null,
@@ -66,34 +95,47 @@ const DashboardLoader = ({ chainId, orgAddress, badgeId, obj, children }) => {
         }
 
         const getLogs = () => {
-            const address = orgAddress || getBadgerAbi(chainId).address;
-
-            const filter = getFilter({ ethereum_address: address });
+            const filter = getFilter();
 
             const provider = getProvider(chainId);
 
             provider.getLogs(filter)
                 .then(logs => {
                     setLogs(logs);
-                    console.log("logs: ", logs)
                 });
         }
 
-        getLogs();
-    }, [])
+        if (!chainId || !orgAddress || !managed || !isLoading) return
 
-    const isDeployed = logs.length > 0;
+        getLogs();
+    }, [chainId, orgAddress, badgeId, managed, isLoading])
+
+    const isLogged = logs.length > 0;
+
+    useEffect(() => {
+        if (!isLoading || !retrieve) return
+
+        if (orgAddress && obj?.ethereum_address === orgAddress) return
+
+        retrieve();
+    }, [address, isLoading, isLogged, retrieve])
+
+    const isDeployed = !isLoading || isLogged;
+
+    const isAccessible = !managed || (managed && canManage);
 
     return (
         <>
             {!isLoading && children}
 
             {isLoading && <>
-                <div className="loading short" />
+                {!address && <div className="loading short" />}
 
-                {isDeployed && <NotIndexedEmpty />}
+                {!isDeployed && isAccessible && <NotDeployedEmpty badgeId={badgeId} />}
 
-                {!isDeployed && <NotDeployedEmpty />}
+                {!managed && isDeployed && <NotIndexedEmpty />}
+
+                {isDeployed && !isAccessible && <NotManagerDeploy badgeId={badgeId} />}
             </>}
         </>
     )

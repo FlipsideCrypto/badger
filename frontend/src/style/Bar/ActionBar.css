@@ -1,12 +1,13 @@
 .action_bar {
     display: grid;
     grid-column: 1 / span 4;
-    grid-template-columns: 4fr 8fr;
+    grid-template-columns: 8fr 4fr;
     grid-template-rows: 1fr;
     align-items: center;
     margin-inline: 20px;
     border-bottom: 1px solid #e0e0e0;
     padding-block: 20px;
+    margin-bottom: 20px;
 }
 
 .action_bar .action_bar__actions {
@@ -20,6 +21,10 @@
 }
 
 @media (max-width: 768px) {
+    .action_bar {
+        grid-template-columns: 10fr 3fr;
+    }
+
     .action_bar .action_bar__toggle {
         display: block;
         margin-left: auto;
@@ -117,7 +122,7 @@
 }
 
 .sidebar__organizations .sidebar__organization img {
-    border-radius: 2px;
+    border-radius: 4px;
     height: 18px;
     width: 18px;
     margin-right: 10px;

@@ -9,7 +9,7 @@ const csvFileToArray = (file) => {
         const values = i.split(",");
 
         const obj = csvHeader.reduce((object, header, index) => {
-            return {...object, [index]: values[index].replace(/\r/g, "")}
+            return { ...object, [index]: values[index].replace(/\r/g, "") }
         }, {});
 
         return obj;
@@ -30,6 +30,14 @@ const compareByProperty = (property, direction, a, b) => {
     if (a[property] > b[property]) return 1 * inverse;
     if (a[property] < b[property]) return -1 * inverse;
     return 0;
+}
+
+const formatName = (name) => {
+    if (name.length === 0) return "Untitled";
+
+    if (name.length > 18) return name.slice(0, 18) + "...";
+
+    return name;
 }
 
 const formatAddresses = (addresses) => {
@@ -73,6 +81,8 @@ const getFileFromBase64 = (base64, filename) => {
 const getTimeSince = (date) => {
     var seconds = Math.floor((new Date() - date) / 1000);
 
+    if (isNaN(seconds)) return
+
     var interval = seconds / 31536000;
     if (interval > 1) {
         return Math.floor(interval) + " years";
@@ -101,6 +111,7 @@ export {
     csvFileToArray,
     sliceAddress,
     compareByProperty,
+    formatName,
     formatAddresses,
     getCSRFToken,
     getFileFromBase64,

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
     Table, TableHead, TableRow,
     TableContainer, TableCell, TableBody
@@ -7,18 +7,35 @@ import {
 
 import { ImageLoader, TableSortHead } from "@components";
 
-import { compareByProperty, getTimeSince } from "@utils";
+import { useNavigateAddress } from "@hooks";
 
-import { BADGE_HEAD_ROWS, IPFS_GATEWAY_URL } from "@static";
+import { compareByProperty, getTimeSince } from "@utils";
 
 import "@style/Table/HolderTable.css";
 
 const BadgeTable = ({ badges }) => {
-    const navigate = useNavigate();
+    const navigate = useNavigateAddress();
 
     const { orgAddress, chainId } = useParams();
 
-    const [headRows, setHeadRows] = useState(BADGE_HEAD_ROWS);
+    const [headRows, setHeadRows] = useState({
+        name: {
+            label: 'Badge',
+            sortable: true,
+            method: "",
+        },
+        holders: {
+            label: 'Holders',
+            sortable: true,
+            method: ""
+        },
+        updated: {
+            label: 'Last Updated',
+            sortable: true,
+            method: "",
+        }
+    });
+
     const [sortedList, setSortedList] = useState(badges);
 
     const onSortChange = (key) => {
@@ -44,7 +61,7 @@ const BadgeTable = ({ badges }) => {
     }, [badges])
 
     return (
-        <div id="holder__table">
+        <div id="holder__table" className="dashboard__table">
             {sortedList && <TableContainer>
                 <Table>
                     <TableHead>
@@ -67,7 +84,7 @@ const BadgeTable = ({ badges }) => {
                         {sortedList.map((badge, index) => (
                             <TableRow
                                 key={index}
-                                onClick={() => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badge.id}/`)}
+                                onClick={() => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badge.token_id}/`)}
                                 style={{
                                     cursor: "pointer"
                                 }}

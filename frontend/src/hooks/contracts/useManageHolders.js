@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
-import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
+import { getBadgerOrganizationAbi, useFees, useUser, useWindow, useClickEvent } from "@hooks";
 
 import { addressValidator } from "@utils";
 
@@ -34,7 +34,7 @@ const getRevokeArgs = ({ revokes, tokenId }) => {
     const functionName = revokes.length > 1 ? "revokeBatch" : "revoke";
     
     // Build cleaned amounts and addresses
-    const revokeAmounts = revokes.map(mint => Math.abs(parseInt(mint.amount) - parseInt(mint.pendingAmount || mint.amount)));
+    const revokeAmounts = revokes.map(mint => Math.abs(parseInt(mint.amount) - parseInt(mint.pendingAmount)));
     const { cleanedAddresses: revokeAddresses, invalid } = addressValidator(revokes.map(revoke => revoke.ethereum_address));
 
     // Make sure everything is valid for the transaction.
@@ -52,7 +52,7 @@ const getRevokeArgs = ({ revokes, tokenId }) => {
 
 const getManageHolderArgs = ({ revokes, mints, tokenId, organization }) => {
     // if multi call is necessary
-    if (mints.length > 0 && revokes.length > 0) {
+    if (mints && revokes && mints.length > 0 && revokes.length > 0) {
         // Build mint and revoke args
         const { functionName: mintFunction, args: mintArgs } = getMintArgs({ mints: mints, tokenId: tokenId });
         const { functionName: revokeFunction, args: revokeArgs} = getRevokeArgs({ revokes: revokes, tokenId: tokenId });
@@ -69,15 +69,15 @@ const getManageHolderArgs = ({ revokes, mints, tokenId, organization }) => {
 
         return { functionName: "multicall", args };
     }
-    else if (mints.length > 0)
+    else if (mints && mints.length > 0)
         return getMintArgs({ mints: mints, tokenId: tokenId });
-    else if (revokes.length > 0)
+    else if (revokes && revokes.length > 0)
         return getRevokeArgs({ revokes: revokes, tokenId: tokenId });
 
     return { functionName: "", args: [] };
 }
 
-const useManageHolders = ({ obj }) => {
+const useManageHolders = ({ mints, revokes, tokenId }) => {
     const fees = useFees();
 
     const { orgAddress } = useParams();
@@ -93,9 +93,9 @@ const useManageHolders = ({ obj }) => {
 
     const { functionName, args } = getManageHolderArgs({ 
         organization: BadgerOrg,
-        mints: obj.mints,
-        revokes: obj.revokes,
-        tokenId: obj.tokenId
+        mints: mints,
+        revokes: revokes,
+        tokenId: tokenId
      });
 
     const overrides = { gasPrice: fees?.gasPrice };
@@ -114,7 +114,11 @@ const useManageHolders = ({ obj }) => {
         }
     });
 
+    const { transactionWindow } = useWindow();
+
     const { writeAsync } = useContractWrite(config);
+
+    const { lastClick } = useClickEvent();
 
     const openHolderTransaction = async ({
         onError = (e) => { console.error(e) },
@@ -124,9 +128,27 @@ const useManageHolders = ({ obj }) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
-            onLoading();
+
+            const isMint = functionName === "mint" || functionName === "mintBatch";
+            
+            const action = functionName === "multicall" ? "make the Badge balance changes" :
+                isMint ? "mint the Badges to the Holders" : "revoke the Badges from the Holders"
+
+            transactionWindow.onStart({ 
+                title: "Waiting for confirmation...",
+                body: `Please confirm the transaction in your wallet to ${action}.`,
+                click: lastClick
+            })
 
             const tx = await writeAsync();
+
+            transactionWindow.onSign({
+                title: "Mining transaction. This may take a few seconds.",
+                body: "Badger hasn't detected your Badge balance changes yet. Please give us a few minutes to check the chain.",
+                hash: tx.hash
+            });
+
+            onLoading();
 
             const receipt = await tx.wait();
 
@@ -138,10 +160,11 @@ const useManageHolders = ({ obj }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
-        } catch (e) {
-            console.error('e', e)
+            transactionWindow.onSuccess();
 
+        } catch (e) {
             onError(e);
+            transactionWindow.onError();
         }
     }
 

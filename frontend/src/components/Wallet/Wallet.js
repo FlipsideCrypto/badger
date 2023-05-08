@@ -4,7 +4,7 @@ import { publicProvider } from 'wagmi/providers/public';
 import { getDefaultWallets, RainbowKitProvider, lightTheme } from '@rainbow-me/rainbowkit';
 import { polygon, localhost } from 'wagmi/chains';
 
-import { AuthenticationContextProvider, OrgContextProvider, UserContextProvider } from '@contexts';
+import { AuthenticationContextProvider } from '@contexts';
 
 const Wallet = ({ children }) => {
     const { chains, provider } = configureChains(
@@ -38,11 +38,7 @@ const Wallet = ({ children }) => {
                 })}
             >
                 <AuthenticationContextProvider>
-                    <OrgContextProvider>
-                        <UserContextProvider>
-                            {children}
-                        </UserContextProvider>
-                    </OrgContextProvider>
+                    {children}
                 </AuthenticationContextProvider>
             </RainbowKitProvider>
         </WagmiConfig>

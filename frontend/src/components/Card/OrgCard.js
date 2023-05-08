@@ -1,15 +1,17 @@
-import { useNavigate } from "react-router-dom";
+import { useMemo } from "react";
 
 import { handleImageLoad } from "@hooks";
 
 import { Card, ChainIcon, ImageLoader } from "@components";
 
-import { sliceAddress } from "@utils";
+import { useNavigateAddress } from "@hooks";
+
+import { formatName, sliceAddress } from "@utils";
 
 import "@style/Card/OrgCard.css"
 
 const OrgCard = ({ org }) => {
-    const navigate = useNavigate();
+    const navigate = useNavigateAddress();
 
     return (
         <Card onClick={() => navigate(`/dashboard/organization/${org.chain_id}/${org.ethereum_address}`)}>
@@ -28,7 +30,7 @@ const OrgCard = ({ org }) => {
                             onLoad={handleImageLoad} />
                     </div>
 
-                    {org.name}
+                    <span>{org.name}</span>
                 </h2>
             </div>
         </Card>

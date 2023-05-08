@@ -3,18 +3,16 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { fal } from '@fortawesome/pro-light-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 
-import { ErrorContextProvider } from "@contexts"
+import { DashboardWrapper, ScrollToTop, SEO } from "@components"
 
-import { SEO, ScrollToTop, Wallet } from "@components"
-
-import { Dashboard, Page } from "@pages"
+import { Dashboard, Discover, Page } from "@pages"
 
 import "@style/App.css"
 
 library.add(fal, fab)
 
-const title = "The Web3 Organization Key Solution | Badger";
-const description = "Level up the access-controls of your onchain organization and enjoy the benefits of a Web3 focused key solution."
+const title = "No-Code Onchain Access Policies // Badger";
+const description = "Level up the access-controls of your onchain organization and enjoy the benefits of a Web3 focused key solution with modular ERC1155s."
 
 function App() {
     return (
@@ -25,12 +23,15 @@ function App() {
                 <ScrollToTop />
 
                 <Routes>
+                    <Route exact path="/discover/" element={
+                        <DashboardWrapper
+                            children={<Discover />}
+                            paramAddress='all'
+                        />
+                    } />
+
                     <Route exact path="/dashboard/*" element={
-                        <ErrorContextProvider>
-                            <Wallet>
-                                <Dashboard />
-                            </Wallet>
-                        </ErrorContextProvider>
+                        <DashboardWrapper children={<Dashboard />} />
                     } />
 
                     <Route path="/*" element={<Page />} />

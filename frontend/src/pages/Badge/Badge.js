@@ -1,25 +1,40 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-import { BadgePreview, Header, HolderTable, SEO, DashboardLoader } from "@components";
+import { BadgePreview, Header, HolderTable, ManagerTable, SEO, DashboardLoader } from "@components";
 
-import { useUser } from "@hooks";
+import { useNavigateAddress, useUser } from "@hooks";
 
 import "@style/pages/Badge.css";
 
-// TODO: Make sure that empty is all good
+const BadgeContent = ({ badge, managers, canManage }) => {
+    return (<>
+        <BadgePreview badge={badge} />
+
+        <ManagerTable
+            badge={badge}
+            managers={managers}
+            canManage={canManage} />
+
+        <HolderTable
+            badge={badge}
+            canManage={canManage} />
+    </>)
+}
+
 const Badge = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigateAddress();
 
     const { chainId, orgAddress, badgeId } = useParams();
 
-    const { address, organization, badge } = useUser({ chainId, orgAddress, badgeId });
+    const {
+        organization,
+        badge,
+        managers,
+        canManage,
+        retrieve
+    } = useUser({ chainId, orgAddress, badgeId });
 
-    const isManager = organization && badge && (
-        organization.owner.ethereum_address === address ||
-        badge.delegates.find(delegate => delegate.ethereum_address === address)
-    );
-
-    const headerActions = [{
+    const headerActions = canManage && [{
         text: "Settings",
         icon: ["fal", "fa-gear"],
         onClick: () => navigate(`/dashboard/organization/${chainId}/${orgAddress}/badge/${badgeId}/edit/`)
@@ -27,16 +42,24 @@ const Badge = () => {
 
     return (
         <>
-            <SEO title={`${organization.name} | ${badge.name} | Badger`} description={badge.description} />
+            <SEO
+                title={`${badge ? `${organization.name} // ${badge.name}` : 'Not Found'} // Badger`}
+                description={badge?.description} />
 
             <Header back={() =>
                 navigate(`/dashboard/organization/${chainId}/${orgAddress}/`)}
-                actions={isManager && headerActions} />
+                actions={headerActions} />
 
-            <DashboardLoader chainId={chainId} orgAddress={orgAddress} obj={organization}>
-                <BadgePreview badge={badge} />
-
-                <HolderTable badge={badge} isManager={isManager} />
+            <DashboardLoader
+                chainId={chainId}
+                orgAddress={orgAddress}
+                badgeId={badgeId}
+                obj={badge}
+                retrieve={retrieve}>
+                <BadgeContent
+                    badge={badge}
+                    managers={managers}
+                    canManage={canManage} />
             </DashboardLoader>
         </>
     )

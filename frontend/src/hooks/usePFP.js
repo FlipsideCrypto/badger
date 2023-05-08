@@ -1,28 +1,23 @@
 import { useEffect, useState } from 'react';
 
-import { useDebounce } from '@hooks';
-
 import { getPFPImage } from '@utils';
 
 const usePFP = ({ name, address }) => {
-    const [characterPFP, setCharacterPFP] = useState(' ');
-
-    const debouncedName = useDebounce(name, 300);
-
-    const formattedName = debouncedName.charAt(0).toUpperCase();
+    const [pfp, setPFP] = useState(' ');
 
     useEffect(() => {
         async function getImage() {
             const image = await getPFPImage(name, address);
 
-            setCharacterPFP(image);
+            setPFP(image);
         }
 
-        if (!formattedName || !address) return
-        getImage();
-    }, [formattedName, address]);
+        if (!name || !address) return
 
-    return { characterPFP };
+        getImage();
+    }, [name, address]);
+
+    return { pfp };
 }
 
 export { usePFP };
