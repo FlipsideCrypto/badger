@@ -33,12 +33,7 @@
     grid-gap: 30px;
     padding: 20px 20px 20px 20px;
     margin-top: 20px;
-}
-
-@media screen and (max-width: 768px) {
-    .badge__header {
-        grid-template-columns: 1fr 1fr;
-    }
+    align-items: center;
 }
 
 .badge__header .preview__container,
@@ -54,10 +49,8 @@
     grid-template-columns: auto 1fr;
     grid-gap: 16px;
     align-items: center;
-}
-
-.badge__header .title h1 {
-    margin-block: 8px;
+    margin-top: 0px;
+    margin-bottom: 10px;
 }
 
 .badge__header .title .icons {
@@ -67,23 +60,21 @@
     align-items: baseline;
 }
 
+.badge__header .description {
+    height: 40px;
+}
+
 .badge__header .title .icons svg {
     width: 14px;
     height: 16px;
 }
 
 .badge__header p {
-    max-width: 540px;
-}
-
-.badge__header .content {
-    display: grid;
-    grid-template-rows: min-content 1fr;
-    gap: 10px;
+    max-width: 720px;
 }
 
 .badge__header .pill {
-    border: 1px solid #E3E0E0;
+    border: 1px solid #e3e0e0;
     border-radius: 50px;
     min-width: 40px;
     text-align: center;

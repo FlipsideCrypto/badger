@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { ActionTitle, TableSortHead, Empty } from '@components';
 
-import { compareByProperty, getTimeSince } from '@utils';
+import { getTimeSince } from '@utils';
 
 import { useSetManagers } from '@hooks';
 
