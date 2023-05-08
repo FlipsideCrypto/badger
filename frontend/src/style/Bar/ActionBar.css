@@ -1,7 +1,7 @@
 .action_bar {
     display: grid;
     grid-column: 1 / span 4;
-    grid-template-columns: 4fr 8fr;
+    grid-template-columns: 8fr 4fr;
     grid-template-rows: 1fr;
     align-items: center;
     margin-inline: 20px;
@@ -21,6 +21,10 @@
 }
 
 @media (max-width: 768px) {
+    .action_bar {
+        grid-template-columns: 10fr 3fr;
+    }
+
     .action_bar .action_bar__toggle {
         display: block;
         margin-left: auto;

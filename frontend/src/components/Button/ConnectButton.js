@@ -15,18 +15,7 @@ const ConnectButton = (props) => {
 
     const className = props.className || "secondary"
 
-    if (!isConnected)
-        return (
-            <button
-                className={className}
-                onClick={openConnectModal}
-                disabled={isLoading}
-            >
-                <span>{isLoading ? "Loading..." : "Connect Wallet"}</span>
-            </button>
-        );
-
-    if (isWrongNetwork && switchNetwork)
+    if (isConnected && isWrongNetwork && switchNetwork)
         return (
             <button
                 className={className}
@@ -36,6 +25,16 @@ const ConnectButton = (props) => {
                 <span>Switch to {primaryChain.name}</span>
             </button>
         );
+
+    return (
+        <button
+            className={className}
+            onClick={openConnectModal}
+            disabled={isLoading}
+        >
+            <span>{isConnected ? "Connected" : isLoading ? "Loading..." : "Connect Wallet"}</span>
+        </button>
+    );
 };
 
 export { ConnectButton };

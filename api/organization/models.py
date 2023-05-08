@@ -5,22 +5,19 @@ from siwe_auth.models import validate_ethereum_address
 from badge.models import Badge
 from module.models import Module
 
+
 class Organization(models.Model):
     is_active = models.BooleanField(default=True)
 
     chain_id = models.IntegerField(default=1337)
     ethereum_address = models.CharField(
-        max_length=50, 
-        blank=False, 
-        default=None, 
-        validators=[validate_ethereum_address]
+        max_length=50, blank=False, default=None, validators=[validate_ethereum_address]
     )
 
     name = models.CharField(max_length=128, blank=True, null=True)
-    symbol = models.CharField(max_length=52, blank=True, null=True)
     description = models.TextField(max_length=4000, blank=True, null=True)
 
-    owner = models.ForeignKey('siwe_auth.Wallet', on_delete=models.CASCADE, null=True)
+    owner = models.ForeignKey("siwe_auth.Wallet", on_delete=models.CASCADE, null=True)
     modules = models.ManyToManyField(Module, blank=True)
     badges = models.ManyToManyField(Badge, blank=True)
 
@@ -36,4 +33,4 @@ class Organization(models.Model):
         return self.ethereum_address
 
     class Meta:
-        ordering = ['-created']
+        ordering = ["-created"]

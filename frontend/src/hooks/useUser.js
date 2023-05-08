@@ -108,6 +108,16 @@ const useUser = (props) => {
         return isOwner || isManager;
     }, [viewing, isOwner, isManager])
 
+    const retrieve = () => {
+        if (!chainId || !orgAddress || !send) return;
+
+        send(JSON.stringify({
+            action: "retrieve",
+            request_id: new Date().getTime(),
+            pk: `${chainId}:${orgAddress}`
+        }))
+    }
+
     return {
         chain,
         primaryChain,
@@ -125,7 +135,8 @@ const useUser = (props) => {
         isManager,
         isMember,
         canManage,
-        send
+        send,
+        retrieve
     }
 }
 

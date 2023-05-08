@@ -2,9 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 
 import ReconnectingWebSocket from 'reconnecting-websocket';
 
+import { useAccount } from "wagmi";
+
 import { useLogout } from "@hooks";
 
 const useSocket = ({ enabled, url }) => {
+    const { address } = useAccount();
+
     const { logout } = useLogout();
 
     const [connected, setConnected] = useState(false);
@@ -70,16 +74,17 @@ const useSocket = ({ enabled, url }) => {
             setObjects(objects => {
                 const index = objects.findIndex(object => object.id === data.data.id);
 
-                const object = {
-                    ...data.data,
-                    retrieved: true
-                }
-
                 if (index === -1) {
-                    return [...objects, object];
+                    return [...objects, {
+                        ...data.data,
+                        retrieved: true
+                    }]
                 }
 
-                objects[index] = object;
+                objects[index] = {
+                    ...data.data,
+                    retrieved: objects[index]?.retrieved || false
+                }
 
                 return objects;
             });
@@ -104,7 +109,7 @@ const useSocket = ({ enabled, url }) => {
 
             handleAction(message);
         }
-    }, [enabled]);
+    }, [enabled, address]);
 
     return {
         connected,

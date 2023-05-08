@@ -1,6 +1,6 @@
 .view {
     display: grid;
-    grid-template-columns: repeat(4, auto);
+    grid-template-columns: repeat(3, auto);
     justify-content: flex-start;
     gap: 10px;
 }
@@ -11,7 +11,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-right: 30px;
+    margin-right: 20px;
 }
 
 .view .organization .organization__image {
@@ -25,6 +25,15 @@
     border-radius: 50%;
     height: 25px !important;
     width: 25px !important;
+}
+
+.view .action_bar__header__subtext {
+    margin-right: 10px;
+}
+
+.view .action_bar__header__subtext,
+.view .action_bar__header__buttons {
+    align-self: center;
 }
 
 @media screen and (max-width: 768px) {

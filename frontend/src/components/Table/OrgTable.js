@@ -61,7 +61,7 @@ const OrgTable = ({ organizations }) => {
     }, [organizations])
 
     return (
-        <div id="holder__table">
+        <div id="holder__table" className="dashboard__content">
             {sortedList && <TableContainer>
                 <Table>
                     <TableHead>

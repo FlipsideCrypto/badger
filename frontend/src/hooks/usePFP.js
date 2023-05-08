@@ -5,8 +5,6 @@ import { getPFPImage } from '@utils';
 const usePFP = ({ name, address }) => {
     const [pfp, setPFP] = useState(' ');
 
-    const formattedName = name.charAt(0).toUpperCase();
-
     useEffect(() => {
         async function getImage() {
             const image = await getPFPImage(name, address);
@@ -14,10 +12,10 @@ const usePFP = ({ name, address }) => {
             setPFP(image);
         }
 
-        if (!formattedName || !address) return
+        if (!name || !address) return
 
         getImage();
-    }, [formattedName, address]);
+    }, [name, address]);
 
     return { pfp };
 }

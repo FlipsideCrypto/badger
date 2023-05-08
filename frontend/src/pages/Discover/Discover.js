@@ -37,8 +37,8 @@ const Discover = () => {
             <SEO title="Discover // Badger" />
 
             <div className="dashboard">
-                <div className="dashboard__content">
-                    <div className="dashboardContent">
+                <div className="dashboard__contents">
+                    <div className="dashboard__content">
                         <Header back={() => navigate("/dashboard/")} />
 
                         <div style={{
