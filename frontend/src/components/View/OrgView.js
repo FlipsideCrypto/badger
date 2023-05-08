@@ -28,14 +28,16 @@ const OrgView = ({ organization }) => {
                             <span>{formattedName}</span>
                         </Link>
 
-                        <a
-                            target="_blank"
-                            rel="noreferrer"
-                            className="organization__metadata"
-                            href={`https://polygonscan.com/address/${organization.ethereum_address}`}
-                        >
-                            <small>{sliceAddress(organization?.ethereum_address)}</small>
-                        </a>
+                        <small>
+                            <a
+                                target="_blank"
+                                rel="noreferrer"
+                                className="organization__metadata"
+                                href={`https://polygonscan.com/address/${organization.ethereum_address}`}
+                            >
+                                {sliceAddress(organization?.ethereum_address)}
+                            </a>
+                        </small>
                     </div>
 
                     <div className="action_bar__header__buttons">
