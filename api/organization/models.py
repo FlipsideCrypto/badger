@@ -33,4 +33,4 @@ class Organization(models.Model):
         return self.ethereum_address
 
     class Meta:
-        ordering = ["-created"]
+        ordering = ["-updated", "-created"]

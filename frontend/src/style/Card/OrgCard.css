@@ -1,13 +1,13 @@
 .home__cards .card {
     border-radius: 4px;
-    height: 150px;
+    height: 120px;
     padding: 20px;
     position: relative;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    background-color: #FAFAFA;
+    background-color: #fafafa;
     overflow: hidden;
-    box-shadow: 0 0 8px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
 
 .home__cards .card:hover {
@@ -36,7 +36,7 @@
     right: -20%;
     bottom: -20%;
     z-index: 3;
-    background: linear-gradient(to right, transparent 10%, rgba(255, 255, 255, .25) 18%, transparent 33%);
+    background: linear-gradient(to right, transparent 10%, rgba(255, 255, 255, 0.25) 18%, transparent 33%);
     background-size: 800px 104px;
     background-position: -320px 0;
     transform: skew(-30deg);
@@ -50,7 +50,8 @@
 
 .home__cards .card .text {
     display: grid;
-    grid-template-rows: auto 4fr;
+    grid-template-rows: auto min-content;
+    gap: 10px;
     height: 100%;
     position: relative;
     z-index: 2;
@@ -72,6 +73,14 @@
     padding-right: 20px;
 }
 
+.home__cards .card .text .description {
+    margin-bottom: 0px;
+    margin-left: 45px;
+}
+
+.home__cards .card .text .title .viewImage__container {
+    position: relative;
+}
 .home__cards .card .text .title .viewImage__container,
 .home__cards .card .text .title .viewImage__container .viewImage {
     border-radius: 50%;
@@ -81,6 +90,14 @@
     margin-bottom: 3px;
     align-items: center;
     justify-content: center;
+}
+
+.home__cards .card .text .title .viewImage__container .chainIcon {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    width: 15px;
+    height: 15px;
 }
 
 .home__cards .card .text .title span {
