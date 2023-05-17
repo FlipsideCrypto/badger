@@ -14,7 +14,7 @@ import '@style/Table/HolderTable.css';
 
 const ManagerControl = ({ canManage, lastLogin, active, onClick }) => (
     <div className="table__inline mono">
-        {lastLogin && <span>{getTimeSince(new Date(lastLogin))} ago</span>}
+        {lastLogin && <span>{getTimeSince(new Date(lastLogin))}</span>}
         {canManage && (
             <button className={active ? 'delete active' : 'delete'} onClick={onClick}>
                 <FontAwesomeIcon icon={['fal', 'fa-trash']} />
@@ -158,7 +158,7 @@ const ManagerTable = ({ badge, managers, canManage }) => {
                                         <TableCell component="th" scope="row">
                                             <ManagerControl
                                                 onClick={() => onDelete(index, false)}
-                                                canManage={true}
+                                                canManage={canManage}
                                             />
                                         </TableCell>
                                     </TableRow>
@@ -178,6 +178,7 @@ const ManagerTable = ({ badge, managers, canManage }) => {
                                             <ManagerControl
                                                 lastLogin={manager.updated}
                                                 active={isSelected(manager.ethereum_address)}
+                                                canManage={canManage}
                                                 onClick={() => onDelete(index, true)}
                                             />
                                         </TableCell>
