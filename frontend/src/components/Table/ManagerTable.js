@@ -12,9 +12,9 @@ import { useSetManagers } from '@hooks';
 
 import '@style/Table/HolderTable.css';
 
-const LastLogin = ({ canManage, lastLogin, active, onClick }) => (
+const ManagerControl = ({ canManage, lastLogin, active, onClick }) => (
     <div className="table__inline mono">
-        <span>{getTimeSince(new Date(lastLogin))} ago</span>
+        {lastLogin && <span>{getTimeSince(new Date(lastLogin))} ago</span>}
         {canManage && (
             <button className={active ? 'delete active' : 'delete'} onClick={onClick}>
                 <FontAwesomeIcon icon={['fal', 'fa-trash']} />
@@ -156,9 +156,9 @@ const ManagerTable = ({ badge, managers, canManage }) => {
                                             />
                                         </TableCell>
                                         <TableCell component="th" scope="row">
-                                            <LastLogin
-                                                lastLogin={manager.last_login}
+                                            <ManagerControl
                                                 onClick={() => onDelete(index, false)}
+                                                canManage={true}
                                             />
                                         </TableCell>
                                     </TableRow>
@@ -175,7 +175,7 @@ const ManagerTable = ({ badge, managers, canManage }) => {
                                             />
                                         </TableCell>
                                         <TableCell component="th" scope="row">
-                                            <LastLogin
+                                            <ManagerControl
                                                 lastLogin={manager.updated}
                                                 active={isSelected(manager.ethereum_address)}
                                                 onClick={() => onDelete(index, true)}
