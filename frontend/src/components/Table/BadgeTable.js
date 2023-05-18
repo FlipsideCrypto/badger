@@ -112,7 +112,7 @@ const BadgeTable = ({ badges }) => {
                                     {badge.users.length}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                    {`${getTimeSince(new Date(badge.updated))} ago`}
+                                    {`${getTimeSince(new Date(badge.updated))}`}
                                 </TableCell>
                             </TableRow>
                         ))}

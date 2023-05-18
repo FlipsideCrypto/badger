@@ -116,7 +116,7 @@ const OrgTable = ({ organizations }) => {
                                             {org.badges.length}
                                         </TableCell>
                                         <TableCell component="th" scope="row">
-                                            {`${getTimeSince(new Date(org.updated))} ago`}
+                                            {`${getTimeSince(new Date(org.updated))}`}
                                         </TableCell>
                                     </TableRow>
                                 ))}
