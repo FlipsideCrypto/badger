@@ -60,14 +60,26 @@ const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) 
         data: ipfsMetadata,
     });
 
-    const activeImageURL = useMemo(() => {
-        if (image) return URL.createObjectURL(image);
+    const activeImageObj = useMemo(() => {
+        if (image)
+            return {
+                url: URL.createObjectURL(image),
+                name: image.name,
+            };
 
-        if (shouldUseHash) return IPFS_GATEWAY_URL + obj.image_hash;
+        if (shouldUseHash)
+            return {
+                url: IPFS_GATEWAY_URL + obj.image_hash,
+                name: IPFS_GATEWAY_URL + obj.image_hash,
+            };
 
-        if (pfp && pfp !== ' ') return URL.createObjectURL(pfp);
+        if (pfp)
+            return {
+                url: URL.createObjectURL(pfp),
+                name: 'Upload custom image...',
+            };
 
-        return null;
+        return { url: null, name: 'Upload custom image...' };
     }, [image, shouldUseHash, obj.image_hash, pfp]);
 
     const isDisabled = useMemo(() => {
@@ -134,7 +146,7 @@ const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) 
                     accept="image/*"
                     required={false}
                     disabled={true}
-                    value={activeImage.name || 'Upload custom image...'}
+                    value={activeImageObj.name}
                     append={
                         <button
                             className="secondary"

@@ -80,14 +80,26 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         data: ipfsMetadata,
     });
 
-    const activeImageURL = useMemo(() => {
-        if (image) return URL.createObjectURL(image);
+    const activeImageObj = useMemo(() => {
+        if (image)
+            return {
+                url: URL.createObjectURL(image),
+                name: image.name,
+            };
 
-        if (shouldUseHash) return IPFS_GATEWAY_URL + obj.image_hash;
+        if (shouldUseHash)
+            return {
+                url: IPFS_GATEWAY_URL + obj.image_hash,
+                name: IPFS_GATEWAY_URL + obj.image_hash,
+            };
 
-        if (badgeArt) return URL.createObjectURL(badgeArt);
+        if (badgeArt)
+            return {
+                url: URL.createObjectURL(badgeArt),
+                name: 'Upload custom image...',
+            };
 
-        return null;
+        return { url: null, name: 'Upload custom image...' };
     }, [image, shouldUseHash, obj.image_hash, badgeArt]);
 
     const isDisabled = useMemo(() => {
@@ -176,7 +188,7 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
                     <div className="form__group mobile__hidden" style={{ gridTemplateRows: 'min-content' }}>
                         <label className="form__label">Live Badge Preview</label>
                         <div className="preview__container">
-                            <ImageLoader className="preview__image" src={activeImageURL} alt="Badge Preview" />
+                            <ImageLoader className="preview__image" src={activeImageObj.url} alt="Badge Preview" />
                         </div>
                     </div>
                 </div>
@@ -196,7 +208,7 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
                     label="Custom Image"
                     required={false}
                     disabled={true}
-                    value={activeImage.name || 'Upload custom image...'}
+                    value={activeImageObj.name}
                     append={
                         <button
                             className="secondary"
