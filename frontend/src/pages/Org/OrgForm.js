@@ -73,7 +73,7 @@ const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) 
                 name: IPFS_GATEWAY_URL + obj.image_hash,
             };
 
-        if (pfp)
+        if (pfp && pfp.name)
             return {
                 url: URL.createObjectURL(pfp),
                 name: 'Upload custom image...',
