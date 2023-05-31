@@ -96,7 +96,7 @@ button.delete {
 button.delete:hover,
 button.delete.active {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    color: #FF0000;
+    color: #ff0000;
 }
 
 button.delete:disabled,
@@ -110,4 +110,17 @@ button.delete:disabled:active {
 .mono {
     font-family: monospace;
     font-variant-numeric: tabular-nums lining-nums;
+}
+
+.table__container {
+    display: flex;
+    align-items: center;
+}
+
+.table__preview {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: black;
+    font-weight: 700;
 }

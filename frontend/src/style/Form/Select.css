@@ -1,5 +1,6 @@
-.form__group input {
-    border: 1px solid #E0E0E0;
+.form__group input,
+.form__group select {
+    border: 1px solid #e0e0e0;
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
     padding: 7px;
     border-radius: 4px;
