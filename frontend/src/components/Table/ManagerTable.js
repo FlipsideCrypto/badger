@@ -4,7 +4,7 @@ import { Table, TableHead, TableRow, TableContainer, TableCell, TableBody } from
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { ActionTitle, TableSortHead, Empty } from '@components';
+import { ActionTitle, TableSortHead, Empty, TableInputAddress } from '@components';
 
 import { getTimeSince } from '@utils';
 
@@ -148,7 +148,7 @@ const ManagerTable = ({ badge, managers, canManage }) => {
                                 newManagers.map((manager, index) => (
                                     <TableRow key={index}>
                                         <TableCell component="th" scope="row">
-                                            <input
+                                            <TableInputAddress
                                                 className="table__input mono"
                                                 value={manager.ethereum_address}
                                                 placeholder="Ethereum address or ENS..."
@@ -168,7 +168,7 @@ const ManagerTable = ({ badge, managers, canManage }) => {
                                 managers.map((manager, index) => (
                                     <TableRow key={index}>
                                         <TableCell component="th" scope="row">
-                                            <input
+                                            <TableInputAddress
                                                 className="table__input mono"
                                                 value={manager.ethereum_address}
                                                 disabled={true}

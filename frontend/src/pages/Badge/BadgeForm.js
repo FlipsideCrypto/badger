@@ -246,7 +246,13 @@ const BadgeForm = ({ isEdit = false }) => {
 
     const { chainId, orgAddress, badgeId } = useParams();
 
-    const { address, organization, badges, badge, canManage, retrieve } = useUser({ chainId, orgAddress, badgeId });
+    const { address, organization, badges, badge, hooks, canManage, retrieve } = useUser({
+        chainId,
+        orgAddress,
+        badgeId,
+    });
+
+    console.log('hooks', hooks);
 
     return (
         <>

@@ -22,6 +22,8 @@ const csvFileToArray = (file) => {
 };
 
 const sliceAddress = (address) => {
+    if (!address || address.length !== 42) return address;
+
     return address.slice(0, 6) + '...' + address.slice(-4);
 };
 
