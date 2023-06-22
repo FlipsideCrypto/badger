@@ -8,8 +8,13 @@
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
+.navlogo {
+    display: flex;
+    align-self: center;
+}
+
 .navbar.filled {
-    background: rgba(255, 255, 255, .95);
+    background: rgba(255, 255, 255, 0.95);
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
     backdrop-filter: blur(2px);
 }
@@ -30,17 +35,16 @@
 
 .navbar a {
     text-decoration: none;
-    color: #1B1B1B;
+    color: #1b1b1b;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
     font-size: 18px;
     font-weight: 400;
-    margin-top: 2px;
     text-align: center;
     white-space: nowrap;
 }
 
-.navbar a button { 
+.navbar a button {
     font-size: 16px;
 }
 
@@ -50,7 +54,8 @@
 
 .navbar a:hover,
 .navbar a:active,
-.navbar a:focus {}
+.navbar a:focus {
+}
 
 .navbar .navbar__links__left {
     margin-left: 40px;
@@ -71,11 +76,11 @@
 
     .navbar .links.active {
         display: block;
-        position: absolute; 
+        position: absolute;
         top: 100%;
         left: 0;
         right: 0;
-        background: rgba(255, 255, 255, .95);
+        background: rgba(255, 255, 255, 0.95);
         z-index: 5;
         padding: 20px;
         box-sizing: border-box;

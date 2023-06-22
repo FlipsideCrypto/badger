@@ -39,7 +39,7 @@ const Navbar = () => {
     return (
         <div className={`navbar ${(isMenuOpen || isFilled) && 'filled'}`}>
             <div className="container">
-                <Link to="/">
+                <Link className="navlogo" to="/">
                     <LogoIcon />
                 </Link>
 

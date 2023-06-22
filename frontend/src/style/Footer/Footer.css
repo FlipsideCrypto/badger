@@ -48,7 +48,7 @@
 
 .footer .legal div {
     width: 100%;
-    display: flex;
+    display: none;
     gap: 45px;
 }
 
@@ -71,8 +71,9 @@
     }
 
     .footer .grid .links {
-        grid-template-areas: "a b"
-            "c d";
+        grid-template-areas:
+            'a b'
+            'c d';
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
     }
@@ -102,7 +103,6 @@
     .footer .legal div {
         gap: 16px;
     }
-
 }
 
 @media only screen and (max-width: 628px) {
@@ -117,10 +117,11 @@
     }
 
     .footer .grid .links {
-        grid-template-areas: "a"
-            "b"
-            "c"
-            "d";
+        grid-template-areas:
+            'a'
+            'b'
+            'c'
+            'd';
         grid-template-columns: 1fr;
         grid-template-rows: 1fr 1fr 1fr 1fr;
     }
@@ -160,6 +161,7 @@
     }
 
     .footer .legal div {
+        display: flex;
         flex-direction: column;
         gap: 10px;
     }
