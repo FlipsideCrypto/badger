@@ -110,15 +110,34 @@
 }
 
 
-.landing .section .context::before {
+.landing .section .context .content {
     content: "";
     position: absolute;
-    top: 80px;
+    top: 0px;
+    bottom: 0px;
     right: 0;
-    width: calc(100% - 200px);
-    height: calc(100% - 160px);
-    background: white;
-    z-index: -2;
+    width: 90%;
+    z-index: 3;
+    margin-left: auto;
+}
+
+.landing .section.left .context .content { 
+    right: initial;
+    left: 0;
+}
+
+.landing .section .context .content img {
+    animation: fadeIn ease 1s;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 .landing .section .context::after {
@@ -150,7 +169,6 @@
     left: 0;
     width: calc(100% - 200px);
     height: calc(100% - 160px);
-    background: white;
     z-index: -2;
 }
 
@@ -379,12 +397,6 @@
     .landing .help .container .card h3 {
         font-size: 32px;
     }
-
-    /* .landing .section .context {
-        min-height: 450px;
-        left: -50%;
-        width: 170%;
-    } */
 
     .landing .section,
     .landing .section.left {
