@@ -153,6 +153,7 @@ const HolderTable = ({ badge, canManage }) => {
                                         value={holder.pendingAmount}
                                         onChange={(e) => onAmountChange(e, index, false)}
                                         onDelete={() => onDelete(index, false)}
+                                        canManage={canManage}
                                     />
                                 </TableCell>
                             </TableRow>

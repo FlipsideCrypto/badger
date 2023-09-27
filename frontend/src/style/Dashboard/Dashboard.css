@@ -4,7 +4,7 @@
     position: relative;
 }
 
-.dashboardContent {
+.dashboard__content {
     grid-column: 1 / span 4;
     margin-inline: 20px;
 }
@@ -29,11 +29,6 @@
 .dashboard h5,
 .dashboard .button {
     font-size: 14px;
-}
-
-.dashboard button,
-.dashboard .button {
-    font-weight: 700;
 }
 
 .dashboard .loading {
@@ -79,7 +74,7 @@
 .preview__container {
     position: relative;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: 4px;
     aspect-ratio: 1/1;
     width: max-content;
     height: max-content;

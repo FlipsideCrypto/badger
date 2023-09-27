@@ -8,7 +8,7 @@ export { Dashboard } from './Dashboard/Dashboard';
 export { Landing } from './Landing/Landing';
 export { FAQ } from './FAQ/FAQ';
 export { Stories, Story } from './Story';
-export { Page } from "./Page/Page";
+export { Page } from "./Page";
 
 export { Privacy, Terms } from './Legal';
 export { Media } from './Media/Media';

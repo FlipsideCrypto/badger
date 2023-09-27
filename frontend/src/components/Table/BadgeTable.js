@@ -61,7 +61,7 @@ const BadgeTable = ({ badges }) => {
     }, [badges])
 
     return (
-        <div className="table" id="holder__table">
+        <div id="holder__table" className="dashboard__table">
             {sortedList && <TableContainer>
                 <Table>
                     <TableHead>
@@ -112,7 +112,7 @@ const BadgeTable = ({ badges }) => {
                                     {badge.users.length}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                    {`${getTimeSince(new Date(badge.updated))} ago`}
+                                    {`${getTimeSince(new Date(badge.updated))}`}
                                 </TableCell>
                             </TableRow>
                         ))}

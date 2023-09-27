@@ -27,10 +27,11 @@ class Loader(ListenerReference):
             "TransferSingle": self.handle_transfer_single,
             "TransferBatch": self.handle_transfer_batch,
             "URI": self.handle_uri,
-            # Manager and hook events
+            # Manager events
             "ManagerUpdated": self.handle_manager_updated,
-            "HookUpdated": self.handle_hook_updated,
             "ManagerConfigured": self.handle_manager_configured,
+            # Hook events
+            "HookUpdated": self.handle_hook_updated,
             "HookConfigured": self.handle_hook_configured,
         }
 
@@ -152,9 +153,6 @@ class Loader(ListenerReference):
             organization.ethereum_address
         )
 
-        if not organization.symbol:
-            organization.symbol = organization_contract.functions.symbol().call()
-
         uri = organization_contract.functions.contractURI().call()
         uri_hash = uri.split("/ipfs/")[1] if "ipfs" in uri else uri
 
@@ -168,8 +166,14 @@ class Loader(ListenerReference):
                 organization.description = data["description"]
                 organization.image_hash = data["image"].split("/ipfs/")[1]
 
-        if not organization.name:
-            organization.name = organization_contract.functions.name().call()
+                if "symbol" in data:
+                    organization.symbol = data["symbol"]
+
+                if "archived" in data:
+                    try:
+                        organization.is_active = not bool(data["archived"])
+                    except ValueError:
+                        pass
 
         organization.save()
 
@@ -224,6 +228,15 @@ class Loader(ListenerReference):
                 badge.name = data["name"]
                 badge.description = data["description"]
                 badge.image_hash = data["image"].split("/ipfs/")[1]
+
+                if "symbol" in data:
+                    badge.symbol = data["symbol"]
+
+                if "archived" in data:
+                    try:
+                        badge.is_active = not bool(data["archived"])
+                    except ValueError:
+                        pass
 
                 response = "Badge details updated"
 

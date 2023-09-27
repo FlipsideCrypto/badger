@@ -10,7 +10,7 @@ const Home = () => {
     const { userOrganizations: organizations } = useUser();
 
     const announcementMessage = (
-        <p>As of March 21st, 2023 organizations deployed before that date have been migrated to
+        <p>Organizations deployed before April 1st, 2023 have been migrated to
             <a href="https://legacy.trybadger.com" target="_blank" rel="noreferrer"> legacy.trybadger.com</a>.
         </p>
     )

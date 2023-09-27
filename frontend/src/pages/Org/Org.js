@@ -1,45 +1,70 @@
-import { useParams } from "react-router-dom";
+import { useMemo } from 'react';
 
-import { useNavigateAddress, useUser } from "@hooks";
+import { useParams } from 'react-router-dom';
 
-import { ActionTitle, BadgeTable, DashboardLoader, Empty, Header, SEO } from "@components";
+import { useNavigateAddress, useUser } from '@hooks';
 
-const OrgEmpty = ({ organization }) => <Empty
-    title={`${organization.name} does not have any Badges yet.`}
-    body="You're almost done setting up your Badger Organization. Now all you have to do is create your first Badge."
-    button="Create a badge"
-    url={`/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/badge/new/`}
-/>
+import { ActionTitle, BadgeTable, DashboardLoader, Empty, Header, SEO } from '@components';
+
+import { formatName } from '@utils';
+
+const OrgEmpty = ({ organization }) => {
+    const formattedName = useMemo(() => formatName(organization?.name), [organization?.name]);
+
+    return (
+        <Empty
+            title={`${formattedName} does not have any Badges yet.`}
+            body="You're almost done setting up your Badger Organization. Now all you have to do is create your first Badge."
+            button="Create a badge"
+            url={`/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/badge/new/`}
+        />
+    );
+};
+
+const OrgContent = ({ organization, badges, canManage }) => {
+    const navigate = useNavigateAddress();
+
+    const titleActions = canManage && [
+        {
+            className: 'secondary',
+            text: 'Create',
+            icon: ['fal', 'plus'],
+            onClick: () =>
+                navigate(
+                    `/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/badge/new/`,
+                ),
+        },
+    ];
+
+    return (
+        <>
+            <ActionTitle title="Badges" actions={titleActions} />
+
+            {badges && badges.length === 0 && <OrgEmpty organization={organization} />}
+
+            {badges && badges.length > 0 && <BadgeTable badges={badges} />}
+        </>
+    );
+};
 
 const Org = () => {
     const navigate = useNavigateAddress();
 
     const { chainId, orgAddress } = useParams();
 
-    const { organization, badges, canManage, send } = useUser({ chainId, orgAddress });
+    const { organization, badges, canManage, retrieve } = useUser({
+        chainId,
+        orgAddress,
+    });
 
-    const headerActions = canManage && [{
-        text: "Settings",
-        icon: ['fal', 'fa-gear'],
-        onClick: () => navigate(`/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/edit/`)
-    }];
-
-    const titleActions = canManage && [{
-        className: "secondary",
-        text: "Create",
-        icon: ['fal', 'plus'],
-        onClick: () => navigate(`/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/badge/new/`)
-    }];
-
-    const onRetrieve = () => {
-        if (!orgAddress || !send) return;
-
-        send(JSON.stringify({
-            action: "retrieve",
-            request_id: new Date().getTime(),
-            pk: orgAddress,
-        }))
-    }
+    const headerActions = canManage && [
+        {
+            text: 'Settings',
+            icon: ['fal', 'fa-gear'],
+            onClick: () =>
+                navigate(`/dashboard/organization/${organization.chain_id}/${organization.ethereum_address}/edit/`),
+        },
+    ];
 
     return (
         <>
@@ -48,24 +73,13 @@ const Org = () => {
                 description={`Browse ${organization?.name} and all its Badges and associated members.`}
             />
 
-            <Header back={() => navigate("/dashboard/")} actions={headerActions} />
+            <Header back={() => navigate('/dashboard/')} actions={headerActions} />
 
-            <DashboardLoader
-                chainId={chainId}
-                orgAddress={orgAddress}
-                obj={organization}
-                retrieve={onRetrieve}
-            >
-                <div className="dashboard__content">
-                    <ActionTitle title="Badges" actions={titleActions} />
-
-                    {badges && badges.length === 0 && <OrgEmpty organization={organization} />}
-
-                    {badges && badges.length > 0 && <BadgeTable badges={badges} />}
-                </div>
-            </ DashboardLoader >
+            <DashboardLoader chainId={chainId} orgAddress={orgAddress} obj={organization} retrieve={retrieve}>
+                <OrgContent chainId={chainId} organization={organization} badges={badges} canManage={canManage} />
+            </DashboardLoader>
         </>
-    )
-}
+    );
+};
 
 export { Org };

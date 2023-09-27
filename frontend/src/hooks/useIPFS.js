@@ -1,47 +1,36 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { ErrorContext } from "@contexts";
+import { postIPFSImage, postIPFSMetadata } from '@utils';
 
-import { postIPFSImage, postIPFSMetadata } from "@utils";
+import { IPFS_GATEWAY_URL } from '@static';
 
-import { IPFS_GATEWAY_URL } from "@static"
-
-const Hash = require("ipfs-only-hash");
+const Hash = require('ipfs-only-hash');
 
 const useIPFS = ({ image, data }) => {
-    const { setError } = useContext(ErrorContext);
-
     const pinImage = async () => {
         const response = await postIPFSImage(image);
 
         if (response?.error) {
-            setError({
-                label: "Error uploading image to IPFS",
-                message: response.error
-            })
-
+            console.error(response.error);
             return;
         }
 
         return response.hash;
-    }
+    };
 
     const pinMetadata = async () => {
         const response = await postIPFSMetadata(data);
 
         if (response.error) {
-            setError({
-                label: 'Error creating Org URI',
-                message: response.error
-            });
+            console.error(response.error);
             return;
         }
 
         return response.hash;
-    }
+    };
 
-    return { pinImage, pinMetadata }
-}
+    return { pinImage, pinMetadata };
+};
 
 const useIPFSImageHash = (imageFile) => {
     const [hash, setHash] = useState(null);
@@ -56,8 +45,12 @@ const useIPFSImageHash = (imageFile) => {
                     cidVersion: 0,
                     onlyHash: true,
                 })
-                    .then((res) => { setHash(res); })
-                    .catch((err) => { console.error('Error with deterministic image hashing', err); })
+                    .then((res) => {
+                        setHash(res);
+                    })
+                    .catch((err) => {
+                        console.error('Error with deterministic image hashing', err);
+                    });
             };
 
             reader.readAsArrayBuffer(image);
@@ -65,19 +58,17 @@ const useIPFSImageHash = (imageFile) => {
 
         if (!imageFile) return;
 
-        if (typeof imageFile === 'string') {
-            // If provided a string, it is treated as if it is hash.
-            // unless it's a file bytes
+        // If provided a string, it is treated as if it is hash unless it's a file bytes.
+        if (typeof imageFile === 'string' && !imageFile.startsWith('data')) {
             setHash(imageFile);
-
             return;
         }
 
         getHash(imageFile);
-    }, [imageFile])
+    }, [imageFile]);
 
     return { imageHash: hash, ipfsImage: imageFile };
-}
+};
 
 const useIPFSMetadataHash = (data) => {
     const [hash, setHash] = useState(null);
@@ -93,17 +84,13 @@ const useIPFSMetadataHash = (data) => {
                 })
                 .catch((err) => {
                     console.error('Error with deterministic metadata hashing', err);
-                })
+                });
         }
 
         getHash();
-    }, [data])
+    }, [data]);
 
     return { metadataHash: hash, ipfsMetadata: data };
-}
+};
 
-export {
-    useIPFS,
-    useIPFSImageHash,
-    useIPFSMetadataHash
-}
+export { useIPFS, useIPFSImageHash, useIPFSMetadataHash };

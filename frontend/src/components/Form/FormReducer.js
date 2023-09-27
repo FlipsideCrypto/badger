@@ -1,6 +1,5 @@
 const initialOrgForm = {
     name: "",
-    symbol: "",
     description: "",
     contract_uri_hash: "",
     owner: "",
@@ -66,7 +65,7 @@ const FormReducer = (state, action) => {
     }
 }
 
-export { 
+export {
     FormReducer,
     initialBadgeForm,
     initialOrgForm

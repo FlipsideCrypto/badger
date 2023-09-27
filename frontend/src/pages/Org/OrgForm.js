@@ -1,40 +1,33 @@
-import { useState, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useMemo, useState, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import { useDebounce, useOrgForm, usePFP, useUser, useIPFS, useIPFSImageHash, useIPFSMetadataHash } from '@hooks';
 
 import {
-    useDebounce,
-    useOrgForm,
-    usePFP,
-    useUser,
-    useIPFS,
-    useIPFSImageHash,
-    useIPFSMetadataHash,
-} from "@hooks";
+    initialOrgForm,
+    DashboardLoader,
+    FormActionBar,
+    FormDrawer,
+    Header,
+    Input,
+    OrgDangerZone,
+    SEO,
+} from '@components';
 
-import { initialOrgForm, FormActionBar, FormDrawer, Header, Input, OrgDangerZone, SEO } from "@components"
+import { IPFS_GATEWAY_URL } from '@static';
 
-import { IPFS_GATEWAY_URL } from "@static";
-
-import "@style/pages/OrgForm.css";
+import '@style/pages/OrgForm.css';
 
 // TODO: OrgDangerZone is a landmine that I am not yet ready to mount.
 
-const getSymbol = (name) => {
-    return name.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().substring(0, 5);
-}
-
-const OrgForm = ({ isEdit = false }) => {
+const OrgFormContent = ({ chainId, address, orgAddress, organization, isEdit }) => {
     const imageInput = useRef();
 
     const navigate = useNavigate();
 
-    const { chainId, orgAddress } = useParams();
-
-    const { address, organization } = useUser({ chainId, orgAddress });
+    const [obj, setObj] = useState((isEdit && organization) || initialOrgForm);
 
     const [image, setImage] = useState(null);
-
-    const [obj, setObj] = useState(organization || initialOrgForm);
 
     const name = useDebounce(obj.name, 300);
 
@@ -42,116 +35,183 @@ const OrgForm = ({ isEdit = false }) => {
 
     const { pfp } = usePFP({ name, address });
 
-    const customImage = image || obj.image_hash;
+    const shouldUseHash = obj.image_hash && (!isEdit || (isEdit && name === organization?.name));
 
-    const activeImage = customImage || pfp;
+    const activeImage = image || (shouldUseHash && obj.image_hash) || pfp;
 
-    const imageURL = customImage && (image ? image.name : IPFS_GATEWAY_URL + obj.image_hash);
-
-    const isDebouncing = name !== obj.name || description !== obj.description;
-
-    const isDisabled = isDebouncing || !(name && description && activeImage && obj.symbol);
-
-    const { imageHash, ipfsImage } = useIPFSImageHash(activeImage)
+    const { imageHash, ipfsImage } = useIPFSImageHash(activeImage);
 
     const { metadataHash, ipfsMetadata } = useIPFSMetadataHash({
         name: name,
         description: description,
         image: imageHash,
-        attributes: obj.attributes
-    })
+        attributes: obj.attributes,
+    });
 
     const { openOrgFormTx, isPrepared, isLoading } = useOrgForm({
         ...obj,
         name: name,
         imageHash: imageHash,
-        contractHash: metadataHash
-    })
+        contractHash: metadataHash,
+    });
 
     const { pinImage, pinMetadata } = useIPFS({
         image: ipfsImage,
-        data: ipfsMetadata
-    })
+        data: ipfsMetadata,
+    });
 
-    const actions = [{
-        text: "Create organization",
-        loading: isLoading,
-        disabled: isDisabled || !isPrepared,
-        event: () => openOrgFormTx({
-            onLoading: () => {
-                pinImage();
-                pinMetadata();
-            },
-            onSuccess: ({ chain, receipt }) => {
-                if (orgAddress)
-                    return navigate(`/dashboard/organization/${chain.id}/${orgAddress}/`)
+    const activeImageObj = useMemo(() => {
+        if (image)
+            return {
+                url: URL.createObjectURL(image),
+                name: image.name,
+            };
 
-                const event = receipt.events.find((event) => event.name === "OrganizationCreated");
+        if (shouldUseHash)
+            return {
+                url: IPFS_GATEWAY_URL + obj.image_hash,
+                name: IPFS_GATEWAY_URL + obj.image_hash,
+            };
 
-                if (!event) throw new Error("Error submitting transaction.");
+        if (pfp && pfp.name)
+            return {
+                url: URL.createObjectURL(pfp),
+                name: 'Upload custom image...',
+            };
 
-                navigate(`/dashboard/organization/${chain.id}/${event.args.organization}/`);
-            }
-        })
-    }]
+        return { url: null, name: 'Upload custom image...' };
+    }, [image, shouldUseHash, obj.image_hash, pfp]);
+
+    const isDisabled = useMemo(() => {
+        const isDebouncing = name !== obj.name || description !== obj.description;
+
+        return isDebouncing || !(name && description && activeImage);
+    }, [name, description, activeImage, obj.name, obj.description]);
+
+    const actions = [
+        {
+            text: `${isEdit ? 'Update' : 'Create'} Organization`,
+            loading: isLoading,
+            disabled: isDisabled || !isPrepared,
+            event: () =>
+                openOrgFormTx({
+                    onLoading: () => {
+                        pinImage();
+                        pinMetadata();
+                    },
+                    onSuccess: ({ chain, receipt }) => {
+                        if (orgAddress) return navigate(`/dashboard/organization/${chainId}/${orgAddress}/`);
+
+                        const event = receipt.events.find((event) => event.name === 'OrganizationCreated');
+
+                        if (!event) throw new Error('Error submitting transaction.');
+
+                        navigate(`/dashboard/organization/${chain.id}/${event.args.organization}/`);
+                    },
+                }),
+        },
+    ];
 
     const onNameChange = (e) => {
-        setObj({ ...obj, name: e.target.value, symbol: getSymbol(e.target.value) })
-    }
+        setObj({ ...obj, name: e.target.value });
+    };
 
     const onDescriptionChange = (e) => {
-        setObj({ ...obj, description: e.target.value })
-    }
-
-    const onImageUpload = () => {
-        imageInput.current.click();
-    }
+        setObj({ ...obj, description: e.target.value });
+    };
 
     const onImageChange = (e) => {
-        const files = e.target.files[0];
+        const file = e.target.files[0];
 
-        if (!files) return
+        if (!file) return;
 
-        const reader = new FileReader();
-
-        reader.readAsDataURL(files);
-        reader.onload = () => { setImage(reader.result) };
-    }
+        setImage(file);
+    };
 
     return (
         <>
-            <SEO title={`${isEdit ? "Update" : "Create"} ${obj?.name || "Organization"} // Badger`} />
-
-            <Header back={() => navigate((isEdit ? `/dashboard/organization/${chainId}/${organization.ethereum_address}/` : '/dashboard/'))} />
-
-            <h2 className="dashboard__content">{`${isEdit ? "Update" : "Create"} Organization`}</h2>
+            <div className="dashboard__content">
+                <h2>{`${isEdit ? 'Update' : 'Create'} Organization`}</h2>
+            </div>
 
             <FormDrawer label="Information">
-                <Input label="Name" value={obj.name || ""} onChange={onNameChange} />
-                <Input label="Description" value={obj.description || ""} onChange={onDescriptionChange} />
+                <Input label="Name" value={obj.name || ''} onChange={onNameChange} />
+                <Input label="Description" value={obj.description || ''} onChange={onDescriptionChange} />
             </FormDrawer>
 
             <FormDrawer label="Advanced" open={!!obj.image_hash}>
-                <Input label="Custom Image" accept="image/*" disabled={true} append={
-                    <button className="secondary" onClick={onImageUpload}>
-                        <span>{customImage ? "Update" : "Upload"}</span>
-                    </button>}
-                    value={imageURL || "Choose file..."} />
+                <Input
+                    name="Custom Image"
+                    label="Custom Image"
+                    accept="image/*"
+                    required={false}
+                    disabled={true}
+                    value={activeImageObj.name}
+                    append={
+                        <button
+                            className="secondary"
+                            onClick={() => imageInput.current.click()}
+                            style={{ width: 'auto' }}
+                        >
+                            <span>{obj.image_hash ? 'Change' : 'Upload'}</span>
+                        </button>
+                    }
+                />
 
-                <input ref={imageInput} type="file" accept="image/*" onChange={onImageChange} />
+                <input
+                    id="org-image"
+                    style={{ display: 'none' }}
+                    ref={imageInput}
+                    accept="image/*"
+                    type="file"
+                    onChange={onImageChange}
+                />
             </FormDrawer>
 
-            <FormActionBar
-                className={!isEdit && "actionFixed" || "full"}
-                actions={actions}
+            <FormActionBar className={(!isEdit && 'actionFixed') || 'full'} actions={actions} />
+
+            {isEdit && <OrgDangerZone />}
+        </>
+    );
+};
+
+const OrgForm = ({ isEdit = false }) => {
+    const navigate = useNavigate();
+
+    const { chainId, orgAddress } = useParams();
+
+    const { address, organization, canManage, retrieve } = useUser({ chainId, orgAddress });
+
+    return (
+        <>
+            <SEO title={`${isEdit ? 'Update' : 'Create'} Organization // Badger`} />
+
+            <Header
+                back={() =>
+                    navigate(
+                        isEdit ? `/dashboard/organization/${chainId}/${organization.ethereum_address}/` : '/dashboard/',
+                    )
+                }
             />
 
-            {isEdit && <>
-                <hr />
-                <OrgDangerZone />
-            </>}
+            <DashboardLoader
+                chainId={chainId}
+                orgAddress={orgAddress}
+                obj={!isEdit ? { name: '' } : organization}
+                retrieve={retrieve}
+                managed={isEdit}
+                canManage={canManage}
+            >
+                <OrgFormContent
+                    chainId={chainId}
+                    address={address}
+                    orgAddress={orgAddress}
+                    organization={organization}
+                    isEdit={isEdit}
+                />
+            </DashboardLoader>
         </>
-    )
-}
+    );
+};
 
 export { OrgForm };

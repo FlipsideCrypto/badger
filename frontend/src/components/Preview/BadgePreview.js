@@ -1,6 +1,6 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { ImageLoader } from "@components";
+import { ImageLoader } from '@components';
 
 const BadgePreview = ({ badge }) => {
     return (
@@ -10,20 +10,19 @@ const BadgePreview = ({ badge }) => {
             </div>
 
             <div className="content">
-                <div className="title">
-                    <h1>{badge.name}</h1>
+                <h1 className="title">
+                    {badge.name}
+                    <div className="icons">{badge.account_bound && <FontAwesomeIcon icon={['fal', 'fa-lock']} />}</div>
+                </h1>
 
-                    <div className="icons">
-                        {badge.account_bound && <FontAwesomeIcon icon={["fal", "fa-lock"]} />}
-                    </div>
+                <p className="description">{badge.description}</p>
+
+                <div className="pill">
+                    <span>{`#${badge.token_id}`}</span>
                 </div>
-
-                <p>{badge.description}</p>
-
-                {/* <div className="pill"><span>{`#${badge.token_id}`}</span></div> */}
             </div>
         </div>
-    )
-}
+    );
+};
 
-export { BadgePreview }
+export { BadgePreview };

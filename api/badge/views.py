@@ -13,9 +13,11 @@ from .serializers import BadgeSerializer
 
 User = get_user_model()
 
+
 class BadgeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Badge.objects.all()
     serializer_class = BadgeSerializer
+
 
 class ArtViewSet(viewsets.ViewSet):
     def __init__(self, *args, **kwargs):
@@ -58,28 +60,29 @@ class ArtViewSet(viewsets.ViewSet):
             fingerprint.append(self._encode(char))
 
         return fingerprint
-    
+
     def _handle_line(self, lines, word):
         if len(word) > 11:
             for i in range(0, len(word), 11):
                 connector = "-" if i + 11 < len(word) else ""
-                lines.append(word[i:i + 11] + connector)
+                lines.append(word[i : i + 11] + connector)
         else:
             lines.append(word)
 
         return lines
 
     @action(
-        detail=False, 
-        methods=['get'], 
-        url_name='pfp',
-        url_path='pfp/(?P<char>[a-zA-Z]+)?/(?P<ethereum_address>[a-zA-Z0-9]+)'
+        detail=False,
+        methods=["get"],
+        url_name="pfp",
+        url_path="pfp/(?P<char>.+)/(?P<ethereum_address>.+)",
     )
     def pfp_art(self, request, **kwargs):
-        char = kwargs.get('char', None)
-        address = kwargs.get('ethereum_address', None)
+        char = kwargs.get("char", None)
+        address = kwargs.get("ethereum_address", None)
 
-        if char == "null": char = None
+        if char == "null":
+            char = None
 
         fill = "#fff"
 
@@ -98,7 +101,7 @@ class ArtViewSet(viewsets.ViewSet):
 
             # create random svg blog
             x_random_rotation = random.randint(0, 360)
-            y_random_rotation = random.randint(0, 360)  
+            y_random_rotation = random.randint(0, 360)
 
             random_color = random.choice(self.colors)
 
@@ -136,11 +139,15 @@ class ArtViewSet(viewsets.ViewSet):
                 <use href="#{"blob-%s" % i}" filter="url(#blur)" />
             """
 
-        text = "" if not char else f"""
+        text = (
+            ""
+            if not char
+            else f"""
             <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="250" fill="#000" font-family="sans-serif">
                 {char[0].upper()}
             </text>
         """
+        )
 
         svg = f"""
             <svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500" >
@@ -156,26 +163,28 @@ class ArtViewSet(viewsets.ViewSet):
             </svg>
         """
 
-        image = base64.b64encode(svg.encode('utf-8')).decode('utf-8')
+        image = base64.b64encode(svg.encode("utf-8")).decode("utf-8")
 
         url_ready_base64 = f"data:image/svg+xml;base64,{image}"
 
-        return Response({
-            "image": url_ready_base64,
-        })
+        return Response(
+            {
+                "image": url_ready_base64,
+            }
+        )
 
     @action(
-        detail=False, 
-        methods=['get'], 
-        url_name='badge',
-        url_path="pfp/(?P<organization_name>[\w\-\.\ ]+)/(?P<ethereum_address>[\w\-\.\ ]+)/(?P<badge_name>[\w\-\.\ ]+)"
+        detail=False,
+        methods=["get"],
+        url_name="badge",
+        url_path="pfp/(?P<organization_name>.+)/(?P<ethereum_address>.+)/(?P<badge_name>.+)",
     )
     def badge_art(self, request, **kwargs):
-        organization = kwargs.get('organization_name', None)
-        address = kwargs.get('ethereum_address', None)
-        badge_name = kwargs.get('badge_name', None)
+        organization = kwargs.get("organization_name", None)
+        address = kwargs.get("ethereum_address", None)
+        badge_name = kwargs.get("badge_name", None)
 
-        invert = request.query_params.get('inverse', False)
+        invert = request.query_params.get("inverse", False)
 
         fingerprint = self._handle_fingerprint(address, badge_name)
 
@@ -200,7 +209,7 @@ class ArtViewSet(viewsets.ViewSet):
 
             # create random svg blog
             x_random_rotation = random.randint(0, 360)
-            y_random_rotation = random.randint(0, 360)  
+            y_random_rotation = random.randint(0, 360)
 
             random_color = random.choice(self.colors)
 
@@ -251,7 +260,7 @@ class ArtViewSet(viewsets.ViewSet):
 
             for i in range(height):
                 y = size - r * (height - i) * 5
-                circle_fill = "#fff" if fill == "#000" else "#000"                
+                circle_fill = "#fff" if fill == "#000" else "#000"
 
                 fingerprint_svg += f"""
                     <circle
@@ -267,8 +276,12 @@ class ArtViewSet(viewsets.ViewSet):
 
         for word in words:
             # determine if the last line already has 14 characters
-            lineLength = (len(lines[-1]) if len(lines) > 0 else 0) + len(word) + (1 if len(lines) > 0 else 0) 
-                          
+            lineLength = (
+                (len(lines[-1]) if len(lines) > 0 else 0)
+                + len(word)
+                + (1 if len(lines) > 0 else 0)
+            )
+
             newLine = len(lines) > 0 and lineLength > 10
 
             if newLine:
@@ -284,14 +297,16 @@ class ArtViewSet(viewsets.ViewSet):
         # create a line for each word
         badge_text = ""
         line_height = 52
-        organization_line_height=30
+        organization_line_height = 30
         if len(lines) > 3:
             line_height = 40
-            organization_line_height=28
+            organization_line_height = 28
 
         line_buffer = 10
         line_x = 50
-        line_y = (size - (line_height) * len(lines) - line_buffer * (len(lines) - 1)) / 2
+        line_y = (
+            size - (line_height) * len(lines) - line_buffer * (len(lines) - 1)
+        ) / 2
         organization_y = 65
 
         if len(lines) > 3:
@@ -347,10 +362,12 @@ class ArtViewSet(viewsets.ViewSet):
         """
 
         # return base64 encoded svg
-        image = base64.b64encode(svg.encode('utf-8')).decode('utf-8')
+        image = base64.b64encode(svg.encode("utf-8")).decode("utf-8")
 
         url_ready_base64 = f"data:image/svg+xml;base64,{image}"
 
-        return Response({
-            "image": url_ready_base64,
-        })
+        return Response(
+            {
+                "image": url_ready_base64,
+            }
+        )

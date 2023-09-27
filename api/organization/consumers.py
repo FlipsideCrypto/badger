@@ -35,7 +35,12 @@ class OrganizationConsumer(ManagedModelMixin):
         ).distinct()
 
     def get_object(self, **kwargs):
-        return Organization.objects.get(ethereum_address=kwargs['pk'])
+        [chain_id, ethereum_address] = kwargs.get('pk').split(':')
+
+        return Organization.objects.get(
+            chain_id=chain_id,
+            ethereum_address=ethereum_address
+        )
  
     @model_observer(Organization)
     async def model_change(self, message, observer=None, **kwargs):
