@@ -11,19 +11,19 @@ const Title = ({ item }) => {
     return <h3 className="animated">{item.title} <span><FontAwesomeIcon icon="fal fa-chevron-down" /></span></h3>
 }
 
-const Accordion = ({ accordianKey, items, onClick = () => {} }) => {
+const Accordion = ({ accordionKey, items, onClick = () => {} }) => {
     return (
         <div className="accordion">
-            {items.map((item, index) => {
+            {items[accordionKey].map((item, index) => {
                 const className = `card ${item.selected === true ? 'selected' : ''} ${item.icon ? 'left' : ''}`
 
                 return <div 
-                    key={`${accordianKey}-${index}`} 
+                    key={`${accordionKey}-${index}`} 
                     className={className} 
                     onClick={() => onClick(previous => { 
                         return { 
                             ...previous,
-                            [accordianKey]: previous[accordianKey]
+                            [accordionKey]: previous[accordionKey]
                                 .map(item => {
                                     item.selected = false
                                     return item

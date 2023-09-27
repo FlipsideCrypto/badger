@@ -21,7 +21,7 @@ const Landing = () => {
     const { story: talentdao } = useStory("talentdao");
     const { story: mdao } = useStory("mdao");
 
-    const [accordians, setAccordians] = useState({
+    const [accordions, setAccordions] = useState({
         process: [{
             selected: true,
             img: launchOrganizations,
@@ -96,7 +96,7 @@ const Landing = () => {
                         </div>
 
                         <div className="content">
-                            {accordians.process
+                            {accordions.process
                                 .filter(item => item.selected)
                                 .map(item => <img key={item.img} src={item.img} width={"100%"} height={"auto"} />)}
                         </div>
@@ -107,7 +107,7 @@ const Landing = () => {
 
                         <Link className="cta" to="/dashboard/">Get started - it's free</Link>
 
-                        <Accordion accordianKey="process" items={accordians.process} onClick={setAccordians} />
+                        <Accordion accordionKey="process" items={accordions} onClick={setAccordions} />
                     </div>
                 </div>
 
@@ -121,7 +121,7 @@ const Landing = () => {
 
                         <Link className="cta" to="/dashboard/">Issue Badges now</Link>
 
-                        <Accordion accordianKey="benefits" items={accordians.benefits} onClick={setAccordians} />
+                        <Accordion accordionKey="benefits" items={accordions} onClick={setAccordions} />
                     </div>
 
                     <div className="context">
@@ -133,7 +133,7 @@ const Landing = () => {
                         </div>
 
                         <div className="content">
-                            {accordians.benefits
+                            {accordions.benefits
                                 .filter(item => item.selected)
                                 .map(item => <img key={item.img} src={item.img} width={"100%"} height={"auto"} />)}
                         </div>
