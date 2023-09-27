@@ -44,6 +44,11 @@
     font-size: 16px;
 }
 
+.navbar .logo { 
+    display: flex;
+    align-items: center;
+}
+
 .navbar .hamburger {
     display: none;
 }
