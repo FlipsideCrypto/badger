@@ -37,19 +37,38 @@ const NotIndexedEmpty = () => <Empty
     />}
 />
 
+const NotManagerDeploy = ({ badgeId }) => {
+    const title = `You are not the manager of this ${badgeId ? "Badge" : "Organization"}.`
+    const body = `The connected wallet is not the manager of this ${badgeId ? "Badge" : "Organization"}. Please connect a wallet that is the manager of this ${badgeId ? "Badge" : "Organization"}.`
+
+    return (
+        <Empty
+            title={title}
+            body={body}
+            button={< ActionButton
+                className="secondary"
+                afterText="Check the chain"
+                icon={['fal', 'eye']}
+            />}
+        />
+    )
+}
+
 const DashboardLoader = ({
     chainId,
     orgAddress,
     badgeId,
     obj,
     retrieve,
+    managed,
+    canManage,
     children
 }) => {
     const { address } = useAccount();
 
     const [logs, setLogs] = useState([]);
 
-    const isLoading = !obj || !obj?.name;
+    const isLoading = (managed && !canManage) || !obj || obj?.name === null;
 
     useEffect(() => {
         const getFilter = () => {
@@ -86,20 +105,24 @@ const DashboardLoader = ({
                 });
         }
 
-        if (!isLoading) return
+        if (!chainId || !orgAddress || !managed || !isLoading) return
 
         getLogs();
-    }, [chainId, orgAddress, badgeId, isLoading])
+    }, [chainId, orgAddress, badgeId, managed, isLoading])
+
+    const isLogged = logs.length > 0;
 
     useEffect(() => {
-        if (!(isLoading && logs.length == 0)) return
+        if (!isLoading || !retrieve) return
 
-        if (!retrieve) return
+        if (orgAddress && obj?.ethereum_address === orgAddress) return
 
         retrieve();
-    }, [isLoading, logs])
+    }, [address, isLoading, isLogged, retrieve])
 
-    const isDeployed = logs.length > 0;
+    const isDeployed = !isLoading || isLogged;
+
+    const isAccessible = !managed || (managed && canManage);
 
     return (
         <>
@@ -108,9 +131,11 @@ const DashboardLoader = ({
             {isLoading && <>
                 {!address && <div className="loading short" />}
 
-                {isDeployed && <NotIndexedEmpty />}
+                {!isDeployed && isAccessible && <NotDeployedEmpty badgeId={badgeId} />}
 
-                {!isDeployed && <NotDeployedEmpty />}
+                {!managed && isDeployed && <NotIndexedEmpty />}
+
+                {isDeployed && !isAccessible && <NotManagerDeploy badgeId={badgeId} />}
             </>}
         </>
     )

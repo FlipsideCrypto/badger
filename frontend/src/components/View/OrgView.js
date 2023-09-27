@@ -1,48 +1,64 @@
+import { useMemo } from 'react';
+
 import { Link } from 'react-router-dom';
 
-import { ActionButton, ImageLoader } from "@components"
+import { ActionButton, ChainIcon, ImageLoader } from '@components';
 
-import { sliceAddress } from "@utils";
+import { formatName, sliceAddress } from '@utils';
 
-import { IPFS_GATEWAY_URL } from "@static";
+import { IPFS_GATEWAY_URL } from '@static';
 
-import "@style/View/OrgView.css"
+import '@style/View/OrgView.css';
 
 const copy = (text) => navigator.clipboard.writeText(text);
 
 const OrgView = ({ organization }) => {
+    const formattedName = useMemo(() => formatName(organization?.name), [organization?.name]);
+
     return (
         <div className="view">
-            {organization && <>
-                <Link className="organization" to="/dashboard/">
-                    <div className="organization__image">
-                        <ImageLoader
-                            bypass={true}
-                            src={IPFS_GATEWAY_URL + organization.image_hash}
+            {organization && (
+                <>
+                    <div className="organization">
+                        <Link to="/dashboard/">
+                            <div className="organization__image">
+                                <ImageLoader bypass={true} src={IPFS_GATEWAY_URL + organization.image_hash} />
+                                <ChainIcon chainId={organization.chain_id} />
+                            </div>
+                            <span>{formattedName}</span>
+                        </Link>
+
+                        <small>
+                            <a
+                                target="_blank"
+                                rel="noreferrer"
+                                className="organization__metadata"
+                                href={`https://polygonscan.com/address/${organization.ethereum_address}`}
+                            >
+                                {sliceAddress(organization?.ethereum_address)}
+                            </a>
+                        </small>
+                    </div>
+
+                    <div className="action_bar__header__buttons">
+                        <ActionButton
+                            className="tertiary"
+                            afterText={'Copy'}
+                            icon={['fal', 'clipboard']}
+                            onClick={() => copy(organization.ethereum_address)}
                         />
                     </div>
-                    <span>{organization.name}</span>
-                </Link>
+                </>
+            )}
 
-                <small className="action_bar__header__subtext">
-                    <span>{organization.chain_id}</span>
-
-                    <a target="_blank" rel="noreferrer" className="link-wrapper"
-                        href={`https://polygonscan.com/address/${organization.ethereum_address}`}>
-                        <strong>{sliceAddress(organization?.ethereum_address)}</strong>
-                    </a>
-                </small>
-
-                <ActionButton className="tertiary" icon={['fal', 'clipboard']} onClick={() => copy(organization.ethereum_address)} />
-                <ActionButton className="link tertiary" icon={['fal', 'link']} onClick={() => copy(window.location.href)} />
-            </>}
-
-            {!organization && <>
-                <div className="loading short" />
-                <div className="loading short" />
-            </>}
-        </div >
-    )
-}
+            {!organization && (
+                <>
+                    <div className="loading short" />
+                    <div className="loading short" />
+                </>
+            )}
+        </div>
+    );
+};
 
 export { OrgView };

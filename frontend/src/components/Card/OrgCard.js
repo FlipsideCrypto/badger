@@ -1,14 +1,14 @@
-import { useNavigate } from "react-router-dom";
+import { useMemo } from 'react';
 
-import { handleImageLoad } from "@hooks";
+import { handleImageLoad } from '@hooks';
 
-import { Card, ChainIcon, ImageLoader } from "@components";
+import { Card, ChainIcon, ImageLoader } from '@components';
 
-import { useNavigateAddress } from "@hooks";
+import { useNavigateAddress } from '@hooks';
 
-import { sliceAddress } from "@utils";
+import { formatName, sliceAddress } from '@utils';
 
-import "@style/Card/OrgCard.css"
+import '@style/Card/OrgCard.css';
 
 const OrgCard = ({ org }) => {
     const navigate = useNavigateAddress();
@@ -16,25 +16,27 @@ const OrgCard = ({ org }) => {
     return (
         <Card onClick={() => navigate(`/dashboard/organization/${org.chain_id}/${org.ethereum_address}`)}>
             <div className="text">
-                <div className="subtext">
-                    <ChainIcon chainId={org.chain_id} />
-                    <strong>{sliceAddress(org.ethereum_address)}</strong>
-                </div>
-
                 <h2 className="title">
                     <div className="viewImage__container">
-                        <ImageLoader className="viewImage"
+                        <ImageLoader
+                            className="viewImage"
                             bypassed={true}
                             prependGateway={true}
                             src={org.image_hash}
-                            onLoad={handleImageLoad} />
+                            onLoad={handleImageLoad}
+                        />
+                        <ChainIcon chainId={org.chain_id} />
                     </div>
 
-                    {org.name}
+                    <span>{org.name}</span>
                 </h2>
+
+                <p className="description">
+                    {org.description.slice(0, 180)} {org.description.length > 180 ? '...' : ''}
+                </p>
             </div>
         </Card>
-    )
-}
+    );
+};
 
-export { OrgCard }
+export { OrgCard };

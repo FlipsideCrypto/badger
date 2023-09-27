@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { usePrepareContractWrite, useContractWrite } from "wagmi"
 
-import { getBadgerOrganizationAbi, useFees, useUser } from "@hooks";
+import { getBadgerOrganizationAbi, useFees, useUser, useWindow, useClickEvent } from "@hooks";
 
 import { addressValidator } from "@utils";
 
@@ -114,7 +114,11 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
         }
     });
 
+    const { transactionWindow } = useWindow();
+
     const { writeAsync } = useContractWrite(config);
+
+    const { lastClick } = useClickEvent();
 
     const openHolderTransaction = async ({
         onError = (e) => { console.error(e) },
@@ -124,9 +128,27 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
         try {
             setIsLoading(true);
             setIsSuccess(false);
-            onLoading();
+
+            const isMint = functionName === "mint" || functionName === "mintBatch";
+            
+            const action = functionName === "multicall" ? "make the Badge balance changes" :
+                isMint ? "mint the Badges to the Holders" : "revoke the Badges from the Holders"
+
+            transactionWindow.onStart({ 
+                title: "Waiting for confirmation...",
+                body: `Please confirm the transaction in your wallet to ${action}.`,
+                click: lastClick
+            })
 
             const tx = await writeAsync();
+
+            transactionWindow.onSign({
+                title: "Mining transaction. This may take a few seconds.",
+                body: "Badger hasn't detected your Badge balance changes yet. Please give us a few minutes to check the chain.",
+                hash: tx.hash
+            });
+
+            onLoading();
 
             const receipt = await tx.wait();
 
@@ -138,10 +160,11 @@ const useManageHolders = ({ mints, revokes, tokenId }) => {
             setIsSuccess(true)
 
             onSuccess({ config, chain, tx, receipt })
-        } catch (e) {
-            console.error('e', e)
+            transactionWindow.onSuccess();
 
+        } catch (e) {
             onError(e);
+            transactionWindow.onError();
         }
     }
 

@@ -1,11 +1,11 @@
 :root {
     --page-margins: 20px;
-    --blue: #00FFE0;
-    --green: #00FF94;
+    --blue: #00ffe0;
+    --green: #00ff94;
 }
 
 * {
-    font-family: "gopher", sans-serif;
+    font-family: 'gopher', sans-serif;
     text-decoration: none;
 }
 
@@ -21,7 +21,7 @@ body {
 
 strong {
     font-weight: 700;
-    color: #1B1B1B;
+    color: #1b1b1b;
 }
 
 blockquote {
@@ -38,9 +38,9 @@ button {
     cursor: pointer;
     padding: 6px 12px;
     border-radius: 4px;
-    font-weight: 700;
+    font-weight: 700 !important;
     font-size: inherit;
-    transition: all .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
     box-shadow: 0 0 80px transparent;
 }
 
@@ -53,11 +53,11 @@ button.unstyled {
 }
 
 button.primary {
-    background: linear-gradient(30deg, #00FF94 0%, #00FFE0 35%);
-    color: #1B1B1B !important;
+    background: linear-gradient(30deg, #00ff94 0%, #00ffe0 35%);
+    color: #1b1b1b !important;
     position: relative;
     filter: saturate(1);
-    transition: all .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 button.primary span {
@@ -77,7 +77,7 @@ button.primary:disabled {
 }
 
 button.primary::after {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0%;
@@ -88,9 +88,9 @@ button.primary::after {
 }
 
 button.secondary {
-    background: #1B1B1B !important;
-    background-color: #1B1B1B !important;
-    transition: all .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    background: #1b1b1b !important;
+    background-color: #1b1b1b !important;
+    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 button.secondary,
@@ -103,14 +103,14 @@ button.secondary:focus,
 button.secondary:active {
     background: #313131 !important;
     background-color: #313131 !important;
-    color: rgba(255, 255, 255, .85);
+    color: rgba(255, 255, 255, 0.85);
 }
 
 button.tertiary {
-    background: #FAFAFA !important;
-    background-color: #FAFAFA !important;
-    color: rgba(27, 27, 27, .85);
-    transition: all .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    background: #fafafa !important;
+    background-color: #fafafa !important;
+    color: rgba(27, 27, 27, 0.85);
+    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 button.tertiary:hover,
@@ -118,18 +118,18 @@ button.tertiary:focus,
 button.tertiary:active {
     background: #e1e1e1 !important;
     background-color: #e1e1e1 !important;
-    color: rgba(27, 27, 27, .85);
+    color: rgba(27, 27, 27, 0.85);
 }
 
 button.warning {
     border-radius: 4px;
-    border: 1px solid #FF0000;
-    color: #FF0000 !important;
+    border: 1px solid #ff0000;
+    color: #ff0000 !important;
 }
 
 button.warning:hover,
 button.warning:focus {
-    background: #FF0000;
+    background: #ff0000;
     color: #fff !important;
 }
 
@@ -142,7 +142,7 @@ button.warning:focus {
 }
 
 .link-wrapper {
-    margin: none !important;
+    margin: 0 !important;
     color: inherit;
     cursor: pointer;
     text-decoration: none;
@@ -153,7 +153,7 @@ button.warning:focus {
 
 .link-text {
     font-weight: 700;
-    color: rgba(27, 27, 27, .85);
+    color: rgba(27, 27, 27, 0.85);
     text-decoration: unset;
 }
 
@@ -170,16 +170,16 @@ button.warning:focus {
 }
 
 .container__background {
-    background: #FAFAFA;
+    background: #fafafa;
     border-radius: 10px;
 }
 
 .blue {
-    color: #00FFE0;
+    color: #00ffe0;
 }
 
 .green {
-    color: #00FF94;
+    color: #00ff94;
 }
 
 @media screen and (max-width: 3000px) {

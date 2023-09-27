@@ -1,10 +1,10 @@
 import {
-    ErrorContextProvider,
     OrgContextProvider,
-    UserContextProvider
+    UserContextProvider,
+    WindowContextProvider
 } from '@contexts';
 
-import { ActionBar, Wallet } from '@components';
+import { Wallet, ActionBar } from '@components';
 
 const DashboardWrapper = ({ children, paramAddress }) => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -13,16 +13,17 @@ const DashboardWrapper = ({ children, paramAddress }) => {
     const focusedAddress = paramAddress !== undefined ? paramAddress : address;
 
     return (
-        <ErrorContextProvider>
+        <WindowContextProvider>
             <Wallet>
                 <OrgContextProvider paramAddress={focusedAddress}>
                     <UserContextProvider>
                         <ActionBar />
+
                         {children}
                     </UserContextProvider>
                 </OrgContextProvider >
             </Wallet>
-        </ErrorContextProvider >
+        </WindowContextProvider >
     )
 }
 

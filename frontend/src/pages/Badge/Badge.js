@@ -6,6 +6,21 @@ import { useNavigateAddress, useUser } from "@hooks";
 
 import "@style/pages/Badge.css";
 
+const BadgeContent = ({ badge, managers, canManage }) => {
+    return (<>
+        <BadgePreview badge={badge} />
+
+        <ManagerTable
+            badge={badge}
+            managers={managers}
+            canManage={canManage} />
+
+        <HolderTable
+            badge={badge}
+            canManage={canManage} />
+    </>)
+}
+
 const Badge = () => {
     const navigate = useNavigateAddress();
 
@@ -15,7 +30,8 @@ const Badge = () => {
         organization,
         badge,
         managers,
-        canManage
+        canManage,
+        retrieve
     } = useUser({ chainId, orgAddress, badgeId });
 
     const headerActions = canManage && [{
@@ -26,23 +42,24 @@ const Badge = () => {
 
     return (
         <>
-            <SEO title={`${badge ? `${organization.name} // ${badge.name}` : 'Not Found'} // Badger`}
+            <SEO
+                title={`${badge ? `${organization.name} // ${badge.name}` : 'Not Found'} // Badger`}
                 description={badge?.description} />
 
             <Header back={() =>
                 navigate(`/dashboard/organization/${chainId}/${orgAddress}/`)}
                 actions={headerActions} />
 
-            <DashboardLoader chainId={chainId} orgAddress={orgAddress} obj={badge}>
-                <BadgePreview badge={badge} />
-
-                <ManagerTable
+            <DashboardLoader
+                chainId={chainId}
+                orgAddress={orgAddress}
+                badgeId={badgeId}
+                obj={badge}
+                retrieve={retrieve}>
+                <BadgeContent
                     badge={badge}
                     managers={managers}
-                    canManage={canManage}
-                />
-
-                <HolderTable badge={badge} canManage={canManage} />
+                    canManage={canManage} />
             </DashboardLoader>
         </>
     )

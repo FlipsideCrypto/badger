@@ -26,7 +26,7 @@ const OrgContextProvider = ({ children, paramAddress }) => {
         connected,
         data: organizations,
         send
-    } = useSocket({ enabled, url })
+    } = useSocket({ enabled: url && enabled, url })
 
     return (
         <OrgContext.Provider value={{

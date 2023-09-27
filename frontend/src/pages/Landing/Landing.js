@@ -3,7 +3,14 @@ import { Link } from "react-router-dom";
 
 import { useStory } from "@hooks";
 
-import { ArrowLink, Accordion, Metrics, StoryPreview, LandingHero, SEO } from "@components";
+import {
+    ArrowLink,
+    Accordion,
+    Metrics,
+    StoryPreview,
+    LandingHero,
+    SEO
+} from "@components";
 
 import delegatePermissions from "../../static/images/delegate-permissions.gif"
 import distributeBadges from "../../static/images/distribute-badges.gif"
