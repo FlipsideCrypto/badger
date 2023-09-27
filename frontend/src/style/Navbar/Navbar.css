@@ -30,7 +30,7 @@
 
 .navbar a {
     text-decoration: none;
-    color: #1B1B1B;
+    color: rgba(27, 27, 27, 0.8);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
     font-size: 18px;
@@ -55,7 +55,9 @@
 
 .navbar a:hover,
 .navbar a:active,
-.navbar a:focus {}
+.navbar a:focus {
+    color: rgba(27, 27, 27, 1);
+}
 
 .navbar .navbar__links__left {
     margin-left: 40px;
