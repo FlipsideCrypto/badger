@@ -16,7 +16,7 @@ const FAQ = () => {
         content: "Badger was specifically designed for people like you. Avoiding the land of complexity, Badger is focused on bringing the power of Badges to every person while removing the technical barrier.",
     }, {
         title: "What can I use a Badge for?",
-        content: "With Badges, the capabilities are as wide as your imagination. You can use Badges as a form of reputation, access, targeting, etc. Once you have deployed Badges with Badger, your team can integrate with the leading solutions in Web3 management. Take a look at our [integration docs](https://flipside-crypto.gitbook.io/badger/help/integration-tutorials) to learn more.",
+        content: "With Badges, the capabilities are as wide as your imagination. You can use Badges as a form of reputation, access, targeting, etc. Once you have deployed Badges with Badger, your team can integrate with the leading solutions in Web3 management. Take a look at our [integration docs](https://docs.trybadger.com/help/integration-tutorials) to learn more.",
     }, {
         title: "How do I get started?",
         content: "All you have to do is connect your wallet.",
@@ -52,7 +52,7 @@ const FAQ = () => {
         content: "Of course! You can find all documentation regarding the app and smart contract at: http://docs.trybadger.com -- If you have a question not answered here, reach out and a Badger team member will get you the answer."
     }, {
         title: "Are there any tutorials to guide me through?",
-        content: "Yes there are! You can find all the tutorial videos in our [Docs on GitBook](https://flipside-crypto.gitbook.io/badger/help/usage-tutorials)."
+        content: "Yes there are! You can find all the tutorial videos in our [Docs on GitBook](https://docs.trybadger.com/help/usage-tutorials)."
     }, {
         title: "Can I make my own frontend that users interact with Badger?",
         content: "Absolutely you can! Badger was built with a primitive-first mindset meaning the use of the app is entirely optional and only offered as a form of assistance. All required pieces that allow Badger to function are handled at the contract level!"

@@ -1,5 +1,5 @@
 const HOME_LINKS = {
-    gitbook: "https://flipside-crypto.gitbook.io/badger/",
+    gitbook: "https://docs.trybadger.com/",
     discord: "https://discord.gg/QnxkCQcg",
     github: "https://github.com/FlipsideCrypto/badger",
 }

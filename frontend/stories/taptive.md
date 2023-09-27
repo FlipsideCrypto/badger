@@ -35,7 +35,7 @@ Now, with Badger they are now able to recognize competition winners with an onch
 
 After reviewing a number of options ranging from sophisticated reputation management protocols and NFT minting apps, Taptive chose Badger as their tool of choice. While other options may appear to have extra features or appear simpler, Grant found that Badger's simple interface was the best tool for the job and gave recipients the extensibility necessary.
 
-[Taptive is able to distribute account bound credentials with the click of the button.](https://flipside-crypto.gitbook.io/badger/our-vision)
+[Taptive is able to distribute account bound credentials with the click of the button.](https://docs.trybadger.com/our-vision)
 
 ## Mobilizing recognition across communities
 

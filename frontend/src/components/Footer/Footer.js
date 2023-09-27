@@ -59,7 +59,7 @@ const Footer = () => {
                         <Link to="/media/">Media Kit</Link>
                     </div>
 
-                    <p>Built by <span><a href="https://cosanostra.gg" target="_blank" rel="noreferrer"> cosanostra </a></span> {`// © Badger 2023`}</p>
+                    <p>© Badger 2023</p>
                 </div>
             </div>
         </div>

@@ -167,18 +167,18 @@ const Landing = () => {
                             <h3>Learn</h3>
                             <p>View tutorials and documentations to understand more about how Badger empowers you.</p>
 
-                            <ArrowLink href="https://flipside-crypto.gitbook.io/badger/help/integration-tutorials/guild">Use Badges with Guild to control Discord</ArrowLink>
-                            <ArrowLink href="https://flipside-crypto.gitbook.io/badger/help/integration-tutorials/snapshot">Empower operating pods with Snapshot votes</ArrowLink>
-                            <ArrowLink href="https://flipside-crypto.gitbook.io/badger/help/integration-tutorials/jokedao">Run an onchain contest for Badge holders on JokeDAO</ArrowLink>
-                            <ArrowLink href="https://flipside-crypto.gitbook.io/badger/help/integration-tutorials/protocol-level">Programatically mint and revoke Badges in a protocol</ArrowLink>
+                            <ArrowLink href="https://docs.trybadger.com/help/integration-tutorials/guild">Use Badges with Guild to control Discord</ArrowLink>
+                            <ArrowLink href="https://docs.trybadger.com/help/integration-tutorials/snapshot">Empower operating pods with Snapshot votes</ArrowLink>
+                            <ArrowLink href="https://docs.trybadger.com/help/integration-tutorials/jokedao">Run an onchain contest for Badge holders on JokeDAO</ArrowLink>
+                            <ArrowLink href="https://docs.trybadger.com/help/integration-tutorials/opensea">Personalize your collection on OpenSea</ArrowLink>
                         </div>
 
                         <div className="card explore">
                             <h3>Explore</h3>
                             <p>Connect with other Badger operators and developers to help you build your network.</p>
-                            <ArrowLink href="https://flipside-crypto.gitbook.io/badger/what-is-badger">Documentation</ArrowLink>
-                            <ArrowLink href="https://flipside-crypto.gitbook.io/badger/advanced/smart-contracts/badger.sol">Developers</ArrowLink>
-                            <ArrowLink href="https://discord.com/invite/TASvMj4vyk">Community</ArrowLink>
+                            <ArrowLink href="https://docs.trybadger.com/what-is-badger">Documentation</ArrowLink>
+                            <ArrowLink href="https://docs.trybadger.com/advanced/smart-contracts">Developers</ArrowLink>
+                            <ArrowLink href="https://twitter.com/trybadger">Community</ArrowLink>
                             <ArrowLink to="/stories/">Customer stories</ArrowLink>
                         </div>
 
