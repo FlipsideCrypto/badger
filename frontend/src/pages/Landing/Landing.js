@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { useStory } from "@hooks";
@@ -11,6 +12,13 @@ import {
     SEO
 } from "@components";
 
+import delegatePermissions from "../../static/images/delegate-permissions.gif"
+import distributeBadges from "../../static/images/distribute-badges.gif"
+import launchOrganizations from "../../static/images/launch-organizations.gif"
+import onchainPermissions from "../../static/images/onchain-permissions.gif"
+import privateKeys from "../../static/images/private-keys.gif"
+import whatMatters from "../../static/images/what-matters.gif"
+
 import "@style/pages/Landing.css";
 
 const title = "The No-Code Badge Solution for Web3 Organizations | Badger";
@@ -19,6 +27,45 @@ const description = "Badger is the no-code solution that unlocks the power of on
 const Landing = () => {
     const { story: talentdao } = useStory("talentdao");
     const { story: mdao } = useStory("mdao");
+
+    const [accordions, setAccordions] = useState({
+        process: [{
+            selected: true,
+            img: launchOrganizations,
+            icon: ['fal', 'sitemap'],
+            title: 'Launch Organizations',
+            content: 'Get past the ground-zero phase and launch your onchain organization with badges in just a few clicks.'
+        },
+        {
+            img: distributeBadges,
+            icon: ['fal', 'chart-network'],
+            title: 'Distribute Badges',
+            content: 'Mint badges and distribute them to your members in a matter of seconds with the help of automated and bulk ERC-1155 minting tools.'
+        },
+        {
+            img: delegatePermissions,
+            icon: ['fal', 'user-check'],
+            title: 'Delegate Permissions',
+            content: 'Delegate permissions to your team members, friends, family and more so that you can focus on the big picture while maintaining security and control of your organization.'
+        }],
+        benefits: [{
+            selected: true,
+            img: privateKeys,
+            icon: ['fal', 'lock'],
+            title: 'Stop Sharing Private Keys',
+            content: 'Forget the days of being worried about a wallet key being leaked. Create nested permissions using AND/OR logic with Badges and unlock the power of an onchain network.'
+        }, {
+            img: onchainPermissions,
+            icon: ['fal', 'handshake'],
+            title: 'Securely Grant Onchain Access',
+            content: 'Keep unwanted guests out while keeping your protocol and Organization nimble. With Badges, permissions can be managed onchain, offchain and even respond to the state of a protocol.'
+        }, {
+            img: whatMatters,
+            icon: ['fal', 'bolt'],
+            title: 'Focus on What Matters Most',
+            content: 'Stop struggling to manage private keys, multi-sigs, assigning permission in 10 places. Mint permissions with Badger and save yourself the time so that you have time to devote the more important things.'
+        }]
+    })
 
     return (
         <>
@@ -54,6 +101,12 @@ const Landing = () => {
                                 <div className="blob" />
                             </div>
                         </div>
+
+                        <div className="content">
+                            {accordions.process
+                                .filter(item => item.selected)
+                                .map(item => <img key={item.img} src={item.img} width={"100%"} height={"auto"} />)}
+                        </div>
                     </div>
 
                     <div className="content">
@@ -61,21 +114,7 @@ const Landing = () => {
 
                         <Link className="cta" to="/dashboard/">Get started - it's free</Link>
 
-                        <Accordion start={1} items={[{
-                            icon: ['fal', 'sitemap'],
-                            title: 'Launch Organizations',
-                            content: 'Get past the ground-zero phase and launch your onchain organization with badges in just a few clicks.'
-                        },
-                        {
-                            icon: ['fal', 'chart-network'],
-                            title: 'Distribute Badges',
-                            content: 'Mint badges and distribute them to your members in a matter of seconds with the help of automated and bulk ERC-1155 minting tools.'
-                        },
-                        {
-                            icon: ['fal', 'user-check'],
-                            title: 'Delegate Permissions',
-                            content: 'Delegate permissions to your team members, friends, family and more so that you can focus on the big picture while maintaining security and control of your organization.'
-                        }]} />
+                        <Accordion accordionKey="process" items={accordions} onClick={setAccordions} />
                     </div>
                 </div>
 
@@ -89,19 +128,7 @@ const Landing = () => {
 
                         <Link className="cta" to="/dashboard/">Issue Badges now</Link>
 
-                        <Accordion start={0} items={[{
-                            icon: ['fal', 'bolt'],
-                            title: 'Power Complex Permissions',
-                            content: 'Forget the days of not being able to keep a smart contract secure without explicit writes. Create nested permissions using AND/OR logic with Badges and unlock the power of a network.'
-                        }, {
-                            icon: ['fal', 'lock'],
-                            title: 'Secure Onchain Activity',
-                            content: 'Keep unwanted guests out while keeping your protocol and Organization nimble. With Badges, access permissions can be managed onchain, offchain and even respond to the state of a protocol.'
-                        }, {
-                            icon: ['fal', 'tasks'],
-                            title: 'Optimize Permission Management',
-                            content: 'Stop struggling to manage private keys, multi-sigs, assigning permission in 10 places. With Badger, update a single location and instantly all gates will follow.'
-                        }]} />
+                        <Accordion accordionKey="benefits" items={accordions} onClick={setAccordions} />
                     </div>
 
                     <div className="context">
@@ -110,6 +137,12 @@ const Landing = () => {
                                 <div className="blob" />
                                 <div className="blob" />
                             </div>
+                        </div>
+
+                        <div className="content">
+                            {accordions.benefits
+                                .filter(item => item.selected)
+                                .map(item => <img key={item.img} src={item.img} width={"100%"} height={"auto"} />)}
                         </div>
                     </div>
                 </div>

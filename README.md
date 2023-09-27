@@ -46,15 +46,15 @@ Although everything has been bundled into a single command, there are a few help
 
 #### Database Migrations
 
-The Badger backend is built using Django. Anytime there are changes to the database schema the migrations need to be made and applied. 
+The Badger backend is built using Django. Anytime there are changes to the database schema the migrations need to be made and applied.
 
-> If you're just forking, we've already pre-built the migrations, you just need to apply them to your database. Migrations are automatically applied when you build using Docker, but if you have an issue this is how you can migrate the database manually. 
+> If you're just forking, we've already pre-built the migrations, you just need to apply them to your database. Migrations are automatically applied when you build using Docker, but if you have an issue this is how you can migrate the database manually.
 
 - terminal: `docker compose run --rm badger_server python manage.py migrate`
 
 #### Testing The Contract
 
-Testing contracts is a critical step before deployment. We've included a few helpers to make this process easier. 
+Testing contracts is a critical step before deployment. We've included a few helpers to make this process easier.
 
 - terminal: `docker compose run --rm badger_node node npx hardhat coverage --network localhost`
 

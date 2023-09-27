@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { Accordion, LandingHero, SEO } from "@components";
 
 import "@style/pages/FAQ.css";
@@ -6,7 +8,7 @@ const title = "FAQ | Badger";
 const description = "Badger is a EVM-Based smart contract factory that deploys new instances of Organizations and Badges for personal use and management.";
 
 const FAQ = () => {
-    const faqs = [{
+    const [accordions, setAccordions]  = useState({ faqs: [{
         title: "What is Badger built to solve?",
         content: "Before Badger it was very difficult to have onchain access policies with network permissions. Badger lowers the barrier and empowers every individual with the ability to issue, manage and revoke onchain permissions in seconds for free without any coding.",
     }, {
@@ -66,7 +68,7 @@ const FAQ = () => {
     }, {
         title: "Do Badges appear on marketplaces?",
         content: "Yes! Badges are ERC-1155 compatible and every major marketplace will display your Badges."
-    }]
+    }]})
 
     return (
         <>
@@ -80,7 +82,7 @@ const FAQ = () => {
                 </LandingHero>
 
                 <div className="container">
-                    <Accordion items={faqs} />
+                    <Accordion accordionKey="faqs" items={accordions} onClick={setAccordions} />
                 </div>
             </div>
         </>
