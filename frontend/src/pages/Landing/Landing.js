@@ -50,7 +50,7 @@ const Landing = () => {
         }, {
             img: onchainPermissions,
             icon: ['fal', 'handshake'],
-            title: 'Secure Grant Onchain Access',
+            title: 'Securely Grant Onchain Access',
             content: 'Keep unwanted guests out while keeping your protocol and Organization nimble. With Badges, permissions can be managed onchain, offchain and even respond to the state of a protocol.'
         }, {
             img: whatMatters,
