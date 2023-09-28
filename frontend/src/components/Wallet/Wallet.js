@@ -20,6 +20,7 @@ const Wallet = ({ children }) => {
 
 	const { connectors } = getDefaultWallets({
 		appName: 'Badger',
+		projectId: '5f9ec8a9be44e8badd36c640b388d14d',
 		chains
 	})
 
