@@ -6,6 +6,7 @@ import {
 } from '@rainbow-me/rainbowkit'
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
 import { localhost, polygon } from 'wagmi/chains'
+import { SafeConnector } from 'wagmi/connectors/safe'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
@@ -25,8 +26,17 @@ const Wallet = ({ children }) => {
 	})
 
 	const wagmiClient = createClient({
-		autoConnect: true,
-		connectors,
+		autoConnect: false,
+		connectors: [
+			...connectors(),
+			new SafeConnector({
+				chains,
+				options: {
+					allowedDomains: [/gnosis-safe.io$/, /app.safe.global$/],
+					debug: true
+				}
+			})
+		],
 		provider
 	})
 

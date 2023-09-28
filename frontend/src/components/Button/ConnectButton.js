@@ -2,6 +2,8 @@ import { useAuthentication } from '@hooks'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useAccount, useSwitchNetwork } from 'wagmi'
 
+import { useAutoConnect } from '../../hooks/useAutoConnect'
+
 const ConnectButton = props => {
 	const { switchNetwork } = useSwitchNetwork()
 
@@ -12,6 +14,8 @@ const ConnectButton = props => {
 	const { primaryChain, isWrongNetwork } = useAuthentication()
 
 	const className = props.className || 'secondary'
+
+	useAutoConnect()
 
 	if (isConnected && isWrongNetwork && switchNetwork)
 		return (
