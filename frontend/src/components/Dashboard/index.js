@@ -1,3 +1,3 @@
-export { DashboardLoader } from './DashboardLoader';
-export { DashboardContent } from './DashboardContent';
-export { DashboardWrapper } from './DashboardWrapper';
+export { DashboardLoader } from './DashboardLoader'
+export { DashboardContent } from './DashboardContent'
+export { DashboardWrapper } from './DashboardWrapper'

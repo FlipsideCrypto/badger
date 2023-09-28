@@ -1,74 +1,73 @@
-
 .window {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    margin: 0;
-    z-index: 200;
-    overflow: hidden;
-    pointer-events: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	margin: 0;
+	z-index: 200;
+	overflow: hidden;
+	pointer-events: none;
 }
 
 .transaction {
-    top: -100px;
-    z-index: 201;
+	top: -100px;
+	z-index: 201;
 }
 
 .window.active {
-    pointer-events: all;
+	pointer-events: all;
 }
 
 .window .bubble {
-    position: relative;
-    top: calc(50% - 2600px);
-    left: calc(50% - 2500px);
-    margin: 0;
-    background: white;
-    border-radius: 50%;
-    width: 5000px;
-    height: 5000px;
-    transform: scale(0);
-    transition: transform .5s ease-in-out;
-    z-index: 202;
+	position: relative;
+	top: calc(50% - 2600px);
+	left: calc(50% - 2500px);
+	margin: 0;
+	background: white;
+	border-radius: 50%;
+	width: 5000px;
+	height: 5000px;
+	transform: scale(0);
+	transition: transform 0.5s ease-in-out;
+	z-index: 202;
 }
 
 .window.transaction .bubble {
-    background: var(--blue);
+	background: var(--blue);
 }
 
 .window.active .bubble {
-    transform: scale(1);
+	transform: scale(1);
 }
 
 .window .message__content {
-    z-index: 203;
-    opacity: 0;
-    padding-inline: 20px;
-    box-sizing: border-box;
-    transition: opacity .4s ease-in-out;
+	z-index: 203;
+	opacity: 0;
+	padding-inline: 20px;
+	box-sizing: border-box;
+	transition: opacity 0.4s ease-in-out;
 }
 
 .window .message__content .empty {
-    background: transparent;
-    box-sizing: border-box;
+	background: transparent;
+	box-sizing: border-box;
 }
 
 .window .message__content {
-    z-index: 204;
+	z-index: 204;
 }
 
 .transaction .message__content .empty {
-    position: absolute;
-    top: -100px;
-    left: 0;
-    bottom: 0;
-    right: 0;
+	position: absolute;
+	top: -100px;
+	left: 0;
+	bottom: 0;
+	right: 0;
 }
 
 .window.active .message__content {
-    z-index: 300;
-    pointer-events: all;
-    opacity: 1;
+	z-index: 300;
+	pointer-events: all;
+	opacity: 1;
 }

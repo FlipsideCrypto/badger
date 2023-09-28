@@ -1,14 +1,14 @@
 .sidebar {
-    height: 100%;
-    position: relative;
-    margin: var(--page-margins);
+	height: 100%;
+	position: relative;
+	margin: var(--page-margins);
 }
 
 .sidebar h5 {
-    color: rgba(0, 0, 0, .35)
+	color: rgba(0, 0, 0, 0.35);
 }
 
-.sidebar .sidebar__footer { 
-    position: absolute;
-    bottom: 0;
+.sidebar .sidebar__footer {
+	position: absolute;
+	bottom: 0;
 }

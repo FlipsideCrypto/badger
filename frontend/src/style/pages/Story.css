@@ -1,266 +1,267 @@
-.story {}
+.story {
+}
 
 .story .hero {
-    position: relative;
+	position: relative;
 }
 
 .story .hero::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url(../../static/images/hero-noise.png) repeat;
-    background-size: 960px 540px;
-    z-index: 1;
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: url(../../static/images/hero-noise.png) repeat;
+	background-size: 960px 540px;
+	z-index: 1;
 }
 
 .story .hero,
 .story .container {
-    z-index: 2;
+	z-index: 2;
 }
 
 .story .hero .container {
-    display: grid;
-    grid-template-columns: 8fr 4fr;
-    gap: 80px;
+	display: grid;
+	grid-template-columns: 8fr 4fr;
+	gap: 80px;
 }
 
 .story .hero .container .background {
-    display: flex;
-    align-items: center;
-    margin-right: -120px;
-    position: relative;
-    margin-top: -100px;
-    min-height: 550px;
+	display: flex;
+	align-items: center;
+	margin-right: -120px;
+	position: relative;
+	margin-top: -100px;
+	min-height: 550px;
 }
 
 .story .hero .container .background .color {
-    overflow: hidden;
-    position: absolute;
-    top: 0;
-    height: 100%;
-    width: 100vw;
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+	height: 100%;
+	width: 100vw;
 }
 
 .story .hero .container .background::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100%;
-    background: url(../../static/images/hero-noise.png) repeat;
-    background-size: 960px 540px;
-    z-index: 1;
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100%;
+	background: url(../../static/images/hero-noise.png) repeat;
+	background-size: 960px 540px;
+	z-index: 1;
 }
 
 .story .hero .container .background img {
-    height: auto;
-    width: 100%;
-    padding: 60px;
-    padding-inline: 120px;
-    align-self: center;
-    position: absolute;
-    z-index: 2;
-    border-radius: 4px;
+	height: auto;
+	width: 100%;
+	padding: 60px;
+	padding-inline: 120px;
+	align-self: center;
+	position: absolute;
+	z-index: 2;
+	border-radius: 4px;
 }
 
 .story .hero .logo {
-    height: 45px;
-    margin-top: 40px;
-    filter: saturate(0) brightness(0);
+	height: 45px;
+	margin-top: 40px;
+	filter: saturate(0) brightness(0);
 }
 
 .story .stats {
-    display: flex;
-    flex-direction: row;
-    gap: 80px;
-    margin-bottom: 40px;
+	display: flex;
+	flex-direction: row;
+	gap: 80px;
+	margin-bottom: 40px;
 }
 
 .story .stats h3,
 h4 {
-    margin: 0;
-    color: #1B1B1B;
+	margin: 0;
+	color: #1b1b1b;
 }
 
 .story .stats h3 {
-    font-size: 32px;
-    color: inherit;
+	font-size: 32px;
+	color: inherit;
 }
 
 .story .body {
-    display: grid;
-    grid-template-columns: 2fr 6fr 2fr;
-    gap: 20px;
+	display: grid;
+	grid-template-columns: 2fr 6fr 2fr;
+	gap: 20px;
 }
 
 .story .body .content {
-    margin-bottom: 40px;
+	margin-bottom: 40px;
 }
 
 .story .body .content .container {
-    margin: 0;
-    padding: 0;
+	margin: 0;
+	padding: 0;
 }
 
 .story .content .preview.full,
 .story .content h4:first-of-type {
-    padding-top: 0;
-    margin-top: 0;
+	padding-top: 0;
+	margin-top: 0;
 }
 
 .story .share .items {
-    position: relative;
-    flex-direction: column;
-    display: flex;
-    align-items: center;
+	position: relative;
+	flex-direction: column;
+	display: flex;
+	align-items: center;
 }
 
 .story .share .items.sticky {
-    position: sticky;
-    top: 150px;
+	position: sticky;
+	top: 150px;
 }
 
 .story .share .items::before {
-    content: '';
-    position: absolute;
-    bottom: -50%;
-    left: 50%;
-    transform: translate(-50%, 50%);
-    background: #1B1B1B;
-    height: 50%;
-    width: 1px;
+	content: '';
+	position: absolute;
+	bottom: -50%;
+	left: 50%;
+	transform: translate(-50%, 50%);
+	background: #1b1b1b;
+	height: 50%;
+	width: 1px;
 }
 
 .story .share .items::after {
-    content: 'SHARE';
-    font-family: 'Gopher';
-    position: absolute;
-    bottom: -120%;
-    left: 50%;
-    font-weight: 700;
-    transform: translate(-50%, 50%) rotate(-90deg);
-    background: white;
-    padding: 5px;
-    border-radius: 4px;
-    font-size: 12px;
+	content: 'SHARE';
+	font-family: 'Gopher';
+	position: absolute;
+	bottom: -120%;
+	left: 50%;
+	font-weight: 700;
+	transform: translate(-50%, 50%) rotate(-90deg);
+	background: white;
+	padding: 5px;
+	border-radius: 4px;
+	font-size: 12px;
 }
 
 .story .share .items a,
 .story .share .items div {
-    background: #fff;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    cursor: pointer;
+	background: #fff;
+	border-radius: 50%;
+	width: 35px;
+	height: 35px;
+	align-items: center;
+	justify-content: center;
+	display: flex;
+	cursor: pointer;
 }
 
 .story .share .items a svg {
-    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+	transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .story .share .items a:hover svg,
 .story .share .items a:hover svg {
-    transform: translateY(-3px);
+	transform: translateY(-3px);
 }
 
 .story .content .markdown h1,
 .story .content .markdown h2,
 .story .content .markdown h3,
 .story .content .markdown h4 {
-    margin-top: 60px;
-    margin-bottom: 10px;
+	margin-top: 60px;
+	margin-bottom: 10px;
 }
 
 .story .content .markdown h2 {
-    font-size: 32px;
+	font-size: 32px;
 }
 
 .story .content .markdown h3 {
-    font-size: 24px;
+	font-size: 24px;
 }
 
 .story .content .markdown h4 {
-    font-size: 20px;
+	font-size: 20px;
 }
 
 .story .content .markdown blockquote,
 .story .content .markdown .blobs {
-    margin-block: 40px;
+	margin-block: 40px;
 }
 
 .story .content .markdown img {
-    max-width: 100%;
-    height: auto;
-    position: relative;
-    margin-block: 20px;
+	max-width: 100%;
+	height: auto;
+	position: relative;
+	margin-block: 20px;
 }
 
 .story .content .markdown p {
-    position: relative;
+	position: relative;
 }
 
 .story .content .markdown .blobs {
-    position: relative;
+	position: relative;
 }
 
 .story .content .markdown .blobs .blob {
-    top: 0;
-    left: 0;
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
-    z-index: -2;
-    pointer-events: none;
-    position: absolute;
-    filter: blur(150px);
+	top: 0;
+	left: 0;
+	width: 300px;
+	height: 300px;
+	border-radius: 50%;
+	z-index: -2;
+	pointer-events: none;
+	position: absolute;
+	filter: blur(150px);
 }
 
 .story .content .markdown .blobs .blob.two {
-    right: 0;
-    bottom: 0;
+	right: 0;
+	bottom: 0;
 }
 
 .story .content .markdown .blobs .blob.three {
-    left: 0;
-    bottom: 0;
+	left: 0;
+	bottom: 0;
 }
 
 .story .content .markdown .blobs .blob.four {
-    right: 0;
-    top: 0;
+	right: 0;
+	top: 0;
 }
 
 .story .content .markdown .blobs::after {
-    content: '';
-    position: absolute;
-    top: -150%;
-    left: -150%;
-    width: 400%;
-    height: 400%;
-    background-image: url(../../static/images/hero-noise.png);
-    background-size: 960px 540px;
-    z-index: -1;
+	content: '';
+	position: absolute;
+	top: -150%;
+	left: -150%;
+	width: 400%;
+	height: 400%;
+	background-image: url(../../static/images/hero-noise.png);
+	background-size: 960px 540px;
+	z-index: -1;
 }
 
 @media (max-width: 1024px) {
-    .story .hero .container {
-        grid-template-columns: 1fr;
-    }
+	.story .hero .container {
+		grid-template-columns: 1fr;
+	}
 
-    .story .hero .container .background {
-        margin-top: 40px;
-        height: auto;
-    }
+	.story .hero .container .background {
+		margin-top: 40px;
+		height: auto;
+	}
 
-    .story .body {
-        grid-template-columns: 1fr 11fr;
-        padding: 60px;
-    }
+	.story .body {
+		grid-template-columns: 1fr 11fr;
+		padding: 60px;
+	}
 }

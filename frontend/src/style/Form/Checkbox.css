@@ -1,63 +1,63 @@
 .checkbox {
-    display: block;
-    position: relative;
-    padding-left: 35px;
-    cursor: pointer;
-    font-size: 38px;
-    user-select: none;
+	display: block;
+	position: relative;
+	padding-left: 35px;
+	cursor: pointer;
+	font-size: 38px;
+	user-select: none;
 }
-  
+
 .checkbox input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+	height: 0;
+	width: 0;
 }
-  
+
 .checkmark {
-    border: 1px solid #E0E0E0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 32px;
-    width: 32px;
-    background-color: #fff;
+	border: 1px solid #e0e0e0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 32px;
+	width: 32px;
+	background-color: #fff;
 }
-  
+
 /* .checkbox:hover input ~ .checkmark {
     background-color: #F0F0F0;
 } */
-  
+
 .checkbox input:checked ~ .checkmark {
-    background-color: #1B1B1B;
+	background-color: #1b1b1b;
 }
-  
+
 .checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
+	content: '';
+	position: absolute;
+	display: none;
 }
-  
+
 .checkbox input:checked ~ .checkmark:after {
-    display: block;
+	display: block;
 }
-  
+
 .checkbox .checkmark:after {
-    left: 9px;
-    top: 0px;
-    width: 12px;
-    height: 20px;
-    border: solid white;
-    border-width: 0 6px 6px 0;
-    transform: rotate(45deg);
+	left: 9px;
+	top: 0px;
+	width: 12px;
+	height: 20px;
+	border: solid white;
+	border-width: 0 6px 6px 0;
+	transform: rotate(45deg);
 }
 
 .checkbox__wrapper .form__group .form__label {
-    width: max-content;
+	width: max-content;
 }
 
 .checkbox__disabled .checkmark {
-    background-color: #F0F0F0;
-    cursor: not-allowed;
+	background-color: #f0f0f0;
+	cursor: not-allowed;
 }

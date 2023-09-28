@@ -1,36 +1,37 @@
-.status__indicators {}
+.status__indicators {
+}
 
 .status__indicators * {
-    margin: 0;
+	margin: 0;
 }
 
 .status__indicators .status__indicator {
-    display: grid;
-    grid-template-columns: 24px auto;
-    align-items: center;
-    margin-bottom: 10px;
+	display: grid;
+	grid-template-columns: 24px auto;
+	align-items: center;
+	margin-bottom: 10px;
 }
 
 .status__indicators .status__indicator p {
-    font-size: 12px;
+	font-size: 12px;
 }
 
 .status__indicators .status__indicator .status__indicator__circle {
-    background: #FF0000;
-    border-radius: 50%;
-    width: 10px;
-    border: 1px solid #E0E0E0;
-    height: 10px;
+	background: #ff0000;
+	border-radius: 50%;
+	width: 10px;
+	border: 1px solid #e0e0e0;
+	height: 10px;
 }
 
 .status__indicators .status__indicator .status__indicator__circle.pending {
-    background: #EBFF00;
+	background: #ebff00;
 }
 
 .status__indicators .status__indicator .status__indicator__circle.can {
-    background: #00FF9D;
+	background: #00ff9d;
 }
 
 .status__indicators .status__indicator .status__indicator__circle.cannot {
-    background: #FF0000;
+	background: #ff0000;
 }

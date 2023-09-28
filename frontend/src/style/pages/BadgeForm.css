@@ -1,36 +1,36 @@
 .preview__container {
-    background-color: #fff;
+	background-color: #fff;
 }
 
 .preview__image {
-    width: 200px;
-    height: 200px;
-    aspect-ratio: 1/1;
-    object-fit: contain;
+	width: 200px;
+	height: 200px;
+	aspect-ratio: 1/1;
+	object-fit: contain;
 }
 
 .badge__form__general {
-    display: grid;
-    grid-template-columns: 10fr 2fr;
-    grid-column-gap: 20px;
+	display: grid;
+	grid-template-columns: 10fr 2fr;
+	grid-column-gap: 20px;
 }
 
 .badge__form__access {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-column-gap: 10px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-column-gap: 10px;
 }
 
 @media (max-width: 768px) {
-    .badge__form__general {
-        grid-template-columns: 1fr;
-    }
+	.badge__form__general {
+		grid-template-columns: 1fr;
+	}
 
-    .badge__form__general .form__group.mobile__hidden {
-        display: none;
-    }
+	.badge__form__general .form__group.mobile__hidden {
+		display: none;
+	}
 
-    .badge__form__access {
-        grid-template-columns: 1fr;
-    }
+	.badge__form__access {
+		grid-template-columns: 1fr;
+	}
 }

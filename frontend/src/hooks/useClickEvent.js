@@ -1,22 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react'
 
 const useClickEvent = () => {
-    const [lastClick, setLastClick] = useState([]);
+	const [lastClick, setLastClick] = useState([])
 
-    useEffect(() => {
-        const updateClick = (e) => {
-            setLastClick(e);
-        }
+	useEffect(() => {
+		const updateClick = e => {
+			setLastClick(e)
+		}
 
-        window.addEventListener("mousedown", updateClick);
+		window.addEventListener('mousedown', updateClick)
 
-        return () => {
-            window.removeEventListener("mousedown", updateClick);
-        };
-    }, []);
+		return () => {
+			window.removeEventListener('mousedown', updateClick)
+		}
+	}, [])
 
-
-    return { lastClick };
+	return { lastClick }
 }
 
 export { useClickEvent }

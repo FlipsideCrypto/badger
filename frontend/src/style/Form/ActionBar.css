@@ -1,41 +1,41 @@
 .action__bar {
-    display: grid;
-    grid-template-columns: auto auto;
-    grid-template: 'help actions';
-    align-items: center;
-    grid-column-gap: 20px;
+	display: grid;
+	grid-template-columns: auto auto;
+	grid-template: 'help actions';
+	align-items: center;
+	grid-column-gap: 20px;
 }
 
-.action__bar .action__bar__help { 
-    font-size: 12px;
-    color: rgba(0,0,0,.35);
-    grid-area: help;
+.action__bar .action__bar__help {
+	font-size: 12px;
+	color: rgba(0, 0, 0, 0.35);
+	grid-area: help;
 }
 
-.action__bar .action__bar__help p { 
-    margin: 0;
+.action__bar .action__bar__help p {
+	margin: 0;
 }
 
-.action__bar .action__bar__actions { 
-    grid-area: actions;
-    display: grid;
-    grid-auto-flow: column;
-    justify-self: end;
-    grid-column-gap: 16px;
+.action__bar .action__bar__actions {
+	grid-area: actions;
+	display: grid;
+	grid-auto-flow: column;
+	justify-self: end;
+	grid-column-gap: 16px;
 }
 
-.action__bar .action__bar__actions button { 
-    margin-left: auto;
+.action__bar .action__bar__actions button {
+	margin-left: auto;
 }
 
 @media only screen and (max-width: 1200px) {
-    .action__bar {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
-        grid-template: 'actions' 'help';
-    }
+	.action__bar {
+		grid-template-columns: 1fr;
+		grid-template-rows: auto;
+		grid-template: 'actions' 'help';
+	}
 
-    .action__bar .action__bar__help { 
-        margin-top: 20px;
-    }
+	.action__bar .action__bar__help {
+		margin-top: 20px;
+	}
 }

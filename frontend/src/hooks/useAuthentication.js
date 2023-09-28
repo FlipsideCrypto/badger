@@ -1,9 +1,9 @@
-import { useContext } from 'react';
+import { useContext } from 'react'
 
-import { AuthenticationContext } from '@contexts';
+import { AuthenticationContext } from '@contexts'
 
 const useAuthentication = () => {
-    return { ...useContext(AuthenticationContext) }
+	return { ...useContext(AuthenticationContext) }
 }
 
 export { useAuthentication }

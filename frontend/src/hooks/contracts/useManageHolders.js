@@ -1,176 +1,212 @@
-import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useMemo, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
-import { usePrepareContractWrite, useContractWrite } from "wagmi"
-
-import { getBadgerOrganizationAbi, useFees, useUser, useWindow, useClickEvent } from "@hooks";
-
-import { addressValidator } from "@utils";
+import {
+	getBadgerOrganizationAbi,
+	useClickEvent,
+	useFees,
+	useUser,
+	useWindow
+} from '@hooks'
+import { addressValidator } from '@utils'
+import { useContractWrite, usePrepareContractWrite } from 'wagmi'
 
 const getMintArgs = ({ mints, tokenId }) => {
-    // Determine if we need to mintBatch
-    const functionName = mints.length > 1 ? "mintBatch" : "mint";
+	// Determine if we need to mintBatch
+	const functionName = mints.length > 1 ? 'mintBatch' : 'mint'
 
-    // Build cleaned amounts and addresses
-    const mintAmounts = mints.map(mint => parseInt(mint.pendingAmount || 1) - parseInt(mint.amount || 0));
-    const { cleanedAddresses: mintAddresses, invalid } = addressValidator(mints.map(mint => mint.ethereum_address));
+	// Build cleaned amounts and addresses
+	const mintAmounts = mints.map(
+		mint => parseInt(mint.pendingAmount || 1) - parseInt(mint.amount || 0)
+	)
+	const { cleanedAddresses: mintAddresses, invalid } = addressValidator(
+		mints.map(mint => mint.ethereum_address)
+	)
 
-    // Make sure everything is valid for the transaction.
-    if (invalid.length !== 0 || mintAddresses.length === 0 || mintAmounts.length !== mintAddresses.length) {
-        // console.error("Invalid mint args", invalid, mintAmounts)
-        return { functionName: "", args: [] };
-    }
+	// Make sure everything is valid for the transaction.
+	if (
+		invalid.length !== 0 ||
+		mintAddresses.length === 0 ||
+		mintAmounts.length !== mintAddresses.length
+	) {
+		// console.error("Invalid mint args", invalid, mintAmounts)
+		return { functionName: '', args: [] }
+	}
 
-    // Build the args
-    const args = functionName === "mint" ? 
-        [mintAddresses[0], tokenId, mintAmounts[0], "0x"] :
-        [mintAddresses, tokenId, mintAmounts, "0x"]
+	// Build the args
+	const args =
+		functionName === 'mint'
+			? [mintAddresses[0], tokenId, mintAmounts[0], '0x']
+			: [mintAddresses, tokenId, mintAmounts, '0x']
 
-    return { functionName, args };
+	return { functionName, args }
 }
 
 const getRevokeArgs = ({ revokes, tokenId }) => {
-    // Determine if we need to revokeBatch
-    const functionName = revokes.length > 1 ? "revokeBatch" : "revoke";
-    
-    // Build cleaned amounts and addresses
-    const revokeAmounts = revokes.map(mint => Math.abs(parseInt(mint.amount) - parseInt(mint.pendingAmount)));
-    const { cleanedAddresses: revokeAddresses, invalid } = addressValidator(revokes.map(revoke => revoke.ethereum_address));
+	// Determine if we need to revokeBatch
+	const functionName = revokes.length > 1 ? 'revokeBatch' : 'revoke'
 
-    // Make sure everything is valid for the transaction.
-    if (invalid.length !== 0 || revokeAddresses.length === 0 || revokeAmounts.length !== revokeAddresses.length) {
-        // console.error("Invalid revoke args", invalid, revokeAmounts)
-        return { functionName: "", args: [] };
-    }
+	// Build cleaned amounts and addresses
+	const revokeAmounts = revokes.map(mint =>
+		Math.abs(parseInt(mint.amount) - parseInt(mint.pendingAmount))
+	)
+	const { cleanedAddresses: revokeAddresses, invalid } = addressValidator(
+		revokes.map(revoke => revoke.ethereum_address)
+	)
 
-    const args = functionName === "revoke" ?
-        [revokeAddresses[0], tokenId, revokeAmounts[0]] :
-        [revokeAddresses, tokenId, revokeAmounts];
+	// Make sure everything is valid for the transaction.
+	if (
+		invalid.length !== 0 ||
+		revokeAddresses.length === 0 ||
+		revokeAmounts.length !== revokeAddresses.length
+	) {
+		// console.error("Invalid revoke args", invalid, revokeAmounts)
+		return { functionName: '', args: [] }
+	}
 
-    return { functionName, args };
+	const args =
+		functionName === 'revoke'
+			? [revokeAddresses[0], tokenId, revokeAmounts[0]]
+			: [revokeAddresses, tokenId, revokeAmounts]
+
+	return { functionName, args }
 }
 
 const getManageHolderArgs = ({ revokes, mints, tokenId, organization }) => {
-    // if multi call is necessary
-    if (mints && revokes && mints.length > 0 && revokes.length > 0) {
-        // Build mint and revoke args
-        const { functionName: mintFunction, args: mintArgs } = getMintArgs({ mints: mints, tokenId: tokenId });
-        const { functionName: revokeFunction, args: revokeArgs} = getRevokeArgs({ revokes: revokes, tokenId: tokenId });
-        
-        // If either of the functions are invalid, return empty args
-        if (!mintFunction || !revokeFunction)
-            return { functionName: "", args: [] };
+	// if multi call is necessary
+	if (mints && revokes && mints.length > 0 && revokes.length > 0) {
+		// Build mint and revoke args
+		const { functionName: mintFunction, args: mintArgs } = getMintArgs({
+			mints: mints,
+			tokenId: tokenId
+		})
+		const { functionName: revokeFunction, args: revokeArgs } =
+			getRevokeArgs({ revokes: revokes, tokenId: tokenId })
 
-        // Encode the mint and revoke args
-        const args = [[
-            organization.abi.encodeFunctionData(mintFunction, mintArgs),
-            organization.abi.encodeFunctionData(revokeFunction, revokeArgs)
-        ]]
+		// If either of the functions are invalid, return empty args
+		if (!mintFunction || !revokeFunction)
+			return { functionName: '', args: [] }
 
-        return { functionName: "multicall", args };
-    }
-    else if (mints && mints.length > 0)
-        return getMintArgs({ mints: mints, tokenId: tokenId });
-    else if (revokes && revokes.length > 0)
-        return getRevokeArgs({ revokes: revokes, tokenId: tokenId });
+		// Encode the mint and revoke args
+		const args = [
+			[
+				organization.abi.encodeFunctionData(mintFunction, mintArgs),
+				organization.abi.encodeFunctionData(revokeFunction, revokeArgs)
+			]
+		]
 
-    return { functionName: "", args: [] };
+		return { functionName: 'multicall', args }
+	} else if (mints && mints.length > 0)
+		return getMintArgs({ mints: mints, tokenId: tokenId })
+	else if (revokes && revokes.length > 0)
+		return getRevokeArgs({ revokes: revokes, tokenId: tokenId })
+
+	return { functionName: '', args: [] }
 }
 
 const useManageHolders = ({ mints, revokes, tokenId }) => {
-    const fees = useFees();
+	const fees = useFees()
 
-    const { orgAddress } = useParams();
+	const { orgAddress } = useParams()
 
-    const { chain, address } = useUser();
+	const { chain, address } = useUser()
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
+	const [isLoading, setIsLoading] = useState(false)
+	const [isSuccess, setIsSuccess] = useState(false)
 
-    const BadgerOrg = useMemo(() => { return getBadgerOrganizationAbi() }, [])
+	const BadgerOrg = useMemo(() => {
+		return getBadgerOrganizationAbi()
+	}, [])
 
-    const isReady = BadgerOrg && fees && address;
+	const isReady = BadgerOrg && fees && address
 
-    const { functionName, args } = getManageHolderArgs({ 
-        organization: BadgerOrg,
-        mints: mints,
-        revokes: revokes,
-        tokenId: tokenId
-     });
+	const { functionName, args } = getManageHolderArgs({
+		organization: BadgerOrg,
+		mints: mints,
+		revokes: revokes,
+		tokenId: tokenId
+	})
 
-    const overrides = { gasPrice: fees?.gasPrice };
+	const overrides = { gasPrice: fees?.gasPrice }
 
-    const { config, isSuccess: isPrepared } = usePrepareContractWrite({
-        enabled: isReady && functionName,
-        address: orgAddress,
-        abi: BadgerOrg.abi,
-        functionName,
-        chainId: chain.id,
-        args,
-        overrides,
-        onError: (e) => {
-            const err = e?.error?.message || e?.data?.message || e
-            throw new Error(err);
-        }
-    });
+	const { config, isSuccess: isPrepared } = usePrepareContractWrite({
+		enabled: isReady && functionName,
+		address: orgAddress,
+		abi: BadgerOrg.abi,
+		functionName,
+		chainId: chain.id,
+		args,
+		overrides,
+		onError: e => {
+			const err = e?.error?.message || e?.data?.message || e
+			throw new Error(err)
+		}
+	})
 
-    const { transactionWindow } = useWindow();
+	const { transactionWindow } = useWindow()
 
-    const { writeAsync } = useContractWrite(config);
+	const { writeAsync } = useContractWrite(config)
 
-    const { lastClick } = useClickEvent();
+	const { lastClick } = useClickEvent()
 
-    const openHolderTransaction = async ({
-        onError = (e) => { console.error(e) },
-        onLoading = () => { },
-        onSuccess = ({ config, chain, tx, receipt }) => { }
-    }) => {
-        try {
-            setIsLoading(true);
-            setIsSuccess(false);
+	const openHolderTransaction = async ({
+		onError = e => {
+			console.error(e)
+		},
+		onLoading = () => {},
+		onSuccess = ({ config, chain, tx, receipt }) => {}
+	}) => {
+		try {
+			setIsLoading(true)
+			setIsSuccess(false)
 
-            const isMint = functionName === "mint" || functionName === "mintBatch";
-            
-            const action = functionName === "multicall" ? "make the Badge balance changes" :
-                isMint ? "mint the Badges to the Holders" : "revoke the Badges from the Holders"
+			const isMint =
+				functionName === 'mint' || functionName === 'mintBatch'
 
-            transactionWindow.onStart({ 
-                title: "Waiting for confirmation...",
-                body: `Please confirm the transaction in your wallet to ${action}.`,
-                click: lastClick
-            })
+			const action =
+				functionName === 'multicall'
+					? 'make the Badge balance changes'
+					: isMint
+					? 'mint the Badges to the Holders'
+					: 'revoke the Badges from the Holders'
 
-            const tx = await writeAsync();
+			transactionWindow.onStart({
+				title: 'Waiting for confirmation...',
+				body: `Please confirm the transaction in your wallet to ${action}.`,
+				click: lastClick
+			})
 
-            transactionWindow.onSign({
-                title: "Mining transaction. This may take a few seconds.",
-                body: "Badger hasn't detected your Badge balance changes yet. Please give us a few minutes to check the chain.",
-                hash: tx.hash
-            });
+			const tx = await writeAsync()
 
-            onLoading();
+			transactionWindow.onSign({
+				title: 'Mining transaction. This may take a few seconds.',
+				body: "Badger hasn't detected your Badge balance changes yet. Please give us a few minutes to check the chain.",
+				hash: tx.hash
+			})
 
-            const receipt = await tx.wait();
+			onLoading()
 
-            if (receipt.status === 0) throw new Error("Error submitting transaction");
+			const receipt = await tx.wait()
 
-            receipt.events = receipt.logs.filter((log) => log.address === orgAddress).map((log) => BadgerOrg.abi.parseLog(log))
+			if (receipt.status === 0)
+				throw new Error('Error submitting transaction')
 
-            setIsLoading(false)
-            setIsSuccess(true)
+			receipt.events = receipt.logs
+				.filter(log => log.address === orgAddress)
+				.map(log => BadgerOrg.abi.parseLog(log))
 
-            onSuccess({ config, chain, tx, receipt })
-            transactionWindow.onSuccess();
+			setIsLoading(false)
+			setIsSuccess(true)
 
-        } catch (e) {
-            onError(e);
-            transactionWindow.onError();
-        }
-    }
+			onSuccess({ config, chain, tx, receipt })
+			transactionWindow.onSuccess()
+		} catch (e) {
+			onError(e)
+			transactionWindow.onError()
+		}
+	}
 
-    return { openHolderTransaction, isPrepared, isLoading, isSuccess }
+	return { openHolderTransaction, isPrepared, isLoading, isSuccess }
 }
 
-export {
-    useManageHolders
-}
+export { useManageHolders }

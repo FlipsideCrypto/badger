@@ -1,2 +1,2 @@
-export { ActionBar } from './ActionBar';
-export { FormActionBar } from './FormActionBar';
+export { ActionBar } from './ActionBar'
+export { FormActionBar } from './FormActionBar'

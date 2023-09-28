@@ -1,23 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
-import { getPFPImage } from '@utils';
+import { getPFPImage } from '@utils'
 
 const usePFP = ({ name, address }) => {
-    const [pfp, setPFP] = useState(' ');
+	const [pfp, setPFP] = useState(' ')
 
-    useEffect(() => {
-        async function getImage() {
-            const image = await getPFPImage(name, address);
+	useEffect(() => {
+		async function getImage() {
+			const image = await getPFPImage(name, address)
 
-            setPFP(image);
-        }
+			setPFP(image)
+		}
 
-        if (!name || !address) return
+		if (!name || !address) return
 
-        getImage();
-    }, [name, address]);
+		getImage()
+	}, [name, address])
 
-    return { pfp };
+	return { pfp }
 }
 
-export { usePFP };
+export { usePFP }

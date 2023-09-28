@@ -1,31 +1,31 @@
 .MuiPaper-root {
-    border-radius: 4px;
-    padding-inline: 20px;
+	border-radius: 4px;
+	padding-inline: 20px;
 }
 
 .MuiAccordion-root {
-    background: #FAFAFA;
-    box-shadow: none;
-    margin: 16px 0px 16px 0px;
+	background: #fafafa;
+	box-shadow: none;
+	margin: 16px 0px 16px 0px;
 }
 
 .MuiAccordion-root::before {
-    background-color: transparent;
+	background-color: transparent;
 }
 
 .MuiAccordionSummary-root {
-    height: 64px;
-    padding-inline: 0px;
-    /* padding-inline: 20px; */
+	height: 64px;
+	padding-inline: 0px;
+	/* padding-inline: 20px; */
 }
 
 .MuiAccordionSummary-root.Mui-expanded {
-    border-bottom: 1px solid #EEEEF6 !important;
-    height: 64px;
+	border-bottom: 1px solid #eeeef6 !important;
+	height: 64px;
 }
 
 .MuiAccordionDetails-root {
-    /* padding-inline: 20px; */
-    padding-top: 20px;
-    padding-bottom: 20px;
+	/* padding-inline: 20px; */
+	padding-top: 20px;
+	padding-bottom: 20px;
 }

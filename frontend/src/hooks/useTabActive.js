@@ -1,20 +1,23 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react'
 
 const useTabActive = () => {
-    const [visibilityState, setVisibilityState] = useState(true);
+	const [visibilityState, setVisibilityState] = useState(true)
 
-    const handleVisibilityChange = useCallback(() => {
-        setVisibilityState(document.visibilityState === 'visible');
-    }, []);
+	const handleVisibilityChange = useCallback(() => {
+		setVisibilityState(document.visibilityState === 'visible')
+	}, [])
 
-    useEffect(() => {
-        document.addEventListener("visibilitychange", handleVisibilityChange)
-        return () => {
-            document.removeEventListener("visibilitychange", handleVisibilityChange)
-        }
-    }, []);
+	useEffect(() => {
+		document.addEventListener('visibilitychange', handleVisibilityChange)
+		return () => {
+			document.removeEventListener(
+				'visibilitychange',
+				handleVisibilityChange
+			)
+		}
+	}, [])
 
-    return visibilityState;
+	return visibilityState
 }
 
-export { useTabActive };
+export { useTabActive }

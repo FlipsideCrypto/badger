@@ -1,40 +1,44 @@
-import { useAccount, useSwitchNetwork } from "wagmi";
+import { useAuthentication } from '@hooks'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useAccount, useSwitchNetwork } from 'wagmi'
 
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+const ConnectButton = props => {
+	const { switchNetwork } = useSwitchNetwork()
 
-import { useAuthentication } from "@hooks";
+	const { isConnected, isLoading } = useAccount()
 
-const ConnectButton = (props) => {
-    const { switchNetwork } = useSwitchNetwork();
+	const { openConnectModal } = useConnectModal()
 
-    const { isConnected, isLoading } = useAccount();
+	const { primaryChain, isWrongNetwork } = useAuthentication()
 
-    const { openConnectModal } = useConnectModal();
+	const className = props.className || 'secondary'
 
-    const { primaryChain, isWrongNetwork } = useAuthentication();
+	if (isConnected && isWrongNetwork && switchNetwork)
+		return (
+			<button
+				className={className}
+				disabled={!switchNetwork}
+				onClick={switchNetwork.bind(null, primaryChain.id)}
+			>
+				<span>Switch to {primaryChain.name}</span>
+			</button>
+		)
 
-    const className = props.className || "secondary"
+	return (
+		<button
+			className={className}
+			onClick={openConnectModal}
+			disabled={isLoading}
+		>
+			<span>
+				{isConnected
+					? 'Connected'
+					: isLoading
+					? 'Loading...'
+					: 'Connect Wallet'}
+			</span>
+		</button>
+	)
+}
 
-    if (isConnected && isWrongNetwork && switchNetwork)
-        return (
-            <button
-                className={className}
-                disabled={!switchNetwork}
-                onClick={switchNetwork.bind(null, primaryChain.id)}
-            >
-                <span>Switch to {primaryChain.name}</span>
-            </button>
-        );
-
-    return (
-        <button
-            className={className}
-            onClick={openConnectModal}
-            disabled={isLoading}
-        >
-            <span>{isConnected ? "Connected" : isLoading ? "Loading..." : "Connect Wallet"}</span>
-        </button>
-    );
-};
-
-export { ConnectButton };
+export { ConnectButton }

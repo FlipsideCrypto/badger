@@ -1,91 +1,91 @@
 #badge {
-    height: 80%;
+	height: 80%;
 }
 
 .center__gutter {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: baseline;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: baseline;
 }
 
 .center__gutter .badge__actions {
-    margin-left: auto;
+	margin-left: auto;
 }
 
 .badge__actions svg {
-    color: rgba(0, 0, 0, 0.35);
-    margin-right: 10px;
+	color: rgba(0, 0, 0, 0.35);
+	margin-right: 10px;
 }
 
 .badge__action span {
-    color: rgba(0, 0, 0, 0.65);
+	color: rgba(0, 0, 0, 0.65);
 }
 
 #manage__button {
-    float: right;
-    margin-top: 20px;
-    margin-bottom: 20px;
+	float: right;
+	margin-top: 20px;
+	margin-bottom: 20px;
 }
 
 .badge__header {
-    display: grid;
-    grid-template-columns: min-content 1fr;
-    grid-gap: 30px;
-    padding: 20px 20px 20px 20px;
-    margin-top: 20px;
-    align-items: center;
+	display: grid;
+	grid-template-columns: min-content 1fr;
+	grid-gap: 30px;
+	padding: 20px 20px 20px 20px;
+	margin-top: 20px;
+	align-items: center;
 }
 
 .badge__header .preview__container,
 .badge__header .preview__container img {
-    width: 140px;
-    height: 140px;
-    border-radius: 4px;
-    background-color: #ffffff;
+	width: 140px;
+	height: 140px;
+	border-radius: 4px;
+	background-color: #ffffff;
 }
 
 .badge__header .title {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-gap: 16px;
-    align-items: center;
-    margin-top: 0px;
-    margin-bottom: 10px;
+	display: grid;
+	grid-template-columns: auto 1fr;
+	grid-gap: 16px;
+	align-items: center;
+	margin-top: 0px;
+	margin-bottom: 10px;
 }
 
 .badge__header .title .icons {
-    display: grid;
-    grid-template-columns: repeat(3, min-content);
-    grid-gap: 10px;
-    align-items: baseline;
+	display: grid;
+	grid-template-columns: repeat(3, min-content);
+	grid-gap: 10px;
+	align-items: baseline;
 }
 
 .badge__header .description {
-    height: 40px;
+	height: 40px;
 }
 
 .badge__header .title .icons svg {
-    width: 14px;
-    height: 16px;
+	width: 14px;
+	height: 16px;
 }
 
 .badge__header p {
-    max-width: 720px;
+	max-width: 720px;
 }
 
 .badge__header .pill {
-    border: 1px solid #e3e0e0;
-    border-radius: 50px;
-    min-width: 40px;
-    text-align: center;
-    width: min-content;
-    font-size: 12px;
-    line-height: 24px;
-    height: 24px;
-    align-self: end;
+	border: 1px solid #e3e0e0;
+	border-radius: 50px;
+	min-width: 40px;
+	text-align: center;
+	width: min-content;
+	font-size: 12px;
+	line-height: 24px;
+	height: 24px;
+	align-self: end;
 }
 
 .no__holders {
-    width: 300px;
-    margin: 30px 0px 30px 20px;
+	width: 300px;
+	margin: 30px 0px 30px 20px;
 }

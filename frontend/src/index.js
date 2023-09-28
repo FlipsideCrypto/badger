@@ -1,21 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { HelmetProvider } from 'react-helmet-async'
 
-import { StyledEngineProvider } from '@mui/material/styles';
-import { HelmetProvider } from 'react-helmet-async';
+import { StyledEngineProvider } from '@mui/material/styles'
+import '@style/index.css'
 
-import App from './App';
+import App from './App'
 
-import '@style/index.css';
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root'))
 
 root.render(
-    <React.StrictMode>
-        <StyledEngineProvider injectFirst>
-            <HelmetProvider>
-                <App />
-            </HelmetProvider>
-        </StyledEngineProvider>
-    </React.StrictMode>
-);
+	<React.StrictMode>
+		<StyledEngineProvider injectFirst>
+			<HelmetProvider>
+				<App />
+			</HelmetProvider>
+		</StyledEngineProvider>
+	</React.StrictMode>
+)

@@ -1,54 +1,54 @@
 .view {
-    display: grid;
-    grid-template-columns: max-content auto;
-    justify-content: flex-start;
-    gap: 10px;
+	display: grid;
+	grid-template-columns: max-content auto;
+	justify-content: flex-start;
+	gap: 10px;
 }
 
 .view .organization {
-    text-decoration: none;
-    color: #1b1b1b;
-    align-items: center;
-    margin-right: 20px;
+	text-decoration: none;
+	color: #1b1b1b;
+	align-items: center;
+	margin-right: 20px;
 }
 
 .view .organization a {
-    grid-column: 2;
-    display: flex;
-    gap: 20px;
+	grid-column: 2;
+	display: flex;
+	gap: 20px;
 }
 
 .view .organization .organization__metadata {
-    margin-left: 45px;
+	margin-left: 45px;
 }
 
 .view .organization .organization__image {
-    border-radius: 50%;
-    height: 25px !important;
-    width: 25px !important;
-    background-color: #fafafa;
-    position: relative;
+	border-radius: 50%;
+	height: 25px !important;
+	width: 25px !important;
+	background-color: #fafafa;
+	position: relative;
 }
 
 .view .organization .organization__image img {
-    border-radius: 50%;
-    height: 25px !important;
-    width: 25px !important;
+	border-radius: 50%;
+	height: 25px !important;
+	width: 25px !important;
 }
 
 .view .organization .organization__image .chainIcon {
-    height: 15px !important;
-    width: 15px !important;
-    position: absolute;
-    bottom: -5px;
-    right: -5px;
+	height: 15px !important;
+	width: 15px !important;
+	position: absolute;
+	bottom: -5px;
+	right: -5px;
 }
 
 .view .action_bar__header__subtext {
-    margin-right: 10px;
+	margin-right: 10px;
 }
 
 .view .action_bar__header__subtext,
 .view .action_bar__header__buttons {
-    align-self: center;
+	align-self: center;
 }

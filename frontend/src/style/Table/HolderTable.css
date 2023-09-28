@@ -1,113 +1,113 @@
 tr {
-    height: 40px !important;
+	height: 40px !important;
 }
 
 td {
-    padding: 0px !important;
+	padding: 0px !important;
 }
 
 th {
-    padding: 0px !important;
+	padding: 0px !important;
 }
 
 th:first-child {
-    padding-left: 20px !important;
+	padding-left: 20px !important;
 }
 
 th:last-child,
 td:last-child {
-    padding-right: 20px !important;
+	padding-right: 20px !important;
 }
 
 th:not(:last-child) {
-    padding-right: 20px !important;
+	padding-right: 20px !important;
 }
 
 .table {
-    margin-inline: -20px;
-    width: calc(100% + 40px);
+	margin-inline: -20px;
+	width: calc(100% + 40px);
 }
 
 .table__input {
-    width: 100%;
-    min-height: 40px;
-    min-width: 40px;
-    padding: 1px 2px;
+	width: 100%;
+	min-height: 40px;
+	min-width: 40px;
+	padding: 1px 2px;
 }
 
 #holder__table {
-    margin-inline: 0px;
+	margin-inline: 0px;
 }
 
 #holder__table.dashboard__table {
-    margin-inline: -20px;
+	margin-inline: -20px;
 }
 
 #holder__table .badge__image,
 #holder__table .badge__image img {
-    width: 25px;
-    height: 25px;
+	width: 25px;
+	height: 25px;
 }
 
 input.table__input {
-    border: none;
-    outline: none;
+	border: none;
+	outline: none;
 }
 
 input.table__input:hover,
 input.table__input:active,
 input.table__input:focus {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 input.table__input:disabled,
 input.table__input:disabled:hover,
 input.table__input:disabled:active,
 input.table__input:disabled:focus {
-    background-color: transparent;
-    color: inherit;
-    box-shadow: none;
+	background-color: transparent;
+	color: inherit;
+	box-shadow: none;
 }
 
 .table__inline {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    text-align: right;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	text-align: right;
 }
 
 .table__inline input {
-    text-align: right;
+	text-align: right;
 }
 
 .table__inline div {
-    float: right;
+	float: right;
 }
 
 button.delete {
-    display: flex;
-    color: rgba(0, 0, 0, 0.65);
-    width: 20px;
-    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
-    padding: 8px;
+	display: flex;
+	color: rgba(0, 0, 0, 0.65);
+	width: 20px;
+	transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+	padding: 8px;
 }
 
 button.delete:hover,
 button.delete.active {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    color: #FF0000;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	color: #ff0000;
 }
 
 button.delete:disabled,
 button.delete:disabled:hover,
 button.delete:disabled:focus,
 button.delete:disabled:active {
-    box-shadow: none;
-    visibility: hidden;
+	box-shadow: none;
+	visibility: hidden;
 }
 
 .mono {
-    font-family: monospace;
-    font-variant-numeric: tabular-nums lining-nums;
+	font-family: monospace;
+	font-variant-numeric: tabular-nums lining-nums;
 }

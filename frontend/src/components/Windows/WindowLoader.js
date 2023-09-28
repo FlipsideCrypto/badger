@@ -1,5 +1,1 @@
-
-
-const WindowLoader = () => {
-    
-}
+const WindowLoader = () => {}

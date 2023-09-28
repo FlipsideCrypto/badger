@@ -1,1 +1,1 @@
-export { BadgeManagementDrawer } from './BadgeManagementDrawer';
+export { BadgeManagementDrawer } from './BadgeManagementDrawer'

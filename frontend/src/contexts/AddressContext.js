@@ -1,17 +1,19 @@
-import { createContext } from "react";
+import { createContext } from 'react'
 
-const AddressContext = createContext();
+const AddressContext = createContext()
 
 const AddressContextProvider = ({ children }) => {
-    const { address } = useAccount();
+	const { address } = useAccount()
 
-    return (
-        <AddressContext.Provider value={{
-            address
-        }}>
-            {children}
-        </AddressContext.Provider>
-    )
+	return (
+		<AddressContext.Provider
+			value={{
+				address
+			}}
+		>
+			{children}
+		</AddressContext.Provider>
+	)
 }
 
 export { AddressContext, AddressContextProvider }

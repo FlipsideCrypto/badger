@@ -1,96 +1,104 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
-import { postIPFSImage, postIPFSMetadata } from '@utils';
+import { IPFS_GATEWAY_URL } from '@static'
+import { postIPFSImage, postIPFSMetadata } from '@utils'
 
-import { IPFS_GATEWAY_URL } from '@static';
-
-const Hash = require('ipfs-only-hash');
+const Hash = require('ipfs-only-hash')
 
 const useIPFS = ({ image, data }) => {
-    const pinImage = async () => {
-        const response = await postIPFSImage(image);
+	const pinImage = async () => {
+		const response = await postIPFSImage(image)
 
-        if (response?.error) {
-            console.error(response.error);
-            return;
-        }
+		if (response?.error) {
+			console.error(response.error)
+			return
+		}
 
-        return response.hash;
-    };
+		return response.hash
+	}
 
-    const pinMetadata = async () => {
-        const response = await postIPFSMetadata(data);
+	const pinMetadata = async () => {
+		const response = await postIPFSMetadata(data)
 
-        if (response.error) {
-            console.error(response.error);
-            return;
-        }
+		if (response.error) {
+			console.error(response.error)
+			return
+		}
 
-        return response.hash;
-    };
+		return response.hash
+	}
 
-    return { pinImage, pinMetadata };
-};
+	return { pinImage, pinMetadata }
+}
 
-const useIPFSImageHash = (imageFile) => {
-    const [hash, setHash] = useState(null);
+const useIPFSImageHash = imageFile => {
+	const [hash, setHash] = useState(null)
 
-    useEffect(() => {
-        async function getHash(image) {
-            const reader = new FileReader();
+	useEffect(() => {
+		async function getHash(image) {
+			const reader = new FileReader()
 
-            reader.onload = async () => {
-                var uint8Array = new Uint8Array(reader.result);
-                await Hash.of(uint8Array, {
-                    cidVersion: 0,
-                    onlyHash: true,
-                })
-                    .then((res) => {
-                        setHash(res);
-                    })
-                    .catch((err) => {
-                        console.error('Error with deterministic image hashing', err);
-                    });
-            };
+			reader.onload = async () => {
+				var uint8Array = new Uint8Array(reader.result)
+				await Hash.of(uint8Array, {
+					cidVersion: 0,
+					onlyHash: true
+				})
+					.then(res => {
+						setHash(res)
+					})
+					.catch(err => {
+						console.error(
+							'Error with deterministic image hashing',
+							err
+						)
+					})
+			}
 
-            reader.readAsArrayBuffer(image);
-        }
+			reader.readAsArrayBuffer(image)
+		}
 
-        if (!imageFile) return;
+		if (!imageFile) return
 
-        // If provided a string, it is treated as if it is hash unless it's a file bytes.
-        if (typeof imageFile === 'string' && !imageFile.startsWith('data')) {
-            setHash(imageFile);
-            return;
-        }
+		// If provided a string, it is treated as if it is hash unless it's a file bytes.
+		if (typeof imageFile === 'string' && !imageFile.startsWith('data')) {
+			setHash(imageFile)
+			return
+		}
 
-        getHash(imageFile);
-    }, [imageFile]);
+		getHash(imageFile)
+	}, [imageFile])
 
-    return { imageHash: hash, ipfsImage: imageFile };
-};
+	return { imageHash: hash, ipfsImage: imageFile }
+}
 
-const useIPFSMetadataHash = (data) => {
-    const [hash, setHash] = useState(null);
+const useIPFSMetadataHash = data => {
+	const [hash, setHash] = useState(null)
 
-    useEffect(() => {
-        async function getHash() {
-            if (!data) return;
+	useEffect(() => {
+		async function getHash() {
+			if (!data) return
 
-            const stringify = JSON.stringify({ ...data, image: IPFS_GATEWAY_URL + data.image });
-            await Hash.of(stringify, { cidVersion: 0, onlyHash: true })
-                .then((res) => {
-                    setHash(res);
-                })
-                .catch((err) => {
-                    console.error('Error with deterministic metadata hashing', err);
-                });
-        }
+			const stringify = JSON.stringify({
+				...data,
+				image: IPFS_GATEWAY_URL + data.image
+			})
+			await Hash.of(stringify, { cidVersion: 0, onlyHash: true })
+				.then(res => {
+					setHash(res)
+				})
+				.catch(err => {
+					console.error(
+						'Error with deterministic metadata hashing',
+						err
+					)
+				})
+		}
 
-        getHash();
-    }, [data]);
+		getHash()
+	}, [data])
 
-    return { metadataHash: hash, ipfsMetadata: data };
-};
+	return { metadataHash: hash, ipfsMetadata: data }
+}
 
-export { useIPFS, useIPFSImageHash, useIPFSMetadataHash };
+export { useIPFS, useIPFSImageHash, useIPFSMetadataHash }

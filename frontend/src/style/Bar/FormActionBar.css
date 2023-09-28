@@ -1,34 +1,34 @@
 .actionBar {
-    display: grid;
-    grid-template-columns: auto;
-    margin-inline: 20px;
+	display: grid;
+	grid-template-columns: auto;
+	margin-inline: 20px;
 }
 
 .actionBar.full,
 .actionBar.actionFixed {
-    margin-inline: 0px;
+	margin-inline: 0px;
 }
 
 .actionBar .actions {
-    width: 100%;
-    display: block;
+	width: 100%;
+	display: block;
 }
 
 .actionBar .actions button {
-    width: 100%;
+	width: 100%;
 }
 
 @media (max-width: 768px) {
-    .actionBar {
-        margin-inline: 0px;
-    }
+	.actionBar {
+		margin-inline: 0px;
+	}
 
-    .actionBar.actionFixed {
-        position: fixed;
-        bottom: 20px;
-        left: 0;
-        right: 0;
-        margin-inline: 20px;
-        z-index: 100;
-    }
+	.actionBar.actionFixed {
+		position: fixed;
+		bottom: 20px;
+		left: 0;
+		right: 0;
+		margin-inline: 20px;
+		z-index: 100;
+	}
 }

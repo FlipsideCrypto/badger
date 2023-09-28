@@ -1,57 +1,56 @@
 .button__secondary {
-    background: #ffffff;
-    color: #1B1B1B;
-    font-weight: 400;
-    border-radius: 4px;
-    text-decoration: none;
-    text-transform: none;
-    cursor: pointer;
-    display: inline-block;
-    margin: 0;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    user-select: none;
-    background-image: none;
+	background: #ffffff;
+	color: #1b1b1b;
+	font-weight: 400;
+	border-radius: 4px;
+	text-decoration: none;
+	text-transform: none;
+	cursor: pointer;
+	display: inline-block;
+	margin: 0;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	user-select: none;
+	background-image: none;
 }
 
 .button__secondary:hover {
-    background-color: #ffffff;
+	background-color: #ffffff;
 }
 
 .button__secondary span,
 .button__primary span {
-    font-size: 18px;
-    font-weight: 400;
-    display: inline-block;
-    padding: 0px 10px;
+	font-size: 18px;
+	font-weight: 400;
+	display: inline-block;
+	padding: 0px 10px;
 }
 
-
 .button__primary {
-    background: linear-gradient(30deg, #00FF94 0%, #00FFE0 35%);
-    background-color: unset;
-    color: #1B1B1B;
-    font-weight: 400;
-    border-radius: 4px;
-    text-decoration: none;
-    text-transform: none;
-    cursor: pointer;
-    display: inline-block;
-    margin: 0;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    user-select: none;
+	background: linear-gradient(30deg, #00ff94 0%, #00ffe0 35%);
+	background-color: unset;
+	color: #1b1b1b;
+	font-weight: 400;
+	border-radius: 4px;
+	text-decoration: none;
+	text-transform: none;
+	cursor: pointer;
+	display: inline-block;
+	margin: 0;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	user-select: none;
 }
 
 .button__primary:hover {
-    background: linear-gradient(30deg, #00FF94 0%, #00FFE0 35%);
+	background: linear-gradient(30deg, #00ff94 0%, #00ffe0 35%);
 }
 
 .button__primary span {
-    font-size: 24px;
-    font-weight: 700;
-    display: inline-block;
-    padding: 3px 20px;
+	font-size: 24px;
+	font-weight: 700;
+	display: inline-block;
+	padding: 3px 20px;
 }

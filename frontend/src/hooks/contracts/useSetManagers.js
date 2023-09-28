@@ -1,155 +1,180 @@
-import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useMemo, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
-import { usePrepareContractWrite, useContractWrite } from "wagmi";
-import { ethers } from "ethers";
-
-import { getBadgerOrganizationAbi, useFees, useUser, useWindow, useClickEvent } from "@hooks";
-
-import { addressValidator } from "@utils";
+import {
+	getBadgerOrganizationAbi,
+	useClickEvent,
+	useFees,
+	useUser,
+	useWindow
+} from '@hooks'
+import { addressValidator } from '@utils'
+import { ethers } from 'ethers'
+import { useContractWrite, usePrepareContractWrite } from 'wagmi'
 
 const getManagerKey = ({ badgeId, manager }) => {
-    const encoded = ethers.utils.defaultAbiCoder.encode(["uint256", "address"], [badgeId, manager]);
-    return ethers.utils.solidityKeccak256(["bytes"], [encoded]);
+	const encoded = ethers.utils.defaultAbiCoder.encode(
+		['uint256', 'address'],
+		[badgeId, manager]
+	)
+	return ethers.utils.solidityKeccak256(['bytes'], [encoded])
 }
 
 /// TODO: Get the manager schema from the contract if it is one.
-const getManagerConfigSchema = async ({ manager }) => {
+const getManagerConfigSchema = async ({ manager }) => {}
 
-}
+const getSetManagerArgs = ({
+	organization,
+	tokenId,
+	managers,
+	isManagers,
+	configs
+}) => {
+	let args = []
+	let functionName = ''
 
-const getSetManagerArgs = ({ organization, tokenId, managers, isManagers, configs }) => {
-    let args = [];
-    let functionName = "";
+	const { cleanedAddresses } = addressValidator(managers)
 
-    const { cleanedAddresses } = addressValidator(managers);
+	if (
+		cleanedAddresses.length === 0 ||
+		isManagers.length !== cleanedAddresses.length ||
+		tokenId === null
+	)
+		return { functionName: '', args: [] }
 
-    if (cleanedAddresses.length === 0 || isManagers.length !== cleanedAddresses.length || tokenId === null)
-        return { functionName: "", args: [] };
+	// TokenId determines whether it is an org or token manager.
+	if (tokenId != null) {
+		functionName = 'setManagers(uint256,address[],bool[])'
+		args = [tokenId, cleanedAddresses, isManagers]
+	} else {
+		functionName = 'setManagers(address[],bool[])'
+		args = [cleanedAddresses, isManagers]
+	}
 
-    // TokenId determines whether it is an org or token manager.
-    if (tokenId != null) {
-        functionName = "setManagers(uint256,address[],bool[])"
-        args = [tokenId, cleanedAddresses, isManagers];
-    } else {
-        functionName = "setManagers(address[],bool[])"
-        args = [cleanedAddresses, isManagers];
-    }
+	// If any managers have a config, we are multicalling the config function with the setManagers function.
+	if (configs.length > 0) {
+		// Make the setManagers function the first argument of the multicall.
+		args = [args]
+		for (const config of configs) {
+			// TODO: get the config schema from the contract
+			// const configSchema = await getManagerConfigSchema({manager: config.manager});
+			// const configHash = ethers.utils.defaultAbiCoder.encode([configSchema], [config.args])
 
-    // If any managers have a config, we are multicalling the config function with the setManagers function.
-    if (configs.length > 0) {
-        // Make the setManagers function the first argument of the multicall.
-        args = [args];
-        for (const config of configs) {
-            // TODO: get the config schema from the contract
-            // const configSchema = await getManagerConfigSchema({manager: config.manager});
-            // const configHash = ethers.utils.defaultAbiCoder.encode([configSchema], [config.args])
+			const configHash = ethers.utils.defaultAbiCoder.encode(
+				['uint256', 'bool'],
+				[tokenId, true]
+			)
+			const configTx = organization.abi.encodeFunctionData(
+				tokenId
+					? 'configManager(uint256,address,bytes)'
+					: 'configManager(address,bytes)',
+				[tokenId, config.manager, configHash]
+			)
 
-            const configHash = ethers.utils.defaultAbiCoder.encode(["uint256", "bool"], [tokenId, true])
-            const configTx = organization.abi.encodeFunctionData(
-                tokenId ? "configManager(uint256,address,bytes)" : "configManager(address,bytes)",
-                [tokenId, config.manager, configHash]
-            );
+			args.push(configTx)
+		}
 
-            args.push(configTx);
-        }
+		return { functionName: 'multicall', args: [args] }
+	}
 
-
-        return { functionName: "multicall", args: [args] };
-    }
-
-
-    return { functionName, args };
+	return { functionName, args }
 }
 
 const useSetManagers = ({ obj }) => {
-    const fees = useFees();
+	const fees = useFees()
 
-    const { orgAddress } = useParams();
+	const { orgAddress } = useParams()
 
-    const { chain, address } = useUser();
+	const { chain, address } = useUser()
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
+	const [isLoading, setIsLoading] = useState(false)
+	const [isSuccess, setIsSuccess] = useState(false)
 
-    const BadgerOrg = useMemo(() => { return getBadgerOrganizationAbi() }, []);
+	const BadgerOrg = useMemo(() => {
+		return getBadgerOrganizationAbi()
+	}, [])
 
-    const { functionName, args } = getSetManagerArgs({
-        organization: BadgerOrg,
-        tokenId: obj.tokenId,
-        managers: obj.managers,
-        isManagers: obj.isManagers,
-        configs: obj.configs
-    });
+	const { functionName, args } = getSetManagerArgs({
+		organization: BadgerOrg,
+		tokenId: obj.tokenId,
+		managers: obj.managers,
+		isManagers: obj.isManagers,
+		configs: obj.configs
+	})
 
-    const isReady = BadgerOrg && fees && address && !!args;
+	const isReady = BadgerOrg && fees && address && !!args
 
-    const overrides = { gasPrice: fees?.gasPrice };
+	const overrides = { gasPrice: fees?.gasPrice }
 
-    const { config, isSuccess: isPrepared } = usePrepareContractWrite({
-        enabled: isReady,
-        address: orgAddress,
-        abi: BadgerOrg.abi,
-        functionName: functionName,
-        chainId: chain.id,
-        args,
-        overrides,
-        onError: (e) => {
-            const err = e?.error?.message || e?.data?.message || e
-            throw new Error(err);
-        }
-    });
+	const { config, isSuccess: isPrepared } = usePrepareContractWrite({
+		enabled: isReady,
+		address: orgAddress,
+		abi: BadgerOrg.abi,
+		functionName: functionName,
+		chainId: chain.id,
+		args,
+		overrides,
+		onError: e => {
+			const err = e?.error?.message || e?.data?.message || e
+			throw new Error(err)
+		}
+	})
 
-    const { writeAsync } = useContractWrite(config);
+	const { writeAsync } = useContractWrite(config)
 
-    const { transactionWindow } = useWindow();
+	const { transactionWindow } = useWindow()
 
-    const { lastClick } = useClickEvent();
+	const { lastClick } = useClickEvent()
 
-    const openManagerTransaction = async ({
-        onError = (e) => { console.error(e) },
-        onLoading = () => { },
-        onSuccess = ({ config, chain, tx, receipt }) => { }
-    }) => {
-        try {
-            setIsLoading(true);
-            setIsSuccess(false);
+	const openManagerTransaction = async ({
+		onError = e => {
+			console.error(e)
+		},
+		onLoading = () => {},
+		onSuccess = ({ config, chain, tx, receipt }) => {}
+	}) => {
+		try {
+			setIsLoading(true)
+			setIsSuccess(false)
 
-            transactionWindow.onStart({
-                title: "Waiting for confirmation...",
-                body: `Please confirm the transaction in your wallet to change your ${obj.tokenId ? "Badge" : "Organization"} Managers.`,
-                click: lastClick
-            })
-            
-            const tx = await writeAsync();
-            
-            onLoading();
-            transactionWindow.onSign({
-                title: "Mining transaction. This may take a few seconds.",
-                body: "Badger hasn't detected your Manager changes yet. Please give us a few minutes to check the chain.",
-                hash: tx.hash
-            })
+			transactionWindow.onStart({
+				title: 'Waiting for confirmation...',
+				body: `Please confirm the transaction in your wallet to change your ${
+					obj.tokenId ? 'Badge' : 'Organization'
+				} Managers.`,
+				click: lastClick
+			})
 
-            const receipt = await tx.wait();
+			const tx = await writeAsync()
 
-            if (receipt.status === 0) throw new Error("Error submitting transaction");
+			onLoading()
+			transactionWindow.onSign({
+				title: 'Mining transaction. This may take a few seconds.',
+				body: "Badger hasn't detected your Manager changes yet. Please give us a few minutes to check the chain.",
+				hash: tx.hash
+			})
 
-            receipt.events = receipt.logs.filter((log) => log.address === orgAddress).map((log) => BadgerOrg.abi.parseLog(log))
+			const receipt = await tx.wait()
 
-            setIsLoading(false)
-            setIsSuccess(true)
+			if (receipt.status === 0)
+				throw new Error('Error submitting transaction')
 
-            onSuccess({ config, chain, tx, receipt })
-            transactionWindow.onSuccess();
-        } catch (e) {
-            onError(e);
-            transactionWindow.onError();
-        }
-    }
+			receipt.events = receipt.logs
+				.filter(log => log.address === orgAddress)
+				.map(log => BadgerOrg.abi.parseLog(log))
 
-    return { openManagerTransaction, isPrepared, isLoading, isSuccess }
+			setIsLoading(false)
+			setIsSuccess(true)
+
+			onSuccess({ config, chain, tx, receipt })
+			transactionWindow.onSuccess()
+		} catch (e) {
+			onError(e)
+			transactionWindow.onError()
+		}
+	}
+
+	return { openManagerTransaction, isPrepared, isLoading, isSuccess }
 }
 
-export {
-    useSetManagers
-}
+export { useSetManagers }

@@ -1,2 +1,2 @@
-export { OrgView } from './OrgView';
-export { ProfileView } from './ProfileView';
+export { OrgView } from './OrgView'
+export { ProfileView } from './ProfileView'

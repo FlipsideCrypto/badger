@@ -1,13 +1,13 @@
 .card * {
-    margin: 0;
+	margin: 0;
 }
 
 .card {
-    border: 1px solid #E0E0E0;
+	border: 1px solid #e0e0e0;
 }
 
-.card h2 { 
-    margin-bottom: 10px;
+.card h2 {
+	margin-bottom: 10px;
 }
 
 /* .card a {

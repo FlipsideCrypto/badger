@@ -1,30 +1,30 @@
 .action__button {
-    /* color: rgba(0, 0, 0, .35) !important; */
-    width: fit-content;
-    text-decoration: none;
+	/* color: rgba(0, 0, 0, .35) !important; */
+	width: fit-content;
+	text-decoration: none;
 }
 
 .action__button:hover,
 .action__button:active,
 .action__button:focus {
-    /* color: rgba(27, 27, 27, .85) !important; */
+	/* color: rgba(27, 27, 27, .85) !important; */
 }
 
 .action__button svg {
-    color: inherit !important;
+	color: inherit !important;
 }
 
 .action__button span {
-    text-transform: none;
-    color: inherit !important;
+	text-transform: none;
+	color: inherit !important;
 }
 
 .action__button .secondary {
-    background: #1B1B1B;
-    color: #fff !important;
+	background: #1b1b1b;
+	color: #fff !important;
 }
 
 .action__button span {
-    text-transform: none;
-    color: inherit !important;
+	text-transform: none;
+	color: inherit !important;
 }

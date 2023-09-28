@@ -1,35 +1,52 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from 'react-router-dom'
 
-import { DashboardContent, SEO } from "@components";
+import { DashboardContent, SEO } from '@components'
+import { Badge, BadgeForm, Discover, Home, Org, OrgForm } from '@pages'
+import '@style/Dashboard/Dashboard.css'
 
-import { Badge, BadgeForm, Discover, Home, Org, OrgForm } from "@pages";
-
-import "@style/Dashboard/Dashboard.css";
-
-const title = "Dashboard // Badger";
-const description = "Badger is a decentralized, open-source, and community-driven platform for creating, managing, and sharing onchain organizations and badges.";
+const title = 'Dashboard // Badger'
+const description =
+	'Badger is a decentralized, open-source, and community-driven platform for creating, managing, and sharing onchain organizations and badges.'
 
 const Dashboard = () => {
-    return (
-        <>
-            <SEO title={title} description={description} />
+	return (
+		<>
+			<SEO title={title} description={description} />
 
-            <div className="dashboard">
-                <DashboardContent>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/discover/" element={<Discover />} />
-                        <Route path="/organization/new/" element={<OrgForm />} />
-                        <Route path="/organization/:chainId/:orgAddress/" element={<Org />} />
-                        <Route path="/organization/:chainId/:orgAddress/edit/" element={<OrgForm isEdit={true} />} />
-                        <Route path="/organization/:chainId/:orgAddress/badge/new/" element={<BadgeForm />} />
-                        <Route path="/organization/:chainId/:orgAddress/badge/:badgeId/" element={<Badge />} />
-                        <Route path="/organization/:chainId/:orgAddress/badge/:badgeId/edit/" element={<BadgeForm isEdit={true} />} />
-                    </Routes>
-                </DashboardContent>
-            </div>
-        </>
-    )
+			<div className="dashboard">
+				<DashboardContent>
+					<Routes>
+						<Route path="/" element={<Home />} />
+						<Route path="/discover/" element={<Discover />} />
+						<Route
+							path="/organization/new/"
+							element={<OrgForm />}
+						/>
+						<Route
+							path="/organization/:chainId/:orgAddress/"
+							element={<Org />}
+						/>
+						<Route
+							path="/organization/:chainId/:orgAddress/edit/"
+							element={<OrgForm isEdit={true} />}
+						/>
+						<Route
+							path="/organization/:chainId/:orgAddress/badge/new/"
+							element={<BadgeForm />}
+						/>
+						<Route
+							path="/organization/:chainId/:orgAddress/badge/:badgeId/"
+							element={<Badge />}
+						/>
+						<Route
+							path="/organization/:chainId/:orgAddress/badge/:badgeId/edit/"
+							element={<BadgeForm isEdit={true} />}
+						/>
+					</Routes>
+				</DashboardContent>
+			</div>
+		</>
+	)
 }
 
-export { Dashboard };
+export { Dashboard }
