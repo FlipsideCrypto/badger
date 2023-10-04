@@ -13,39 +13,34 @@ import {
     useClickEvent
 } from "@hooks";
 
-const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, accountBound, address, slot }) => {
+import { CONTRACT_SLOTS } from "@static";
+
+const getBadgeFormTxArgs = ({ organization, uriHash, tokenId, setAccountBound, isAccountBound, address, slot}) => {
     if (!uriHash || !address || !slot || tokenId === null)
         return { args: [], functionName: "" };
 
-    // For now, we're hard coding the setHook and configHook if the badge is account bound. A more modular piece is being built out for hooks and managers.
-    const functionName = accountBound ? "multicall" : "setBadgeURI";
-    let args = [];
+    const functionName = setAccountBound ? "multicall" : "setBadgeURI";
 
     if (functionName === "setBadgeURI" && uriHash)
-        args = [tokenId, uriHash];
+        return { functionName, args: [tokenId, uriHash] };
 
     // If we are initializing as account bound, we need to set the badge URI, set the manager, and config it
-    if (functionName === "multicall") {
-        const config = ethers.utils.defaultAbiCoder.encode(["uint256", "bool"], [tokenId, true])
+    const config = ethers.utils.defaultAbiCoder.encode(["uint256", "bool"], [tokenId, isAccountBound])
 
-        const setBadgeURI = organization.abi.encodeFunctionData(
-            "setBadgeURI", [tokenId, uriHash]
-        );
-        const setHook = organization.abi.encodeFunctionData(
-            "setHooks", [slot, [address], [true]]
-        );
-        const configHook = organization.abi.encodeFunctionData(
-            "configHook", [slot, address, config]
-        );
+    const setBadgeURI = organization.abi.encodeFunctionData(
+        "setBadgeURI", [tokenId, uriHash]
+    );
+    const setHook = organization.abi.encodeFunctionData(
+        "setHooks", [slot, [address], [true]]
+    );
+    const configHook = organization.abi.encodeFunctionData(
+        "configHook", [slot, address, config]
+    );
 
-        args = [[setBadgeURI, setHook, configHook]];
-    }
-
-
-    return { functionName, args };
+    return { functionName, args: [[setBadgeURI, setHook, configHook]] };
 }
 
-const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
+const useBadgeForm = ({ uriHash, accountBound, setAccountBound, tokenId, isEdit }) => {
     const fees = useFees();
 
     const { orgAddress } = useParams();
@@ -63,9 +58,10 @@ const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
         organization: BadgerOrg,
         uriHash: uriHash,
         tokenId: tokenId,
-        accountBound: accountBound,
         address: transferBoundAddress,
-        slot: "0x844bb459abe62f824043e42caa262ad6859731fc48abd8966db11d779c0fe669" // TODO: Don't hardcode this (BEFORE_TRANSFER bytes32 slot)
+        slot: CONTRACT_SLOTS.BEFORE_TRANSFER,
+        accountBound,
+        setAccountBound,
     });
 
     const isReady = BadgerOrg && fees && address && !!args;
@@ -103,7 +99,7 @@ const useBadgeForm = ({ imageHash, uriHash, accountBound, tokenId, isNew }) => {
             
             transactionWindow.onStart({
                 title: "Waiting for confirmation...",
-                body: `Please confirm the transaction in your wallet to ${isNew ? "create" : "edit"} your Badge.`,
+                body: `Please confirm the transaction in your wallet to ${isEdit ? "create" : "edit"} your Badge.`,
                 click: lastClick
             })
             

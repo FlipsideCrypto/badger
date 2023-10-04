@@ -28,7 +28,7 @@ import { IPFS_GATEWAY_URL } from '@static';
 
 import '@style/pages/BadgeForm.css';
 
-const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, isEdit }) => {
+const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, isEdit, initialAccountBoundState }) => {
     const imageInput = useRef();
 
     const navigate = useNavigate();
@@ -37,9 +37,9 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
 
     const [image, setImage] = useState(null);
 
-    // TODO: This needs to be either added to the obj after
-    //       cleaning it up or everything else comes out.
-    const [isAccountBound, setIsAccountBound] = useState(true);
+    const [isAccountBound, setIsAccountBound] = useState(isEdit ? initialAccountBoundState : true);
+
+    const needToChangeAccountBound = isAccountBound !== initialAccountBoundState;
 
     const name = useDebounce(obj.name, 300);
 
@@ -71,7 +71,8 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         ...obj,
         uriHash: metadataHash,
         accountBound: isAccountBound,
-        isNew: !isEdit,
+        setAccountBound: needToChangeAccountBound,
+        isEdit: isEdit,
         tokenId,
     });
 
@@ -156,9 +157,10 @@ const BadgeFormContent = ({ chainId, orgAddress, organization, badges, badge, is
         <>
             <SEO
                 title={`
-            ${isEdit ? 'Update' : 'Create'} 
-            ${`${organization?.name} //` || ''}
-            ${name || 'Badge'} // Badger`}
+                    ${isEdit ? 'Update' : 'Create'} 
+                    ${`${organization?.name} //` || ''}
+                    ${name || 'Badge'} // Badger
+                `}
             />
 
             <h2>{isEdit ? 'Update' : 'Create'} Badge</h2>
@@ -246,13 +248,11 @@ const BadgeForm = ({ isEdit = false }) => {
 
     const { chainId, orgAddress, badgeId } = useParams();
 
-    const { address, organization, badges, badge, hooks, canManage, retrieve } = useUser({
+    const { address, organization, badges, badge, canManage, retrieve, isAccountBound } = useUser({
         chainId,
         orgAddress,
         badgeId,
     });
-
-    console.log('hooks', hooks);
 
     return (
         <>
@@ -284,6 +284,7 @@ const BadgeForm = ({ isEdit = false }) => {
                     organization={organization}
                     badges={badges}
                     badge={badge}
+                    initialAccountBoundState={isAccountBound}
                     isEdit={isEdit}
                 />
             </DashboardLoader>
