@@ -4,6 +4,8 @@ import { ethers } from 'ethers';
 
 import { UserContext } from '@contexts';
 
+import { CONTRACT_SLOTS } from '@static';
+
 function getOrganizationKey(manager) {
     return ethers.utils.solidityKeccak256(['bytes'], [ethers.utils.defaultAbiCoder.encode(['address'], [manager])]);
 }
@@ -14,6 +16,28 @@ function getBadgeKey(badgeId, manager) {
         [ethers.utils.defaultAbiCoder.encode(['uint256', 'address'], [badgeId, manager])],
     );
 }
+
+// This would be necessary if we planned to support multiple hook types, but for now we only have the one.
+// async function getEncodedHookConfig(hook, config, provider) {
+//     const hookContract = new ethers.Contract(hook.ethereum_address, CONFIG_SCHEMA_ABI, provider);
+//     const schema = (await hookContract.CONFIG_SCHEMA()).split(',');
+//     return ethers.utils.defaultAbiCoder.encode(schema, config);
+// }
+// const CONFIG_SCHEMA_ABI = [
+//     {
+//         "inputs": [],
+//         "name": "CONFIG_SCHEMA",
+//         "outputs": [
+//             {
+//                 "internalType": "string",
+//                 "name": "",
+//                 "type": "string"
+//             }
+//         ],
+//         "stateMutability": "view",
+//         "type": "function"
+//     }
+// ]
 
 const useUser = (props) => {
     const {
@@ -32,7 +56,7 @@ const useUser = (props) => {
     const { chainId = chain?.id, orgAddress = null, badgeId = null } = props || {};
 
     const organization = useMemo(() => {
-        if (!isLoaded || organizations.length == 0 || !orgAddress) return null;
+        if (!isLoaded || organizations.length === 0 || !orgAddress) return null;
 
         return organizations.find((org) => {
             return org.chain_id === parseInt(chainId) && org.ethereum_address === orgAddress;
@@ -81,35 +105,19 @@ const useUser = (props) => {
             return module.module_type === 'hook';
         });
 
-        async function getEncodedHookConfig(hook, config) {
-            const schema = (await hook.CONFIG_SCHEMA()).split(',');
-            return ethers.utils.defaultAbiCoder.encode(schema, config);
-        }
-
-        // const BEFORE_TRANSFER_SLOT = "0x844bb459abe62f824043e42caa262ad6859731fc48abd8966db11d779c0fe669";
-
-        // const HOOK_SLOT = await organization.BEFORE_TRANSFER();
-        // const hookConfig = await getEncodedHookConfig(hook, [0, true]);
-
-        const getTransferBoundKey = (badgeId) => {
-            return ethers.utils.solidityKeccak256(
-                ['bytes'],
-                [ethers.utils.defaultAbiCoder.encode(['uint256', 'bool'], [badgeId, true])],
-            );
+        const expectedTransferBoundConfig = (badgeId) => {
+            return ethers.utils.defaultAbiCoder.encode(['uint256', 'bool'], [badgeId, true]);
         };
-
-        organizationHooks.map((hook) => {
-            console.log('hook', hook);
-            console.log('getBadgeKey', getBadgeKey(badge.token_id, hook.ethereum_address));
-            console.log('getTransferBoundKey', getTransferBoundKey(badge.token_id));
-            console.log('try this?');
-        });
 
         const filter = (module) => {
-            return module.is_active && module.module_key === getTransferBoundKey(badge.token_id);
+            return module.is_active && module.module_key === CONTRACT_SLOTS.BEFORE_TRANSFER && module.moduleConfig === expectedTransferBoundConfig(badge.token_id);
         };
 
-        return organizationHooks.filter(filter);
+        const matchingTransferBoundModule = organizationHooks.filter(filter);
+        console.log('organizationHooks', organizationHooks)
+        console.log('matchingTransferBoundModule', matchingTransferBoundModule)
+
+        return matchingTransferBoundModule.length > 0;
     }, [organization, badge]);
 
     const isOwner = useMemo(() => {
