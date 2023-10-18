@@ -65,7 +65,7 @@ class Backfill:
             ORGANIZATION_EVENTS
         )
 
-# if __name__ == '__main__':
-#     backfill = Backfill()
-#     backfill.backfill_factories()
-#     backfill.backfill_organizations()
+if __name__ == '__main__':
+    backfill = Backfill()
+    backfill.backfill_factories()
+    backfill.backfill_organizations()

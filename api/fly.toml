@@ -15,7 +15,7 @@ kill_timeout = "5s"
   release_command = "python manage.py migrate"
 
 [processes]
-  app = "gunicorn api.wsgi --log-level=info --log-file=-"
+  app = "gunicorn api.wsgi --log-level=info --log-file=- --bind 0.0.0.0:8080"
 
 [[services]]
   protocol = "tcp"

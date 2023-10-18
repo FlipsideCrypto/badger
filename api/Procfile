@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: gunicorn api.wsgi --log-level=info --log-file=-
+web: gunicorn api.wsgi --log-level=info --log-file=- --bind 0.0.0.0:8080
