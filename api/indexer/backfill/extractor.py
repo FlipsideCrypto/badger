@@ -3,7 +3,7 @@ from web3 import Web3
 
 from django.conf import settings
 
-w3 = Web3(Web3.WebsocketProvider(settings.WS_POLYGON_PROVIDER))
+w3 = Web3(Web3.WebsocketProvider(settings.WS_POLYGON_PROVIDER, websocket_timeout=180, websocket_kwargs={'max_size': 2**24}))
 
 class Extractor:
     def __init__(self):
