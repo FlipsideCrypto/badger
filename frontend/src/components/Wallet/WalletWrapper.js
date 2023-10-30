@@ -1,11 +1,12 @@
-import { configureChains, createClient, WagmiConfig, defaultChains, chain } from 'wagmi';
+import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import { polygon, localhost } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
 const WalletWrapper = ({ children }) => {
     const { chains, provider } = configureChains(
-        [...defaultChains, chain.polygon, chain.localhost],
+        [polygon, localhost],
         [
           alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_API_KEY }),
           publicProvider()
